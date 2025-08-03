@@ -198,6 +198,11 @@
   image: /files/images/avatar/chenxi_huang.jpeg
   category: Student
 
+- name: Weiliang Zhao
+  homepage: https://www.cs.columbia.edu/~wz2665/weiliang.html
+  image: /files/images/avatar/weiliang_zhao.jpg
+  category: Student
+
 - name: Elaine Ang
   homepage: https://www.linkedin.com/in/elaine-ang-57077694/
   image: /files/images/avatar/elaine_ang.jpeg
