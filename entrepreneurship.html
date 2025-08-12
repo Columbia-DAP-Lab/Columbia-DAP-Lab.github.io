@@ -51,8 +51,14 @@ title: Columbia Engineering AI Entrepreneurship Series
         {% else %}
           {{ event.title }}
         {% endif %}
-        {% if event.who %} <span class="who">{{ event.who }}</span>{% endif %}
-        </h4>
+        {% if event.who %} 
+          {% if event.url %}
+            <span class="who"><a href="{{ event.url }}">{{ event.who }}</a></span>
+          {% else %}
+            <span class="who">{{ event.who }}</span>
+          {% endif %}
+        {% endif %}        
+      </h4>
         <p class="text-muted">{{ event.time }}  {{ event.date | date: "%B %d, %Y" }} </p>
         {% unless event.description contains "tba" %}
           <div class="markdown-content">
@@ -75,7 +81,13 @@ title: Columbia Engineering AI Entrepreneurship Series
         {% else %}
           {{ event.title }}
         {% endif %}
-        {% if event.who %} <span class="who">{{ event.who }}</span>{% endif %}
+        {% if event.who %} 
+          {% if event.url %}
+            <span class="who"><a href="{{ event.url }}">{{ event.who }}</a></span>
+          {% else %}
+            <span class="who">{{ event.who }}</span>
+          {% endif %}
+        {% endif %}       
         </h4>
         <p class="text-muted">{{ event.time }}  {{ event.date | date: "%B %d, %Y" }} </p>
         <div class="markdown-content">
