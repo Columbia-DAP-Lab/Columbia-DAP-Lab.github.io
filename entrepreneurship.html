@@ -51,14 +51,17 @@ title: Columbia Engineering AI Entrepreneurship Series
         {% else %}
           {{ event.title }}
         {% endif %}
+      </h4>
         {% if event.who %} 
           {% if event.url %}
             <span class="who"><a href="{{ event.url }}">{{ event.who }}</a></span>
           {% else %}
             <span class="who">{{ event.who }}</span>
           {% endif %}
+          {% if event.role %}
+            <span class="role">{{ event.role }}</span>
+          {% endif %}
         {% endif %}        
-      </h4>
         <p class="text-muted">{{ event.time }}  {{ event.date | date: "%B %d, %Y" }} </p>
         {% unless event.description contains "tba" %}
           <div class="markdown-content">
@@ -81,6 +84,7 @@ title: Columbia Engineering AI Entrepreneurship Series
         {% else %}
           {{ event.title }}
         {% endif %}
+        </h4>
         {% if event.who %} 
           {% if event.url %}
             <span class="who"><a href="{{ event.url }}">{{ event.who }}</a></span>
@@ -88,7 +92,6 @@ title: Columbia Engineering AI Entrepreneurship Series
             <span class="who">{{ event.who }}</span>
           {% endif %}
         {% endif %}       
-        </h4>
         <p class="text-muted">{{ event.time }}  {{ event.date | date: "%B %d, %Y" }} </p>
         <div class="markdown-content">
           {{ event.description | markdownify }}
@@ -132,6 +135,7 @@ title: Columbia Engineering AI Entrepreneurship Series
 <style>
 .who {
   font-weight: normal;
+  font-size: 1.2em;
   color: gray;
 }
 .markdown-content p {
@@ -142,5 +146,9 @@ title: Columbia Engineering AI Entrepreneurship Series
 }
 .markdown-content em {
   font-style: italic;
+}
+.role {
+  font-size: 1.2em;
+  color: gray;
 }
 </style>
