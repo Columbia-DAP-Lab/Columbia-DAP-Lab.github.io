@@ -24,7 +24,7 @@ title: Events
 
 <div class="container my-5">
   {% if upcoming %}
-    <h2>Upcoming Events</h2>
+    <h2 style="color:gray">Upcoming Events</h2>
     <div class="mb-5">
       {% for event in events %}
         {% if event.date >= today %}
@@ -41,6 +41,13 @@ title: Events
             <div class="markdown-content">
               {{ event.description | markdownify }}
             </div>
+            <div class="mt-4">
+              {% if event.video %}
+              <a href="{{ event.video }}" class="btn btn-primary rounded-pill px-3 py-1" style="text-decoration: none; font-weight: 500;">
+                <i class="fas fa-play-circle me-2">Video Recording</i>
+              </a>
+              {% endif %}
+            </div>
           </div>
         {% endif %}
       {% endfor %}
@@ -48,7 +55,7 @@ title: Events
   {% endif %}
 
   {% if past %}
-    <h2>Past Events</h2>
+    <h2 style="color:gray">Past Events</h2>
     <div>
       {% for event in events %}
         {% if event.date < today %}
