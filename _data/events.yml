@@ -4,17 +4,28 @@
 # date:
 # time:
 # description:
-# link:  speaker URL
+# wholink:  speaker URL
+# link: title URL
 # video: link to youtube recording
+# slides: link to slides
 # 
 #
 
-
+- title: 'Simulation Environments for testing and training task-focused AI agents'
+  who: Mehdi Jamei
+  wholink: https://www.linkedin.com/in/mehdijamei/
+  date: '2025-09-16'
+  time: 12PM
+  where: CSB 451
+  description: >
+    Mehdi is the cofounder and CEO of Veris AI, an agentic infrastructure company based in NY, building simulation training grounds for enterprise AI agents. Veris is named on the Future50 list by the Generalist and is backed by Decibel Ventures and ACrew Capital.
+    Mehdi is an applied AI researcher, builder, and industry leader. He holds a PhD in Electrical Engineering and Computer Science and an M.S. in Physics, both from UC Berkeley. Most recently, he served as the Director of AI at System.com
 - title: 'Reality Checks'
   date: '2025-09-30'
   who: Kyunghyun Cho
+  where: CSB 451
   time: 12PM
-  link: https://kyunghyuncho.me/
+  wholink: https://kyunghyuncho.me/
   description: >
     Despite its amazing success, leaderboard chasing has become something researchers dread and mock. When implemented properly and executed faithfully, leaderboard chasing can lead to both faster and easily reproducible progress in science, as evident from the amazing progress we have seen with machine learning, or more broadly artificial intelligence, in recent decades. It does not however mean that it is easy to implement and execute leaderboard chasing properly. In this talk, I will go over four case studies demonstrating the issues that ultimately prevent leaderboard chasing from a valid scientific approach. The first case study is on the lack of proper hyperparameter tuning in continual learning, the second on the lack of consensus on evaluation metrics in machine unlearning, the third on the challenges of properly evaluating the evaluation metrics in free-form text generation, and the final one on wishful thinking. By going over these cases, I hope we can collectively acknowledge some of our own fallacies, think of underlying causes behind these fallacies and come up with better ways to approach artificial intelligence research. 
 

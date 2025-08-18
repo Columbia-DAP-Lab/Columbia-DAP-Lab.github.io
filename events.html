@@ -4,6 +4,7 @@ title: Events
 ---
 
 {% assign events = site.data.events | sort: "date" | reverse %}
+{% assign oevents = site.data.events | sort: "date"  %}
 {% assign today = 'now' | date: "%Y-%m-%d" %}
 {% assign upcoming = false %}
 {% assign past = false %}
@@ -26,7 +27,7 @@ title: Events
   {% if upcoming %}
     <h2 style="color:gray">Upcoming Events</h2>
     <div class="mb-5">
-      {% for event in events %}
+      {% for event in oevents %}
         {% if event.date >= today %}
           <div class="mb-4">
             <h4>
@@ -35,7 +36,13 @@ title: Events
             {% else %}
               {{ event.title }}
             {% endif %}
-            {% if event.who %} <span class="who">{{ event.who }}</span>{% endif %}
+            {% if event.who %} 
+              {% if event.wholink %}
+                <a href="{{ event.wholink }}" class="me-2"><span class="who">{{ event.who }}</span> </a>
+              {% else %}
+                <span class="who">{{ event.who }}</span>
+              {% endif %}
+            {% endif %}
             </h4>
             <p class="text-muted">{{ event.time }}  {{ event.date | date: "%B %d, %Y" }} </p>
             <div class="markdown-content">
@@ -45,6 +52,11 @@ title: Events
               {% if event.video %}
               <a href="{{ event.video }}" class="btn btn-primary rounded-pill px-3 py-1" style="text-decoration: none; font-weight: 500;">
                 <i class="fas fa-play-circle me-2">Video Recording</i>
+              </a>
+              {% endif %}
+              {% if event.slides %}
+              <a href="{{ event.slides }}" class="btn btn-primary rounded-pill px-3 py-1" style="text-decoration: none; font-weight: 500;">
+                <i class="fas fa-file-alt me-2">Slides</i>
               </a>
               {% endif %}
             </div>
