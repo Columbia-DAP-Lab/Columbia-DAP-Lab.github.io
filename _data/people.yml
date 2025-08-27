@@ -160,6 +160,11 @@
   image: /files/images/avatar/nikos_pagonas.jpeg
   category: Student
 
+- name: Jenny Ma
+  homepage: https://jennygzma.github.io/
+  image: /files/images/avatar/jenny_ma.jpeg
+  category: Student
+
 - name: Ryan Shea
   image: /files/images/avatar/ryan_shea.jpg
   category: Student
