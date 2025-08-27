@@ -227,3 +227,12 @@
   tags: 
     - ai
     - hac
+
+- title: "Fast Userspace Networking for the Rest of Us"
+  authors: Alireza Sanaee, Vahab Jabrayilov, Ilias Marinos, Anuj Kalia, Divyanshu Saxena, Prateesh Goyal, Kostis Kaffes, Gianni Antichi
+  url: https://arxiv.org/abs/2502.09281
+  conf: ArXiv 2025
+  pub_date: "2025-02-13"
+  tags: 
+    - systems
+    - networking
