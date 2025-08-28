@@ -102,4 +102,3 @@ docker compose up --build --no-cache
 - `_config.yml` - Jekyll configuration
 - `Gemfile` - Ruby dependencies
 - `docker-compose.yml` - Docker configuration
-
