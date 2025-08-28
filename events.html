@@ -29,7 +29,7 @@ title: Events
     <div class="mb-5">
       {% for event in oevents %}
         {% if event.date >= today %}
-          <div class="mb-4">
+          <div class="mb-4" id="{{ event.title | slugify }}">
             <h4>
             {% if event.link %}
               <a href="{{ event.link }}">{{ event.title }}</a>
@@ -71,7 +71,7 @@ title: Events
     <div>
       {% for event in events %}
         {% if event.date < today %}
-          <div class="mb-4">
+          <div class="mb-4" id="{{ event.title | slugify }}">
             <h4>
             {% if event.link %}
               <a href="{{ event.link }}">{{ event.title }}</a>
@@ -83,6 +83,18 @@ title: Events
             <p class="text-muted">{{ event.time }}  {{ event.date | date: "%B %d, %Y" }} </p>
             <div class="markdown-content">
               {{ event.description | markdownify }}
+            </div>
+            <div class="mt-4">
+              {% if event.video %}
+              <a href="{{ event.video }}" class="btn btn-primary rounded-pill px-3 py-1" style="text-decoration: none; font-weight: 500;">
+                <i class="fas fa-play-circle me-2">Video Recording</i>
+              </a>
+              {% endif %}
+              {% if event.slides %}
+              <a href="{{ event.slides }}" class="btn btn-primary rounded-pill px-3 py-1" style="text-decoration: none; font-weight: 500;">
+                <i class="fas fa-file-alt me-2">Slides</i>
+              </a>
+              {% endif %}
             </div>
           </div>
         {% endif %}
