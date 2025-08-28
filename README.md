@@ -2,6 +2,61 @@
 
 The official website for the Data, Agents, and Processes Lab (DAPLab) at Columbia University.
 
+## Editing Content
+
+After editing, please test your changes locally using Docker (see below), submit a Pull Request to [Columbia-DAP-Lab.github.io](https://github.com/Columbia-DAP-Lab/Columbia-DAP-Lab.github.io), and request @Alex-XJK (for students or general inquiries) or @sirrice (for faculty-related inquiries) to review and merge.
+
+If you are adding a new feature or making significant changes, please talk to our maintaining team in advance.
+
+### Contributing Your Profile
+
+You can now add yourself or update your profile by editing the `_data/people.yml` file.
+
+For Faculty members:
+```yaml
+- name: Your Name
+  homepage: (optional) https://your.website
+  image: (optional) /files/images/avatar/your_image.jpg
+  bio: >
+    (optional) A brief multi-line introduction
+  category: Faculty
+  field: [CS, Systems...]  # comma-separated research fields
+```
+For Students and Researchers:
+```yaml
+- name: Your Name
+  homepage: (optional) https://your.website
+  image: (optional) /files/images/avatar/your_fullname.jpg
+  category: Student
+```
+
+Please upload your avatar image to `/files/images/avatar/` and use that full path above. Please ensure your image is in square format and appropriately sized *under 1MB* for the best display.
+
+For Students and Researchers ordering:  
+Since commit a92a4bc, for ease of maintenance, student categories no longer need to be sorted; Liquid will automatically sort them at deployment-time.
+
+### Updating Publications
+
+Edit `_data/pubs.yml` and follow the existing format to add your publications. Basically, you will need to provide the following information for each publication:
+```yaml
+- title: Title of the paper
+  authors: name 1, name 2
+  conf: conference name
+  pub_date: "YYYY-MM-DD"
+  url: url to the paper
+  tags:
+    - tag1
+    - tag2
+```
+A explanation of the publication date: Only the year and month will be displayed, but you need to provide complete information for sorting purposes.
+
+### Managing Events
+
+To manage events,
+- Edit the `_data/events.yml` file, or
+- Add new events directly to the "website" table in the shared "Fall 2025 DAP Lab Seminar" Google Sheet. They will be automatically synced into the YAML file at 9 AM EST every day.
+
+
 ## Local Development with Docker
 
 This project uses Docker to provide a consistent development environment. Follow these steps to test changes locally:
@@ -92,13 +147,3 @@ docker compose up --build
 ```bash
 docker compose up --build --no-cache
 ```
-
-### Project Structure
-
-- `_data/` - Data files (people, publications, events, etc.)
-- `_includes/` - Reusable HTML components
-- `_layouts/` - Page templates
-- `files/` - Static assets (CSS, images, JS)
-- `_config.yml` - Jekyll configuration
-- `Gemfile` - Ruby dependencies
-- `docker-compose.yml` - Docker configuration
