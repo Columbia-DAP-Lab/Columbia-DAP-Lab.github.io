@@ -29,7 +29,7 @@ jobs:
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.3.4'  # Specify the required Ruby version
+          ruby-version: '3.4.5'  # Specify the required Ruby version
           bundler-cache: true  # Cache dependencies
 
       - name: Install dependencies
