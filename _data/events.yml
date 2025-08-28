@@ -138,3 +138,18 @@
     frameworks that bridge the gap between algorithms and their practical deployment.
     Through this multi-faceted approach, his work aims to better understand and build
     AI systems.
+
+- title: Spring 2025 Agentic System Made Real Course
+  date: '2025-01-21'
+  time: 10:10AM - 11:25AM TR
+  who: Eugene Wu and Kostis Kaffes
+  link: https://w6113.github.io/
+  description: >
+    LLMs have opened new possibilities of automated agents that plan and complete tasks on the 
+    user's behalf. Such agents have the potential to usher in a new industrial revolution by 
+    automating organizational processes. This graduate-level course will cut across the technology 
+    stack to examine the research questions that need to be answered for agents to be possible in 
+    real tasks that matter. Each session will review 1-3 papers or systems, and discuss research 
+    opportunities that arise from the gap between existing research and enterprise requirements. 
+    Topics will span systems (data systems and ML systems), AI (LLMs, agent-based planning), HCI, 
+    and theory (reinforcement learning, markets).
