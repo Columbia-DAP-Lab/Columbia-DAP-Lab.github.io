@@ -160,6 +160,11 @@
   image: /files/images/avatar/nikos_pagonas.jpeg
   category: Student
 
+- name: Jenny Ma
+  homepage: https://jennygzma.github.io/
+  image: /files/images/avatar/jenny_ma.jpeg
+  category: Student
+
 - name: Ryan Shea
   image: /files/images/avatar/ryan_shea.jpg
   category: Student
@@ -246,4 +251,19 @@
 - name: Sitong Wang
   homepage: https://sitong-wang.github.io/
   image: /files/images/avatar/sitong_wang.jpg
+  category: Student
+
+- name: Vahab Jabrayilov
+  homepage: https://vjabrayilov.github.io/
+  image: /files/images/avatar/vahab_jabrayilov.jpg
+  category: Student
+
+- name: Arnav Ahuja
+  homepage: https://arnavahuja.github.io/
+  image: /files/images/avatar/arnav_ahuja.jpeg
+  category: Student
+
+- name: Anushka Bhatnagar
+  homepage: https://anushkabhatnagar.github.io/
+  image: /files/images/avatar/anushka_bhatnagar.jpg
   category: Student
