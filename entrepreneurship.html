@@ -53,8 +53,8 @@ title: Columbia Engineering AI Entrepreneurship Series
         {% endif %}
       </h4>
         {% if event.who %} 
-          {% if event.url %}
-            <span class="who"><a href="{{ event.url }}">{{ event.who }}</a></span>
+          {% if event.wholink %}
+            <span class="who"><a href="{{ event.wholink }}">{{ event.who }}</a></span>
           {% else %}
             <span class="who">{{ event.who }}</span>
           {% endif %}
@@ -86,8 +86,8 @@ title: Columbia Engineering AI Entrepreneurship Series
         {% endif %}
         </h4>
         {% if event.who %} 
-          {% if event.url %}
-            <span class="who"><a href="{{ event.url }}">{{ event.who }}</a></span>
+          {% if event.wholink %}
+            <span class="who"><a href="{{ event.wholink }}">{{ event.who }}</a></span>
           {% else %}
             <span class="who">{{ event.who }}</span>
           {% endif %}
