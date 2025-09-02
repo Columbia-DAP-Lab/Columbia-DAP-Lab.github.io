@@ -1,9 +1,12 @@
-- title: 'TBA'
-  date: '2025-09-09'
+- title: 'Focus is Everything - How to Effectively Navigate the AI Landscape'
+  date: '09-09'
   who: Aaron Vontell, Anthropic
   role: Member of the Technical Staff
   wholink: https://www.linkedin.com/in/aaron-vontell
-  description: 
+  description: >
+    In this talk, Aaron will walk through his journey building in the AI space, detailing his learnings from Instabase, his own AI startup Regression Games, and now his experience at Anthropic. This talk will focus on the importance of focusing on specific problems and navigating frequently-changing technological landscapes, and how to apply cutting-edge research in record time.
+  bio: >
+    Aaron Vontell is a software engineer and entrepreneur, currently serving as a Member of Technical Staff at Anthropic. Previously, he was the Founder and CEO of Regression Games, an AI gaming startup backed by NEA and a16z. He holds a degree from MIT, including a masters in AI, where he contributed to MIT's Battlecode AI competition. 
 - title: 'TBA'
   date: '2025-09-23'
   who: Tom Effland, Noetica
