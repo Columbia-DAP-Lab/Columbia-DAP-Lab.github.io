@@ -1,5 +1,6 @@
 # 
 # title:
+# tag: Entrepreneurship/Seminar/Workshop/Course
 # who:
 # date:
 # time:
@@ -11,25 +12,81 @@
 # 
 #
 
+- title: 'Reality Checks'
+  tag: Seminar
+  date: '2025-09-30'
+  who: Kyunghyun Cho
+  where: CSB 453
+  time: 12PM
+  wholink: https://kyunghyuncho.me/
+  description: >
+    Despite its amazing success, leaderboard chasing has become something researchers dread and mock.
+    When implemented properly and executed faithfully, leaderboard chasing can lead to both faster
+    and easily reproducible progress in science, as evident from the amazing progress we have seen
+    with machine learning, or more broadly artificial intelligence, in recent decades. It does not
+    however mean that it is easy to implement and execute leaderboard chasing properly. In this talk,
+    I will go over four case studies demonstrating the issues that ultimately prevent leaderboard
+    chasing from a valid scientific approach. The first case study is on the lack of proper
+    hyperparameter tuning in continual learning, the second on the lack of consensus on evaluation
+    metrics in machine unlearning, the third on the challenges of properly evaluating the evaluation
+    metrics in free-form text generation, and the final one on wishful thinking. By going over these
+    cases, I hope we can collectively acknowledge some of our own fallacies, think of underlying
+    causes behind these fallacies and come up with better ways to approach artificial intelligence research.  
+    
+    Kyunghyun Cho is a professor of computer science and data science at New York University and an
+    executive director of frontier research at the Prescient Design team within Genentech Research
+    & Early Development (gRED). He became the Glen de Vries Professor of Health Statistics in 2025.
+    He is also a CIFAR Fellow of Learning in Machines & Brains and an Associate Member of the
+    National Academy of Engineering of Korea. He served as a (co-)Program Chair of ICLR 2020,
+    NeurIPS 2022 and ICML 2022. He was one of the three founding Editors-in-Chief of the
+    Transactions on Machine Learning Research (TMLR) until 2024. He was a research scientist at
+    Facebook AI Research from June 2017 to May 2020 and a postdoctoral fellow at University of
+    Montreal until Summer 2015 under the supervision of Prof. Yoshua Bengio, after receiving MSc
+    and PhD degrees from Aalto University April 2011 and April 2014, respectively, under the
+    supervision of Prof. Juha Karhunen, Dr. Tapani Raiko and Dr. Alexander Ilin. He received
+    the Samsung Ho-Am Prize in Engineering in 2021. He tries his best to find a balance among
+    machine learning, natural language processing, and life, but almost always fails to do so.
+
 - title: 'Simulation Environments for testing and training task-focused AI agents'
+  tag: Seminar
   who: Mehdi Jamei
   wholink: https://www.linkedin.com/in/mehdijamei/
   date: '2025-09-16'
   time: 12PM
-  where: CSB 451
+  where: CSB 453
   description: >
-    Mehdi is the cofounder and CEO of Veris AI, an agentic infrastructure company based in NY, building simulation training grounds for enterprise AI agents. Veris is named on the Future50 list by the Generalist and is backed by Decibel Ventures and ACrew Capital.
-    Mehdi is an applied AI researcher, builder, and industry leader. He holds a PhD in Electrical Engineering and Computer Science and an M.S. in Physics, both from UC Berkeley. Most recently, he served as the Director of AI at System.com
-- title: 'Reality Checks'
-  date: '2025-09-30'
-  who: Kyunghyun Cho
-  where: CSB 451
+    Mehdi is the cofounder and CEO of Veris AI, an agentic infrastructure company based in NY,
+    building simulation training grounds for enterprise AI agents. Veris is named on the Future50
+    list by the Generalist and is backed by Decibel Ventures and ACrew Capital.    
+    
+    Mehdi is an applied AI researcher, builder, and industry leader. He holds a PhD in Electrical
+    Engineering and Computer Science and an M.S. in Physics, both from UC Berkeley. Most recently,
+    he served as the Director of AI at System.com
+
+
+- title: 'MassGen: Multi-Agent Scaling System'
+  tag: Seminar
+  date: '2025-09-09'
+  who: Chi Wang
+  where: CSB 453
   time: 12PM
-  wholink: https://kyunghyuncho.me/
+  wholink: https://www.linkedin.com/in/chi-wang-autogen/
   description: >
-    Despite its amazing success, leaderboard chasing has become something researchers dread and mock. When implemented properly and executed faithfully, leaderboard chasing can lead to both faster and easily reproducible progress in science, as evident from the amazing progress we have seen with machine learning, or more broadly artificial intelligence, in recent decades. It does not however mean that it is easy to implement and execute leaderboard chasing properly. In this talk, I will go over four case studies demonstrating the issues that ultimately prevent leaderboard chasing from a valid scientific approach. The first case study is on the lack of proper hyperparameter tuning in continual learning, the second on the lack of consensus on evaluation metrics in machine unlearning, the third on the challenges of properly evaluating the evaluation metrics in free-form text generation, and the final one on wishful thinking. By going over these cases, I hope we can collectively acknowledge some of our own fallacies, think of underlying causes behind these fallacies and come up with better ways to approach artificial intelligence research.  
-    Kyunghyun Cho is a professor of computer science and data science at New York University and an executive director of frontier research at the Prescient Design team within Genentech Research & Early Development (gRED). He became the Glen de Vries Professor of Health Statistics in 2025. He is also a CIFAR Fellow of Learning in Machines & Brains and an Associate Member of the National Academy of Engineering of Korea. He served as a (co-)Program Chair of ICLR 2020, NeurIPS 2022 and ICML 2022. He was one of the three founding Editors-in-Chief of the Transactions on Machine Learning Research (TMLR) until 2024. He was a research scientist at Facebook AI Research from June 2017 to May 2020 and a postdoctoral fellow at University of Montreal until Summer 2015 under the supervision of Prof. Yoshua Bengio, after receiving MSc and PhD degrees from Aalto University April 2011 and April 2014, respectively, under the supervision of Prof. Juha Karhunen, Dr. Tapani Raiko and Dr. Alexander Ilin. He received the Samsung Ho-Am Prize in Engineering in 2021. He tries his best to find a balance among machine learning, natural language processing, and life, but almost always fails to do so.
+    Chi will present MassGen, a growing open-source multi-agent scaling system that tackles
+    single-agent limitations through collaborative AI coordination. Built on AG2's research foundation,
+    the system implements novel coordination of frontier AI agents. Early benchmarking across
+    reasoning and instruction-following tasks shows statistically significant improvements, with
+    growing industrial and academic adoption demonstrating the research opportunity for scaling
+    intelligence through collaborative emergence.  
+    
+    Chi Wang is founder of AutoGen (now AG2), the open-source AgentOS to support agentic AI, and
+    its parent open-source project FLAML, a fast library for AutoML & tuning. He has received
+    multiple awards such as best paper of ICLR'24 LLM Agents Workshop and SIGKDD Data Science/Data
+    Mining PhD Dissertation Award. He has 15+ years of research experience in Computer Science
+    from Google DeepMind, Microsoft Research, Meta, UIUC and Tsinghua.
+
 - title: 'March 2025 Workshop: AI Agents for Work'
+  tag: Workshop
   date: '2025-03-12'
   time: 12PM
   link: https://daplab.cs.columbia.edu/workshop/2025-03/
@@ -45,56 +102,62 @@
     from OpenAI who led  their chain-of-thought and agentic work, Danielle Perszyk
     from Amazon AGI, Jonathan Frankle  from Databricks, Deepak Dastrala from Intellect,
     [Cong Yu](https://www.linkedin.com/in/congyu)  who leads AI at Celonis, and more.
-- title: 'Efficient Fine-Tuning and Compression of Large Language Models: Towards
-    Low-bit and Ultra-Low Parameter Solutions'
+
+- title: 'Efficient Fine-Tuning and Compression of Large Language Models: Towards Low-bit and Ultra-Low Parameter Solutions'
   who: Jiajun Zhou
   date: '2025-07-07'
   time: 12PM
-  description: "Efficient fine-tuning of Large Language Models (LLMs) is crucial due\
-    \ to their substantial memory and computational demands. This seminar discusses\
-    \ recent advancements in techniques aimed at  significantly reducing these costs,\
-    \ enabling effective adaptation of large-scale models even on resource-constrained\
-    \ hardware. The talk will begin with an overview of current challenges and mainstream\
-    \ approaches to compressing and fine-tuning LLMs, highlighting trade-offs between\
-    \  model size, accuracy, and efficiency. Subsequently, the speaker will introduce\
-    \ novel approaches  that enable fine-tuning at extremely low precision and ultra-low\
-    \ parameter regimes,  significantly reducing memory requirements without compromising\
-    \ performance. Finally, the  discussion will cover recent progress and future\
-    \ directions for achieving efficient deployment  of LLMs in real-world applications.\
-    \  \n\n\nJiajun Zhou is currently a Ph.D. student in the Department of Electrical\
-    \ and Electronic  Engineering at the University of Hong Kong (HKU), supervised\
-    \ by Prof. Ngai Wong, and a visiting  scholar at the University of California,\
-    \ Santa Barbara (UCSB). He received his Master's degree  in IC Design Engineering\
-    \ from the Hong Kong University of Science and Technology (HKUST) in 2019.  He\
-    \ previously worked as a Research Assistant at the Chinese University of Hong\
-    \ Kong (CUHK).  His research primarily focuses on developing innovative frameworks\
-    \ for efficient training and  inference of Large Language Models (LLMs), particularly\
-    \ through quantization, low-bit  optimization, and tensor decomposition. He has\
-    \ published extensively in AI and hardware  acceleration venues, including NAACL,\
-    \ IEEE FCCM, and IEEE TCAD.\n"
+  description: >
+    Efficient fine-tuning of Large Language Models (LLMs) is crucial due
+    to their substantial memory and computational demands. This seminar discusses
+    recent advancements in techniques aimed at  significantly reducing these costs,
+    enabling effective adaptation of large-scale models even on resource-constrained
+    hardware. The talk will begin with an overview of current challenges and mainstream
+    approaches to compressing and fine-tuning LLMs, highlighting trade-offs between
+    model size, accuracy, and efficiency. Subsequently, the speaker will introduce
+    novel approaches  that enable fine-tuning at extremely low precision and ultra-low
+    parameter regimes,  significantly reducing memory requirements without compromising
+    performance. Finally, the  discussion will cover recent progress and future
+    directions for achieving efficient deployment  of LLMs in real-world applications.  
+    
+    Jiajun Zhou is currently a Ph.D. student in the Department of Electrical
+    and Electronic  Engineering at the University of Hong Kong (HKU), supervised
+    by Prof. Ngai Wong, and a visiting  scholar at the University of California,
+    Santa Barbara (UCSB). He received his Master's degree  in IC Design Engineering
+    from the Hong Kong University of Science and Technology (HKUST) in 2019.  He
+    previously worked as a Research Assistant at the Chinese University of Hong
+    Kong (CUHK).  His research primarily focuses on developing innovative frameworks
+    for efficient training and  inference of Large Language Models (LLMs), particularly
+    through quantization, low-bit  optimization, and tensor decomposition. He has
+    published extensively in AI and hardware  acceleration venues, including NAACL,
+    IEEE FCCM, and IEEE TCAD.\n"
+
 - title: 'Multi-Agent Systems in the Era of LLMs: Testbeds, Applications, and Beyond'
   who: Yusen Zhang
   date: '2025-07-10'
   time: 12PM
-  description: "Autonomous agents powered by large language models (LLMs) are emerging\
-    \ as powerful tools for a  wide range of tasks. However, a single agent often\
-    \ faces performance ceilings, especially when  tackling complex workflows like\
-    \ running an AI company or AI4Research, and is inherently limited  in scenarios\
-    \ that involve multiple instances, such as simulations, embodied agents, and digital\
-    \  twins. In this talk, I will present Multi-Agent Large Language Models (MA-LLMs),\
-    \ a promising  paradigm designed to overcome the fundamental limitations of single-agent\
-    \ systems. I will begin  by highlighting three threads of my previous work that\
-    \ lay the groundwork for MA-LLMs. Next,  I'll introduce our research on fairness\
-    \ summarization, which demonstrates challenges that a  single agent struggles\
-    \ to handle well. Then, I will present how agents can collaborate in a  chain-of-agent\
-    \ manner to solve difficult tasks, such as long-document summarization and  multi-step\
-    \ reasoning. Finally, I will reflect on current limitations in MA-LLMs and outline\
-    \ my  long-term vision of building Agent Societies: a human-centric society consisting\
-    \ of scalable,  trustworthy, and collaborative intelligent agents and humans.\n\
-    \nYusen Zhang is a fourth-year CS PhD student at Penn State University, advised\
-    \ by Dr. Rui Zhang.  He has done industry research internships at Amazon, Microsoft,\
-    \ and Google. He also worked  closely with Dr. Dragomir Radev. He received his\
-    \ master's degree from Emory University,  advised by Dr. Jinho D. Choi. \n"
+  description: >
+    Autonomous agents powered by large language models (LLMs) are emerging
+    as powerful tools for a  wide range of tasks. However, a single agent often
+    faces performance ceilings, especially when  tackling complex workflows like
+    running an AI company or AI4Research, and is inherently limited  in scenarios
+    that involve multiple instances, such as simulations, embodied agents, and digital
+    twins. In this talk, I will present Multi-Agent Large Language Models (MA-LLMs),
+    a promising  paradigm designed to overcome the fundamental limitations of single-agent
+    systems. I will begin  by highlighting three threads of my previous work that
+    lay the groundwork for MA-LLMs. Next,  I'll introduce our research on fairness
+    summarization, which demonstrates challenges that a  single agent struggles
+    to handle well. Then, I will present how agents can collaborate in a  chain-of-agent
+    manner to solve difficult tasks, such as long-document summarization and  multi-step
+    reasoning. Finally, I will reflect on current limitations in MA-LLMs and outline
+    my  long-term vision of building Agent Societies: a human-centric society consisting
+    of scalable,  trustworthy, and collaborative intelligent agents and humans.  
+    
+    Yusen Zhang is a fourth-year CS PhD student at Penn State University, advised
+    by Dr. Rui Zhang.  He has done industry research internships at Amazon, Microsoft,
+    and Google. He also worked  closely with Dr. Dragomir Radev. He received his
+    master's degree from Emory University,  advised by Dr. Jinho D. Choi.
+
 - title: 'The Road to High-Quality LLM Inference Services: System, Data, and Context'
   who: Yizheng Jiao
   date: '2025-07-17'
@@ -104,23 +167,20 @@
     services including
 
     1. high-level principles of increasing performance and saving costs
-
-    2. a data selection algorithm to finetune LLM to increase the accuracy of domain-specific
-    questions
-
-    3. a method to enhance users' prompt with domain-specific  knowledge bases.
-
-
+    2. a data selection algorithm to finetune LLM to increase the accuracy of domain-specific questions
+    3. a method to enhance users' prompt with domain-specific knowledge bases.
 
     Yizheng Jiao graduated from UNC Chapel Hill with a doctoral degree in 2022. He
     joined Bytedance  after graduation and am doing research on LLM systems. His goal
     is to build efficient and  accurate LLM services with experience includes LLM
     inference systems, data selection for LLM  finetuning, and prompt optimization.
+
 - title: From Serving LLMs to Serving Agents on the Cloud
+  tag: Seminar
   date: '2025-07-24'
   time: 12PM
   who: Xiaozhe Yao
-  description: >-
+  description: >
     In this talk, I will discuss key challenges in building agentic AI systems in
     the cloud. I will highlight DeltaZip, our recent work on efficiently deploying
     multiple fine-tuned models -- a step we believe is essential toward enabling future
@@ -129,7 +189,6 @@
     and compression algorithm, DeltaZip achieves a 2x to 12x throughput improvement
     over state-of-the-art systems. In addition to this project, I will share some
     ongoing challenges we are tackling in this space.
-
 
     Xiaozhe Yao is a third-year doctoral student at Systems Group, Department of Computer
     Science, ETH Zurich advised by Prof. Dr. Ana Klimović. His research explores the
@@ -140,16 +199,17 @@
     AI systems.
 
 - title: Spring 2025 Agentic System Made Real Course
+  tag: Course
   date: '2025-01-21'
   time: 10:10AM - 11:25AM TR
   who: Eugene Wu and Kostis Kaffes
   link: https://w6113.github.io/
   description: >
-    LLMs have opened new possibilities of automated agents that plan and complete tasks on the 
-    user's behalf. Such agents have the potential to usher in a new industrial revolution by 
-    automating organizational processes. This graduate-level course will cut across the technology 
-    stack to examine the research questions that need to be answered for agents to be possible in 
-    real tasks that matter. Each session will review 1-3 papers or systems, and discuss research 
-    opportunities that arise from the gap between existing research and enterprise requirements. 
-    Topics will span systems (data systems and ML systems), AI (LLMs, agent-based planning), HCI, 
+    LLMs have opened new possibilities of automated agents that plan and complete tasks on the
+    user's behalf. Such agents have the potential to usher in a new industrial revolution by
+    automating organizational processes. This graduate-level course will cut across the technology
+    stack to examine the research questions that need to be answered for agents to be possible in
+    real tasks that matter. Each session will review 1-3 papers or systems, and discuss research
+    opportunities that arise from the gap between existing research and enterprise requirements.
+    Topics will span systems (data systems and ML systems), AI (LLMs, agent-based planning), HCI,
     and theory (reinforcement learning, markets).

@@ -32,8 +32,9 @@ For Students and Researchers:
 
 Please upload your avatar image to `/files/images/avatar/` and use that full path above. Please ensure your image is in square format and appropriately sized *under 1MB* for the best display.
 
-For Students and Researchers ordering:  
-Since commit a92a4bc, for ease of maintenance, student categories no longer need to be sorted; Liquid will automatically sort them at deployment-time.
+For adding yourself as a **new** member, please include **your supervisor's name** in your PR description for verification. Without that, your PR may be delayed or rejected!
+
+For Students and Researchers ordering: Since commit a92a4bc, for ease of maintenance, student categories no longer need to be sorted; Liquid will automatically sort them at deployment-time.
 
 ### Updating Publications
 
@@ -54,7 +55,9 @@ A explanation of the publication date: Only the year and month will be displayed
 
 To manage events,
 - Edit the `_data/events.yml` file, or
-- Add new events directly to the "website" table in the shared "Fall 2025 DAP Lab Seminar" Google Sheet. They will be automatically synced into the YAML file at 9 AM EST every day.
+- ~~Add new events directly to the "website" table in the shared "Fall 2025 DAP Lab Seminar" Google Sheet. They will be automatically synced into the YAML file at 9 AM EST every day.~~
+
+> Note: The Google Sheet method is temporarily disabled due to the low frequency of use after Sept. 9, 2025. Please edit the YAML file directly for now.
 
 
 ## Local Development with Docker

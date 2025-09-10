@@ -148,3 +148,31 @@ h1, h2, h3, h4, h5, h6 {
 .badge-default         { background-color: #6c757d; }  /* Neutral gray */
 
 
+/* Base tag style */
+.event-tag {
+  display: inline-block;
+  padding: 0.25em 0.6em;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border-radius: 9999px; /* fully rounded pill */
+  color: #fff;
+  margin-left: 0.5em;
+  vertical-align: middle;
+}
+
+/* Category-specific colors */
+.event-tag--entrepreneurship {
+  background-color: #CB4B16; /* orange */
+}
+
+.event-tag--seminar {
+  background-color: #268BD2; /* blue */
+}
+
+.event-tag--course {
+  background-color: #09B703; /* green */
+}
+
+.event-tag--workshop {
+  background-color: #2AA198; /* teal */
+}
