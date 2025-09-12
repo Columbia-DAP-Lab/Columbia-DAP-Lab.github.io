@@ -37,7 +37,7 @@ title: Events
     <div class="mb-5">
       {% for event in oevents %}
         {% if event.date >= today and event.who != "🤔" %}
-          <div class="mb-4 event-item event-{{ event.tag | downcase | default: 'other' }}" id="{{ event.title | slugify }}">
+          <div class="mb-4 event-item event-{{ event.tag | downcase | default: 'other' }}" id="{{ event.date | date: '%y%m%d' }}-{{ event.title | slugify }}">
             <h4>
             {% if event.link %}
               <a href="{{ event.link }}">{{ event.title }}</a>
@@ -86,7 +86,7 @@ title: Events
     <div>
       {% for event in events %}
         {% if event.date < today and event.who != "🤔" %}
-          <div class="mb-4 event-item event-{{ event.tag | downcase | default: 'other' }}" id="{{ event.title | slugify }}">
+          <div class="mb-4 event-item event-{{ event.tag | downcase | default: 'other' }}" id="{{ event.date | date: '%y%m%d' }}-{{ event.title | slugify }}">
             <h4>
             {% if event.link %}
               <a href="{{ event.link }}">{{ event.title }}</a>
