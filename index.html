@@ -47,7 +47,16 @@ layout: default
             <h4 class="mb-0">Events</h4>
           </div>
           <div class="card-body p-3">
-            {% assign recent_events = site.data.events | sort: "date" | reverse | slice: 0, 4 %}
+            {% assign all_events = site.data.events | concat: site.data.startups %}
+            {% assign valid_events = "" | split: "" %}
+
+            {% for e in all_events %}
+              {% if e.title != "TBA" and e.description and e.description.size > 1 %}
+                {% assign valid_events = valid_events | push: e %}
+              {% endif %}
+            {% endfor %}
+
+            {% assign recent_events = valid_events | sort: "date" | reverse | slice: 0, 4 %}
             <ul class="list-unstyled">
               {% for event in recent_events %}
               <li class="mb-3">
