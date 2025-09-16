@@ -55,6 +55,16 @@
   time: 12PM
   where: CSB 453
   description: >
+    AI agents hold great value for enterprises but are notoriously difficult to productionize in a
+    robust and reliable way. Enterprise agents must internalize task context, constraints, and
+    success metrics to be reliable, yet learning directly in production is risky and often infeasible.
+    Veris is a simulation-first experiential learning platform for training and evaluating
+    domain-specific AI agents through simulated experience. I will present how Veris constructs
+    high-fidelity interactive environments that mirror target deployments, including tool APIs, data
+    schemas, user behaviors, and organizational policies. Then I will discuss how Veris supports
+    multiple post-training paths like RL with online rollouts and trajectory replay, and iterative
+    prompt or policy optimization. Finally, I will outline current challenges and research opportunities.  
+    
     Mehdi is the cofounder and CEO of Veris AI, an agentic infrastructure company based in NY,
     building simulation training grounds for enterprise AI agents. Veris is named on the Future50
     list by the Generalist and is backed by Decibel Ventures and ACrew Capital.    
