@@ -57,7 +57,10 @@ title: Events
               </span>
             {% endif %}
             </h4>
-            <p class="text-muted">{{ event.time }}  {{ event.date | date: "%B %d, %Y" }} </p>
+            <p class="text-muted">
+              <span>{{ event.time }}  {{ event.date | date: "%B %d, %Y" }}</span>
+              <span style="margin-left: 2em">{{ event.where }}</span>
+            </p>
             {% if event.description | strip != "tba" %}
             <div class="markdown-content">
               {{ event.description | markdownify }}
@@ -100,7 +103,10 @@ title: Events
               </span>
             {% endif %}
             </h4>
-            <p class="text-muted">{{ event.time }}  {{ event.date | date: "%B %d, %Y" }} </p>
+            <p class="text-muted">
+              <span>{{ event.time }}  {{ event.date | date: "%B %d, %Y" }}</span>
+              <span style="margin-left: 2em">{{ event.where }}</span>
+            </p>
             {% if event.description | strip != "tba" %}
             <div class="markdown-content">
               {{ event.description | markdownify }}
