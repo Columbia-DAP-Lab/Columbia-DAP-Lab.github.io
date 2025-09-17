@@ -2,6 +2,7 @@
   date: '2025-09-09'
   tag: Entrepreneurship
   time: 7PM
+  where: Davis Auditorium
   who: Aaron Vontell, Anthropic
   role: Member of the Technical Staff
   wholink: https://www.linkedin.com/in/aaron-vontell
@@ -12,12 +13,14 @@
   tag: Entrepreneurship
   time: 7PM
   who: Tom Effland, Noetica
+  where: Davis Auditorium
   role: Co-founder and CTO
   wholink: https://www.noetica.ai/
   description: 
 - title: 'TBA'
   date: '2025-10-07'
   tag: Entrepreneurship
+  where: Davis Auditorium
   time: 7PM
   who: Xiaofeng Wang, LinkedIn
   role: Senior Eng Manager, Agents Platform 
@@ -28,11 +31,13 @@
   tag: Entrepreneurship
   time: 7PM
   who: Sushanth Raman, Pallet
+  where: Davis Auditorium
   role: CEO & Founder
   wholink: https://www.pallet.com/
   description: 
 - title: 'TBA'
   date: '2025-11-04'
+  where: Davis Auditorium
   tag: Entrepreneurship
   time: 7PM
   who: Eno Reyes, Factory
@@ -42,6 +47,7 @@
 - title: 'TBA'
   date: '2025-11-18'
   tag: Entrepreneurship
+  where: Davis Auditorium
   time: 7PM
   who: Anish Agrawal, Traversal 
   wholink:  https://www.traversal.com/
@@ -50,6 +56,7 @@
 - title: 'AI Entrepreneurship: Obstacles, Opportunities, and Outcomes'
   date: '2025-12-02'
   tag: Entrepreneurship
+  where: Davis Auditorium
   time: 7PM
   who: Anish Das Sarma, Reinforce Labs
   role: Founder and CEO
@@ -59,6 +66,7 @@
   date: '2025-12-16'
   tag: Entrepreneurship
   time: 7PM
+  where: 451 Mudd
   who: Ramin Hasani, Liquid AI
   role: Co-founder and CEO
   wholink: https://www.liquid.ai/team/ramin-hasani
