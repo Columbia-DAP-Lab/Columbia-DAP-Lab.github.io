@@ -32,6 +32,29 @@
 # Project specific tags are fine as well.  For instance, precision interfaces has a custom "pi" tag 
 
 
+
+
+
+- title: "KGym: A Platform and Dataset to Benchmark Large Language Models on Linux Kernel Crash Resolution"
+  authors: Alex Mathai, Chenxi Huang, Petros Maniatis, Aleksandr Nogikh, Franjo Ivančić, Junfeng Yang, Baishakhi Ray
+  conf: NeurIPS 2024
+  pub_date: "2024-07-03"
+  url: https://neurips.cc/virtual/2024/poster/97426
+  tags:
+    - ai
+    - sys
+    - agent-debug
+
+- title: "CrashFixer: A Crash Resolution Agent for the Linux Kernel"
+  authors: Alex Mathai, Chenxi Huang, Suwei Ma, Jihwan Kim, Hailie Mitchell, Aleksandr Nogikh, Petros Maniatis, Franjo Ivančić, Junfeng Yang, Baishakhi Ray
+  conf: Arxiv 2025
+  pub_date: "2025-04-29"
+  url: https://arxiv.org/abs/2504.20412
+  tags:
+    - ai
+    - sys
+    - agent-debug
+
 - title: "Twin-2K-500: A dataset for building digital twins of over 2,000 people based on their answers to over 500 questions"
   authors: Olivier Toubia, George Z. Gui, Tianyi Peng, Daniel J. Merlau, Ang Li, and Haozhe Chen
   conf: Marketing Science

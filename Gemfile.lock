@@ -13,9 +13,13 @@ GEM
       http_parser.rb (~> 0)
     eventmachine (1.2.7)
     ffi (1.17.2-aarch64-linux-gnu)
+    ffi (1.17.2-x86_64-darwin)
     ffi (1.17.2-x86_64-linux-gnu)
     forwardable-extended (2.6.0)
     google-protobuf (4.32.0-aarch64-linux-gnu)
+      bigdecimal
+      rake (>= 13)
+    google-protobuf (4.32.0-x86_64-darwin)
       bigdecimal
       rake (>= 13)
     google-protobuf (4.32.0-x86_64-linux-gnu)
@@ -82,6 +86,8 @@ GEM
     safe_yaml (1.0.5)
     sass-embedded (1.91.0-aarch64-linux-gnu)
       google-protobuf (~> 4.31)
+    sass-embedded (1.91.0-x86_64-darwin)
+      google-protobuf (~> 4.31)
     sass-embedded (1.91.0-x86_64-linux-gnu)
       google-protobuf (~> 4.31)
     terminal-table (3.0.2)
@@ -91,6 +97,7 @@ GEM
 
 PLATFORMS
   aarch64-linux-gnu
+  x86_64-darwin-22
   x86_64-linux
 
 DEPENDENCIES
@@ -109,7 +116,7 @@ DEPENDENCIES
   webrick (~> 1.7)
 
 RUBY VERSION
-   ruby 3.4.5p51
+   ruby 3.1.2p20
 
 BUNDLED WITH
-   2.7.1
+   2.5.17
