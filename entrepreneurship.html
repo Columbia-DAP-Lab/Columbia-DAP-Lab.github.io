@@ -68,11 +68,11 @@ title: Columbia Engineering AI Entrepreneurship Series
           <span>{{ event.time }}  {{ event.date | date: "%B %d, %Y" }}</span>
           <span style="margin-left: 2em">{{ event.where }}</span>
         </p>
-        {% unless event.description contains "tba" %}
+        {% if event.description and event.description != "" %}
           <div class="markdown-content">
             {{ event.description | markdownify }}
           </div>
-        {% endunless %}
+        {% endif %}
       </div>
     {% endif %}
   {% endfor %}
