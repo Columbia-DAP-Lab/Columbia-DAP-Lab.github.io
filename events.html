@@ -61,8 +61,7 @@ title: Events
               <span>{{ event.time }}  {{ event.date | date: "%B %d, %Y" }}</span>
               <span style="margin-left: 2em">{{ event.where }}</span>
             </p>
-            {% assign desc_stripped = event.description | strip %}
-            {% if desc_stripped != "tba" %}
+            {% if event.description | strip != "tba" %}
             <div class="markdown-content">
               {{ event.description | markdownify }}
               </div>
@@ -108,8 +107,7 @@ title: Events
               <span>{{ event.time }}  {{ event.date | date: "%B %d, %Y" }}</span>
               <span style="margin-left: 2em">{{ event.where }}</span>
             </p>
-            {% assign desc_stripped = event.description | strip %}
-            {% if desc_stripped != "tba" %}
+            {% if event.description | strip != "tba" %}
             <div class="markdown-content">
               {{ event.description | markdownify }}
             </div>
