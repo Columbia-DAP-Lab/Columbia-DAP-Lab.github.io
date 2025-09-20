@@ -8,7 +8,7 @@
   wholink: https://www.linkedin.com/in/aaron-vontell
   description:
     In this talk, Aaron will walk through his journey building in the AI space, detailing his learnings from Instabase, his own AI startup Regression Games, and now his experience at Anthropic. This talk will focus on the importance of focusing on specific problems and navigating frequently-changing technological landscapes, and how to apply cutting-edge research in record time.
-- title: 'TBA'
+- title: 'Lessons for Building Valuable Domain-Specific AI Products'
   date: '2025-09-23'
   tag: Entrepreneurship
   time: 7PM
@@ -16,7 +16,8 @@
   where: Davis Auditorium
   role: Co-founder and CTO
   wholink: https://www.noetica.ai/
-  description: 
+  description: >
+    This talk shares lessons learned going from NLP researcher to building Noetica, a platform that analyzes populations of complex contracts to determine market standards for deal terms. Along the way I'll discuss (1) how LLMs have enabled a new opportunity space for hybrid systems that combine extraction capabilities with formal analytical frameworks, (2) how building these systems still requires deep fusion of subject-matter and technical judgment to identify tractable decompositions of seemingly impossible problems, and (3) how this converges to a new version of the Technical Product Manager role. This role is highly suited to technical researchers willing to tackle sector-specific challenges. 
 - title: 'TBA'
   date: '2025-10-07'
   tag: Entrepreneurship
