@@ -69,9 +69,10 @@ title: Columbia Engineering AI Entrepreneurship Series
           <span style="margin-left: 2em">{{ event.where }}</span>
         </p>
         {% if event.description and event.description != "" %}
-          <div class="markdown-content">
+          <p class="markdown-content">
             {{ event.description | markdownify }}
-          </div>
+          </p>
+        {% if event.bio %} <p>{{ event.bio | markdownify }}</p> {% endif %}
         {% endif %}
       </div>
     {% endif %}
@@ -103,6 +104,7 @@ title: Columbia Engineering AI Entrepreneurship Series
         </p>
         <div class="markdown-content">
           {{ event.description | markdownify }}
+        {% if event.bio %} <p>{{ event.bio | markdownify }}</p> {% endif %}
         </div>
       </div>
     {% endif %}

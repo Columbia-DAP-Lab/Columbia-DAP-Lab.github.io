@@ -32,7 +32,7 @@
     metrics in free-form text generation, and the final one on wishful thinking. By going over these
     cases, I hope we can collectively acknowledge some of our own fallacies, think of underlying
     causes behind these fallacies and come up with better ways to approach artificial intelligence research.  
-    
+  bio: > 
     Kyunghyun Cho is a professor of computer science and data science at New York University and an
     executive director of frontier research at the Prescient Design team within Genentech Research
     & Early Development (gRED). He became the Glen de Vries Professor of Health Statistics in 2025.
@@ -64,7 +64,7 @@
     schemas, user behaviors, and organizational policies. Then I will discuss how Veris supports
     multiple post-training paths like RL with online rollouts and trajectory replay, and iterative
     prompt or policy optimization. Finally, I will outline current challenges and research opportunities.  
-    
+  bio: > 
     Mehdi is the cofounder and CEO of Veris AI, an agentic infrastructure company based in NY,
     building simulation training grounds for enterprise AI agents. Veris is named on the Future50
     list by the Generalist and is backed by Decibel Ventures and ACrew Capital.    

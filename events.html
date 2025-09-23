@@ -66,6 +66,7 @@ title: Events
               {{ event.description | markdownify }}
               </div>
             {% endif %}
+            {% if event.bio %} <p>{{ event.bio | markdownify }}</p> {% endif %}
             <div class="mt-4">
               {% if event.video %}
               <a href="{{ event.video }}" class="btn btn-primary rounded-pill px-3 py-1" style="text-decoration: none; font-weight: 500;">
@@ -112,6 +113,7 @@ title: Events
               {{ event.description | markdownify }}
             </div>
             {% endif %}
+            {% if event.bio %} <p>{{ event.bio | markdownify }}</p> {% endif %}
 
             <div class="mt-4">
               {% if event.video %}
