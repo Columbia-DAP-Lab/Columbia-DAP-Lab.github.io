@@ -21,11 +21,14 @@ This position offers an exciting opportunity to work at the intersection of **ma
 
 We are particularly interested in candidates who can contribute to projects across:
 
-- **AI agent infrastructure**: building scalable, efficient systems to support and leverage agent training, inference, and workflows  
+- **Systems**: building scalable, efficient systems to support and leverage agent training, inference, and workflows  
 - **User modeling and simulation** for agent personalization and evaluation  
-- **Reinforcement learning and LLM fine-tuning** for dynamic adaptation  
 - **Human-AI interaction and usability** in real-world decision-making  
+
+<!--
 - **Agent orchestration**, including tool use, memory, and feedback loops  
+- **Reinforcement learning and LLM fine-tuning** for dynamic adaptation  
+-->
 
 This role is ideal for researchers excited about combining ML algorithms, systems design, and human-centered AI to develop **generalizable and trustworthy agents**.
 
@@ -33,8 +36,8 @@ This role is ideal for researchers excited about combining ML algorithms, system
 
 #### ✅ Qualifications
 
-- PhD in Computer Science, Machine Learning, HCI, Systems, NLP, or a related field  
-- Strong publication record in top-tier venues (e.g., NeurIPS, ICML, UIST, ICLR, ACL, VLDB, SIGMOD, MLSys, SOSP, OSDI)  
+- PhD in Computer Science, Machine Learning, HCI, ML or data Systems, NLP, or a related field  
+- Strong publication record in top-tier venues (e.g., VLDB, SIGMOD, MLSys, SOSP, OSDI, NeurIPS, ICML, UIST, ICLR, ACL)  
 - Experience with building AI systems (e.g., agents, RL environments, orchestration frameworks)  
 - Familiarity with large language models (LLMs), reinforcement learning, or data-centric systems  
 
