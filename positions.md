@@ -5,6 +5,26 @@ layout: default
 
 ## Positions at the DAPLab
 
+### Undergraduate & Master Students
+
+We welcome highly motivated Columbia undergraduate and MS students to contribute to our research on data systems, agents, and process automation. Students typically engage in research engineering, prototyping, and user studies with mentorship from DAPLab faculty and PhD students.
+
+- Expected commitment: 8–12 hours/week during semesters; full-time optional in summer
+- Desired backgrounds: systems, ML/AI, HCI, data engineering, full‑stack development
+- Credit/RA options: discussed per project and semester availability
+
+If you're interested, please submit the short application below. We review on a rolling basis and contact selected candidates for a brief interview.
+
+{% if site.ug_ms_application_url and site.ug_ms_application_url != '' %}
+<p>
+  <a class="btn btn-primary" href="{{ site.ug_ms_application_url }}" target="_blank" rel="noopener noreferrer">Undergrad & Master Student Application</a>
+</p>
+{% else %}
+<p>
+  Application link coming soon. In the meantime, email <a href="mailto:ewu@cs.columbia.edu">ewu@cs.columbia.edu</a> with your resume.
+</p>
+{% endif %}
+
 ### Postdoc Research Position
 
 **DAPlab – Columbia University**  
