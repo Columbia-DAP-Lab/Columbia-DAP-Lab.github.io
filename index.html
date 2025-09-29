@@ -25,6 +25,16 @@ layout: default
 
   <div class="container-fluid">
     <div class="row">
+      {% if site.ug_ms_application_url and site.ug_ms_application_url != '' %}
+      <div class="col-12 mb-4">
+        <div class="alert alert-light border text-dark d-flex justify-content-between align-items-center" role="alert">
+          <div class="me-3">
+            <strong>Now recruiting:</strong> Undergraduate and MS students interested in working with the DAP Lab on agentic systems.
+          </div>
+          <a class="btn btn-sm btn-outline-primary" href="{{ site.ug_ms_application_url }}" target="_blank" rel="noopener noreferrer">Apply here</a>
+        </div>
+      </div>
+      {% endif %}
       <div class="col-sm-12 col-md-12 col-lg-6 mb-4">
         <div class="card h-100">
           <div class="card-header bg-light bg-gradient text-dark border-bottom-0">
