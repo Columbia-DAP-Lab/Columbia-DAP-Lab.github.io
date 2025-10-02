@@ -20,7 +20,7 @@
 
   description:
     This talk shares lessons learned going from NLP researcher to building Noetica, a platform that analyzes populations of complex contracts to determine market standards for deal terms. Along the way I'll discuss (1) how LLMs have enabled a new opportunity space for hybrid systems that combine extraction capabilities with formal analytical frameworks, (2) how building these systems still requires deep fusion of subject-matter and technical judgment to identify tractable decompositions of seemingly impossible problems, and (3) how this converges to a new version of the Technical Product Manager role. This role is highly suited to technical researchers willing to tackle sector-specific challenges. 
-- title: "Building LinkedIn's Agents Platform at Enterprise Scale"
+- title: "Agents at Scale: Lessons from LinkedIn's Agent Journey"
   date: '2025-10-07'
   tag: Entrepreneurship
   where: Davis Auditorium
