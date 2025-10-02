@@ -12,6 +12,37 @@
 # 
 #
 
+- title: 'Keep Computing Systems Safe under Disruptive Agents'
+  tag: Seminar
+  date: '2025-10-07'
+  who: Tianyin Xu
+  where: CSB 453
+  time: 12:30PM
+  wholink : https://tianyin.github.io/
+  description: >
+    The brains of computing systems today have increasingly been realized by 
+    generative AI such as Large Language Models (LLMs) together with agentic 
+    technologies. While the AI approaches are arguably more creative and cheaper 
+    to develop, their safety becomes a fundamental challenge. Instead of using 
+    another LLM as a judge or waiting for a provably trustworthy model to exist, 
+    we may want to figure out how to build seatbelts and airbags for computing 
+    systems driven by LLMs/agents. In this talk, I will share our preliminary 
+    experience of developing a site reliability engineering (SRE) agent which 
+    attempts to autonomously mitigate production system failures. I would also 
+    discuss the potential of advanced system intelligence – AI that can 
+    understand "systems" beyond code and reason about their safety properties.  
+  bio: > 
+    Tianyin Xu is an Associate Professor of Computer Science at the University 
+    of Illinois Urbana-Champaign (UIUC). His research focuses on building reliable 
+    computer systems that empower next-generation computing. He has been on the 
+    UIUC List of Teachers Ranked as Excellent for nine times. His work received 
+    two OSDI Jay Lepreau Best Paper Awards, two ASPLOS Best Paper Awards, two 
+    SIGSOFT Distinguished Paper Awards, a Gilles Muller Best Artifact Award, a 
+    CACM Research Highlight, and an ICML Spotlight. He is also a recipient of 
+    the C.W. Gear Outstanding Junior Faculty Award, a Dean's Award for Excellence 
+    in Research, an Intel Rising Star Faculty Award, and a Facebook Distributed 
+    Systems Research Award.
+
 - title: 'Reality Checks'
   tag: Seminar
   date: '2025-09-30'
