@@ -10,7 +10,6 @@ gem "kramdown-parser-gfm"
 gem "jekyll-feed" # for RSS feeds
 gem "jekyll-remote-theme" # for remote themes
 gem 'jekyll-sitemap'
-
 # gem "jekyll-index-pages" # Removed: incompatible with Jekyll 4.x
 gem 'i18n', '~> 1.8'
 gem "base64"
