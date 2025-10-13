@@ -35,6 +35,15 @@
 
 
 
+- title: "Please Don’t Kill My Vibe: Empowering Agents with Data Flow Control"
+  authors: Charlie Summers, Haneen Mohammed, Eugene Wu
+  conf: CIDR 2026
+  pub_date: "2026-01-17"
+  tags:
+    - ai
+    - sys
+    - agent-debug
+  url: https://www.dropbox.com/scl/fi/iz50niican9apygkpx5en/dfc-cidr26-submitted.pdf?rlkey=24fc47k659xixlevtkkrp4nx0&dl=0
 - title: "KGym: A Platform and Dataset to Benchmark Large Language Models on Linux Kernel Crash Resolution"
   authors: Alex Mathai, Chenxi Huang, Petros Maniatis, Aleksandr Nogikh, Franjo Ivančić, Junfeng Yang, Baishakhi Ray
   conf: NeurIPS 2024
