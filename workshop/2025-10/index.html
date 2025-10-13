@@ -4,8 +4,77 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Agents for Work - October 2025</title>
-   
-            
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="main.css"> 
+    <link rel="stylesheet" href="schedule.css"> 
+    
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+
+        .section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 50px 0;
+        } 
+        #adventures { background-color: #f4f4f4; }
+        #destinations { background-color: #e9ecef; }
+        .final_panel { background-color: rgba(96, 165, 250, 0.25);}
+
+        .image-container {
+            min-height: 100vh; /* Full viewport height */
+            background-color: #f8f9fa; /* Light gray background */
+        }
+       
+        .logo_img {
+            max-width: 100%;
+            min-width: 80px;  /* Prevents logos from getting too small */
+            width: auto;
+            max-width: 120px;
+        }
+  
+        .ribbon_container{
+            width: 100vw;
+        }
+        .ribbon{
+            width: 100vw;
+            height:30px;
+            margin-left: calc(-50vw + 50%);
+            margin-right: calc(-50vw + 50%);
+            filter: saturate(2);
+        }
+        .subheading{
+            color: #005BBF;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .sponsor_logo{
+            padding: 20px;
+        }
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .gallery img {
+            width: 200px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 10px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .gallery img:hover {
+            transform: scale(1.5);
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
@@ -138,23 +207,16 @@
                     </div>
                 </div>
 
-                <!-- Opening Remarks -->
+                <!-- Morning Welcome -->
                 <div class="row margin-b-30 flex-nowrap">
                     <div class="col-2 event-info">
                         <span>9:30</span>
                     </div>
                     <div class="col-8 event-detail">
-                        <h3>Welcome</h3>
+                        <h3>Morning Welcome</h3>
                         <div class="row margin-b-20">
                             <div class="col-12">
-                                <h4><h4>
                                 <p></p>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-12">
-                                <h4></h4>
-                                <p>Introduction</p>
                             </div>
                         </div>
                     </div>
@@ -166,52 +228,49 @@
                         <span>10:00</span>
                     </div>
                     <div class="col-8 event-detail">
-                        <h3> Opening Keynote </h3>
+                        <h3>Keynote</h3>
                         <div class="row margin-b-20">
                             <div class="col-12">
-                                <h4></h4>
+                                <h4><a href="https://huggingface.co/srush" target="_blank">Sasha Rush</a></h4>
                                 <p></p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Break -->
+                <!-- Research Panel -->
                 <div class="row margin-b-30 flex-nowrap">
                     <div class="col-2 event-info">
-                        <span>11:00 </span>
+                        <span>11:00</span>
                     </div>
                     <div class="col-8 event-detail">
-                        <h3> Panel </h3>
+                        <h3>Research Panel</h3>
                         <div class="row margin-b-20">
                             <div class="col-12">
-                                <h4>New Technology Development of AI Agents</h4>
-                                <p>
-                                    <p></p>
-                                    <p></p>
-                                    <p></p>
-                                    <p></p>
-                                    <p></p>
-                                    <p></p>
-                                </p>
+                                <p><a href="https://business.columbia.edu/faculty/people/dan-wang" target="_blank">Dan Wang, CBS</a></p>
+                                <p><a href="https://rayb.info" target="_blank">Baishakhi Ray, CS</a></p>
+                                <p><a href="https://www.cs.columbia.edu/~chilton/" target="_blank">Lydia Chilton, CS</a></p>
+                                <p>Medhi, <a href="https://www.veris.ai" target="_blank">Veris</a></p>
+                                <p>Moderator: TBA</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Session 1 -->
+                <!-- Research Talks -->
                 <div class="row margin-b-30 flex-nowrap">
                     <div class="col-2 event-info">
-                        <span>12:00 </span>
+                        <span>12:00</span>
                     </div>
                     <div class="col-8 event-detail">
-                        <h3>Academic Lightning Talks </h3>
+                        <h3>Research Talks</h3>
                         <div class="row margin-b-20">
                             <div class="col-12">
-                                <p></p>
-                                <p></p>
-                                <p></p>
-                                <p></p>
+                                <p><a href="https://www.cs.columbia.edu/~johnhew/" target="_blank">John Hewitt, CS</a></p>
+                                <p><a href="https://daveholtz.net" target="_blank">David Holtz, CBS</a></p>
+                                <p><a href="https://tianyipeng.github.io/" target="_blank">Tianyi Peng, CBS</a></p>
+                                <p><a href="https://wenyueh.github.io/en/" target="_blank">Wenyue Hua, Microsoft Frontier AI</a></p>
+                                <p><a href="https://www.cs.columbia.edu/~junfeng/" target="_blank">Junfeng, CS</a></p>
                             </div>
                         </div>
                     </div>
@@ -220,7 +279,7 @@
                 <!-- Lunch -->
                 <div class="row margin-b-30 flex-nowrap">
                     <div class="col-2 event-info">
-                        <span>12:40 </span>
+                        <span>1:00</span>
                     </div>
                     <div class="col-8 event-detail">
                         <h3>Lunch</h3>
@@ -232,104 +291,97 @@
                     </div>
                 </div>
 
-                <!-- Keynote 2 -->
+                <!-- Afternoon Welcome -->
                 <div class="row margin-b-30 flex-nowrap">
                     <div class="col-2 event-info">
                         <span>1:30</span>
                     </div>
                     <div class="col-8 event-detail">
-                        <h3>Afternoon Remarks</h3>
+                        <h3>Afternoon Welcome</h3>
                         <div class="row margin-b-20">
                             <div class="col-12">
-                                <h4></h4>
                                 <p></p>
-                                <h4></h4>
-                                <p></p>    
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Session 2 -->
+                <!-- Keynote 2 -->
                 <div class="row margin-b-30 flex-nowrap">
                     <div class="col-2 event-info">
-                        <span>1:45 </span>
+                        <span>1:45</span>
                     </div>
                     <div class="col-8 event-detail">
-                        <h3>Afternoon Keynote</h3>
+                        <h3>Keynote 2</h3>
                         <div class="row margin-b-20">
                             <div class="col-12">
-                                <h4></h4> 
+                                <h4><a href="https://lvdmaaten.github.io/" target="_blank">Laurens van der Maaten</a></h4>
                                 <p></p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Closing Remarks -->
+                <!-- Industry Panel -->
                 <div class="row margin-b-30 flex-nowrap">
                     <div class="col-2 event-info">
                         <span>2:45</span>
                     </div>
                     <div class="col-8 event-detail">
-                        <h3>Industry Panel </h3>
+                        <h3>Industry Panel</h3>
                         <div class="row margin-b-20">
                             <div class="col-12">
-                                <h4>Evaluating and Benchmarking AI Agents in Enterprise</h4>
-                                <p></p>
-                                <p></p>
-                                <p></p>
-                                <p></p>
-                                <p></p>
-                                <p>Moderator: </p>
-                                
+                                <p>Medha Bankhwal, <a href="https://www.mckinsey.com/capabilities/quantumblack" target="_blank">McKinsey Quantum Black</a></p>
+                                <p><a href="https://tavily.com" target="_blank">Rotem Weiss, Tavily</a></p>
+                                <p><a href="https://tidalwave.com" target="_blank">Tidalwave</a></p>
+                                <p><a href="https://purplefabric.ai/" target="_blank">TBA, Intellect Design, Purple Fabric</a></p>
+                                <p><a href="https://www.datadog.com" target="_blank">Eric Kuang, Datadog</a></p>
+                                <p>Moderator: <a href="https://www.cs.columbia.edu/~zhouyu/" target="_blank">Zhou Yu</a></p>
                             </div>
                         </div>
                     </div>
                 </div>
 
+                <!-- Industry Talks -->
                 <div class="row margin-b-30 flex-nowrap">
                     <div class="col-2 event-info">
                         <span>3:45</span>
                     </div>
                     <div class="col-8 event-detail">
-                        <h3>Industry Lightning Talks </h3>
+                        <h3>Industry Talks</h3>
                         <div class="row margin-b-20">
                             <div class="col-12">
-                                <!-- <h4>Deploying AI Agents in Enterprise</h4> -->
-                                <!-- <p>Deploying AI Agents in Enterprise: Considerations and Case Studies.</p> -->
-                                <!-- <p>Adam Silverman,	AgentOps</p> -->
-                                <p></p>
-                                <p></p>
-                                <p></p>
-                                <p></p>
+                                <p>TBA, MongoDB</p>
+                                <p><a href="https://business.columbia.edu/faculty/people/olivier-toubia" target="_blank">Oliver Toubia, CBS</a></p>
+                                <p><a href="https://www.mckinsey.com/capabilities/quantumblack" target="_blank">McKinsey Quantum Black</a></p>
+                                <p>Justin Debrabant, <a href="https://databricks.com" target="_blank">Databricks</a></p>
                             </div>
                         </div>
                     </div>
                 </div>
 
+
+
+                <!-- Closing Remarks -->
                 <div class="row margin-b-30 flex-nowrap">
                     <div class="col-2 event-info">
                         <span>4:30</span>
                     </div>
                     <div class="col-8 event-detail">
-                        <h3>Closing </h3>
+                        <h3>Closing Remarks</h3>
                         <div class="row margin-b-20">
                             <div class="col-12">
-                                <h4>Lydia Chilton, Columbia CS</h4>
-                                <!-- <p>Avanessians Director of the Data Science Institute<br> -->
-                                    <!-- Professor of Industrial Engineering and Operations Research</p> -->
-                                <!-- <h4>Deploying AI Agents in Enterprise: Considerations and Case Studies.</h4> -->
-                                <!-- <p>Deploying AI Agents in Enterprise: Considerations and Case Studies.</p> -->
+                                <p><a href="https://www.cs.columbia.edu/~chilton/" target="_blank">Lydia Chilton, Columbia CS</a></p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Happy Hour -->
+
+                <!-- Reception and Student Posters -->
                 <div class="row margin-b-30 flex-nowrap">
                     <div class="col-2 event-info">
-                        <span>4:45 - 6:30</span>
+                        <span>5:00 - 6:30</span>
                     </div>
                     <div class="col-8 event-detail">
                         <h3>Reception and Poster Session</h3>
@@ -372,83 +424,4 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-
-
-
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
-
-    
-    <link rel="stylesheet" href="main.css"> 
-    <link rel="stylesheet" href="schedule.css"> 
-    
-    <style>
-        html {
-            scroll-behavior: smooth;
-        }
-
-        .section {
-            
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 50px 0;
-        } 
-        #adventures { background-color: #f4f4f4; }
-        #destinations { background-color: #e9ecef; }
-        .final_panel { background-color: rgba(96, 165, 250, 0.25);}
-
-
-        .image-container {
-            min-height: 100vh; /* Full viewport height */
-            background-color: #f8f9fa; /* Light gray background */
-        }
-       
-        .logo_img {
-            max-width: 100%;
-            min-width: 80px;  /* Prevents logos from getting too small */
-            width: auto;
-            max-width: 120px;
-        }
-  
-        .ribbon_container{
-            width: 100vw;
-        }
-        .ribbon{
-            width: 100vw;
-            height:30px;
-            margin-left: calc(-50vw + 50%);
-            margin-right: calc(-50vw + 50%);
-            filter: saturate(2);
-        }
-        .subheading{
-            color: #005BBF;
-            font-weight: bold;
-            text-align: center;
-        }
-
-        .gallery {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            justify-content: center;
-        }
-
-        .gallery img {
-            width: 200px;
-            height: 150px;
-            object-fit: cover;
-            border-radius: 10px;
-            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
-            transition: transform 0.2s ease-in-out;
-        }
-
-        .gallery img:hover {
-            transform: scale(1.5);
-        }
-    </style>
-       
-            
      
