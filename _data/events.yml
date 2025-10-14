@@ -12,6 +12,42 @@
 # 
 #
 
+- title: 'Disaggregated LLM Inference: Past, Present, and Future'
+  tag: Seminar
+  date: '2025-10-14'
+  who: Junda Chen
+  where: CSB 453
+  time: 12PM
+  wholink: https://gindachen.github.io/
+  description: >
+    Large language model (LLM) serving faces a fundamental challenge: the prefill 
+    phase is compute-bound while the decode phase is memory-bound. Existing serving 
+    systems co-locate these two phases and batch their computation across users 
+    and requests, a strategy that not only introduces strong prefill–decode 
+    interference but also couples resource allocation and parallelism choices across both phases.
+    We introduce DistServe, a low-latency serving engine that assigns prefill and 
+    decode computation to different GPUs, thereby eliminating interference between 
+    the two. DistServe co-optimizes resource allocation and parallelism strategies 
+    tailored for each phase, while placing them across the cluster to account for 
+    bandwidth constraints and minimize the communication overhead introduced by 
+    disaggregation. As a result, DistServe substantially improves serving performance, 
+    measured as the maximum request rate that can be sustained under strict time-to-first-token (TTFT) 
+    and time-per-output-token (TPOT) constraints.
+    Since DistServe, disaggregation has moved into the spotlight of LLM inference, 
+    with many companies and open-source projects adopting or extending this paradigm in practice. 
+    We will also highlight related academic and open-source work that has emerged around 
+    disaggregated inference, and reflect on the open challenges faced today as well 
+    as the opportunities that lie ahead.
+  bio: > 
+    Junda Chen is a third-year Ph.D. student in Computer Science at the 
+    University of California, San Diego. His research focuses on large-scale 
+    LLM systems, with an emphasis on efficient inference and training of large 
+    language models. He is an author of DistServe, a disaggregated inference 
+    system adopted by major industry partners (including NVIDIA Dynamo, llm-d, etc.). 
+    His broader work spans GPU scheduling, distributed inference frameworks, and 
+    the design of next-generation serving systems for foundation models.
+
+
 - title: 'Keep Computing Systems Safe under Disruptive Agents'
   tag: Seminar
   date: '2025-10-07'
