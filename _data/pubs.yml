@@ -31,11 +31,34 @@
 #
 # Project specific tags are fine as well.  For instance, precision interfaces has a custom "pi" tag 
 
+- title: "Toward Systems Foundations for Agentic Exploration"
+  authors: Jiakai Xu, Tianle Zhou, Eugene Wu, Kostis Kaffes
+  conf: SAA Workshop at SOSP 2025
+  pub_date: "2025-10-13"
+  tags:
+    - ai
+    - sys
+  url: https://arxiv.org/abs/2510.05556
 
+- title: "Cortex: Workflow-Aware Resource Pooling and Scheduling for Agentic Serving"
+  authors: Nikos Pagonas, Yeounoh Chung, Kostis Kaffes, Arvind Krishnamurthy
+  conf: SAA Workshop at SOSP 2025
+  pub_date: "2025-10-13"
+  tags:
+    - ai
+    - sys
+  url: https://saa2025.github.io/papers/saa25-final5.pdf
 
+- title: "Set It and Forget It: Zero-Mod ML Magic for Linux Tuning"
+  authors: Georgios Liargkovas, Prabhpreet Singh Sodhi, Kostis Kaffes
+  conf: PACMI Workshop at SOSP 2025
+  pub_date: "2025-10-13"
+  tags:
+    - ai
+    - sys
+  url: https://dl.acm.org/doi/10.1145/3766882.3767175
 
-
-- title: "Please Don’t Kill My Vibe: Empowering Agents with Data Flow Control"
+- title: "Please Don't Kill My Vibe: Empowering Agents with Data Flow Control"
   authors: Charlie Summers, Haneen Mohammed, Eugene Wu
   conf: CIDR 2026
   pub_date: "2026-01-17"
@@ -44,6 +67,7 @@
     - sys
     - agent-debug
   url: https://www.dropbox.com/scl/fi/iz50niican9apygkpx5en/dfc-cidr26-submitted.pdf?rlkey=24fc47k659xixlevtkkrp4nx0&dl=0
+
 - title: "KGym: A Platform and Dataset to Benchmark Large Language Models on Linux Kernel Crash Resolution"
   authors: Alex Mathai, Chenxi Huang, Petros Maniatis, Aleksandr Nogikh, Franjo Ivančić, Junfeng Yang, Baishakhi Ray
   conf: NeurIPS 2024
@@ -69,7 +93,7 @@
   conf: Marketing Science
   pub_date: "2025-05-23"
   url: https://arxiv.org/abs/2505.17479
-  tags: 
+  tags:
     - digi-twin
     - ai
 
