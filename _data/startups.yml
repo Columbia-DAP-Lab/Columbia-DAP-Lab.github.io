@@ -30,15 +30,21 @@
   wholink: https://www.linkedin.com/in/wang-xiaofeng/
   bio: Xiaofeng Wang is a Senior Engineering Manager at LinkedIn, where he leads the Agents Platform team, building the foundational technologies that enable the entire engineering organization to deliver agentic experiences. His team is responsible for the agent runtime platform, agent framework, and Cognitive Memory Agent. He and his team have also been invited to speak at various leading industry conferences. In his previous role at LinkedIn, Xiaofeng led the first team dedicated to Generative AI Foundations, developing infrastructure, platforms, and tooling from the ground up to power all of LinkedIn's member-facing GenAI products since 2022. Before that, he worked as an engineer and data scientist in the Data Science Productivity and Research team, building platforms to automate advanced data science analyses such as A/B testing, deep dives, and observational causal studies. Prior to LinkedIn, Xiaofeng worked at Bank of America Merrill Lynch, where he led the team building recommendation systems for the Merrill Edge's personalized investing platform. He received his Ph.D. in Systems and Information Engineering from the University of Virginia.
   description: Join Xiaofeng Wang, Sr. Engineering Manager at LinkedIn's Agents Platform, as he takes you behind the scenes of the platform powering all of LinkedIn's member-facing agentic applications at scale. This talk will trace the GenAI product revolution, from simple prompt‑in‑string use cases to the latest LinkedIn Hiring Assistant. It will show how the Agent Platform evolved to enable these experiences. Xiaofeng will share the technical foundations, organizational challenges, hiring strategies, and hard‑won lessons that shaped LinkedIn's journey, highlighting how the team bridged open‑source innovation with enterprise‑grade infrastructure, built seamless developer experiences, and enforced trust and responsible AI from day one. Whether you're a researcher, engineer, product leader, or entrepreneur, this talk offers a front-row look at LinkedIn's agentic journey, the latest trends in agent development, and what it takes to transform prototypes into impactful, production-grade agents at enterprise scale. 
-- title: 'TBA'
+- title: 'How to Build Cursor for Law'
   date: '2025-10-21'
   tag: Entrepreneurship
   time: 7PM
-  who: tba
+  who: Thomas Bueler-Faudree, August
   where: Davis Auditorium
-  role: tba
-  wholink: 
-  description: 
+  role: Co-founder
+  wholink:
+  bio: Thomas Bueler-Faudree is the co-founder of August, where he leads engineering and product. He earned a bachelor's degree in computer science and history from Columbia University. At Columbia he worked in the CRIS Lab and CML.
+  description: |
+    Modern document-heavy work in law, finance, and consulting is repetitive, bespoke, and review heavy. Code generation tools like Cursor have reshaped how developers work, but that shift has not happened in law. Legal tasks are hard to measure and even harder to "unit test," which is why many AI tools miss the mark.
+
+    This talk shows how August is building agents that do better: the right indexing methods, visible state, disciplined tool use, and citations at every step to cleanly automate real professional workflows. We'll walk through a multi-step research agent (e.g., over SEC filings) that plans the task, retrieves the right sources, routes to the relevant sections, and drafts grounded legal answers.
+
+    Attendees will leave with a lightweight design pattern for credence domains like law. We will also share our growth and go-to-market. We are productizing law-firm workflows and, in some cases, selling with the firm to their clients. This is a new model that is gaining traction across professional services. 
 - title: 'TBA'
   date: '2025-11-04'
   where: Davis Auditorium
