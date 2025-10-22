@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hello, World!</title>
+  <style>
+    :root {
+      --bg: #0b1220;
+      --fg: #ffffff;
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --glass: rgba(255, 255, 255, 0.06);
+      --border: rgba(255, 255, 255, 0.15);
+    }
+    html, body {
+      height: 100%;
+    }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      color: var(--fg);
+      background:
+        radial-gradient(1000px 400px at 10% -10%, #e0f7ff 0, transparent 60%),
+        radial-gradient(800px 300px at 120% 120%, #ffe0f0 0, transparent 60%),
+        var(--bg);
+      display: grid;
+      place-items: center;
+    }
+    .card {
+      text-align: center;
+      backdrop-filter: blur(8px);
+      background-color: var(--glass);
+      padding: 2rem 3rem;
+      border-radius: 1rem;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, .35);
+    }
+    h1 {
+      margin: 0 0 .5rem;
+      font-size: clamp(2rem, 8vw, 5rem);
+      letter-spacing: .02em;
+    }
+    p {
+      margin: .5rem 0;
+      opacity: .85;
+    }
+    button {
+      margin-top: 1rem;
+      padding: .8rem 1.2rem;
+      border: 0;
+      border-radius: .6rem;
+      background: var(--primary);
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 10px 25px rgba(79, 70, 229, .35);
+      transition: transform .05s ease, background .2s ease;
+    }
+    button:hover { background: var(--primary-hover); }
+    button:active { transform: translateY(1px); }
+    footer {
+      position: fixed;
+      inset-inline: 0;
+      bottom: .75rem;
+      text-align: center;
+      font-size: .85rem;
+      opacity: .6;
+    }
+    .headshots {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      align-items: center;
+      margin-top: 2rem;
+    }
+    .headshot {
+      text-align: center;
+    }
+    .headshot img {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--border);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, .3);
+    }
+    .headshot p {
+      margin-top: .5rem;
+      font-size: .9rem;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1>Hello, World!</h1>
+    <p>This is a minimal static site.</p>
+    <button id="btn">Click me</button>
+    <p id="msg" style="margin-top:1rem;"></p>
+    
+    <div class="headshots">
+      <div class="headshot">
+        <img src="NataliaDorogi.png" alt="Natalia Dorogi">
+        <p>Natalia Dorogi</p>
+      </div>
+      <div class="headshot">
+        <img src="ZachLipton.png" alt="Zach Lipton">
+        <p>Zach Lipton</p>
+      </div>
+    </div>
+  </main>
+  <footer>Served locally</footer>
+  <script>
+    const btn = document.getElementById('btn');
+    const msg = document.getElementById('msg');
+    const greetings = ['Hello!', 'Hola!', 'Bonjour!', 'Ciao!', 'Namaste!', 'Hej!', 'Hallo!', 'Salut!'];
+    btn.addEventListener('click', () => {
+      msg.textContent = greetings[Math.floor(Math.random() * greetings.length)];
+    });
+  </script>
+</body>
+</html>
