@@ -45,7 +45,7 @@
     This talk shows how August is building agents that do better: the right indexing methods, visible state, disciplined tool use, and citations at every step to cleanly automate real professional workflows. We'll walk through a multi-step research agent (e.g., over SEC filings) that plans the task, retrieves the right sources, routes to the relevant sections, and drafts grounded legal answers.
 
     Attendees will leave with a lightweight design pattern for credence domains like law. We will also share our growth and go-to-market. We are productizing law-firm workflows and, in some cases, selling with the firm to their clients. This is a new model that is gaining traction across professional services. 
-- title: 'TBA'
+- title: 'Software Development Agents are General Agents'
   date: '2025-11-04'
   where: Davis Auditorium
   tag: Entrepreneurship
@@ -53,7 +53,8 @@
   who: Eno Reyes, Factory
   role: CTO & Co-founder
   wholink: https://enoreyes.com/
-  description: 
+  description:  This talk will explore the broad set of tasks a software development agent must be capable of doing to serve the product needs of our customers, and how we built them, alongside our journey to get to where we are today
+  bio: Eno Reyes is co-founder and CTO of Factory, a Sequoia-backed startup building an enterprise platform for model-agnostic software development agents. He was previously an ML engineer at Hugging Face, where he helped Fortune 500 organizations manage and deploy LLMs.
 - title: 'TBA'
   date: '2025-11-18'
   tag: Entrepreneurship
