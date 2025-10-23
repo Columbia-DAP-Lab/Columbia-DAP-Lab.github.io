@@ -107,6 +107,16 @@
   category: Faculty
   field: [CS, Systems]
 
+- name: Xuhai "Orson" Xu
+  homepage: https://orsonxu.com
+  image: /files/images/avatar/xuhai_xu.jpg
+  bio: >
+    Assistant Professor at Columbia DBMI and Visiting Faculty at Google. Leads the SEA Lab focusing on 
+    human-centered AI and health applications. Distinguished Paper Award at UbiComp 2023. 
+    Pioneered generalizable behavior modeling and intelligent intervention techniques for health and well-being.
+  category: Faculty
+  field: [DBMI, HCI, AI for Health]
+
 - name: Eugene Wu
   homepage: https://www.eugenewu.net/
   image: /files/images/avatar/eugene.png
