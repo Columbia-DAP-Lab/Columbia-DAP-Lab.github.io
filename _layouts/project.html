@@ -1,0 +1,267 @@
+---
+layout: default
+---
+
+<style>
+.project-detail {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.project-header {
+  margin-bottom: 2rem;
+}
+
+.project-header h1 {
+  font-size: 2.5rem;
+  color: #003262;
+  margin-bottom: 0.5rem;
+}
+
+.project-header .subtitle {
+  font-size: 1.2rem;
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+.project-meta {
+  display: flex;
+  gap: 2rem;
+  padding: 1rem 0;
+  border-top: 1px solid #e0e0e0;
+  border-bottom: 1px solid #e0e0e0;
+  margin-bottom: 2rem;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.project-meta-item strong {
+  color: #003262;
+}
+
+.project-avatar-large {
+  width: 100%;
+  max-width: 600px;
+  margin: 2rem auto;
+  display: block;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.project-content {
+  line-height: 1.8;
+  font-size: 1.05rem;
+  color: #333;
+}
+
+.project-content h2 {
+  color: #003262;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  font-size: 1.8rem;
+}
+
+.project-content h3 {
+  color: #003262;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  font-size: 1.4rem;
+}
+
+.project-links {
+  display: flex;
+  gap: 1rem;
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.project-link-btn {
+  display: inline-block;
+  background: #003262;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background 0.3s ease;
+}
+
+.project-link-btn:hover {
+  background: #002145;
+}
+
+.project-section {
+  margin: 3rem 0;
+}
+
+.project-section h2 {
+  color: #003262;
+  border-bottom: 2px solid #003262;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.contributors-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.contributor {
+  display: inline-block;
+}
+
+.contributor a {
+  color: #003262;
+  text-decoration: none;
+}
+
+.contributor a:hover {
+  text-decoration: underline;
+}
+
+.publications-list {
+  list-style: none;
+  padding: 0;
+}
+
+.publication-item {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-left: 4px solid #003262;
+}
+
+.publication-title {
+  font-weight: 600;
+  color: #003262;
+  margin-bottom: 0.5rem;
+}
+
+.publication-venue {
+  color: #666;
+  font-style: italic;
+}
+
+.publication-link {
+  color: #003262;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.publication-link:hover {
+  text-decoration: underline;
+}
+
+.back-link {
+  display: inline-block;
+  color: #003262;
+  text-decoration: none;
+  margin-bottom: 2rem;
+  font-size: 0.9rem;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}
+
+.back-link::before {
+  content: "← ";
+}
+</style>
+
+<div class="project-detail">
+  <a href="/projects/" class="back-link">Back to Projects</a>
+  
+  <div class="project-header">
+    <h1>{{ page.title }}</h1>
+    {% if page.subtitle %}
+    <div class="subtitle">{{ page.subtitle }}</div>
+    {% endif %}
+    
+    <div class="project-meta">
+      {% if page.date %}
+      <div class="project-meta-item">
+        <strong>Posted:</strong> {{ page.date | date: "%B %d, %Y" }}
+      </div>
+      {% endif %}
+      {% if page.tags %}
+      <div class="project-meta-item">
+        <strong>Tags:</strong> {{ page.tags | join: ", " }}
+      </div>
+      {% endif %}
+    </div>
+  </div>
+  
+  {% if page.avatar %}
+  <img src="/_projects/{{ page.slug }}/{{ page.avatar }}" alt="{{ page.title }}" class="project-avatar-large">
+  {% endif %}
+  
+  <div class="project-content">
+    {{ content }}
+  </div>
+  
+  {% if page.links %}
+  <div class="project-links">
+    {% if page.links.github %}
+    <a href="{{ page.links.github }}" class="project-link-btn" target="_blank">GitHub</a>
+    {% endif %}
+    {% if page.links.pypi %}
+    <a href="{{ page.links.pypi }}" class="project-link-btn" target="_blank">PyPI</a>
+    {% endif %}
+    {% if page.links.blog %}
+    <a href="{{ page.links.blog }}" class="project-link-btn" target="_blank">Blog Post</a>
+    {% endif %}
+    {% if page.links.demo %}
+    <a href="{{ page.links.demo }}" class="project-link-btn" target="_blank">Demo</a>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  {% if page.authors or page.publications %}
+  <div class="row mt-5">
+    {% if page.authors %}
+    <div class="col-md-6 mb-4">
+      <div class="project-section">
+        <h2>Contributors</h2>
+        <ul class="contributors-list">
+          {% for author in page.authors %}
+          <li class="contributor">
+            {% if author.url %}
+            <a href="{{ author.url }}">{{ author.name }}</a>
+            {% else %}
+            {{ author.name }}
+            {% endif %}
+          </li>
+          {% unless forloop.last %}<span>,</span>{% endunless %}
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+    {% endif %}
+    
+    {% if page.publications %}
+    <div class="col-md-6 mb-4">
+      <div class="project-section">
+        <h2>Publications</h2>
+        <ul class="publications-list">
+          {% for pub in page.publications %}
+          <li class="publication-item">
+            <div class="publication-title">{{ pub.title }}</div>
+            <div class="publication-venue">{{ pub.venue }}{% if pub.year %} – {{ pub.year }}{% endif %}</div>
+            {% if pub.url %}
+            <a href="{{ pub.url }}" class="publication-link" target="_blank">View Publication →</a>
+            {% endif %}
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+  {% endif %}
+</div>
