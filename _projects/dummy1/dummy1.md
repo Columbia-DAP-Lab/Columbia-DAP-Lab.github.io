@@ -1,22 +1,27 @@
 ---
-title: "Dummy 1"
+title: "Dummy 1"  # Project Title You want to show on the index page
 subtitle: "A dummy project for testing."
-date: 2025-01-01
+date: 2025-01-31
 authors:
   - name: "Alex Jiakai Xu"
-avatar: dummy-image.png
+  - name: "J.K. Xu"
+avatar: dummy-image.png  # Optional, if wanted, put the image file in the same directory
 tags:
   - "Empty"
   - "Demo"
-links:
+links:  # Optional, but if needed, only these 4 keys are allowed for now
   github: "https://github.com/Alex-XJK/xxx"
   pypi: "https://pypi.org/project/xxx/"
   blog: "https://alex-xjk.github.io/xxx-blog-post"
   demo: "https://www.youtube.com/watch?v=xxxx"
-publications:
+publications:  # Optional, can list multiple publications
   - title: "My Dummy Paper"
+    venue: "Dummy Conference 2024"
+    url: "https://dc2024.dummypaper.org"
+    year: 2024
+  - title: "My Dummy Paper Again"
     venue: "Dummy Conference 2025"
-    url: "https://osdi2025.dummypaper.org"
+    url: "https://dc2025.dummypaper.org"
     year: 2025
 ---
 
