@@ -5,4 +5,16 @@ url: "https://daplab.cs.columbia.edu"
 theme: minima # Default theme, or replace with your theme
 plugins:
   - jekyll-sitemap
+collections:
+  projects:
+    output: true
+    permalink: /projects/:name/
+include:
+  - _projects  # Include images from _projects in the build
+defaults:
+  - scope:
+      path: ""
+      type: "projects"
+    values:
+      layout: "project"
 ug_ms_application_url: "https://forms.gle/6FkeeJv43arrbN1n9"

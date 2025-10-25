@@ -1,0 +1,272 @@
+---
+layout: default
+title: Projects
+---
+
+<style>
+.projects-header {
+  margin-bottom: 2rem;
+}
+
+.projects-header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.search-container {
+  margin-bottom: 2rem;
+}
+
+.search-input {
+  width: 100%;
+  max-width: 500px;
+  padding: 0.75rem;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.search-buttons {
+  margin-top: 0.5rem;
+}
+
+.projects-grid {
+  margin-top: 2rem;
+  --card-gutter: 0.5rem; /* horizontal gutter between cards */
+  margin-left: calc(var(--card-gutter) * -1);
+  margin-right: calc(var(--card-gutter) * -1);
+}
+
+.project-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 1.5rem;
+  background: white;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  margin-left: var(--card-gutter);
+  margin-right: var(--card-gutter);
+}
+
+.project-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.project-avatar {
+  width: 100%;
+  height: 200px;
+  object-fit: contain;
+  margin-bottom: 1rem;
+  border-radius: 4px;
+}
+
+.project-title {
+  font-size: 1.5rem;
+  color: #003262;
+  margin-bottom: 0.5rem;
+  text-decoration: none;
+}
+
+.project-title:hover {
+  text-decoration: underline;
+}
+
+.project-subtitle {
+  color: #666;
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+  line-height: 1.4;
+}
+
+/* Hidden section for search indexing */
+.project-content, .project-tags {
+  display: none;
+}
+
+/* .project-content {
+  color: #444;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+  flex-grow: 1;
+}
+
+.project-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.tag {
+  background: #e8f4f8;
+  color: #003262;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+} */
+/* End hidden section */
+
+.project-footer {
+  padding-top: 1rem;
+  border-top: 1px solid #e0e0e0;
+}
+
+.learn-more-btn {
+  display: inline-block;
+  background-color: #005aaf;
+  color: white;
+  padding: 0.5rem 1.5rem;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.learn-more-btn:hover {
+  background-color: #003369;
+}
+
+.masonry {
+  column-count: 3;
+  column-gap: 1.25rem;
+}
+
+.masonry-item {
+  break-inside: avoid;
+  margin-bottom: 1.25rem;
+}
+
+/* Responsive tweaks, Bootstrap does not handle masonry columns */
+@media (max-width: 992px) {
+  .masonry {
+    column-count: 2;
+  }
+}
+@media (max-width: 576px) {
+  .masonry {
+    column-count: 1;
+  }
+}
+
+.no-results {
+  text-align: center;
+  padding: 3rem;
+  color: #666;
+  display: none;
+}
+
+.no-results.show {
+  display: block;
+}
+</style>
+
+<div class="projects-header">
+  <h1>Projects</h1>
+  
+  <div class="search-container">
+    <input 
+      type="text" 
+      id="search-input" 
+      class="search-input" 
+      placeholder="Search projects..."
+      aria-label="Search projects"
+    >
+    <div class="search-buttons">
+      <button class="btn btn-primary" onclick="searchProjects()">Submit</button>
+      <button class="btn btn-secondary" onclick="resetSearch()">Reset</button>
+    </div>
+  </div>
+</div>
+
+<div class="projects-grid masonry" id="projects-grid">
+  {% assign sorted_projects = site.projects | sort: 'date' | reverse %}
+  {% for project in sorted_projects %}
+  <div class="project-card masonry-item" data-tags="{{ project.tags | join: ',' | downcase }}" data-title="{{ project.title | downcase }}" data-authors="{% for author in project.authors %}{{ author.name | downcase }}{% unless forloop.last %},{% endunless %}{% endfor %}">
+    {% if project.avatar %}
+    <img src="/_projects/{{ project.slug }}/{{ project.avatar }}" alt="{{ project.title }}" class="project-avatar">
+    {% endif %}
+    
+    <a href="{{ project.url }}" class="project-title">{{ project.title }}</a>
+    
+    {% if project.subtitle %}
+    <div class="project-subtitle">{{ project.subtitle }}</div>
+    {% endif %}
+
+    <!-- This section is used for search indexing -->
+    <div class="project-content">
+      {{ project.content | strip_html }}
+    </div>
+
+    {% if project.tags %}
+    <div class="project-tags">
+      {% for tag in project.tags %}
+      <span class="tag">{{ tag }}</span>
+      {% endfor %}
+    </div>
+    {% endif %}
+    <!-- End search indexing section -->
+
+    <div class="project-footer">
+      <a href="{{ project.url }}" class="learn-more-btn">Learn More</a>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<div class="no-results" id="no-results">
+  <h3>No projects found</h3>
+  <p>Try adjusting your search terms</p>
+</div>
+
+<script>
+function searchProjects() {
+  const searchTerm = document.getElementById('search-input').value.toLowerCase();
+  // Select project cards directly so grid column classes work correctly
+  const cols = document.querySelectorAll('.projects-grid > .project-card');
+  let visibleCount = 0;
+  
+  cols.forEach(col => {
+  const title = (col.getAttribute('data-title') || '').toLowerCase();
+  const tags = (col.getAttribute('data-tags') || '').toLowerCase();
+  const authors = (col.getAttribute('data-authors') || '').toLowerCase();
+  const content = (col.textContent || '').toLowerCase();
+    
+    if (title.includes(searchTerm) || 
+        tags.includes(searchTerm) || 
+        authors.includes(searchTerm) ||
+        content.includes(searchTerm)) {
+      col.style.display = 'block';
+      visibleCount++;
+    } else {
+      col.style.display = 'none';
+    }
+  });
+  
+  const noResults = document.getElementById('no-results');
+  if (visibleCount === 0) {
+    noResults.classList.add('show');
+  } else {
+    noResults.classList.remove('show');
+  }
+}
+
+function resetSearch() {
+  document.getElementById('search-input').value = '';
+  const cols = document.querySelectorAll('.projects-grid > .project-card');
+  cols.forEach(col => {
+    col.style.display = 'block';
+  });
+  document.getElementById('no-results').classList.remove('show');
+}
+
+// Allow Enter key to trigger search
+document.getElementById('search-input').addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') {
+    searchProjects();
+  }
+});
+</script>
