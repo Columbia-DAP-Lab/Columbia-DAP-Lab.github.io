@@ -3,7 +3,7 @@ title: "checkpoint-lite"
 subtitle: "A minimal checkpoint/restore tool using CRIU and OverlayFS for fast process state management."
 date: 2025-08-03
 authors:
-  - name: "Alex Jiakai Xu"
+  - name: "Jiakai Xu"
   - name: "Tianle Zhou"
   - name: "Eugene Wu"
   - name: "Kostis Kaffes"
