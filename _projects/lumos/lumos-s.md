@@ -26,7 +26,7 @@ publications:
 ### Overview
 **LumOS** builds an *expert‑in‑residence* agent that **safely tunes Linux kernel schedulers online**. The agent reasons over live telemetry, proposes settings, and applies changes with guards (transactional apply/commit/revert, approvals), delivering **faster convergence and lower tail latency** than classical tuners or manual tuning, and adapting quickly to workload shifts.
 
-![Architecture](https://daplab.cs.columbia.edu/projects/lumos/architecture.svg)
+![Architecture](/_projects/lumos/architecture.svg)
 
 
 ### Why it matters
