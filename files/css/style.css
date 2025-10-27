@@ -116,7 +116,7 @@ h1, h2, h3, h4, h5, h6 {
   display: inline-block;
 }
 
-.badge-indigo          { background-color: #4b0082; }  /* Security */
+.badge-indigo          { background-color: #24129b; }  /* Security */
 .badge-dark-blue       { background-color: #004080; }  /* Systems */
 .badge-light-blue      { background-color: #66b2ff; }  /* Software Eng */
 .badge-sky-blue        { background-color: #8ad3ef; }  /* Data Mgmt */
@@ -134,11 +134,13 @@ h1, h2, h3, h4, h5, h6 {
 .badge-light-purple    { background-color: #c3b1e1; } /* Vision */
 .badge-orchid          { background-color: #da70d6; }  /* Neuro-symbolic */
 .badge-fuchsia         { background-color: #ff77ff; }  /* HCI */
+.badge-dark-slate-blue { background-color: #483d8b; }  /* AI for Health */
 
 /* Academic Groups */
-.badge-silver          { background-color: #ffd700; color: black; }  /* CS */
-.badge-gold            { background-color: #c0c0c0; color: black; }  /* IEOR */
+.badge-gold            { background-color: #ffd700; color: black; }  /* CS */
+.badge-silver          { background-color: #c0c0c0; color: black; }  /* IEOR */
 .badge-orange          { background-color: #ff9500; color: black; }  /* CBS */
+.badge-aquamarine      { background-color: #7fffd4; color: black; }  /* DBMI */
 
 /* Administrative and advisory */
 .badge-advisory       { background-color: #cc0000; }  /* Advisory Board */

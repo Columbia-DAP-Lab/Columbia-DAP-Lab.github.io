@@ -107,16 +107,6 @@
   category: Faculty
   field: [CS, Systems]
 
-- name: Xuhai Orson Xu
-  homepage: https://orsonxu.com
-  image: /files/images/avatar/xuhai_xu.jpg
-  bio: >
-    Assistant Professor at Columbia DBMI and Visiting Faculty at Google. Leads the SEA Lab focusing on 
-    human-centered AI and health applications. Distinguished Paper Award at UbiComp 2023. 
-    Pioneered generalizable behavior modeling and intelligent intervention techniques for health and well-being.
-  category: Faculty
-  field: [DBMI, HCI, AI for Health]
-
 - name: Eugene Wu
   homepage: https://www.eugenewu.net/
   image: /files/images/avatar/eugene.png
@@ -136,6 +126,16 @@
     including the Daniel H. Wagner Prize, APS, and RMP student paper awards.
   category: Faculty
   field: [Columbia Business, Decision making]
+
+- name: Xuhai Orson Xu
+  homepage: https://orsonxu.com
+  image: /files/images/avatar/xuhai.jpg
+  bio: >
+    Assistant Professor at Columbia DBMI and Visiting Faculty at Google. Leads the SEA Lab focusing on 
+    human-centered AI and health applications. Distinguished Paper Award at UbiComp 2023. 
+    Pioneered generalizable behavior modeling and intelligent intervention techniques for health and well-being.
+  category: Faculty
+  field: [DBMI, HCI, AI for Health]
 
 # Advisory Board (Categorized under Faculty)
 
@@ -159,6 +159,11 @@
   field: [Advisory Board, CS, UChicago]
 
 # Students
+
+- name: Jiakai Xu
+  homepage: https://alex-xjk.github.io/
+  image: /files/images/avatar/jiakai_xu.jpg
+  category: Student
 
 - name: Georgios Liargkovas
   homepage: https://liargkovas.com/
@@ -223,11 +228,6 @@
   image: /files/images/avatar/elaine_ang.jpeg
   category: Student
 
-- name: Jiakai Xu
-  homepage: https://alex-xjk.github.io/
-  image: /files/images/avatar/jiakai_xu.jpg
-  category: Student
-
 - name: Tianle Zhou
   homepage: https://www.linkedin.com/in/tian-le-zhou-99a145221/
   image: /files/images/avatar/tianle_zhou.png
@@ -290,5 +290,5 @@
 
 - name: Alex Mathai
   homepage: https://alexmathai.com
-  image: files/images/avatar/alex-mathai.png
+  image: /files/images/avatar/alex_mathai.png
   category: Student
