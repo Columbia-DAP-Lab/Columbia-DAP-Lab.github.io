@@ -1,12 +1,12 @@
 ---
-title: "PALs"  # Project Title You want to show on the index page
+title: "PALs"
 subtitle: "Process-Aware Learning Agents for Human-AI Alignment"
 date: 2025-10-24
 authors:
   - name: "Jenny Ma"
   - name: "Lydia B. Chilton"
-avatar: pal-agents.png  # Optional, if wanted, put the image file in the same directory
-tags: 
+avatar: pal-agents.png
+tags:
   - "Workflow-alignment"
   - "Human Computer Interaction"
   - "Agentic Systems"

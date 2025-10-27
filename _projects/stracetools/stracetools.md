@@ -4,6 +4,7 @@ subtitle: "A modern Python library for parsing, analyzing, and visualizing strac
 date: 2025-07-29
 authors:
   - name: "Alex Jiakai Xu"
+  - name: "Tianle Zhou"
 avatar: avatar.png
 tags:
   - "Tracing"

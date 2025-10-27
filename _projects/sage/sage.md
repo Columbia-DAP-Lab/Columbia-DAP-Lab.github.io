@@ -1,5 +1,5 @@
 ---
-title: "SAGE"  # Project Title You want to show on the index page
+title: "SAGE"
 subtitle: "A Top-Down Bottom-Up Knowledge-Grounded User Simulator for Multi-turn AGent Evaluation"
 date: 2025-10-06
 authors:
@@ -7,11 +7,11 @@ authors:
   - name: "Yunan Lu*"
   - name: "Liang Qiu"
   - name: "Zhou Yu"
-avatar: sage.png  # Optional, if wanted, put the image file in the same directory
+avatar: sage.png
 tags:
   - "User Simulator"
   - "Agent Evaluation"
-publications:  # Optional, can list multiple publications
+publications:
   - title: "SAGE: A Top-Down Bottom-Up Knowledge-Grounded User Simulator for Multi-turn AGent Evaluation"
     venue: "Under Submission"
     url: "https://arxiv.org/abs/2510.11997"

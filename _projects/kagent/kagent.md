@@ -1,7 +1,7 @@
 ---
-title: "kGym & kAgent : A Platform and Agent to patch Linux kernel bugs"
-layout: project
-date: 2025-10-26
+title: "kGym & kAgent"
+subtitle: "A Platform and Agent to patch Linux kernel bugs"
+date: 2025-05-13
 authors:
   - name: Alex Mathai*
   - name: Chenxi Huang*

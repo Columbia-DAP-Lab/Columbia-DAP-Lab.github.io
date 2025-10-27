@@ -4,6 +4,7 @@ subtitle: "A minimal checkpoint/restore tool using CRIU and OverlayFS for fast p
 date: 2025-08-03
 authors:
   - name: "Jiakai Xu"
+    url: "https://alex-xjk.github.io/"  # Just in case I forget this hidden feature, lol...
   - name: "Tianle Zhou"
   - name: "Eugene Wu"
   - name: "Kostis Kaffes"

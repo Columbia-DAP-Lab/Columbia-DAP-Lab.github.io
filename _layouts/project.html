@@ -252,7 +252,7 @@ layout: default
           {% for pub in page.publications %}
           <li class="publication-item">
             <div class="publication-title">{{ pub.title }}</div>
-            <div class="publication-venue">{{ pub.venue }}{% if pub.year %} – {{ pub.year }}{% endif %}</div>
+            <div class="publication-venue">{{ pub.venue }}{% if pub.year %} - {{ pub.year }}{% endif %}</div>
             {% if pub.url %}
             <a href="{{ pub.url }}" class="publication-link" target="_blank">View Publication →</a>
             {% endif %}

@@ -29,3 +29,6 @@ This is a **dummy** project description in markdown format for testing purposes.
 
 ## Description
 It serves as a placeholder to demonstrate the project layout and metadata structure used on our lab website.
+
+Use this path to refer to (images, files, etc.) the current project folder: `_projects/dummy1/xxx`
+![Image](/_projects/dummy1/dummy-image.png)
