@@ -40,11 +40,12 @@ experimental automation, and intelligent reasoning to close the loop between bug
 
 ## Components
 
-| **Component** | **Description** |
-|----------------|-----------------|
+| **Name&emsp;&emsp;&emsp;** | **Description** |
+| --- | --- |
 | **kBench** | A curated benchmark of Linux kernel bugs, each paired with developer-provided fixes and deterministic reproduction scripts. Enables systematic evaluation of patching strategies. |
-| **kGym** | A sandboxed, large-scale **kernel experimentation platform** capable of booting and testing thousands of kernel configurations in parallel. Provides execution traces, crash states, and verification environments for patches. |
-| **kAgent** | A specialized LLM-based **autonomous agent** that runs experiments in kGym, interprets crash logs, hypothesizes code changes, and iteratively validates patches until a verified fix is achieved. |
+| **kGym** | A sandboxed, large-scale *kernel experimentation platform* capable of booting and testing thousands of kernel configurations in parallel. Provides execution traces, crash states, and verification environments for patches. |
+| **kAgent** | An LLM-based *autonomous agent* that runs experiments in kGym, interprets crash logs, hypothesizes code changes, and iteratively validates patches until a verified fix is achieved. |
+
 
 ---
 
