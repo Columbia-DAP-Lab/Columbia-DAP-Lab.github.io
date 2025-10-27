@@ -3,8 +3,8 @@ name: Deploy GitHub Pages
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "0 14 * * *"  # Every day at 10 AM New York time
+  # schedule:
+  #   - cron: "0 14 * * *"  # Every day at 10 AM New York time
   push:
     branches: ["main"]  # Trigger on non-action pushes to main branch
 
