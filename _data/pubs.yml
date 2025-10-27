@@ -47,7 +47,7 @@
   tags:
     - ai
     - sys
-  url: https://saa2025.github.io/papers/saa25-final5.pdf
+  url: https://saa2025.github.io/papers/Cortex%20-%20Workflow-Aware%20Resource%20Pooling%20and%20Scheduling%20for%20Agentic%20Serving.pdf
 
 - title: "Set It and Forget It: Zero-Mod ML Magic for Linux Tuning"
   authors: Georgios Liargkovas, Prabhpreet Singh Sodhi, Kostis Kaffes
@@ -303,4 +303,3 @@
   tags: 
     - systems
     - networking
-
