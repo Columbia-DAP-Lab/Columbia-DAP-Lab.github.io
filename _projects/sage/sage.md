@@ -1,10 +1,10 @@
 ---
 title: "SAGE"  # Project Title You want to show on the index page
 subtitle: "A Top-Down Bottom-Up Knowledge-Grounded User Simulator for Multi-turn AGent Evaluation"
-date: 2025-10-13
+date: 2025-10-06
 authors:
-  - name: "Ryan Shea"
-  - name: "Yunan Lu"
+  - name: "Ryan Shea*"
+  - name: "Yunan Lu*"
   - name: "Liang Qiu"
   - name: "Zhou Yu"
 avatar: sage.png  # Optional, if wanted, put the image file in the same directory
