@@ -113,9 +113,8 @@ Digital environments are messy and stateful: every agent action perturbs hidden 
 We show a fundamental trade-off: lightweight mechanisms are efficient but lose volatile state, while high-fidelity restores preserve consistency at substantial latency cost. To bridge this gap, we design a lean restoration tool that removes unnecessary bloat to accelerate snapshot/restore without sacrificing essential fidelity. Our results point to a simple conclusion: scaling agent exploration beyond benchmarks and into real deployments will require native, fork-like primitives that let agents branch, isolate, and rejoin execution cheaply and consistently.
 
 
-**[Cortex: Workflow-Aware Resource Pooling and Scheduling for Agentic Serving](https://saa2025.github.io/papers/saa25-final5.pdf)**   
+**[Cortex: Workflow-Aware Resource Pooling and Scheduling for Agentic Serving](https://saa2025.github.io/papers/Cortex%20-%20Workflow-Aware%20Resource%20Pooling%20and%20Scheduling%20for%20Agentic%20Serving.pdf)**   
 Nikos Pagonas, Yeounoh Chung, Kostis Kaffes 
 
 In collaboration with Google, we introduce Cortex, a prototype workflow-aware serving platform designed for agentic workloads. The core principle of Cortex is stage isolation: it provisions dedicated resource pools for each distinct stage of an agentic workflow.
 This simple yet powerful strategy mitigates inter-stage interference in compute and memory, leading to better KV cache utilization, higher throughput, and more predictable performance. By customizing resource allocation and scheduling within each distinct stage of agentic workflows, Cortex lays the groundwork for more advanced, agent-native serving paradigms, including malleable resource management, speculative execution of workflow branches, and a shared, multi-tiered cache for agentic state.
-
