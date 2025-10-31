@@ -6,6 +6,7 @@ authors:
   - name: "Jiakai Xu"
     url: "https://alex-xjk.github.io/"  # Just in case I forget this hidden feature, lol...
   - name: "Tianle Zhou"
+  - name: "Georgios Liargkovas"
   - name: "Eugene Wu"
   - name: "Kostis Kaffes"
 avatar: ckpt-icon.png

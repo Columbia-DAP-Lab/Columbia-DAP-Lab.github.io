@@ -4,7 +4,7 @@ subtitle: "A dummy project for testing."
 date: 2025-01-31
 authors:
   - name: "Alex Jiakai Xu"
-  - name: "J.K. Xu"
+  - name: "Dummy Author"
 avatar: dummy-image.png  # Optional, if wanted, put the image file in the same directory
 tags:
   - "Empty"

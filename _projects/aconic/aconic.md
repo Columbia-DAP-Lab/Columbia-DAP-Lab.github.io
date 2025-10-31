@@ -4,7 +4,7 @@ subtitle: "Design your workflow with CONstraint-Induced Complexity"
 date: 2025-10-06
 authors:
   - name: "Tianle Zhou"
-  - name: "Jiakai Xu"
+  - name: "Alex Jiakai Xu"
   - name: "Guanhong Liu"
   - name: "Jiaxiang Liu"
   - name: "Haonan Wang"
