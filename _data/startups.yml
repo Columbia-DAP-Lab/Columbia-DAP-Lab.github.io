@@ -45,16 +45,37 @@
     This talk shows how August is building agents that do better: the right indexing methods, visible state, disciplined tool use, and citations at every step to cleanly automate real professional workflows. We'll walk through a multi-step research agent (e.g., over SEC filings) that plans the task, retrieves the right sources, routes to the relevant sections, and drafts grounded legal answers.
 
     Attendees will leave with a lightweight design pattern for credence domains like law. We will also share our growth and go-to-market. We are productizing law-firm workflows and, in some cases, selling with the firm to their clients. This is a new model that is gaining traction across professional services. 
-- title: 'Software Development Agents are General Agents'
+
+- title: 'Warehouse Adaptation of Robots and AI Systems'
   date: '2025-11-04'
   where: Davis Auditorium
   tag: Entrepreneurship
   time: 7PM
-  who: Eno Reyes, Factory
-  role: CTO & Co-founder
-  wholink: https://enoreyes.com/
-  description:  This talk will explore the broad set of tasks a software development agent must be capable of doing to serve the product needs of our customers, and how we built them, alongside our journey to get to where we are today
-  bio: Eno Reyes is co-founder and CTO of Factory, a Sequoia-backed startup building an enterprise platform for model-agnostic software development agents. He was previously an ML engineer at Hugging Face, where he helped Fortune 500 organizations manage and deploy LLMs.
+  who: Vivian Zhang, WarehouseRobot.ai
+  role: CEO
+  wholink: https://warehouserobot.ai/
+  description:  |
+    Autonomous warehouse systems represent one of the most advanced and large-scale examples of embodied multi-agent intelligence operating in the physical world. Thousands of mobile robots collaborate continuously to move, pick, and sort goods in dynamic, uncertain environments—achieving high efficiency, adaptability, and robustness in real time.
+
+    In this talk, I will discuss how warehouse robotics offers both a practical foundation and conceptual inspiration for the design of AI systems. I will introduce the market context and technical underpinnings of large-scale robotic automation, then explore how intelligence emerges through coordination, perception, and control across distributed agents. I will also discuss how large language models (LLMs) may extend this paradigm—enabling natural language tasking, high-level reasoning, and seamless human–AI collaboration in embodied systems.
+
+    Finally, I will reflect on how lessons from large-scale robotic coordination can inform the broader design of the warehouse automation ecosystems, highlighting new directions for research at the intersection of autonomy, learning, and collective intelligence.
+  bio: |
+    Vivian Zhang is the Chief Executive Officer of [WarehouseRobot.AI](https://warehouserobot.ai), where she leads research and development in intelligent robotics, large-scale multi-agent coordination, and autonomous warehouse systems. Her work spans planning under uncertainty, human–AI collaboration, and the integration of large language models into embodied intelligence. Vivian’s perspective bridges industrial-scale deployment and AI research, with a focus on how real-world robotics can inform the next generation of AI agents and collective intelligence systems. Her portfolio of AI startups and AI VC fund can be found at [https://viviancompanies.com/](https://viviancompanies.com/) and at [https://extelligenceinvest.com/](https://extelligenceinvest.com/). 
+
+    Vivian was named one of the Top 100 Most Influential Chinese by Forbes and recognized among 50 top most well known Data Scientists by CBNData. Vivian’s always happy to hear from founders and fellows — feel free to reach out anytime!
+
+
+  #- title: 'Software Development Agents are General Agents'
+  #  date: '2025-11-04'
+  #  where: Davis Auditorium
+  #  tag: Entrepreneurship
+  #  time: 7PM
+  #  who: Eno Reyes, Factory
+  #  role: CTO & Co-founder
+  #  wholink: https://enoreyes.com/
+  #  description:  This talk will explore the broad set of tasks a software development agent must be capable of doing to serve the product needs of our customers, and how we built them, alongside our journey to get to where we are today
+  #  bio: Eno Reyes is co-founder and CTO of Factory, a Sequoia-backed startup building an enterprise platform for model-agnostic software development agents. He was previously an ML engineer at Hugging Face, where he helped Fortune 500 organizations manage and deploy LLMs.
 - title: 'TBA'
   date: '2025-11-18'
   tag: Entrepreneurship
