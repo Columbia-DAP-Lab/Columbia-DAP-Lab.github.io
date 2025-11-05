@@ -114,7 +114,7 @@ We show a fundamental trade-off: lightweight mechanisms are efficient but lose v
 
 
 **[Cortex: Workflow-Aware Resource Pooling and Scheduling for Agentic Serving](https://saa2025.github.io/papers/Cortex%20-%20Workflow-Aware%20Resource%20Pooling%20and%20Scheduling%20for%20Agentic%20Serving.pdf)**   
-Nikos Pagonas, Yeounoh Chung, Kostis Kaffes 
+Nikos Pagonas, Yeounoh Chung, Kostis Kaffes, Arvind Krishnamurthy
 
 In collaboration with Google, we introduce Cortex, a prototype workflow-aware serving platform designed for agentic workloads. The core principle of Cortex is stage isolation: it provisions dedicated resource pools for each distinct stage of an agentic workflow.
 This simple yet powerful strategy mitigates inter-stage interference in compute and memory, leading to better KV cache utilization, higher throughput, and more predictable performance. By customizing resource allocation and scheduling within each distinct stage of agentic workflows, Cortex lays the groundwork for more advanced, agent-native serving paradigms, including malleable resource management, speculative execution of workflow branches, and a shared, multi-tiered cache for agentic state.
