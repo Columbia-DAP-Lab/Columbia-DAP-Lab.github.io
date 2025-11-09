@@ -66,6 +66,15 @@
   tags:
     - ai
 
+- title: "Toward Systems Foundations for Agentic Exploration"
+  authors: Jiakai Xu, Tianle Zhou, Eugene Wu, Kostis Kaffes
+  conf: SAA Workshop at SOSP 2025
+  pub_date: "2025-10-13"
+  tags:
+    - ai
+    - sys
+  url: https://arxiv.org/abs/2510.05556
+
 - title: "Cortex: Workflow-Aware Resource Pooling and Scheduling for Agentic Serving"
   authors: Nikos Pagonas, Yeounoh Chung, Kostis Kaffes, Arvind Krishnamurthy
   conf: SAA Workshop at SOSP 2025
