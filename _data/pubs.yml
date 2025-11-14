@@ -31,6 +31,41 @@
 #
 # Project specific tags are fine as well.  For instance, precision interfaces has a custom "pi" tag 
 
+- title: "Multi-Agent Markov Entanglement"
+  authors: Shuze Chen, Tianyi Peng
+  conf: NeurIPS 2025 (Spotlight)
+  awards: Winner of INFORMS Junior Faculty Interest Group Paper Prize; Second Place, INFORMS George Nicholson Student Paper Competition
+  pub_date: "2025-12-07"
+  tags:
+    - ai
+    - rl
+    - theory
+  url: https://arxiv.org/abs/2506.02385
+
+- title: "Tail-Optimized Caching for LLM Inference"
+  authors: Wenxin Zhang, Yueying Li, Ciamac C. Moallemi, Tianyi Peng
+  conf: NeurIPS 2025
+  pub_date: "2025-12-07"
+  tags:
+    - ai
+    - sys
+  url: https://arxiv.org/abs/2510.15152
+
+- title: "Data Mixture Optimization: A Multi-Fidelity Multi-Scale Bayesian Framework"
+  authors: Tzu-Ching Yen, Andrew Wei Tung Siah, Haozhe Chen, C. Daniel Guetta, Tianyi Peng, Hongseok Namkoong
+  conf: NeurIPS 2025
+  pub_date: "2025-12-07"
+  tags:
+    - ai
+  url: https://arxiv.org/abs/2503.21023
+
+- title: "Agents for Web Testing: A Case Study in the Wild"
+  authors: Naimeng Ye, Xiao Yu, Ruize Xu, Tianyi Peng, Zhou Yu
+  conf: LAw Workshop at NeurIPS 2025
+  pub_date: "2025-12-07"
+  tags:
+    - ai
+
 - title: "Toward Systems Foundations for Agentic Exploration"
   authors: Jiakai Xu, Tianle Zhou, Eugene Wu, Kostis Kaffes
   conf: SAA Workshop at SOSP 2025
@@ -116,8 +151,8 @@
 
 - title: "LLM Generated Persona is a Promise with a Catch"
   authors: Ang Li, Haozhe Chen, Hongseok Namkoong, Tianyi Peng
-  conf: Arxiv 2025
-  pub_date: "2025-03-18"
+  conf: NeurIPS 2025 Position Paper
+  pub_date: "2025-12-07"
   url: https://arxiv.org/abs/2503.16527
   tags:
     - ai
