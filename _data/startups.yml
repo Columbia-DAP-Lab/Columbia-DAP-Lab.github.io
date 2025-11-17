@@ -65,7 +65,6 @@
 
     Vivian was named one of the Top 100 Most Influential Chinese by Forbes and recognized among 50 top most well known Data Scientists by CBNData. Vivian’s always happy to hear from founders and fellows — feel free to reach out anytime!
 
-
   #- title: 'Software Development Agents are General Agents'
   #  date: '2025-11-04'
   #  where: Davis Auditorium
@@ -76,7 +75,8 @@
   #  wholink: https://enoreyes.com/
   #  description:  This talk will explore the broad set of tasks a software development agent must be capable of doing to serve the product needs of our customers, and how we built them, alongside our journey to get to where we are today
   #  bio: Eno Reyes is co-founder and CTO of Factory, a Sequoia-backed startup building an enterprise platform for model-agnostic software development agents. He was previously an ML engineer at Hugging Face, where he helped Fortune 500 organizations manage and deploy LLMs.
-- title: 'TBA'
+
+- title: 'AI Site Reliability Engineers: Automating Incident Response in Complex Systems'
   date: '2025-11-18'
   tag: Entrepreneurship
   where: Davis Auditorium
@@ -84,7 +84,30 @@
   who: Anish Agrawal, Traversal 
   wholink:  https://www.traversal.com/
   role: CEO & Co-founder
-  description: 
+  description:  |
+    In this presentation, I will describe ongoing work at Traversal, where our team is developing an
+    AI Site Reliability Engineer (SRE) designed to assist enterprises in diagnosing and mitigating
+    production incidents, with the broader goal of improving the resilience of large-scale, mission-
+    critical systems. I will outline why incident troubleshooting is rapidly becoming a central
+    bottleneck in realizing end-to-end automation of the software development lifecycle (SDLC),
+    particularly as organizations adopt increasingly complex cloud-native architectures and
+    integrate AI-driven tooling across their operational workflows.
+    
+    From a research perspective, automated incident response represents a technically rich and
+    largely underexplored problem space. I will highlight how it brings together challenges at the
+    intersection of agentic system design, large language model evaluation, causal inference on
+    unstructured data, and time-series modeling of high-dimensional telemetry. These domains
+    converge in the task of enabling AI systems to form hypotheses, reason under uncertainty,
+    and propose actionable remediations in environments characterized by incomplete information,
+    noisy signals, and strict reliability constraints. Our goal in this work is not only to build a
+    practical system, but also to surface open problems and novel research opportunities for the
+    broader community.
+  bio: |
+    Anish Agarwal is the CEO and Cofounder of Traversal, a startup building AI Site Reliability
+    Engineer agents to help teams diagnose and remediate complex production incidents, and an
+    Assistant Professor at Columbia University. His work focuses on causal machine learning and
+    data-driven decision-making in complex, real-world systems.
+
 - title: 'AI Entrepreneurship: Obstacles, Opportunities, and Outcomes'
   date: '2025-12-02'
   tag: Entrepreneurship
