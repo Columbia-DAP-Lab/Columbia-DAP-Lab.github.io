@@ -12,6 +12,27 @@
 # 
 #
 
+- title: 'TBA'
+  tag: Seminar
+  date: '2025-11-18'
+  who: Justin DeBrabant
+  where: CSB 453
+  time: 12PM
+  wholink: 
+  description:
+  bio: 
+
+- title: '2025 Undergraduate Computer and Data Science Research fair'
+  tag: Workshop
+  date: '2025-11-06'
+  time: 5PM
+  link: https://datascience.columbia.edu/events/undergraduate-research-fair-2025/
+  description: >
+    The UCDS research fair celebrates the leading undergraduate research across 
+    Columbia University's many schools as well as Barnard College.  This is co-organized with 
+    Columbia's [Data Science Institute](https://datascience.columbia.edu/), and check 
+    [more details here](https://datascience.columbia.edu/events/undergraduate-research-fair-2025/)!
+
 - title: 'Disaggregated LLM Inference: Past, Present, and Future'
   tag: Seminar
   date: '2025-10-14'
@@ -165,7 +186,7 @@
 - title: 'March 2025 Workshop: AI Agents for Work'
   tag: Workshop
   date: '2025-03-12'
-  time: 12PM
+  time: 10AM
   link: https://daplab.cs.columbia.edu/workshop/2025-03/
   description: >
     On March 12, 2025, DAPLab ran the first annual workshop at the Columbia Business
