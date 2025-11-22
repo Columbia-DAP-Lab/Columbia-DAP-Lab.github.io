@@ -12,6 +12,39 @@
 # 
 #
 
+- title: 'Building Foundation Models at Scale: System Experiences and Challenges'
+  tag: Seminar
+  date: '2025-11-21'
+  who: Jingren Zhou
+  where: Davis Auditorium
+  time: 11AM
+  wholink: https://www.jingrenzhou.com/
+  description: >
+    The rapid evolution of AI has led to the emergence of massive and complex foundation models that
+    require enormous computational resources, making efficient training and inference systems
+    essential. Training such models requires large-scale distributed computation, effective overlap
+    of computation and communication, sophisticated parallelization strategies, and robust fault-
+    tolerant mechanisms. Inference systems, on the other hand, must support diverse workloads with
+    varying service-level agreements (SLAs), rapidly integrate engineering optimizations, and
+    carefully balance trade-offs among throughput, latency, cost, and availability, particularly in
+    distributed environments. In this talk, I will discuss the major systems challenges in building
+    large-scale foundation models, focusing on our experiences developing Qwen (large language
+    models) and Wan (video generative models). I will also present ongoing research and system
+    designs that enhance the efficiency of training and inference at scale, enabling more effective
+    management of complex AI workloads in cloud environments.
+  bio: >
+    Jingren Zhou '01SEAS, '04SEAS is the Chief Technology Officer at Alibaba Cloud, where he drives
+    technology innovation and product development across a wide range of cloud computing services.
+    He also leads the development of AI foundation models, such as Qwen and Wan models, and their
+    applications in diverse business applications within Alibaba Cloud. Prior to this role, he
+    played a key role in building Alibaba's cloud-scale distributed data analytics platform and
+    developing advanced techniques for personalized search, product recommendation, and advertising
+    on Alibaba's e-commerce platform. Before joining Alibaba, he was a veteran at Microsoft,
+    focusing on big data and database research and development. His research interests include
+    cloud computing, distributed systems, databases, and large-scale machine learning. He has served
+    as PC co-chair and core committee member for many academic conferences and technical forums. He
+    received his PhD in Computer Science from Columbia University. He is a Fellow of ACM and IEEE.
+
 - title: 'Enterprise App Platform Powered by Data and AI'
   tag: Seminar
   date: '2025-11-18'
