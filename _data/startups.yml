@@ -8,6 +8,7 @@
   wholink: https://www.linkedin.com/in/aaron-vontell
   description:
     In this talk, Aaron will walk through his journey building in the AI space, detailing his learnings from Instabase, his own AI startup Regression Games, and now his experience at Anthropic. This talk will focus on the importance of focusing on specific problems and navigating frequently-changing technological landscapes, and how to apply cutting-edge research in record time.
+
 - title: 'Lessons for Building Valuable Domain-Specific AI Products'
   date: '2025-09-23'
   tag: Entrepreneurship
@@ -17,9 +18,9 @@
   role: Co-founder and CTO
   wholink: https://www.noetica.ai/
   bio: Tom Effland is the technical founder and CTO of Noetica AI, a fast-growing VC-backed Series A startup. The company's AI-powered knowledge platform helps many top law firms improve outcomes in valuable corporate debt, securities, and M&A transactions. Before founding Noetica, Tom earned his PhD in Computer Science from Columbia University. He was advised by Prof. Michael Collins and received support from a NSF Graduate Research Fellowship.
-
   description:
     This talk shares lessons learned going from NLP researcher to building Noetica, a platform that analyzes populations of complex contracts to determine market standards for deal terms. Along the way I'll discuss (1) how LLMs have enabled a new opportunity space for hybrid systems that combine extraction capabilities with formal analytical frameworks, (2) how building these systems still requires deep fusion of subject-matter and technical judgment to identify tractable decompositions of seemingly impossible problems, and (3) how this converges to a new version of the Technical Product Manager role. This role is highly suited to technical researchers willing to tackle sector-specific challenges. 
+
 - title: "Agents at Scale: Lessons from LinkedIn's Agent Journey"
   date: '2025-10-07'
   tag: Entrepreneurship
@@ -30,6 +31,7 @@
   wholink: https://www.linkedin.com/in/wang-xiaofeng/
   bio: Xiaofeng Wang is a Senior Engineering Manager at LinkedIn, where he leads the Agents Platform team, building the foundational technologies that enable the entire engineering organization to deliver agentic experiences. His team is responsible for the agent runtime platform, agent framework, and Cognitive Memory Agent. He and his team have also been invited to speak at various leading industry conferences. In his previous role at LinkedIn, Xiaofeng led the first team dedicated to Generative AI Foundations, developing infrastructure, platforms, and tooling from the ground up to power all of LinkedIn's member-facing GenAI products since 2022. Before that, he worked as an engineer and data scientist in the Data Science Productivity and Research team, building platforms to automate advanced data science analyses such as A/B testing, deep dives, and observational causal studies. Prior to LinkedIn, Xiaofeng worked at Bank of America Merrill Lynch, where he led the team building recommendation systems for the Merrill Edge's personalized investing platform. He received his Ph.D. in Systems and Information Engineering from the University of Virginia.
   description: Join Xiaofeng Wang, Sr. Engineering Manager at LinkedIn's Agents Platform, as he takes you behind the scenes of the platform powering all of LinkedIn's member-facing agentic applications at scale. This talk will trace the GenAI product revolution, from simple prompt‑in‑string use cases to the latest LinkedIn Hiring Assistant. It will show how the Agent Platform evolved to enable these experiences. Xiaofeng will share the technical foundations, organizational challenges, hiring strategies, and hard‑won lessons that shaped LinkedIn's journey, highlighting how the team bridged open‑source innovation with enterprise‑grade infrastructure, built seamless developer experiences, and enforced trust and responsible AI from day one. Whether you're a researcher, engineer, product leader, or entrepreneur, this talk offers a front-row look at LinkedIn's agentic journey, the latest trends in agent development, and what it takes to transform prototypes into impactful, production-grade agents at enterprise scale. 
+
 - title: 'How to Build Cursor for Law'
   date: '2025-10-21'
   tag: Entrepreneurship
@@ -117,6 +119,7 @@
   role: Founder and CEO
   wholink: https://www.reinforcelabs.ai/
   description: 
+
 - title: 'TBA'
   date: '2025-12-16'
   tag: Entrepreneurship
@@ -126,3 +129,91 @@
   role: Co-founder and CEO
   wholink: https://www.liquid.ai/team/ramin-hasani
   description:
+
+- title: 'TBA'
+  date: '2026-01-22'
+  tag: Entrepreneurship
+  time: 11AM
+  where: Davis Auditorium
+  who:
+  role:
+  wholink:
+  description:
+  bio:
+
+- title: 'TBA'
+  date: '2026-02-05'
+  tag: Entrepreneurship
+  time: 11AM
+  where: Davis Auditorium
+  who:
+  role:
+  wholink:
+  description:
+  bio:
+
+- title: 'TBA'
+  date: '2026-02-19'
+  tag: Entrepreneurship
+  time: 11AM
+  where: Davis Auditorium
+  who:
+  role:
+  wholink:
+  description:
+  bio:
+
+- title: 'TBA'
+  date: '2026-03-05'
+  tag: Entrepreneurship
+  time: 11AM
+  where: Davis Auditorium
+  who:
+  role:
+  wholink:
+  description:
+  bio:
+
+- title: 'TBA'
+  date: '2026-03-19'
+  tag: Entrepreneurship
+  time: 11AM
+  where: Davis Auditorium
+  who:
+  role:
+  wholink:
+  description:
+  bio:
+
+- title: 'TBA'
+  date: '2026-04-02'
+  tag: Entrepreneurship
+  time: 11AM
+  where: Davis Auditorium
+  who:
+  role:
+  wholink:
+  description:
+  bio:
+
+- title: 'TBA'
+  date: '2026-04-16'
+  tag: Entrepreneurship
+  time: 11AM
+  where: Davis Auditorium
+  who:
+  role:
+  wholink:
+  description:
+  bio:
+
+- title: 'TBA'
+  date: '2026-04-30'
+  tag: Entrepreneurship
+  time: 11AM
+  where: Davis Auditorium
+  who:
+  role:
+  wholink:
+  description:
+  bio:
