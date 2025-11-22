@@ -97,7 +97,13 @@ title: Events
             {% else %}
               {{ event.title }}
             {% endif %}
-            {% if event.who %} <span class="who">{{ event.who }}</span>{% endif %}
+            {% if event.who %}
+              {% if event.wholink %}
+                <a href="{{ event.wholink }}" class="me-2"><span class="who">{{ event.who }}</span> </a>
+              {% else %}
+                <span class="who">{{ event.who }}</span>
+              {% endif %}
+            {% endif %}
             {% if event.tag %}
               <span class="event-tag event-tag--{{ event.tag | downcase }}">
                 {{ event.tag }}
