@@ -118,7 +118,15 @@
   who: Anish Das Sarma, Reinforce Labs
   role: Founder and CEO
   wholink: https://www.reinforcelabs.ai/
-  description: 
+  description:  |
+    Building an AI startup today is exciting, but also uniquely challenging. In this talk, I’ll offer a transparent, behind-the-scenes look at the realities of modern AI entrepreneurship. We are in one of the fastest-moving technology cycles in history. Drawing from firsthand experience as a repeat founder, I’ll unpack the full spectrum of an entrepreneur’s journey exploring obstacles, opportunities, and outcomes. You will leave with an honest, grounded understanding of what it takes, what to expect, and why, despite the challenges, this may be one of the most exciting times in history to build in AI.
+
+  bio:  |
+    Anish Das Sarma is the Founder and CEO of Reinforce Labs, a startup dedicated to ensuring safe, secure, and compliant adoption of enterprise AI systems. A repeat founder, Anish previously built Trooly, an AI-powered identity and trust platform that was acquired by Airbnb, where he went on to lead key initiatives in AI, trust & safety. Most recently, Anish served as a Director of Engineering at Google, where he led large-scale AI/ML teams across Google Ads Safety. 
+
+    Anish holds a Ph.D. in Computer Science from Stanford University and a B.Tech in Computer Science from IIT Bombay. Across more than a decade in AI, he has combined deep technical expertise with hands-on operational leadership, building products and teams across multiple domains of applied ML.
+
+
 
 - title: 'TBA'
   date: '2025-12-16'
