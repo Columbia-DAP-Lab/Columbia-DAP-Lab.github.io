@@ -11,6 +11,34 @@
 # slides: link to slides
 # 
 #
+- title: 'Validation Techniques for Offensive Security Agents'
+  tag: Seminar
+  date: '2025-12-02'
+  who: Brendan Dolan-Gavitt
+  where: CSB 453
+  time: 12PM
+  wholink: https://www.linkedin.com/in/brendan-dolan-gavitt-3b68154/
+  description: >
+    Large language models are increasingly helping to automate vulnerability
+    discovery and exploit development in real-world software. However, naïvely
+    asking LLMs to identify vulnerabilities leads to a deluge of false positives
+    that can drown out real findings. In this talk, we will present techniques
+    that enable AI agents to find vulnerabilities at scale, fully autonomously
+    and with minimal false positives. The key to our approach is developing
+    robust exploit validators that can conclusively determine whether an exploit
+    claimed by the agent is real, allowing the agent to make arbitrarily many
+    attempts without  the amount of human effort needed to review the results.
+    Using these techniques, we were able to test thousands of web apps found on
+    Docker Hub, identifying over 200 zero days and obtaining multiple CVEs, and
+    identify vulnerabilities in black-box bug bounty targets from HackerOne,
+    identifying more than 1000 vulnerabilities and reaching the #1 rank in the
+    US on the HackerOne leaderboard.
+  bio: >
+    Brendan Dolan-Gavitt is an AI researcher at XBOW, where he helps build
+    agents to identify critical vulnerabilities in software before they can be
+    exploited by attackers (or attackers' agents!). Prior to joining XBOW, he
+    was an associate professor at NYU Tandon, researching software security and
+    machine learning.
 
 - title: 'Building Foundation Models at Scale: System Experiences and Challenges'
   tag: Seminar
