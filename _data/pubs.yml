@@ -31,6 +31,57 @@
 #
 # Project specific tags are fine as well.  For instance, precision interfaces has a custom "pi" tag 
 
+
+- title: "LLM Generated Persona Is a Promise With a Catch"
+  authors: Ang Li, Haozhe Chen, Hongseok Namkoong, Tianyi Peng
+  conf: NeurIPS 2025 (Position Paper)
+  pub_date: "2025-12-07"
+  tags:
+    - ai
+    - llm
+    - hci
+  url: https://arxiv.org/abs/2503.16527
+
+- title: "LLM Agents for Always-On Operating System Tuning"
+  authors: Georgios Liargkovas, Vahab Jabrayilov, Hubertus Franke, Kostis Kaffes
+  conf: NeurIPS 2025
+  pub_date: "2025-12-07"
+  tags:
+    - ai
+    - sys
+    - os
+  url: https://liargkovas.com/assets/pdf/Liargkovas_ML4Sys_NeurIPS25.pdf
+
+- title: "RAISE: Reliable Agent Improvement via Simulated Experience"
+  authors: Sahar Omidi Shayegan, Joshua Meyer, Victor Shih, Sebastian Sosa, Tianyi Peng, Kostis Kaffes, Eugene Wu, Andi Partovi, Mehdi Jamei
+  conf: NeurIPS 2025 (SEA Workshop)
+  pub_date: "2025-12-07"
+  tags:
+    - ai
+    - agents
+    - simulation
+  url: https://openreview.net/forum?id=53oRwdZe6k
+
+- title: "Q-learning with Posterior Sampling"
+  authors: Priyank Agrawal, Shipra Agrawal, Azmat Azati
+  conf: NeurIPS 2025
+  pub_date: "2025-12-07"
+  tags:
+    - ai
+    - rl
+    - theory
+  url: https://openreview.net/forum?id=XUca2I1n8C
+
+- title: "Touch in the Wild: Learning Fine-Grained Manipulation with a Portable Visuo-Tactile Gripper"
+  authors: Xinyue Zhu*, Binghao Huang*, Yunzhu Li
+  conf: NeurIPS 2025
+  pub_date: "2025-12-07"
+  tags:
+    - ai
+    - robotics
+    - multimodal
+  url: https://arxiv.org/abs/2507.15062
+
 - title: "Multi-Agent Markov Entanglement"
   authors: Shuze Chen, Tianyi Peng
   conf: NeurIPS 2025 (Spotlight)
