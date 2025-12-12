@@ -32,16 +32,6 @@
 # Project specific tags are fine as well.  For instance, precision interfaces has a custom "pi" tag 
 
 
-- title: "LLM Generated Persona Is a Promise With a Catch"
-  authors: Ang Li, Haozhe Chen, Hongseok Namkoong, Tianyi Peng
-  conf: NeurIPS 2025 (Position Paper)
-  pub_date: "2025-12-07"
-  tags:
-    - ai
-    - llm
-    - hci
-  url: https://arxiv.org/abs/2503.16527
-
 - title: "LLM Agents for Always-On Operating System Tuning"
   authors: Georgios Liargkovas, Vahab Jabrayilov, Hubertus Franke, Kostis Kaffes
   conf: NeurIPS 2025
