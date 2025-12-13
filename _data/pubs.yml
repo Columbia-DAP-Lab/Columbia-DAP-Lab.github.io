@@ -345,6 +345,16 @@
     - automation
     - hac
 
+  - title: "Diversity Helps Jailbreak Large Language Models"
+  authors: Weiliang Zhao, Daneil Ben-Levi, Wei Hao, Junfeng Yang, Chengzhi Mao
+  url: https://arxiv.org/pdf/2411.04223
+  conf: NAACL 2025
+  pub_date: "2025-05-01"
+  comment: Oral
+  tags:
+    - ai
+    - safety
+
 - title: Data Cleaning Using Large Language Models
   authors: Shuo Zhang, Zezhou Huang, Eugene Wu
   url: "https://www.dropbox.com/scl/fi/5abz3z48jx3gnrwe86qrx/datacleanwllm-dais25.pdf?rlkey=9mzvk9vi95hn2utbu9ecfj72x&dl=0"
