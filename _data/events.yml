@@ -11,6 +11,32 @@
 # slides: link to slides
 # 
 #
+
+- title: 'AI for IT Automation: Benchmarking and Agent Development Research @ IBM'
+  tag: Seminar
+  date: '2025-12-16'
+  who: Saurabh Jha, Yu Deng, Daby Sow
+  where: CSB 453
+  time: 12PM
+  description: >
+    IT outages remain frequent and expensive and stem from diverse causes spanning
+    network failures, third-party/cloud dependencies, configuration drift, and software
+    bugs—making automation uniquely challenging in the IT domain. This talk introduces
+    ITBench, an open and extensible benchmark of real-world IT automation scenarios
+    with a rigorous evaluation framework, designed to assess and improve LLM/agent
+    performance across SRE, FinOps, and security tasks—and to enable gym-style RL
+    fine-tuning.  We describe our broader benchmarking effort: how we operationalize
+    scenarios + environments, standardize evaluation, and build a community around
+    open-source agents and tooling to make results reproducible and comparable.
+    We also share our Kaggle leaderboards release (ITBench Snapshots)—a diagnosis-focused
+    subset intended to catalyze open evaluation and rapid iteration. The leaderboards
+    highlight a key reality: even strong models still struggle with end-to-end reliability,
+    and baseline performance remains far from "production-ready." Finally, we outline
+    how we're pushing beyond today's architectures—showing progress toward 80%+
+    accuracy in targeted settings—and why treating ITBench as a gym-like environment
+    is a practical path to train RL-driven agents that achieve higher accuracy at
+    lower cost.
+
 - title: 'Validation Techniques for Offensive Security Agents'
   tag: Seminar
   date: '2025-12-09'
