@@ -126,17 +126,34 @@
 
     Anish holds a Ph.D. in Computer Science from Stanford University and a B.Tech in Computer Science from IIT Bombay. Across more than a decade in AI, he has combined deep technical expertise with hands-on operational leadership, building products and teams across multiple domains of applied ML.
 
-
-
-- title: 'TBA'
+- title: 'Building Liquid AI'
   date: '2025-12-16'
   tag: Entrepreneurship
   time: 7PM
-  where: 451 Mudd
+  where: Davis Auditorium
   who: Ramin Hasani, Liquid AI
   role: Co-founder and CEO
   wholink: https://www.liquid.ai/team/ramin-hasani
-  description:
+  description: |
+    AI progress today is constrained by rising energy use, cost, latency, and complexity.
+    In this talk, I will share the scientific and entrepreneurial journey behind Liquid AI, an MIT
+    spin-off founded to rethink artificial intelligence from first principles. I will describe how
+    breakthroughs in brain-inspired, continuous-time neural networks enabled a new class of Liquid
+    Foundation Models that deliver high-quality multimodal intelligence with dramatically lower
+    compute, memory, and latency. The lecture will explore how these technical advances translate
+    into company-building strategy: designing models around hardware, deploying AI on-device and
+    at scale, and creating defensibility beyond the frontier-model race. I will conclude with
+    lessons on fundraising, partnerships, talent, and building sustainable AI businesses that can
+    operate at planetary scale.
+  bio: |
+    Ramin Hasani is the co-founder and CEO of Liquid AI and a research affiliate at MIT CSAIL.
+    Previously, he was jointly appointed as a Principal Machine Learning Scientist at the Vanguard
+    Group and a Research Affiliate at MIT CSAIL. Ramin's research focuses on robust deep learning
+    and decision-making in complex dynamical systems. Prior to that, he was a Postdoctoral Associate
+    at CSAIL MIT, leading research on modeling intelligence and sequential decision-making. He
+    received his Ph.D. degree with distinction in Computer Science from the Vienna University of
+    Technology, Austria. His Ph.D. dissertation and continued research on Liquid Neural Networks
+    got recognized internationally with numerous nominations and awards.
 
 - title: 'TBA'
   date: '2026-01-22'
