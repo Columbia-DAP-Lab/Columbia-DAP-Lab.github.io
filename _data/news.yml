@@ -9,23 +9,30 @@
 #   content: >
 #     Multi-line detailed information in Markdown format
 #
-    
-- title: >
-    Fall 2025 [AI Entrepreneurship Series](./entrepreneurship)
-  content: >
-    The DAPLab is organizing a series of events that bring together Columbia students, faculty, and industry partners to discuss the process of transitioning lessons from research and the classroom into products and value.
 
 - title: >
-    Fall 2025 DAPLab Research Seminar
+    Spring 2026 [AI Entrepreneurship Series](./entrepreneurship)
   content: >
-    The DAPlab's Tuesday 12PM research seminar in CSB 453 (CS Conference Room) invites speakers that can share cutting-edge agent-systems 
-    research or can talk about processes in their organizations and how they are trying to automate them.
+    The DAPLab is organizing a series of events that bring together Columbia students,
+    faculty, and industry partners to discuss the process of transitioning lessons from
+    research and the classroom into products and value.
 
 - title: >
-    Fall 2025 [Agentic System Made Real](https://www.cs.columbia.edu/~junfeng/25fa-e6113/) Course
+    Spring 2026 DAPLab Research Seminar
   content: >
-    This second iteration of the course will be led by [Junfeng Yang](https://www.cs.columbia.edu/~junfeng/), 
-    with a focus on security issues related to AI Agents. Check the Spring 2025 version [here](./events#250121-spring-2025-agentic-system-made-real-course).
+    The DAPlab's Tuesday 12PM research seminar in CSB 453 (CS Conference Room) invites speakers
+    that can share cutting-edge agent-systems research or can talk about processes in their
+    organizations and how they are trying to automate them.
+
+- title: >
+    Honorable Mention, CRA Outstanding Undergraduate Researcher Award
+  content: >
+    Congratulations to Tianle Zhou on earning an Honorable Mention in the 2025-2026 CRA Outstanding
+    Undergraduate Researcher Award, presented by the Computing Research Association (CRA). Zhou is
+    an undergraduate researcher in our DAPLab, where he works under the guidance of Prof. Eugene Wu
+    and Prof. Kostis Kaffes. His research focuses on understanding how autonomous agents can be
+    effectively supported in real-world, stateful system environments, as well as identifying the
+    limitations that arise when such agents are deployed for complex, multi-step tasks.
 
 - title: >
     [October 2025 Workshop](./workshop/2025-10)
