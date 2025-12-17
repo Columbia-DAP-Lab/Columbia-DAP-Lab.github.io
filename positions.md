@@ -8,7 +8,9 @@ layout: default
 ## Undergrad and MS Positions
 
 
-We regularly recruit strong Undergraduate and MS students interested in working with the DAPLab on agentic systems.  To match applicants to current projects and to evaluate your background, we have put together a list of projects and small tasks for you to complete.   Applicants should expect to commit _at least_ 10-15 hours a week and be self-motivated.  If you are interested, 
+We regularly recruit strong Undergraduate and MS students interested in working with the DAPLab on agentic systems.  To match applicants to current projects and to evaluate your background, we have put together a list of projects and small tasks for you to complete.   Applicants should expect to commit _at least_ 10-15 hours a week and be self-motivated.  
+
+If you are interested, 
 <a class="btn btn-sm btn-outline-primary" href="{{ site.ug_ms_application_url }}" target="_blank" rel="noopener noreferrer">Apply here</a> 
 
 ## Postdoc Research Position
