@@ -15,7 +15,7 @@
 - title: 'AI for IT Automation: Benchmarking and Agent Development Research @ IBM'
   tag: Seminar
   date: '2025-12-16'
-  who: Saurabh Jha, Yu Deng, Daby Sow
+  who: Saurabh Jha, Yu Deng, Daby Sow, Ruchi Mahindru
   where: CSB 453
   time: 12PM
   description: >
@@ -105,9 +105,25 @@
   who: Justin DeBrabant
   where: CSB 453
   time: 12PM
-  wholink:
-  description:
-  bio:
+  description: >
+    Modern enterprises increasingly rely on the ability to rapidly iterate and deploy custom
+    applications that tap into their core data assets. However, the transition from a "vibe coding"
+    prototype to a production-ready application remains a significant hurdle due to the complexities
+    of infrastructure management, security, and data governance. In this talk, Justin DeBrabant
+    will be discussing how Databricks Apps addresses this "last-mile" challenge by providing
+    a managed, serverless framework that allows developers to build and host applications directly
+    alongside their data. He will break down the operational friction caused by moving data to
+    external runtimes and demonstrate how integrating identity and governance into a single
+    platform accelerates the delivery of interactive data-intelligence tools.
+  bio: >
+    Justin DeBrabant is the the Director of Product Management at Databricks, where he leads
+    the initiative to enable developers to build data and AI applications directly on the
+    Lakehouse platform. He previously served as the Chief Product Officer at ActionIQ and
+    worked on the Big Data Platform at Two Sigma. He has also served as an Adjunct Professor at
+    the University of Massachusetts Dartmouth. He holds a Ph.D. in Computer Science from Brown
+    University, where his research focused on main-memory database architectures and "anti-caching"
+    techniques for high-performance transaction processing.
+
 
 - title: '2025 Undergraduate Computer and Data Science Research fair'
   tag: Workshop
