@@ -345,7 +345,7 @@
     - automation
     - hac
 
-  - title: "Diversity Helps Jailbreak Large Language Models"
+- title: "Diversity Helps Jailbreak Large Language Models"
   authors: Weiliang Zhao, Daneil Ben-Levi, Wei Hao, Junfeng Yang, Chengzhi Mao
   url: https://arxiv.org/pdf/2411.04223
   conf: NAACL 2025
