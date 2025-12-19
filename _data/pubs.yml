@@ -42,6 +42,17 @@
     - os
   url: https://liargkovas.com/assets/pdf/Liargkovas_ML4Sys_NeurIPS25.pdf
 
+- title: "A Decade of Systems for Human Data Interaction"
+  authors: Eugene Wu, Yiru Chen, Haneen Mohammed, Zezhou Huang
+  url: https://arxiv.org/abs/2511.15585
+  conf: ArXiV 2025
+  pub_date: "2025-11-19"
+  tags:
+    - ai
+    - sys
+    - hac
+
+
 - title: "RAISE: Reliable Agent Improvement via Simulated Experience"
   authors: Sahar Omidi Shayegan, Joshua Meyer, Victor Shih, Sebastian Sosa, Tianyi Peng, Kostis Kaffes, Eugene Wu, Andi Partovi, Mehdi Jamei
   conf: NeurIPS 2025 (SEA Workshop)
