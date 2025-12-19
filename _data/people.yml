@@ -198,10 +198,10 @@
   image: /files/images/avatar/jiaxiang_liu.jpeg
   category: Student
 
-- name: Haonan Peter Wang
-  homepage: https://www.linkedin.com/in/haonan-wang-3a5955237/
-  image: /files/images/avatar/haonan_wang.png
-  category: Student
+# - name: Haonan Peter Wang
+#   homepage: https://www.linkedin.com/in/haonan-wang-3a5955237/
+#   image: /files/images/avatar/haonan_wang.png
+#   category: Student
 
 - name: Haneen Mohammed
   homepage: https://www.linkedin.com/in/haneenmohammed/
