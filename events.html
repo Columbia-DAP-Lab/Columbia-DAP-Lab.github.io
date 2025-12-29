@@ -114,12 +114,19 @@ title: Events
               <span>{{ event.time }}  {{ event.date | date: "%B %d, %Y" }}</span>
               <span style="margin-left: 2em">{{ event.where }}</span>
             </p>
-            {% if event.description | strip != "tba" %}
-            <div class="markdown-content">
-              {{ event.description | markdownify }}
+            {% if event.description | strip != "tba" or event.bio %}
+            <div class="event-body clamped">
+              {% if event.description | strip != "tba" %}
+              <div class="markdown-content">
+                {{ event.description | markdownify }}
+              </div>
+              {% endif %}
+              {% if event.bio %}
+              <p>{{ event.bio | markdownify }}</p>
+              {% endif %}
             </div>
+            <button class="expand-btn">See more</button>
             {% endif %}
-            {% if event.bio %} <p>{{ event.bio | markdownify }}</p> {% endif %}
 
             <div class="mt-4">
               {% if event.video %}
@@ -176,10 +183,28 @@ title: Events
   color: white;
   border-color: #2563eb;
 }
+
+.event-body.clamped {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+}
+.expand-btn {
+  background: transparent;
+  border: none;
+  color: #2563eb;
+  cursor: pointer;
+  padding: 0;
+  margin-top: 0.25rem;
+  font-weight: 500;
+}
+.expand-btn:focus { outline: none; }
 </style>
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
+  // Event category filtering
   const buttons = document.querySelectorAll(".event-filter-btn");
   const items = document.querySelectorAll(".event-item");
 
@@ -199,6 +224,38 @@ document.addEventListener("DOMContentLoaded", function() {
         }
       });
     });
+  });
+
+  // Expand/collapse for past events
+  const expandBtns = document.querySelectorAll('.expand-btn');
+
+  // Hide expand button when the body doesn't overflow the clamped area
+  function updateExpandButtonVisibility(btn) {
+    const body = btn.previousElementSibling;
+    if (!body) return;
+    // If full content height fits within the (clamped) container, hide the button
+    if (body.scrollHeight <= body.clientHeight + 1) {
+      btn.style.display = 'none';
+    } else {
+      btn.style.display = '';
+    }
+  }
+
+  expandBtns.forEach(btn => {
+    // initial visibility check
+    updateExpandButtonVisibility(btn);
+
+    btn.addEventListener('click', () => {
+      const body = btn.previousElementSibling;
+      if (!body) return;
+      body.classList.toggle('clamped');
+      btn.textContent = body.classList.contains('clamped') ? 'See more' : 'See less';
+    });
+  });
+
+  // Re-check on resize (in case layout/line-wrap changes)
+  window.addEventListener('resize', () => {
+    expandBtns.forEach(updateExpandButtonVisibility);
   });
 });
 </script>
