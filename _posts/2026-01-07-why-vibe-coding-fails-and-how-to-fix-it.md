@@ -5,6 +5,7 @@ title: "Why Vibe Coding Fails and How to Fix It"
 date: 2026-01-07
 categories: [general]
 tags: [test]
+published: false
 ---
 
 <style>

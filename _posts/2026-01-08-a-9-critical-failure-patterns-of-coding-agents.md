@@ -5,6 +5,7 @@ title: "9 Critical Failure Patterns of Coding Agents"
 date: 2026-01-08
 categories: [general]
 tags: [test]
+published: false
 ---
 
 <style>

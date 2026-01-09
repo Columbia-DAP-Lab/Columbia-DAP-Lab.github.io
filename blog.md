@@ -56,10 +56,12 @@ ul li a:hover {
 
 <ul style="margin-left: 0px; padding-left: 0px; margin-top: 1em;">
   {% for post in site.posts %}
+    {% if post.published != false %}
   <li style="margin-bottom: 1em">
   <span class="date-pill">{{post.date|date: "%m/%d/%y"}}</span>
   <a href="{{ post.url }}">{{ post.title }}</a>
 </li>
+    {% endif %}
   {% endfor %}
 </ul>
 
