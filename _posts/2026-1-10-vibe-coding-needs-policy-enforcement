@@ -50,7 +50,7 @@ A lot of fixes are already out there, but none of them seem to work. **What all 
 
 Cursor Rules and Cline Memory Bank are two popular approaches that I’ve tried. @aashari’s [Cursor Rules](https://gist.github.com/aashari/07cc9c1b6c0debbeb4f4d94a3a81339e) gives agents a set of rules and prompt templates that force the agent to go through a cycle of plan -> code -> test -> debug -> reflect. But the problem is that the agents don’t follow the rules.  [Cline Memory bank](https://docs.cline.bot/prompting/cline-memory-bank) is a set of structured files that act as long-term memory for the AI, storing key information about your project like your coding conventions, spec details, preferences, project status, etc. However, the agent can disregard the memory! **These files are just add text -- they are not enforced.**
 
-**Without structures that enforce these behaviors to actually happen, agents will continue to misbehave**.** Plans aren’t followed. Policies conflict. Reflections are shallow. Context files grow huge and shallow. The agent ends up with more text, but not understanding!
+**Without structures that enforce these behaviors to actually happen, agents will continue to misbehave.** Plans aren’t followed. Policies conflict. Reflections are shallow. Context files grow huge and shallow. The agent ends up with more text, but not understanding!
 
 ## How Can We Solve This? 
 
