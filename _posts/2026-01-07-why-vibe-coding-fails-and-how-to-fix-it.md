@@ -5,7 +5,6 @@ title: "Why Vibe Coding Fails and How to Fix It"
 date: 2026-01-07
 categories: [general]
 tags: [test]
-published: false
 ---
 
 <style>
@@ -42,7 +41,7 @@ Unsurprisingly, our main insight is that vibe coding is not magic, and we need t
 
 This mini-blog series shares highlights from our current research on improving the process of vibe coding. We start with a detailed analysis of the critical failure patterns and then share two promising directions:
 
-1. **The 9 Critical Failure Patterns of Coding Agents.** We analyzed the top state-of-the-art agents (Cline, Claude, Cursor, Replit, and V0) and found 9 key failure patterns. The most serious and common problems were error handling and business logic. These are dangerous because they are often silent, where the code appears to run without errors, but the app doesn't actually do what the user asked.
+1. **[The 9 Critical Failure Patterns of Coding Agents.]({%link _posts/2026-01-08-a-9-critical-failure-patterns-of-coding-agents.md %})** We analyzed the top state-of-the-art agents (Cline, Claude, Cursor, Replit, and V0) and found 9 key failure patterns. The most serious and common problems were error handling and business logic. These are dangerous because they are often silent, where the code appears to run without errors, but the app doesn't actually do what the user asked.
 
 2. **Vibe Coding needs better transparency.** When a vibe-coding workflow fails, developers must be able to identify where things went wrong and fix issues, yet current tools provide little visibility into the underlying process. We show that transparency tools—such as workflow detection and improved execution visibility—can dramatically reduce debugging time and enable users to verify outputs without requiring deep coding expertise.
 
