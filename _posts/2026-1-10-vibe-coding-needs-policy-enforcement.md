@@ -24,19 +24,28 @@ nav img {
   display: inline !important;
   margin: 0 10px 0 0 !important;
 }
+
+.post-subtitle {
+  text-align: center;
+  font-size: 1.9rem;
+  font-weight: 700;
+  margin: 0.6rem 0 1.2rem;
+  color: #222;
+}
 </style>
 
-As Reya’s study showed, building applications isn’t just about producing outputs that look correct — it’s about enforcing policies. Modern coding agents can generate code that runs, and features that appear complete, while silently violating critical constraints. These violations are hard to see, but they’re exactly what lead to fragile systems, hidden bugs, and endless vibe-debugging. The problem isn’t that agents don’t know what to do – it’s that the rules they’re given are not binding. To make agents behave, we need systems that treat policies as first-class. This boils down to a simple pattern:
+As [Reya’s post]({% link _posts/2026-01-07-why-vibe-coding-fails-and-how-to-fix-it.md %}) post showed, building applications isn’t just about producing outputs that look correct — it’s about enforcing policies. Modern coding agents can generate code that runs, and features that appear complete, while silently violating critical constraints. These violations are hard to see, but they’re exactly what lead to fragile systems, hidden bugs, and endless vibe-debugging. The problem isn’t that agents don’t know what to do – it’s that the rules they’re given are not binding. To make agents behave, we need systems that treat policies as first-class. This boils down to a simple pattern:
 
-**Propose → Extract → Enforce.**
+<p class="post-subtitle">Propose → Extract → Enforce.</p>
 
 Agents can propose plans and solutions, but they must also extract the relevant policies — execution steps, coding conventions, clarification requirements — and enforce them for the agent to actually align with user intent. 
 
 ## The 4 Agent Behaviors that Cause Vibe-Coding Failures
 
-After vibe-coding with Cline, I isolated 4 recurring agent behaviors behind most vibe-coding failures: 
+Reya’s post surveys vibe-coding failures across many agents. Here, I focus on Cline (powered by Claude Sonnet 4-5), a vibe-coding tool I"m very fimilair with, as a concrete case. I isolated 4 recurring agent behaviors behind most vibe-coding failures: 
 
 ![problem behaviors]({{ site.baseurl }}/files/images/blog/2026-1-10-vibe-coding-needs-policy-enforcement/teaser.png)
+Here, I visualize a Cline interaction and highlight specific sequences where the agent deviates from intended behavior—skipping steps, ignoring conventions and style, making incorrect assumptions, or optimizing locally.
 
 - **Skipping steps**: The agent confidently says it will do something (“I’ll build the backend and the frontend!”) and then it will only build half. It claims it followed its own plan but quietly skips steps and forgets entire chunks of functionality; the policy exists implicitly, but isn’t enforced.
 - **Ignoring conventions and style**: Even with clear patterns in my codebase — and even with explicit rules — the AI can still go rogue. It adds docstrings when I never use them, rearranges my file structures, overengineers components, and generally doesn’t always code the way I code. The proper policies aren’t extracted and enforced.
@@ -48,7 +57,7 @@ After vibe-coding with Cline, I isolated 4 recurring agent behaviors behind most
 
 A lot of fixes are already out there, but none of them seem to work. **What all these solutions lack is an enforcement of agent policies, rules, and context.** 
 
-Cursor Rules and Cline Memory Bank are two popular approaches that I’ve tried. @aashari’s [Cursor Rules](https://gist.github.com/aashari/07cc9c1b6c0debbeb4f4d94a3a81339e) gives agents a set of rules and prompt templates that force the agent to go through a cycle of plan -> code -> test -> debug -> reflect. But the problem is that the agents don’t follow the rules.  [Cline Memory bank](https://docs.cline.bot/prompting/cline-memory-bank) is a set of structured files that act as long-term memory for the AI, storing key information about your project like your coding conventions, spec details, preferences, project status, etc. However, the agent can disregard the memory! **These files are just add text -- they are not enforced.**
+Cursor Rules and Cline Memory Bank are two popular approaches that I’ve tried. @aashari’s [Cursor Rules](https://gist.github.com/aashari/07cc9c1b6c0debbeb4f4d94a3a81339e) gives agents a set of rules and prompt templates that force the agent to go through a cycle of plan -> code -> test -> debug -> reflect. But the problem is that the agents don’t follow the rules.  [Cline Memory bank](https://docs.cline.bot/prompting/cline-memory-bank) is a set of structured files that act as long-term memory for the AI, storing key information about your project like your coding conventions, spec details, preferences, project status, etc. However, the agent can disregard the memory! **These files just add text -- they are not enforced.**
 
 **Without structures that enforce these behaviors to actually happen, agents will continue to misbehave.** Plans aren’t followed. Policies conflict. Reflections are shallow. Context files grow huge and shallow. The agent ends up with more text, but not understanding!
 
@@ -74,5 +83,5 @@ Cursor Rules and Cline Memory Bank are two popular approaches that I’ve tried.
 - **Attempted Solution**: Cursor Rules’ prompts ask the coding agent to think about a solution that would be globally compatible. Cline’s Memory Bank stores the project state and existing progress so the agent has more global context. This is a major improvement over raw LLMs — they find bugs faster and more reliably and build code with more foresight. However, for larger, more complex bugs, Cursor Rules identifies root causes, but doesn’t **enforce solving them the right way**. Without stepwise constraints, the agent can still write superficial fixes instead of actually repairing the flow.
 - **Real Solution**: Combine the solutions from the first three approaches. After detecting the root cause and planning out a solution, the agent must propose a plan and follow all the steps to fully implement the global solution end-to-end, extract the right policies to ask for help at the right times, and then enforce the policies to build out something that is aligned with our coding preferences.
 
-In the end, all of these solutions are just simple enforcement mechanisms that make the agent actually do what it claims. In the future, these mechanisms can also enable agents to reliably enforce safety, data, and security policies. Stay tuned for the next posts, where we'll break down the ways we've tried to fix these failures in real systems! 
+In the end, all of these solutions are just simple enforcement mechanisms that make the agent actually do what it claims. In the future, these mechanisms can also enable agents to reliably enforce safety, data, and security policies. Stay tuned for the next posts, where I’ll introduce a system that operationalizes these enforcement principles as the underlying basis for coding-agent behavior.
 
