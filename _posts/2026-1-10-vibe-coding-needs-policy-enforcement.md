@@ -63,6 +63,8 @@ Cursor Rules and Cline Memory Bank are two popular approaches that I’ve tried.
 
 ## How Can We Solve This? 
 
+Most vibe-coding failures can be fixed with a few simple tricks. Nothing fancy—just easy, practical ways to make agents actually follow the plan, respect style, and avoid dumb shortcuts. Here’s what I’ve found works.
+
 ### 1. Skipping Steps
 ![skipping steps]({{ site.baseurl }}/files/images/blog/2026-1-10-vibe-coding-needs-policy-enforcement/problem_1.png)
 - **Attempted Solution**: Cursor Rules and Cline Memory Bank both force agents to have a “thinking step”. They ask the agent to review the repository before generating a detailed plan that aligns with the spec requirements. However, the plan is not a binding policy – agents can completely disregard it by skipping steps and claiming the feature is done when the core behavior is missing, leaving the user to manually chase down the gaps. 
@@ -83,5 +85,6 @@ Cursor Rules and Cline Memory Bank are two popular approaches that I’ve tried.
 - **Attempted Solution**: Cursor Rules’ prompts ask the coding agent to think about a solution that would be globally compatible. Cline’s Memory Bank stores the project state and existing progress so the agent has more global context. This is a major improvement over raw LLMs — they find bugs faster and more reliably and build code with more foresight. However, for larger, more complex bugs, Cursor Rules identifies root causes, but doesn’t **enforce solving them the right way**. Without stepwise constraints, the agent can still write superficial fixes instead of actually repairing the flow.
 - **Real Solution**: Combine the solutions from the first three approaches. After detecting the root cause and planning out a solution, the agent must propose a plan and follow all the steps to fully implement the global solution end-to-end, extract the right policies to ask for help at the right times, and then enforce the policies to build out something that is aligned with our coding preferences.
 
-In the end, all of these solutions are just simple enforcement mechanisms that make the agent actually do what it claims. In the future, these mechanisms can also enable agents to reliably enforce safety, data, and security policies. Stay tuned for the next posts, where I’ll introduce a system that operationalizes these enforcement principles as the underlying basis for coding-agent behavior.
+In the end, all of these solutions are just simple enforcement mechanisms that make the agent actually do what it claims. In the future, these mechanisms can also enable agents to reliably enforce safety, data, and security policies. 
 
+What starts as small, practical fixes can scale: in the next posts, I’ll introduce a system that operationalizes these enforcement principles as the underlying basis for coding-agent behavior.
