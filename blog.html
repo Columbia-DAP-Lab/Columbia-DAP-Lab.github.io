@@ -1,0 +1,160 @@
+---
+layout: page
+color: '#0c6a99'
+logo: Blog
+urlprefix: .
+---
+<style>
+.peach { background: #FBE5D6; }
+.blue { background: #B4C7E7; }
+
+ul li {
+  margin-bottom: 1em;         /* Nice spacing between items */
+  padding-left: 0px;            /* Ensure no left padding */
+}
+
+ul li a:hover {
+  color: white;
+  background: #012169;
+  background: #009EFF;
+}
+
+
+ul {
+  list-style: none;           /* Remove bullets */
+  padding-left: 0;            /* Remove left margin/padding */
+  margin-left: 0;             /* Remove left margin */
+}
+
+.date-pill {
+  display: inline-block;
+  color: #009eff;
+  border-radius: 100px;      /* Fully rounded pill shape */
+  font-size: 0.85em;
+  font-weight: 600;
+  margin-right: 0.75em;       /* Space between pill and title */
+}
+
+ul li a {
+  text-decoration: underline;
+  color: inherit;
+}
+
+ul li a:hover {
+  color: white;
+  background: #012169;
+  padding: 0.25em 0.5em;
+  border-radius: 4px;
+}
+
+</style>
+
+
+<h1>DAPLab Blog</h1>
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-lg-3 col-md-4 d-none d-md-block">
+      {% include blog-sidebar.html %}
+    </div>
+
+    <div class="col-lg-9 col-md-8 blog-main" style="padding-left:2rem">
+
+      <style>
+      /* Blog-specific styles: prevent global .card:hover scale on this page */
+      .blog-main .card:hover {
+        transform: none !important;
+        transition: none !important;
+      }
+
+      /* Namespace potential blog-specific helpers */
+      .blog-card { border: none; }
+      /* Ensure images inside the blog main column respect column width */
+      .blog-main .card-content img,
+      .blog-main .latest-post img,
+      .blog-main .card-body img,
+      .blog-main .post-body img,
+      .blog-main .card-content picture,
+      .blog-main .card-content figure img {
+        max-width: 100% !important;
+        height: auto !important;
+        display: block !important;
+      }
+      .blog-main img.larger-image,
+      .blog-main img.hero-image {
+        max-width: 100% !important;
+        height: auto !important;
+      }
+      </style>
+
+      <div class="latest-post mt-4">
+        {% assign shown = false %}
+        {% for post in site.posts %}
+            {% if post.layout == "post" and post.published != false and shown == false %}
+            <article class="blog-card card">
+              <div class="card-body">
+                <h2 class="card-title"><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
+                <h6 class="card-subtitle mb-2 text-muted">{{ post.date | date: "%b %d, %Y" }}</h6>
+                {% if post.excerpt %}
+                <p class="card-text">{{ post.excerpt }}</p>
+                {% endif %}
+                <div class="card-content">{{ post.content }}</div>
+              </div>
+            </article>
+            {% assign shown = true %}
+            {% break %}
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+;(function(){
+  // Load a post into the latest-post container without navigating away.
+  function loadPost(url, push){
+    var container = document.querySelector('.latest-post');
+    if(!container) return;
+    container.innerHTML = '<div class="p-3">Loading…</div>';
+    fetch(url).then(function(r){ return r.text(); }).then(function(html){
+      try{
+        var parser = new DOMParser();
+        var doc = parser.parseFromString(html, 'text/html');
+        var meta = doc.querySelector('.post-meta');
+        var body = doc.querySelector('.post-body');
+        if(!body){ container.innerHTML = '<p>Unable to load post.</p>'; return; }
+
+        var article = document.createElement('article');
+        article.className = 'blog-card card';
+        var inner = document.createElement('div');
+        inner.className = 'card-body';
+        inner.innerHTML = (meta? meta.outerHTML : '') + body.innerHTML;
+        article.appendChild(inner);
+        container.innerHTML = '';
+        container.appendChild(article);
+
+        if(push) history.pushState({ post: url }, '', url);
+      }catch(e){ console.error(e); container.innerHTML = '<p>Error loading post.</p>'; }
+    }).catch(function(){ container.innerHTML = '<p>Error fetching post.</p>'; });
+  }
+
+  // Attach click handlers to sidebar links
+  function init(){
+    var links = document.querySelectorAll('.blog-sidebar a.blog-nav-link');
+    links.forEach(function(a){
+      a.addEventListener('click', function(e){
+        e.preventDefault();
+        var url = a.getAttribute('href');
+        if(url) loadPost(url, true);
+      });
+    });
+  }
+
+  window.addEventListener('DOMContentLoaded', init);
+
+  window.addEventListener('popstate', function(e){
+    if(e.state && e.state.post){ loadPost(e.state.post, false); }
+  });
+})();
+</script>

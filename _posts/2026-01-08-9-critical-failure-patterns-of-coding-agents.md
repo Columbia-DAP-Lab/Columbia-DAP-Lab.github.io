@@ -5,42 +5,12 @@ title: "9 Critical Failure Patterns of Coding Agents"
 date: 2026-01-08
 categories: [general]
 tags: [test]
+authors:
+  - name: "Reya Vir"
+    url: "https://reyavir.com"
+excerpt: "Nine recurring failure patterns we observed when using coding agents, and why they matter."
+slug: "9-critical-failure-patterns-of-coding-agents"
 ---
-
-# 9 Critical Failure Patterns of Coding Agents
-
-**Author:** [Reya Vir](https://reyavir.com)
-
-<style>
-.page-content img,
-main img {
-  max-width: 65%;
-  height: auto;
-  display: block;
-  margin: 1em auto;
-}
-
-.navbar img,
-nav img {
-  max-width: none !important;
-  height: 1.5em !important;
-  display: inline !important;
-  margin: 0 10px 0 0 !important;
-}
-
-.figure-caption {
-  text-align: center;
-  font-size: 0.9em;
-  font-style: italic;
-  color: #666;
-  margin-top: 0.5em;
-  margin-bottom: 1.5em;
-}
-
-.larger-image {
-  max-width: 80% !important;
-}
-</style>
 
 In this part of the mini series, we look at the specific failures that happen when you try to build real applications with AI. 
 

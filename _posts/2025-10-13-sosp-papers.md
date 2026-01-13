@@ -5,84 +5,10 @@ title: "Columbia DAPLab at SOSP 2025"
 date: 2025-10-13
 categories: [general]
 tags: [test]
+excerpt: "Highlights of DAPLab research presented at SOSP 2025 and related workshops."
+slug: "columbia-daplab-at-sosp-2025"
 ---
-
-<style>
-  h3 {
-    margin-top: 2em;
-    font-family: "Raleway";
-    font-weight: 400;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-}
-
-
-.hero-container {
-  position: relative;
-  width: 100%;
-  height: 300px;              /* Adjust height as needed */
-  overflow: hidden;
-  margin-bottom: 2em;
-  border-radius: 8px;         /* Optional: rounded corners */
-}
-
-.hero-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;          /* Ensures image covers the container */
-  object-position: center;    /* Centers the image */
-  max-width: 100%;            /* Ensures it doesn't exceed container width */
-}
-
-.hero-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(45deg, rgba(0, 0, 0, 0.6), rgba(0, 158, 255, 0.4));
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.hero-title {
-  color: white;
-  font-size: 3em;
-  font-weight: bold;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
-  margin: 0;
-  text-align: center;
-}
-
-/* Responsive design for smaller screens */
-@media (max-width: 768px) {
-  .hero-container {
-    height: 200px;            /* Smaller height on mobile */
-  }
-  
-  .hero-title {
-    font-size: 2em;           /* Smaller text on mobile */
-  }
-}
-
-@media (max-width: 480px) {
-  .hero-container {
-    height: 150px;            /* Even smaller on very small screens */
-  }
-  
-  .hero-title {
-    font-size: 1.5em;         /* Smaller text on very small screens */
-  }
-}
-</style>
-
-<div class="hero-container">
-  <img src="{{ site.baseurl }}/files/images/blog/sosp25.jpg" alt="SOSP 25" class="hero-image">
-</div>
-
-
-
+![SOSP2025]({{ site.baseurl }}/files/images/blog/sosp25.jpg)
 
 This October, the Data, Agents, and Processes Lab (DAPLab) at Columbia University will present a slate of new research at SOSP workshops, spanning agentic infrastructure and self-tuning kernels. Our work lays the foundation for a future agentic infrastructure that will enable the safe, reliable and efficient operation of LLM agents in real-world environments. Highlights below.
 
