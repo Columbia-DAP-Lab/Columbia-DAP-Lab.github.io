@@ -5,7 +5,6 @@ title: "Vibe Coding Needs Policy Enforcement"
 date: 2026-01-10
 categories: [general]
 tags: [test]
-published: false
 ---
 
 
