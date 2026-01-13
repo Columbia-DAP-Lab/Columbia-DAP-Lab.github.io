@@ -8,31 +8,8 @@ tags: [test]
 published: false
 ---
 
-<style>
-.page-content img,
-main img {
-  max-width: 55%;
-  height: auto;
-  display: block;
-  margin: 1em auto;
-}
 
-.navbar img,
-nav img {
-  max-width: none !important;
-  height: 1.5em !important;
-  display: inline !important;
-  margin: 0 10px 0 0 !important;
-}
 
-.post-subtitle {
-  text-align: center;
-  font-size: 1.9rem;
-  font-weight: 700;
-  margin: 0.6rem 0 1.2rem;
-  color: #222;
-}
-</style>
 
 As [Reya’s post]({% link _posts/2026-01-07-why-vibe-coding-fails-and-how-to-fix-it.md %}) post showed, building applications isn’t just about producing outputs that look correct — it’s about enforcing policies. Modern coding agents can generate code that runs, and features that appear complete, while silently violating critical constraints. These violations are hard to see, but they’re exactly what lead to fragile systems, hidden bugs, and endless vibe-debugging. The problem isn’t that agents don’t know what to do – it’s that the rules they’re given are not binding. To make agents behave, we need systems that treat policies as first-class. This boils down to a simple pattern:
 
