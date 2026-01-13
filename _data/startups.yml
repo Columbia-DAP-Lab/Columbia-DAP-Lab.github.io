@@ -1,3 +1,94 @@
+#
+#- title: 'TBA'
+#  date: '2026-01-22'
+#  tag: Entrepreneurship
+
+
+- title: 'TBA'
+  date: '2026-02-05'
+  tag: Entrepreneurship
+  time: 11AM
+  where: Davis Auditorium
+  who: Parag Agrawal, Parallel.ai
+  role: CEO and Cofounder
+  wholink: parallel.ai/
+  description:
+  bio: |
+    Parag Agrawal is the founder of Parallel Web Systems, a company unlocking the web for AI agents. Previously, he spent 11 years at Twitter, where he joined as an engineer before serving as CTO, 
+    and then CEO. Parag has a PhD from Stanford University in Computer Science and a Bachelor's degree in Computer Science and Engineering from IIT, Bombay. 
+
+- title: 'TBA'
+  date: '2026-02-19'
+  tag: Entrepreneurship
+  time: 11AM
+  where: Davis Auditorium
+  who: 🤔
+  role:
+  wholink:
+  description:
+  bio:
+
+- title: 'TBA'
+  date: '2026-03-05'
+  tag: Entrepreneurship
+  time: 11AM
+  where: Davis Auditorium
+  who: 🤔
+  role:
+  wholink:
+  description:
+  bio:
+
+- title: 'TBA'
+  date: '2026-03-19'
+  tag: Entrepreneurship
+  time: 11AM
+  where: Davis Auditorium
+  who: Neil Daswani, Firebolt Ventures
+  role: 
+  wholink: https://www.linkedin.com/in/daswani
+  description:
+  bio:
+
+- title: 'TBA'
+  date: '2026-04-02'
+  tag: Entrepreneurship
+  time: 11AM
+  where: Davis Auditorium
+  who: Sidharth Shanker, Baseten
+  role:
+  wholink:
+  description:
+  bio:
+
+- title: 'TBA'
+  date: '2026-04-16'
+  tag: Entrepreneurship
+  time: 11AM
+  where: Davis Auditorium
+  who: 🤔
+  role:
+  wholink:
+  description:
+  bio:
+
+- title: 'TBA'
+  date: '2026-04-30'
+  tag: Entrepreneurship
+  time: 11AM
+  where: Davis Auditorium
+  who: 🤔
+  role:
+  wholink:
+  description:
+  bio:
+
+
+
+
+
+
+
 - title: 'Focus is Everything - How to Effectively Navigate the AI Landscape'
   date: '2025-09-09'
   tag: Entrepreneurship
@@ -154,93 +245,3 @@
     received his Ph.D. degree with distinction in Computer Science from the Vienna University of
     Technology, Austria. His Ph.D. dissertation and continued research on Liquid Neural Networks
     got recognized internationally with numerous nominations and awards.
-
-- title: 'TBA'
-  date: '2026-01-22'
-  tag: Entrepreneurship
-  time: 11AM
-  where: Davis Auditorium
-  who: 🤔
-  role:
-  wholink:
-  description:
-  bio:
-
-- title: 'TBA'
-  date: '2026-02-05'
-  tag: Entrepreneurship
-  time: 11AM
-  where: Davis Auditorium
-  who: Parag Agrawal, Parallel.ai
-  role: CEO and Cofounder
-  wholink: parallel.ai/
-  description:
-  bio: |
-    Parag Agrawal is the founder of Parallel Web Systems, a company unlocking the web for AI agents. Previously, he spent 11 years at Twitter, where he joined as an engineer before serving as CTO, 
-    and then CEO. Parag has a PhD from Stanford University in Computer Science and a Bachelor's degree in Computer Science and Engineering from IIT, Bombay. 
-
-- title: 'TBA'
-  date: '2026-02-19'
-  tag: Entrepreneurship
-  time: 11AM
-  where: Davis Auditorium
-  who: 🤔
-  role:
-  wholink:
-  description:
-  bio:
-
-- title: 'TBA'
-  date: '2026-03-05'
-  tag: Entrepreneurship
-  time: 11AM
-  where: Davis Auditorium
-  who: 🤔
-  role:
-  wholink:
-  description:
-  bio:
-
-- title: 'TBA'
-  date: '2026-03-19'
-  tag: Entrepreneurship
-  time: 11AM
-  where: Davis Auditorium
-  who: Neil Daswani, Firebolt Ventures
-  role: 
-  wholink: https://www.linkedin.com/in/daswani
-  description:
-  bio:
-
-- title: 'TBA'
-  date: '2026-04-02'
-  tag: Entrepreneurship
-  time: 11AM
-  where: Davis Auditorium
-  who: Sidharth Shanker, Baseten
-  role:
-  wholink:
-  description:
-  bio:
-
-- title: 'TBA'
-  date: '2026-04-16'
-  tag: Entrepreneurship
-  time: 11AM
-  where: Davis Auditorium
-  who: 🤔
-  role:
-  wholink:
-  description:
-  bio:
-
-- title: 'TBA'
-  date: '2026-04-30'
-  tag: Entrepreneurship
-  time: 11AM
-  where: Davis Auditorium
-  who: 🤔
-  role:
-  wholink:
-  description:
-  bio:
