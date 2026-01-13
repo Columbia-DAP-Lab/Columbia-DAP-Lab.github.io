@@ -8,7 +8,7 @@ tags: [test]
 ---
 
 #  Vibe Coding Needs Policy Enforcement
-_By [Jenny Ma](https://gist.github.com/aashari/07cc9c1b6c0debbeb4f4d94a3a81339e)_
+**Author:** [Jenny Ma](https://gist.github.com/aashari/07cc9c1b6c0debbeb4f4d94a3a81339e)
 
 As [Reya’s post]({% link _posts/2026-01-07-why-vibe-coding-fails-and-how-to-fix-it.md %}) post showed, building applications isn’t just about producing outputs that look correct — it’s about enforcing policies. Modern coding agents can generate code that runs, and features that appear complete, while silently violating critical constraints. These violations are hard to see, but they’re exactly what lead to fragile systems, hidden bugs, and endless vibe-debugging. The problem isn’t that agents don’t know what to do – it’s that the rules they’re given are not binding. To make agents behave, we need systems that treat policies as first-class. This boils down to a simple pattern:
 
