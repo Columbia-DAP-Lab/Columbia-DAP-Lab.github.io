@@ -49,7 +49,7 @@ This mini-blog series shares highlights from our current research on improving t
 
 2. **Vibe Coding needs better transparency.** When a vibe-coding workflow fails, developers must be able to identify where things went wrong and fix issues, yet current tools provide little visibility into the underlying process. We show that transparency tools—such as workflow detection and improved execution visibility—can dramatically reduce debugging time and enable users to verify outputs without requiring deep coding expertise.
 
-3. **Vibe-Coding Needs Policy Enforcement.** Currently, vibe coding agents see your requirements as preferences, not as enforced policies. They don't do what they promised. To ensure reliable agent behavior, systems must treat policies as strict rules. Agents can propose plans and solutions, but the system should extract relevant policies and enforce them so that agent behavior truly aligns with user intent.
+3. **[Vibe-Coding Needs Policy Enforcement.]({%link _posts/2026-1-10-vibe-coding-needs-policy-enforcement.md %})** Currently, vibe coding agents see your requirements as preferences, not as enforced policies. They don't do what they promised. To ensure reliable agent behavior, systems must treat policies as strict rules. Agents can propose plans and solutions, but the system should extract relevant policies and enforce them so that agent behavior truly aligns with user intent.
 
 ## References
 
