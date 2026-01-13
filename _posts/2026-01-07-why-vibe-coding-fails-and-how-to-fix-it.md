@@ -9,7 +9,7 @@ tags: [test]
 
 # Why Vibe Coding Fails and How to Fix It
 
-**Authors:** [Reya Vir](https://reyavir.com), Jenny Ma, Riya Sahni, [Lydia Chilton](https://www.cs.columbia.edu/~chilton/chilton.html), [Eugene Wu](https://www.cs.columbia.edu/~ewu/), [Zhou Yu](https://www.cs.columbia.edu/~zhouyu/)
+**Authors:** [Reya Vir](https://reyavir.com), [Jenny Ma](https://jennygzma.github.io/), Riya Sahni, [Lydia Chilton](https://www.cs.columbia.edu/~chilton/chilton.html), [Eugene Wu](https://www.cs.columbia.edu/~ewu/), [Zhou Yu](https://www.cs.columbia.edu/~zhouyu/)
 
 <style>
 .page-content img,
