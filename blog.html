@@ -50,11 +50,10 @@ ul li a:hover {
 </style>
 
 
-<h1>DAPLab Blog</h1>
-
 <div class="container-fluid">
   <div class="row">
     <div class="col-lg-3 col-md-4 d-none d-md-block">
+      <h1>DAPLab Blog</h1>
       {% include blog-sidebar.html %}
     </div>
 
@@ -85,15 +84,55 @@ ul li a:hover {
         max-width: 100% !important;
         height: auto !important;
       }
+      .full-post-link {
+        position: absolute;
+        right: 1rem;
+        top: 0.6rem;
+        z-index: 2;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.25rem 0.5rem;
+        font-size: 1rem;
+        border-radius: 0.35rem;
+        color: #012169; /* dark blue text by default */
+        border: 1px solid rgba(1,33,105,0.18);
+        background: rgba(255,255,255,0.78); /* light glass so title under it remains readable */
+        backdrop-filter: blur(2px);
+        -webkit-backdrop-filter: blur(2px);
+      }
+      .blog-card { position: relative; }
+      .full-post-link:hover { background: rgba(1,33,105,0.12); color: #ffffff; text-decoration:none; }
+      .full-post-link.btn { color: #012169; background: rgba(255,255,255,0.78); border-color: rgba(1,33,105,0.18); }
+
+      /* Fade-in animation for JS-inserted posts */
+      @keyframes blogFadeIn {
+        from { opacity: 0; transform: translateY(6px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+      .fade-in {
+        animation: blogFadeIn 1s ease both;
+      }
       </style>
 
       <div class="latest-post mt-4">
         {% assign shown = false %}
+        {% comment %} Determine the latest post URL for JS-based loading. {% endcomment %}
+        {% assign latest_post = nil %}
+        {% for post in site.posts %}
+          {% if post.layout == "post" and post.published != false %}
+            {% assign latest_post = post %}
+            {% break %}
+          {% endif %}
+        {% endfor %}
+
         {% for post in site.posts %}
             {% if post.layout == "post" and post.published != false and shown == false %}
             <article class="blog-card card">
+              <a href="{{ post.url | relative_url }}" class="card-link full-post-link btn btn-sm btn-outline-primary"><small>Open full post</small></a>
               <div class="card-body">
-                <h2 class="card-title"><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
+                <h2 class="card-title">{{ post.title }}</h2>
                 <h6 class="card-subtitle mb-2 text-muted">{{ post.date | date: "%b %d, %Y" }}</h6>
                 {% if post.excerpt %}
                 <p class="card-text">{{ post.excerpt }}</p>
@@ -105,6 +144,7 @@ ul li a:hover {
             {% break %}
           {% endif %}
         {% endfor %}
+        <script>window.__latestPostForBlog = "{{ latest_post.url | relative_url }}";</script>
       </div>
     </div>
   </div>
@@ -127,12 +167,22 @@ ul li a:hover {
 
         var article = document.createElement('article');
         article.className = 'blog-card card';
+        var fullpostlink = doc.createElement('a');
+        fullpostlink.className = 'card-link full-post-link btn btn-sm btn-outline-primary';
+        fullpostlink.href = url;
+        fullpostlink.innerHTML = '<small>Open full post</small>';
+        article.appendChild(fullpostlink);
         var inner = document.createElement('div');
         inner.className = 'card-body';
         inner.innerHTML = (meta? meta.outerHTML : '') + body.innerHTML;
         article.appendChild(inner);
         container.innerHTML = '';
         container.appendChild(article);
+        // add fade-in animation to the newly inserted article
+        try{
+          article.classList.add('fade-in');
+          article.addEventListener('animationend', function(){ article.classList.remove('fade-in'); });
+        }catch(e){}
 
         if(push) history.pushState({ post: url }, '', url);
       }catch(e){ console.error(e); container.innerHTML = '<p>Error loading post.</p>'; }
@@ -149,6 +199,15 @@ ul li a:hover {
         if(url) loadPost(url, true);
       });
     });
+
+    // If a latest post URL is provided by Liquid, load it via JS for consistent rendering
+    try{
+      var latestUrl = window.__latestPostForBlog;
+      if(latestUrl){
+        var container = document.querySelector('.latest-post');
+        if(container){ setTimeout(function(){ loadPost(latestUrl, false); }, 50); }
+      }
+    }catch(e){/* ignore */}
   }
 
   window.addEventListener('DOMContentLoaded', init);
