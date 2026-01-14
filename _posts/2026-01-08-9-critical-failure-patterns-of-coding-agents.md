@@ -11,10 +11,15 @@ authors:
 excerpt: "Nine recurring failure patterns we observed when using coding agents, and why they matter."
 slug: "9-critical-failure-patterns-of-coding-agents"
 ---
+<style>
+.larger-image {
+  width: 80% !important;
+}
+</style>
 
-In this part of the mini series, we look at the specific failures that happen when you try to build real applications with AI. 
+In this part of the mini series, we look at the specific failures that happen when you try to build real applications with AI.
 
-![Critical failure patterns]({{ site.baseurl }}/files/images/blog/critical_failure_patterns.png)
+{% include blog-image.html file="critical_failure_patterns.png" alt="Critical failure patterns" %}
 
 <div class="figure-caption">Figure 1: The 9 critical failure patterns of coding agents and vibe-coding tools, distilled from hundreds of observed failures across 15+ applications.</div> 
 
@@ -189,7 +194,7 @@ The rest of this post describes each of the failure modes, along with an example
 
 Agents struggle to translate visual requests into code. Since they cannot see the interface, they often fail to understand spatial requests, like moving a button, resizing a component, or aligning items. This leads to layouts and styles that do not match what the user intended.
 
-<img src="{{ site.baseurl }}/files/images/blog/presentation.png" alt="Presentation & UI Grounding Mismatch" class="larger-image">
+{% include blog-image.html file="presentation.png" alt="Presentation & UI Grounding Mismatch" class="larger-image" %}
 
 Example: The user asks the agent to build a calendar and display it as a grid. The agent generates the correct calendar data, but displays the days in a single vertical line instead.
 
@@ -197,7 +202,7 @@ Example: The user asks the agent to build a calendar and display it as a grid. T
 
 As users interact with an application, the system must maintain the in-memory state that is reflected in the interface—for example, the contents of a shopping cart, the ordering of list items, or the current step in an installation flow. The agent often fails to manage shared state between components when refactoring and struggles to even understand what state to store and maintain.
 
-<img src="{{ site.baseurl }}/files/images/blog/state_management.png" alt="State Management Failures" class="larger-image">
+{% include blog-image.html file="state_management.png" alt="State Management Failures" class="larger-image" %}
 
 Example: In a to-do list app, a user drags Task 1 below Task 3 to reorder items. The agent updates part of the state but fails to reconcile the full list order, resulting in the wrong order.
 
@@ -205,7 +210,7 @@ Example: In a to-do list app, a user drags Task 1 below Task 3 to reorder items.
 
 Business logic is crucial and ubiquitous in every application. It defines the rules, permissions, and calculations needed for the use case. Unfortunately, despite its importance, agents often fail to correctly implement these core rules. They might write code that runs without errors, but it produces the wrong output because the underlying logic is flawed.
 
-<img src="{{ site.baseurl }}/files/images/blog/business_logic.png" alt="Business Logic Mismatch" class="larger-image">
+{% include blog-image.html file="business_logic.png" alt="Business Logic Mismatch" class="larger-image" %}
 
 Example: In a shopping application, the business rule requires a 10% discount to be applied to orders over $40, by applying the 10% off on the entire cart price (left side). The agent might miscalculate the shopping cart total by instead applying 10% to individual items that are over $40, resulting in incorrect pricing shown to the user (right side).
 
@@ -213,7 +218,7 @@ Example: In a shopping application, the business rule requires a 10% discount to
 
 Every application stores data in a database, but this requires designing a schema and issuing the appropriate SQL or database queries to query and update its contents. Despite considerable research and progress to improve natural language to SQL[<a href="#ref5">5</a>][<a href="#ref6">6</a>], vibe coding agents still struggle with data logic and fail to understand the data model (even one it generated itself!). This lack of schema awareness leads to poor database design, like creating redundant columns or failing to update the schema when new prompts are given.
 
-<img src="{{ site.baseurl }}/files/images/blog/data_management.png" alt="Data Management Errors" class="larger-image">
+{% include blog-image.html file="data_management.png" alt="Data Management Errors" class="larger-image" %}
 
 Example: The agent needs to update the status of a Jira ticket. The green box shows the database containing both a firestore_id and a jira_id. To correctly update the status, the agent should pass the jira_id into the update function (left). Instead, the agent gets confused and passes in the firestore_id (right), which leads to data retrieval errors.
 
@@ -221,7 +226,7 @@ Example: The agent needs to update the status of a Jira ticket. The green box sh
 
 Apps often need to communicate with external services, but agents frequently fail to call APIs correctly[<a href="#ref7">7</a>]. The agent may prioritize code that appears to cause changes in the UI, instead of code that functions as expected. For instance, it may hallucinate fake inputs like environment variables or API keys instead of asking for the real values.
 
-<img src="{{ site.baseurl }}/files/images/blog/api_externalservice.png" alt="API & External Service Integration Failures" class="larger-image">
+{% include blog-image.html file="api_externalservice.png" alt="API & External Service Integration Failures" class="larger-image" %}
 
 Example: In a Journal app, the user clicks the "Generate AI Summary" button to create a short summary title based on their current journal entry. The agent had implemented the feature using a placeholder key instead of asking for a real one, and so the call fails. Because the API call failed, the user is left with a default hardcoded response ("Today was a good day…") instead of the actual summary they expected.
 
@@ -229,7 +234,7 @@ Example: In a Journal app, the user clicks the "Generate AI Summary" button to c
 
 Agents often introduce security vulnerabilities – even basic ones. They lack an understanding of data sensitivity and access control. They choose the easiest way to answer users' queries rather, often ignoring safety checks. As a result, they frequently expose sensitive data like API keys, or misunderstanding access control.
 
-<img src="{{ site.baseurl }}/files/images/blog/security_vulnerabilities.png" alt="Security Vulnerabilities" class="larger-image">
+{% include blog-image.html file="security_vulnerabilities.png" alt="Security Vulnerabilities" class="larger-image" %}
 
 Example: A user interacts with a coding agent that has access to both public and private codebases. The agent fails to separate roles for a 'regular user' and an 'admin,' and accidentally provides answers from a private admin codebase to regular users, exposing internal data.
 
@@ -237,7 +242,7 @@ Example: A user interacts with a coding agent that has access to both public and
 
 Agents often write repeated code, adding duplicate functions with very similar logic rather than abstracting it. This leads to a confusing and unmaintainable codebase, making debugging harder for both the user and agent.
 
-<img src="{{ site.baseurl }}/files/images/blog/repeatedcode.png" alt="Repeated Code" class="larger-image">
+{% include blog-image.html file="repeatedcode.png" alt="Repeated Code" class="larger-image" %}
 
 Example: The agent duplicates the API setup code in both fetchUserData and fetchProductData instead of using a shared helper. This creates a maintenance burden: if the API token changes, the user must manually find and update it in every single function.
 
@@ -245,7 +250,7 @@ Example: The agent duplicates the API setup code in both fetchUserData and fetch
 
 Agents lose context in larger projects. As more files are added, the agent loses track of the overall architecture. As a result, the agent may mistakenly edit the wrong component or introduce breaking changes. We call this the lack of codebase awareness. As a byproduct, agents also fail to refactor code appropriately when adding or editing application features. For instance, they often re-implement an algorithm from scratch, rather than using a well-established software package.
 
-<img src="{{ site.baseurl }}/files/images/blog/codeawareness.png" alt="Codebase Awareness & Refactoring Issues" class="larger-image">
+{% include blog-image.html file="codeawareness.png" alt="Codebase Awareness & Refactoring Issues" class="larger-image" %}
 
 Example: In the figure, the agent needs to compute the edit distance between two strings. Rather than simply importing the existing editdistance library (left), the agent manually implements the entire Levenshtein algorithm from scratch (right). This adds unnecessary complexity, making the code harder to read, maintain, and debug.
 
@@ -253,7 +258,7 @@ Example: In the figure, the agent needs to compute the edit distance between two
 
 The agent prioritizes execution over correctness. Agents often implement just enough error handling so that the app runs end-to-end without crashing, but fails to inform the user when things go wrong. This creates code that convinces us it works because it runs. But in reality, the agent has failed to add proper logic (like clear failure messages or retry logic), leaving both the user and the agent blind to the error.
 
-<img src="{{ site.baseurl }}/files/images/blog/exception_handling.png" alt="Exception & Error Handling" class="larger-image">
+{% include blog-image.html file="exception_handling.png" alt="Exception & Error Handling" class="larger-image" %}
 
 Example: In a Journal App, the user clicks "Generate AI Summary" and the app fails in the backend. The agent's code catches the error but silently logs it in the developer console without updating the UI. The user is left seeing a stuck "Generating…" message, but the actual error is hidden in the developer console–a layer that vibe coders typically do not (and shouldn't have to) check.
 

@@ -10,6 +10,7 @@ authors:
   - name: "Jenny Ma"
     url: "https://jennygzma.github.io/"
   - name: "Riya Sahni"
+    url: "https://riyasahni.github.io/"
   - name: "Lydia Chilton"
     url: "https://www.cs.columbia.edu/~chilton/chilton.html"
   - name: "Eugene Wu"
@@ -22,13 +23,13 @@ slug: "why-vibe-coding-fails-and-how-to-fix-it"
 
 Vibe coding allows anyone – programmers and non-programmers alike – to write code. It's promised to 10x the productivity of software engineers [<a href="#ref1">1</a>]. Vibe coding editors like Cursor, Cline, and Replit develop complex coding agents to plan and write the code for you. But anyone who has actually used these tools knows that they are very limited. 
 
-![Vibe coding tweet 1]({{ site.baseurl }}/files/images/blog/vibe_coding_tweet1.png)
+{% include blog-image.html file="vibe_coding_tweet1.png" alt="Vibe coding tweet 1" %}
 
-![Vibe coding tweet 2]({{ site.baseurl }}/files/images/blog/vibe_coding_tweet2.png)
+{% include blog-image.html file="vibe_coding_tweet2.png" alt="Vibe coding tweet 2" %}
 
 The common refrain is that vibe coding gets you about 70% of the way there [<a href="#ref2">2</a>]. The first draft looks great, but as features get added, *as you try to iterate*, the application starts breaking, and a human still has to pick up the slack.
 
-![How to be a vibe coder]({{ site.baseurl }}/files/images/blog/how_to_be_a_vibe_coder.png)
+{% include blog-image.html file="how_to_be_a_vibe_coder.png" alt="How to be a vibe coder" %}
 
 The trillion-dollar question our labs and others are studying is thus: *Why do vibe coding agents fail?* And what innovations are needed to close the gap between where we are and the dream?
 

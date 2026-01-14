@@ -8,7 +8,7 @@ tags: [test]
 excerpt: "Highlights of DAPLab research presented at SOSP 2025 and related workshops."
 slug: "columbia-daplab-at-sosp-2025"
 ---
-![SOSP2025]({{ site.baseurl }}/files/images/blog/sosp25.jpg)
+{% include blog-image.html file="sosp25.jpg" alt="SOSP2025" %}
 
 This October, the Data, Agents, and Processes Lab (DAPLab) at Columbia University will present a slate of new research at SOSP workshops, spanning agentic infrastructure and self-tuning kernels. Our work lays the foundation for a future agentic infrastructure that will enable the safe, reliable and efficient operation of LLM agents in real-world environments. Highlights below.
 

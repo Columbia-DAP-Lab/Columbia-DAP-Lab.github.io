@@ -5,6 +5,7 @@
 
   {% if page.authors %}
     <div class="post-authors">
+      Authored by
         {% for a in page.authors %}
             {% if a.url %}
                 <a href="{{ a.url }}">{{ a.name }}</a>
@@ -28,5 +29,6 @@
 <style>
 .post-title{color:#003262;margin-top:0.5rem;}
 .post-authors{color:#555;margin-bottom:.2rem;}
+.post-authors a{color:#3c5577;text-decoration:none;}
 .post-excerpt{color:#666}
 </style>
