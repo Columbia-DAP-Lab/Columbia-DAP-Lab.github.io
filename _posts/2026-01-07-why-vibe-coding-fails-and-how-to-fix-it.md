@@ -4,40 +4,32 @@ color: '#0c6a99'
 title: "Why Vibe Coding Fails and How to Fix It"
 date: 2026-01-07
 categories: [general]
-tags: [test]
+authors:
+  - name: "Reya Vir"
+    url: "https://reyavir.com"
+  - name: "Jenny Ma"
+    url: "https://jennygzma.github.io/"
+  - name: "Riya Sahni"
+    url: "https://riyasahni.github.io/"
+  - name: "Lydia Chilton"
+    url: "https://www.cs.columbia.edu/~chilton/chilton.html"
+  - name: "Eugene Wu"
+    url: "https://www.cs.columbia.edu/~ewu/"
+  - name: "Zhou Yu"
+    url: "https://www.cs.columbia.edu/~zhouyu/"
+excerpt: "Why vibe coding often stalls during iteration: common failure patterns and fixes to make coding agents more reliable."
+slug: "why-vibe-coding-fails-and-how-to-fix-it"
 ---
-
-# Why Vibe Coding Fails and How to Fix It
-
-**Authors:** [Reya Vir](https://reyavir.com), [Jenny Ma](https://jennygzma.github.io/), Riya Sahni, [Lydia Chilton](https://www.cs.columbia.edu/~chilton/chilton.html), [Eugene Wu](https://www.cs.columbia.edu/~ewu/), [Zhou Yu](https://www.cs.columbia.edu/~zhouyu/)
-
-<style>
-.page-content img,
-main img {
-  max-width: 55%;
-  height: auto;
-  display: block;
-  margin: 1em auto;
-}
-
-.navbar img,
-nav img {
-  max-width: none !important;
-  height: 1.5em !important;
-  display: inline !important;
-  margin: 0 10px 0 0 !important;
-}
-</style>
 
 Vibe coding allows anyone – programmers and non-programmers alike – to write code. It's promised to 10x the productivity of software engineers [<a href="#ref1">1</a>]. Vibe coding editors like Cursor, Cline, and Replit develop complex coding agents to plan and write the code for you. But anyone who has actually used these tools knows that they are very limited. 
 
-![Vibe coding tweet 1]({{ site.baseurl }}/files/images/blog/vibe_coding_tweet1.png)
+{% include blog-image.html file="vibe_coding_tweet1.png" alt="Vibe coding tweet 1" %}
 
-![Vibe coding tweet 2]({{ site.baseurl }}/files/images/blog/vibe_coding_tweet2.png)
+{% include blog-image.html file="vibe_coding_tweet2.png" alt="Vibe coding tweet 2" %}
 
 The common refrain is that vibe coding gets you about 70% of the way there [<a href="#ref2">2</a>]. The first draft looks great, but as features get added, *as you try to iterate*, the application starts breaking, and a human still has to pick up the slack.
 
-![How to be a vibe coder]({{ site.baseurl }}/files/images/blog/how_to_be_a_vibe_coder.png)
+{% include blog-image.html file="how_to_be_a_vibe_coder.png" alt="How to be a vibe coder" %}
 
 The trillion-dollar question our labs and others are studying is thus: *Why do vibe coding agents fail?* And what innovations are needed to close the gap between where we are and the dream?
 
@@ -49,7 +41,7 @@ This mini-blog series shares highlights from our current research on improving t
 
 2. **Vibe Coding needs better transparency.** When a vibe-coding workflow fails, developers must be able to identify where things went wrong and fix issues, yet current tools provide little visibility into the underlying process. We show that transparency tools—such as workflow detection and improved execution visibility—can dramatically reduce debugging time and enable users to verify outputs without requiring deep coding expertise.
 
-3. **[Vibe-Coding Needs Policy Enforcement.]({%link _posts/2026-1-10-vibe-coding-needs-policy-enforcement.md %})** Currently, vibe coding agents see your requirements as preferences, not as enforced policies. They don't do what they promised. To ensure reliable agent behavior, systems must treat policies as strict rules. Agents can propose plans and solutions, but the system should extract relevant policies and enforce them so that agent behavior truly aligns with user intent.
+3. **[Vibe-Coding Needs Policy Enforcement.]({%link _posts/2026-01-10-vibe-coding-needs-policy-enforcement.md %})** Currently, vibe coding agents see your requirements as preferences, not as enforced policies. They don't do what they promised. To ensure reliable agent behavior, systems must treat policies as strict rules. Agents can propose plans and solutions, but the system should extract relevant policies and enforce them so that agent behavior truly aligns with user intent.
 
 ## References
 

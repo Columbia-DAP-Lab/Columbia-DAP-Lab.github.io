@@ -1,0 +1,15 @@
+{% comment %}
+
+Include: blog-image.html
+
+Usage:
+  {% include blog-image.html file="teaser.png" alt="Alt text" class="img-fluid" slug="custom-slug" %}
+
+  If `slug` omitted, uses `page.slug` (recommended to include `slug` in post front-matter).
+Generates: {{ site.baseurl }}/files/images/blog/{slug}/{file}
+
+{% endcomment %}
+
+{% assign img_slug = include.slug | default: page.slug %}
+{% assign img_path = site.baseurl | append: "/files/images/blog/" | append: img_slug | append: "/" | append: include.file %}
+<img src="{{ img_path }}" alt="{{ include.alt | default: '' }}" class="{{ include.class | default: 'img-fluid' }}" loading="{{ include.loading | default: 'lazy' }}">
