@@ -59,16 +59,22 @@ ul li a:hover {
 
     <div class="col-lg-9 col-md-8 blog-main" style="padding-left:2rem">
 
+      <!--
+      Important fix after 0cb51cb
+      Mobile: show simple list (non-AJAX) so users can navigate on small screens
+      -->
+      <div class="d-block d-md-none mb-3">
+        {% include blog-sidebar.html link_class="" container_class="" %}
+      </div>
+
       <style>
-      /* Blog-specific styles: prevent global .card:hover scale on this page */
+      /* Blog-specific styles */
       .blog-main .card:hover {
         transform: none !important;
         transition: none !important;
       }
 
-      /* Namespace potential blog-specific helpers */
       .blog-card { border: none; }
-      /* Ensure images inside the blog main column respect column width */
       .blog-main .card-content img,
       .blog-main .latest-post img,
       .blog-main .card-body img,
@@ -106,7 +112,6 @@ ul li a:hover {
       .full-post-link:hover { background: rgba(1,33,105,0.12); color: #ffffff; text-decoration:none; }
       .full-post-link.btn { color: #012169; background: rgba(255,255,255,0.78); border-color: rgba(1,33,105,0.18); }
 
-      /* Fade-in animation for JS-inserted posts */
       @keyframes blogFadeIn {
         from { opacity: 0; transform: translateY(6px); }
         to   { opacity: 1; transform: translateY(0); }
@@ -117,30 +122,11 @@ ul li a:hover {
       </style>
 
       <div class="latest-post mt-4">
-        {% assign shown = false %}
-        {% comment %} Determine the latest post URL for JS-based loading. {% endcomment %}
+        <!-- Determine the latest post URL for JS-based loading. -->
         {% assign latest_post = nil %}
         {% for post in site.posts %}
           {% if post.layout == "post" and post.published != false %}
             {% assign latest_post = post %}
-            {% break %}
-          {% endif %}
-        {% endfor %}
-
-        {% for post in site.posts %}
-            {% if post.layout == "post" and post.published != false and shown == false %}
-            <article class="blog-card card">
-              <a href="{{ post.url | relative_url }}" class="card-link full-post-link btn btn-sm btn-outline-primary"><small>Open full post</small></a>
-              <div class="card-body">
-                <h2 class="card-title">{{ post.title }}</h2>
-                <h6 class="card-subtitle mb-2 text-muted">{{ post.date | date: "%b %d, %Y" }}</h6>
-                {% if post.excerpt %}
-                <p class="card-text">{{ post.excerpt }}</p>
-                {% endif %}
-                <div class="card-content">{{ post.content }}</div>
-              </div>
-            </article>
-            {% assign shown = true %}
             {% break %}
           {% endif %}
         {% endfor %}
@@ -167,18 +153,20 @@ ul li a:hover {
 
         var article = document.createElement('article');
         article.className = 'blog-card card';
+        // Full-post link
         var fullpostlink = doc.createElement('a');
         fullpostlink.className = 'card-link full-post-link btn btn-sm btn-outline-primary';
         fullpostlink.href = url;
         fullpostlink.innerHTML = '<small>Open full post</small>';
         article.appendChild(fullpostlink);
+        // Main content
         var inner = document.createElement('div');
         inner.className = 'card-body';
         inner.innerHTML = (meta? meta.outerHTML : '') + body.innerHTML;
         article.appendChild(inner);
         container.innerHTML = '';
         container.appendChild(article);
-        // add fade-in animation to the newly inserted article
+        // Fade-in animation when rendering
         try{
           article.classList.add('fade-in');
           article.addEventListener('animationend', function(){ article.classList.remove('fade-in'); });
