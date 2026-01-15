@@ -53,26 +53,154 @@
         <div class="container-fluid">
           <div class="row">
             <div class="col-md-10 offset-md-1" style="margin-top: 2em">
-              {% include post-meta.html %}
 
-              <article class="post-body">
-                {{ content }}
-              </article>
+              <style>
+                .post-container {
+                  display: flex;
+                  gap: 2rem;
+                  align-items: flex-start;
+                }
+                .post-sidebar-toggle {
+                  background: none;
+                  border: none;
+                  font-size: 1.5rem;
+                  cursor: pointer;
+                  color: #012169;
+                  padding: 0.5rem;
+                  margin-bottom: 1rem;
+                  writing-mode: vertical-rl;
+                  text-orientation: mixed;
+                  min-height: 100px;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                }
+                .post-sidebar-toggle:hover {
+                  color: #0c6a99;
+                }
+                .post-sidebar-wrapper {
+                  flex-shrink: 0;
+                  overflow: hidden;
+                }
+                /* Desktop: sidebar expanded (normal width) */
+                .post-sidebar-wrapper.open {
+                  flex-basis: 250px;
+                }
+                /* Desktop: sidebar collapsed (only button visible) */
+                .post-sidebar-wrapper:not(.open) {
+                  flex-basis: 40px;
+                }
+                .post-sidebar-wrapper:not(.open) .blog-sidebar {
+                  display: none;
+                }
+                /* Article max-width for readability */
+                .post-content-wrapper {
+                  flex: 1 1 auto;
+                  min-width: 0;
+                  max-width: 900px;
+                  margin: 0 auto;
+                }
+                /* Mobile: different behavior */
+                @media (max-width: 768px) {
+                  .post-container {
+                    flex-direction: column;
+                    gap: 1rem;
+                    align-items: stretch;
+                  }
+                  .post-sidebar-toggle {
+                    writing-mode: horizontal-tb;
+                    text-orientation: unset;
+                    min-height: auto;
+                    padding: 0.75rem;
+                  }
+                  .post-sidebar-wrapper {
+                    flex-basis: auto;
+                  }
+                  .post-sidebar-wrapper.open {
+                    flex-basis: auto;
+                  }
+                  .post-sidebar-wrapper:not(.open) {
+                    flex-basis: auto;
+                    max-height: 50px;
+                    overflow: visible;
+                  }
+                  .post-sidebar-wrapper:not(.open) .blog-sidebar {
+                    display: none;
+                  }
+                }
+              </style>
+
+              <div class="post-container">
+                <div class="post-sidebar-wrapper">
+                  <button class="post-sidebar-toggle" aria-label="Toggle sidebar">☰ Posts</button>
+                  {% include blog-sidebar.html %}
+                </div>
+                <div class="post-content-wrapper">
+                  {% include post-meta.html %}
+                  <article class="post-body">
+                    {{ content }}
+                  </article>
+                </div>
+              </div>
+
+              <script>
+                (function() {
+                  var toggle = document.querySelector('.post-sidebar-toggle');
+                  var sidebar = document.querySelector('.post-sidebar-wrapper');
+                  if (toggle && sidebar) {
+                    // Default state: open on desktop, closed on mobile
+                    var isDesktop = window.innerWidth > 768;
+                    if (isDesktop) {
+                      sidebar.classList.add('open');
+                      toggle.textContent = '✕';
+                    } else {
+                      sidebar.classList.remove('open');
+                      toggle.textContent = '☰ Posts';
+                    }
+
+                    // Toggle handler
+                    toggle.addEventListener('click', function(e) {
+                      e.preventDefault();
+                      sidebar.classList.toggle('open');
+                      var isOpen = sidebar.classList.contains('open');
+                      if (window.innerWidth > 768) {
+                        toggle.textContent = isOpen ? '✕' : '☰';
+                      } else {
+                        toggle.textContent = isOpen ? '✕ Posts' : '☰ Posts';
+                      }
+                    });
+
+                    // Handle window resize
+                    window.addEventListener('resize', function() {
+                      var isDesktopNow = window.innerWidth > 768;
+                      var isOpen = sidebar.classList.contains('open');
+                      if (isDesktopNow && !isOpen) {
+                        // Auto-open on desktop, but keep toggle text as ☰
+                        sidebar.classList.add('open');
+                        toggle.textContent = '✕';
+                      } else if (!isDesktopNow && isOpen) {
+                        // Auto-close on mobile
+                        sidebar.classList.remove('open');
+                        toggle.textContent = '☰ Posts';
+                      }
+                    });
+                  }
+                })();
+              </script>
 
             </div>
           </div>
         </div>
       </div>
     </main>
-    
+
     <style>
     .page-content {
-      max-width: min(100ch, 100% - 2rem);
       margin-inline: auto;
     }
-    
+
     .post-body img { max-width: 100%; height: auto; display: block; margin: 1em auto; }
-    
+
     .navbar img,
     nav img {
       max-width: none !important;
@@ -80,7 +208,7 @@
       display: inline !important;
       margin: 0 10px 0 0 !important;
     }
-    
+
     .post-subtitle {
       text-align: center;
       font-size: 1.9rem;
@@ -89,9 +217,9 @@
       color: #222;
     }
     </style>
-    
-    
-    
+
+
+
     {%- include footer.html -%}
     <link rel="stylesheet" href="{{ "/files/css/style.css" | relative_url }}">
     {%- include includes.html -%}
