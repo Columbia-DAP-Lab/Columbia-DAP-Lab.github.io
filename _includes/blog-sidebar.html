@@ -25,4 +25,11 @@
 .blog-sidebar .list-group-item:hover { background: #f5f8ff; }
 .blog-sidebar h6 { font-size: 0.95rem; color: #012169; }
 .blog-sidebar p { margin: 0.2rem 0 0; }
+
+/* Mobile: remove sticky positioning to avoid scroll conflicts */
+@media (max-width: 768px) {
+  .blog-sidebar {
+    position: static !important;
+  }
+}
 </style>
