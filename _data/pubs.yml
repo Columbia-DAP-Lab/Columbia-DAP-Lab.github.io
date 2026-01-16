@@ -401,3 +401,12 @@
   tags: 
     - systems
     - networking
+
+- title: "SAGE: A Top-Down Bottom-Up Knowledge-Grounded User Simulator for Multi-turn AGent Evaluation"
+  authors: Ryan Shea, Yunan Lu, Liang Qiu, Zhou Yu
+  conf: EACL 2026
+  pub_date: "2025-10-13"
+  url: https://arxiv.org/abs/2510.11997
+  tags:
+    - ai
+    - digi-twin
