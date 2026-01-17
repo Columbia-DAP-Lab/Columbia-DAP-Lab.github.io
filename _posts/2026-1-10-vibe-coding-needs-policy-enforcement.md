@@ -10,7 +10,7 @@ tags: [test]
 #  Vibe Coding Needs Policy Enforcement
 **Author:** [Jenny Ma](https://jennygzma.github.io/)
 
-As [Reya’s post]({% link _posts/2026-01-07-why-vibe-coding-fails-and-how-to-fix-it.md %}) post showed, building applications isn’t just about producing outputs that look correct — it’s about enforcing policies. Modern coding agents can generate code that runs, and features that appear complete, while silently violating critical constraints. These violations are hard to see, but they’re exactly what lead to fragile systems, hidden bugs, and endless vibe-debugging. The problem isn’t that agents don’t know what to do – it’s that the rules they’re given are not binding. To make agents behave, we need systems that treat policies as first-class. This boils down to a simple pattern:
+As [Reya’s post]({% link _posts/2026-01-07-why-vibe-coding-fails-and-how-to-fix-it.md %}) showed, building applications isn’t just about producing outputs that look correct — it’s about enforcing policies. Modern coding agents can generate code that runs, and features that appear complete, while silently violating critical constraints. These violations are hard to see, but they’re exactly what lead to fragile systems, hidden bugs, and endless vibe-debugging. The problem isn’t that agents don’t know what to do – it’s that the rules they’re given are not binding. To make agents behave, we need systems that treat policies as first-class. This boils down to a simple pattern:
 
 <p class="post-subtitle">Propose → Extract → Enforce.</p>
 
@@ -18,7 +18,7 @@ Agents can propose plans and solutions, but they must also extract the relevant 
 
 ## The 4 Agent Behaviors that Cause Vibe-Coding Failures
 
-Reya’s post surveys vibe-coding failures across many agents. Here, I focus on Cline (powered by Claude Sonnet 4-5), a vibe-coding tool I"m very fimilair with, as a concrete case. I isolated 4 recurring agent behaviors behind most vibe-coding failures: 
+Reya’s post surveys vibe-coding failures across many agents. Here, I focus on Cline (powered by Claude Sonnet 4-5), a vibe-coding tool I'm very familiar with, as a concrete case. I isolated 4 recurring agent behaviors behind most vibe-coding failures: 
 
 ![problem behaviors]({{ site.baseurl }}/files/images/blog/2026-1-10-vibe-coding-needs-policy-enforcement/teaser.png)
 Here, I visualize a Cline interaction and highlight specific sequences where the agent deviates from intended behavior—skipping steps, ignoring conventions and style, making incorrect assumptions, or optimizing locally.
