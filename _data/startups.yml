@@ -13,7 +13,9 @@
   role: CEO and Cofounder
   wholink: https://parallel.ai/
   description:
-  bio: Parag Agrawal is the founder of Parallel Web Systems, a company unlocking the web for AI agents. Previously, he spent 11 years at Twitter, where he joined as an engineer before serving as CTO, and then CEO. Parag has a PhD from Stanford University in Computer Science and a Bachelor's degree in Computer Science and Engineering from IIT, Bombay. 
+  bio: |
+    Parag Agrawal is the founder of Parallel Web Systems, a company unlocking the web for AI agents. Previously, he spent 11 years at Twitter, where he joined as an engineer before serving as CTO, and then CEO. 
+    Parag has a PhD from Stanford University in Computer Science and a Bachelor's degree in Computer Science and Engineering from IIT, Bombay. 
 
 - title: 'TBA'
   date: '2026-02-19'

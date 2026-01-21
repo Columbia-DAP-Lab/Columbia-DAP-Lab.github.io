@@ -72,8 +72,8 @@ title: Columbia Engineering AI Entrepreneurship Series
           <p class="markdown-content">
             {{ event.description | markdownify }}
           </p>
-        {% if event.bio %} <p>{{ event.bio | markdownify }}</p> {% endif %}
         {% endif %}
+        {% if event.bio %} <p>{{ event.bio | markdownify }}</p> {% endif %}
       </div>
     {% endif %}
   {% endfor %}
