@@ -137,6 +137,16 @@
   category: Faculty
   field: [DBMI, HCI, AI for Health]
 
+- name: Zhuo Zhang
+  homepage: https://zzhang.xyz/
+  image: /files/images/avatar/zhuo.jpg
+  bio: >
+    Developed software security techniques that strengthen program assurance, enable precise
+    auditing, and improve vulnerability discovery. Recipient of the ACM SIGSAC Doctoral
+    Dissertation Award and a DEF CON CTF champion.
+  category: Faculty
+  field: [CS, Security, Software]
+
 # Advisory Board (Categorized under Faculty)
 
 - name: Richard Zemel
