@@ -43,7 +43,7 @@
     - massively parallel computation
 
 - title: "Group-realizable multi-group learning by minimizing empirical risk"
-  author: Navid Ardeshir, Samuel Deng, Daniel Hsu, Jingwen Liu
+  authors: Navid Ardeshir, Samuel Deng, Daniel Hsu, Jingwen Liu
   conf: ALT 2026
   pub_date: "2026-02-23"
   url: https://www.arxiv.org/abs/2601.16922
@@ -54,7 +54,7 @@
     - sample complexity
 
 - title: "Prior makes it possible: from sublinear graph algorithms to LLM test-time methods"
-  author: Avrim Blum, Daniel Hsu, Cyrus Rashtchian, Donya Saless
+  authors: Avrim Blum, Daniel Hsu, Cyrus Rashtchian, Donya Saless
   conf: AISTATS 2026
   pub_date: "2026-05-02"
   url: https://arxiv.org/abs/2510.16609
@@ -65,7 +65,7 @@
     - sublinear graph algorithms
 
 - title: "Panprediction: optimal predictions for any downstream task and loss"
-  author: Sivaraman Balakrishnan, Nika Haghtalab, Daniel Hsu, Brian Lee, Eric Zhao
+  authors: Sivaraman Balakrishnan, Nika Haghtalab, Daniel Hsu, Brian Lee, Eric Zhao
   conf: AISTATS 2026
   pub_date: "2026-05-02"
   url: https://arxiv.org/abs/2510.27638
