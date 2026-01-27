@@ -12,6 +12,30 @@
 # 
 #
 
+- title: 'AI Agents That Reverse Engineer Legacy Code at Scale'
+  tag: Seminar
+  date: '2026-01-27'
+  who: Asaf Bord
+  where: CSB 480
+  time: 12PM
+  description: >
+    Most enterprises still run mission-critical workloads on legacy systems—Informatica,
+    Sybase, COBOL, stored procedures, ETL pipelines written decades ago. Modernizing
+    them requires thousands of hours just to understand what the code does.
+    This talk presents a practical, deployed approach for building AI agents that analyze, map, and
+    explain legacy codebases with high reliability. Based on real production work
+    at a Fortune 100, we cover the architecture, evaluation patterns, safety guardrails,
+    and workflow design that make these agents viable. We also show how deploying them
+    through GitHub Copilot (GHCP) became both a technical accelerator and an organizational
+    adoption driver. Attendees will leave with a clear blueprint for how to make
+    agentic automation safe, predictable, and impactful in real modernization programs.
+  bio: >
+    Asaf Bord has 20+ years of experience in data and AI, working across startups
+    and enterprise companies like eBay, WeWork, and Northwestern Mutual. At
+    Northwestern Mutual, he leads the company's Data and GenAI efforts—from corporate
+    strategy to hands-on project delivery from POC to production. Asaf also
+    co-founded Multinear, an open-source platform for evaluating and maintaining GenAI systems.
+
 - title: 'AI for IT Automation: Benchmarking and Agent Development Research @ IBM'
   tag: Seminar
   date: '2025-12-16'
