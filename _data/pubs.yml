@@ -31,6 +31,49 @@
 #
 # Project specific tags are fine as well.  For instance, precision interfaces has a custom "pi" tag 
 
+- title: "Fast attention mechanisms: a tale of parallelism"
+  authors: Jingwen Liu, Hantao Yu, Clayton Sanford, Alexandr Andoni, Daniel Hsu
+  conf: NeurIPS 2025
+  pub_date: "2025-12-02"
+  url: https://arxiv.org/abs/2509.09001
+  tags:
+    - ai
+    - attention
+    - nearest-neighbor search
+    - massively parallel computation
+
+- title: "Group-realizable multi-group learning by minimizing empirical risk"
+  author: Navid Ardeshir, Samuel Deng, Daniel Hsu, Jingwen Liu
+  conf: ALT 2026
+  pub_date: "2026-02-23"
+  url: https://www.arxiv.org/abs/2601.16922
+  tags:
+    - ai
+    - multi-group learning
+    - empirical risk minimization
+    - sample complexity
+
+- title: "Prior makes it possible: from sublinear graph algorithms to LLM test-time methods"
+  author: Avrim Blum, Daniel Hsu, Cyrus Rashtchian, Donya Saless
+  conf: AISTATS 2026
+  pub_date: "2026-05-02"
+  url: https://arxiv.org/abs/2510.16609
+  tags:
+    - ai
+    - test-time augmentation
+    - retrieval augmented generation
+    - sublinear graph algorithms
+
+- title: "Panprediction: optimal predictions for any downstream task and loss"
+  author: Sivaraman Balakrishnan, Nika Haghtalab, Daniel Hsu, Brian Lee, Eric Zhao
+  conf: AISTATS 2026
+  pub_date: "2026-05-02"
+  url: https://arxiv.org/abs/2510.27638
+  tags:
+    - ai
+    - omniprediction
+    - multi-group learning
+    - multiobjective learning
 
 - title: "LLM Agents for Always-On Operating System Tuning"
   authors: Georgios Liargkovas, Vahab Jabrayilov, Hubertus Franke, Kostis Kaffes
