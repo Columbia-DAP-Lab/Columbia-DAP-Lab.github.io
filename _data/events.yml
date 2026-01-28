@@ -12,6 +12,33 @@
 # 
 #
 
+- title: 'We solved trust for AI Agents in 1973 (we just forgot)'
+  tag: Seminar
+  date: '2026-02-17'
+  who: Jacopo Tagliabue
+  where: CSB 453
+  time: 12PM
+  description: >
+    Most enterprises do not trust agents to operate on production data lakes:
+    as a result, data engineering is lagging behind the general programming population
+    in leveraging coding assistants and AI tools. We argue that the popular strategy
+    of trading generality for perceived trust is misguided: the agentic lakehouse
+    should happen without having to assume trust and global coordination at all.
+    We operationalize our agenda by re-interpreting in the OLAP world three insights
+    from the MVCC literature: process isolation, data versioning, declarative APIs.
+    Taken together, they allow a swarm of agents to perform safe and concurrent work
+    on production data. Going from theory to practice, we describe the core implementation
+    choices behind Bauplan - from git-for-data to transactional pipelines and SDK design -,
+    and share lessons learned and open problems from running data workloads at scale.
+  bio: >
+    Jacopo Tagliabue is the co-founder of Bauplan, a data and AI infrastructure company.
+    Previously, he co-founded Tooso (acquired by TSX:CVO), led Coveo's AI through its IPO,
+    and built Coveo Labs, whose libraries, models, and datasets have garnered thousands
+    of stars and millions of downloads. His research spans AI, NLP, information retrieval,
+    data management, and computer systems, with collaborations at Netflix, NVIDIA, Stanford,
+    and Wisconsin-Madison. While building Bauplan, he moonlights as a professor of ML Systems
+    at NYU (which is only notable because it's the only job he's ever had that his parents understand).
+
 - title: 'AI Agents That Reverse Engineer Legacy Code at Scale'
   tag: Seminar
   date: '2026-01-27'
