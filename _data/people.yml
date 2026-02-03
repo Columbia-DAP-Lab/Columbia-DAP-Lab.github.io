@@ -286,7 +286,7 @@
 - name: Anushka Bhatnagar
   homepage: https://anushkabhatnagar.github.io/
   image: /files/images/avatar/anushka_bhatnagar.jpg
-  category: Student
+  category: Student  # MS Graduted in Dec 2025
 
 - name: Eric Choi
   homepage: https://www.linkedin.com/in/eric-s-choi/
@@ -312,3 +312,8 @@
   homepage: https://www.linkedin.com/in/jinhui-liu-ai/
   image: /files/images/avatar/jinhui_liu.jpg
   category: Student
+
+- name: Yusen Zhang
+  homepage: https://yuszh.com
+  image: /files/images/avatar/yusen_zhang.jpg
+  category: Student  # Postdoc
