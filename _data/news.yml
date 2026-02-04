@@ -18,6 +18,14 @@
     research and the classroom into products and value.
 
 - title: >
+    DAPLab Receives Microsoft Azure Credit Award
+  content: >
+    DAPLab has received a $250K Microsoft Azure credit award through the AARI program to support
+    research on robust generalization in agentic AI. The funding enables work on environment
+    scaling and diversification to improve the reliability of agentic systems in real-world
+    deployments.
+
+- title: >
     Spring 2026 DAPLab Research Seminar
   content: >
     The DAPlab's Tuesday 12PM research seminar in CSB 453 (CS Conference Room) invites speakers
@@ -25,20 +33,13 @@
     organizations and how they are trying to automate them.
 
 - title: >
-    Honorable Mention, CRA Outstanding Undergraduate Researcher Award
+    Student Honors & Fellowships
   content: >
-    Congratulations to Tianle Zhou on earning an Honorable Mention in the 2025-2026 CRA Outstanding
-    Undergraduate Researcher Award, presented by the Computing Research Association (CRA). Zhou is
-    an undergraduate researcher in our DAPLab, where he works under the guidance of Prof. Eugene Wu
-    and Prof. Kostis Kaffes. His research focuses on understanding how autonomous agents can be
-    effectively supported in real-world, stateful system environments, as well as identifying the
-    limitations that arise when such agents are deployed for complex, multi-step tasks.
-
-- title: >
-    [October 2025 Workshop](./workshop/2025-10)
-  content: >
-    We plan to run the second iteration of our AI Agents for Work workshop in October 2025. 
-    The first day will be a public event with cutting edge research, war stories from deployments,
-    and engaging panels. The second day will be private for DAPLab industry partners to deeply 
-    engage with the students, faculty, and other partners.
+    Congratulations to DAPLab students on recent achievements:
+    [Jerry Jiaxiang Liu](https://jerrrrryl.github.io/) received an IBM PhD Fellowship for his work
+    on data lake agents, and
+    [Alex Jiakai Xu](https://alex-xjk.github.io/) received the AI & Autonomous Fellowship for
+    his work on AI and agentic systems.
+    [Tianle Zhou](https://www.linkedin.com/in/tian-le-zhou-99a145221/) earned an Honorable Mention
+    in the 2025-2026 CRA Outstanding Undergraduate Researcher Award.
 

@@ -175,7 +175,6 @@
     University, where his research focused on main-memory database architectures and "anti-caching"
     techniques for high-performance transaction processing.
 
-
 - title: '2025 Undergraduate Computer and Data Science Research fair'
   tag: Workshop
   date: '2025-11-06'
@@ -186,6 +185,23 @@
     Columbia University's many schools as well as Barnard College.  This is co-organized with 
     Columbia's [Data Science Institute](https://datascience.columbia.edu/), and check 
     [more details here](https://datascience.columbia.edu/events/undergraduate-research-fair-2025/)!
+
+- title: 'October 2025 Workshop: AI Agents for Work'
+  tag: Workshop
+  date: '2025-10-27'
+  time: 9AM
+  link: https://daplab.cs.columbia.edu/workshop/2025-10/
+  description: >
+    On October 27, 2025, DAPLab ran the second iteration of the AI Agents for Work workshop.
+    The two-day event brought together researchers, practitioners, students, faculty, and
+    industry partners to explore the latest advances and real-world deployments of agentic
+    AI systems.
+
+    The first day was a public program featuring cutting-edge research talks, war stories
+    from production deployments, and engaging panel discussions. The second day was a
+    private, invitation-only session for DAPLab industry partners, providing an opportunity
+    to deeply engage with Columbia students and faculty, as well as fellow partners, through
+    focused discussions and collaborative activities.
 
 - title: 'Disaggregated LLM Inference: Past, Present, and Future'
   tag: Seminar
@@ -221,7 +237,6 @@
     system adopted by major industry partners (including NVIDIA Dynamo, llm-d, etc.). 
     His broader work spans GPU scheduling, distributed inference frameworks, and 
     the design of next-generation serving systems for foundation models.
-
 
 - title: 'Keep Computing Systems Safe under Disruptive Agents'
   tag: Seminar
@@ -315,7 +330,6 @@
     Engineering and Computer Science and an M.S. in Physics, both from UC Berkeley. Most recently,
     he served as the Director of AI at System.com
 
-
 - title: 'MassGen: Multi-Agent Scaling System'
   tag: Seminar
   date: '2025-09-09'
@@ -350,23 +364,71 @@
     hands-on, entrepreneurial lens. Check the Spring 2025 version
     [here](./events#250121-spring-2025-agentic-system-made-real-course).
 
-- title: 'March 2025 Workshop: AI Agents for Work'
-  tag: Workshop
-  date: '2025-03-12'
-  time: 10AM
-  link: https://daplab.cs.columbia.edu/workshop/2025-03/
+- title: From Serving LLMs to Serving Agents on the Cloud
+  tag: Seminar
+  date: '2025-07-24'
+  time: 12PM
+  who: Xiaozhe Yao
   description: >
-    On March 12, 2025, DAPLab ran the first annual workshop at the Columbia Business
-    School.  The one-day workshop to brought together over 200 industry leaders, Columbia
-    faculty and students,  and technologists who are interested in the concept of
-    AI agents.
+    In this talk, I will discuss key challenges in building agentic AI systems in
+    the cloud. I will highlight DeltaZip, our recent work on efficiently deploying
+    multiple fine-tuned models -- a step we believe is essential toward enabling future
+    AI systems. The core insight behind DeltaZip is that fine-tuning often introduces
+    small-magnitude changes to a pre-trained model. By co-designing the serving system
+    and compression algorithm, DeltaZip achieves a 2x to 12x throughput improvement
+    over state-of-the-art systems. In addition to this project, I will share some
+    ongoing challenges we are tackling in this space.
 
-    Speakers and panelists come from enterprises that are deploying agentic solutions,
-    technologists  and infrastructure leaders, and researchers at leading AI labs
-    as well as Columbia.  These include [Jason Wei](https://www.linkedin.com/in/jason-wei-5a7323b0/)
-    from OpenAI who led  their chain-of-thought and agentic work, Danielle Perszyk
-    from Amazon AGI, Jonathan Frankle  from Databricks, Deepak Dastrala from Intellect,
-    [Cong Yu](https://www.linkedin.com/in/congyu)  who leads AI at Celonis, and more.
+    Xiaozhe Yao is a third-year doctoral student at Systems Group, Department of Computer
+    Science, ETH Zurich advised by Prof. Dr. Ana Klimović. His research explores the
+    complex and fundamental tensions between three pillars: from optimizing systems
+    for efficient ML, to improving data quality and organization for ML, to developing
+    frameworks that bridge the gap between algorithms and their practical deployment.
+    Through this multi-faceted approach, his work aims to better understand and build
+    AI systems.
+
+- title: 'The Road to High-Quality LLM Inference Services: System, Data, and Context'
+  who: Yizheng Jiao
+  date: '2025-07-17'
+  time: 12PM
+  description: >
+    This talk is about sharing the experience of building enterprise LLM inference
+    services including
+
+    1. high-level principles of increasing performance and saving costs
+    2. a data selection algorithm to finetune LLM to increase the accuracy of domain-specific questions
+    3. a method to enhance users' prompt with domain-specific knowledge bases.
+
+    Yizheng Jiao graduated from UNC Chapel Hill with a doctoral degree in 2022. He
+    joined Bytedance  after graduation and am doing research on LLM systems. His goal
+    is to build efficient and  accurate LLM services with experience includes LLM
+    inference systems, data selection for LLM  finetuning, and prompt optimization.
+
+- title: 'Multi-Agent Systems in the Era of LLMs: Testbeds, Applications, and Beyond'
+  who: Yusen Zhang
+  date: '2025-07-10'
+  time: 12PM
+  description: >
+    Autonomous agents powered by large language models (LLMs) are emerging
+    as powerful tools for a  wide range of tasks. However, a single agent often
+    faces performance ceilings, especially when  tackling complex workflows like
+    running an AI company or AI4Research, and is inherently limited  in scenarios
+    that involve multiple instances, such as simulations, embodied agents, and digital
+    twins. In this talk, I will present Multi-Agent Large Language Models (MA-LLMs),
+    a promising  paradigm designed to overcome the fundamental limitations of single-agent
+    systems. I will begin  by highlighting three threads of my previous work that
+    lay the groundwork for MA-LLMs. Next,  I'll introduce our research on fairness
+    summarization, which demonstrates challenges that a  single agent struggles
+    to handle well. Then, I will present how agents can collaborate in a  chain-of-agent
+    manner to solve difficult tasks, such as long-document summarization and  multi-step
+    reasoning. Finally, I will reflect on current limitations in MA-LLMs and outline
+    my  long-term vision of building Agent Societies: a human-centric society consisting
+    of scalable,  trustworthy, and collaborative intelligent agents and humans.  
+    
+    Yusen Zhang is a fourth-year CS PhD student at Penn State University, advised
+    by Dr. Rui Zhang.  He has done industry research internships at Amazon, Microsoft,
+    and Google. He also worked  closely with Dr. Dragomir Radev. He received his
+    master's degree from Emory University,  advised by Dr. Jinho D. Choi.
 
 - title: 'Efficient Fine-Tuning and Compression of Large Language Models: Towards Low-bit and Ultra-Low Parameter Solutions'
   who: Jiajun Zhou
@@ -397,71 +459,23 @@
     published extensively in AI and hardware  acceleration venues, including NAACL,
     IEEE FCCM, and IEEE TCAD.\n"
 
-- title: 'Multi-Agent Systems in the Era of LLMs: Testbeds, Applications, and Beyond'
-  who: Yusen Zhang
-  date: '2025-07-10'
-  time: 12PM
+- title: 'March 2025 Workshop: AI Agents for Work'
+  tag: Workshop
+  date: '2025-03-12'
+  time: 10AM
+  link: https://daplab.cs.columbia.edu/workshop/2025-03/
   description: >
-    Autonomous agents powered by large language models (LLMs) are emerging
-    as powerful tools for a  wide range of tasks. However, a single agent often
-    faces performance ceilings, especially when  tackling complex workflows like
-    running an AI company or AI4Research, and is inherently limited  in scenarios
-    that involve multiple instances, such as simulations, embodied agents, and digital
-    twins. In this talk, I will present Multi-Agent Large Language Models (MA-LLMs),
-    a promising  paradigm designed to overcome the fundamental limitations of single-agent
-    systems. I will begin  by highlighting three threads of my previous work that
-    lay the groundwork for MA-LLMs. Next,  I'll introduce our research on fairness
-    summarization, which demonstrates challenges that a  single agent struggles
-    to handle well. Then, I will present how agents can collaborate in a  chain-of-agent
-    manner to solve difficult tasks, such as long-document summarization and  multi-step
-    reasoning. Finally, I will reflect on current limitations in MA-LLMs and outline
-    my  long-term vision of building Agent Societies: a human-centric society consisting
-    of scalable,  trustworthy, and collaborative intelligent agents and humans.  
-    
-    Yusen Zhang is a fourth-year CS PhD student at Penn State University, advised
-    by Dr. Rui Zhang.  He has done industry research internships at Amazon, Microsoft,
-    and Google. He also worked  closely with Dr. Dragomir Radev. He received his
-    master's degree from Emory University,  advised by Dr. Jinho D. Choi.
+    On March 12, 2025, DAPLab ran the first annual workshop at the Columbia Business
+    School.  The one-day workshop to brought together over 200 industry leaders, Columbia
+    faculty and students,  and technologists who are interested in the concept of
+    AI agents.
 
-- title: 'The Road to High-Quality LLM Inference Services: System, Data, and Context'
-  who: Yizheng Jiao
-  date: '2025-07-17'
-  time: 12PM
-  description: >
-    This talk is about sharing the experience of building enterprise LLM inference
-    services including
-
-    1. high-level principles of increasing performance and saving costs
-    2. a data selection algorithm to finetune LLM to increase the accuracy of domain-specific questions
-    3. a method to enhance users' prompt with domain-specific knowledge bases.
-
-    Yizheng Jiao graduated from UNC Chapel Hill with a doctoral degree in 2022. He
-    joined Bytedance  after graduation and am doing research on LLM systems. His goal
-    is to build efficient and  accurate LLM services with experience includes LLM
-    inference systems, data selection for LLM  finetuning, and prompt optimization.
-
-- title: From Serving LLMs to Serving Agents on the Cloud
-  tag: Seminar
-  date: '2025-07-24'
-  time: 12PM
-  who: Xiaozhe Yao
-  description: >
-    In this talk, I will discuss key challenges in building agentic AI systems in
-    the cloud. I will highlight DeltaZip, our recent work on efficiently deploying
-    multiple fine-tuned models -- a step we believe is essential toward enabling future
-    AI systems. The core insight behind DeltaZip is that fine-tuning often introduces
-    small-magnitude changes to a pre-trained model. By co-designing the serving system
-    and compression algorithm, DeltaZip achieves a 2x to 12x throughput improvement
-    over state-of-the-art systems. In addition to this project, I will share some
-    ongoing challenges we are tackling in this space.
-
-    Xiaozhe Yao is a third-year doctoral student at Systems Group, Department of Computer
-    Science, ETH Zurich advised by Prof. Dr. Ana Klimović. His research explores the
-    complex and fundamental tensions between three pillars: from optimizing systems
-    for efficient ML, to improving data quality and organization for ML, to developing
-    frameworks that bridge the gap between algorithms and their practical deployment.
-    Through this multi-faceted approach, his work aims to better understand and build
-    AI systems.
+    Speakers and panelists come from enterprises that are deploying agentic solutions,
+    technologists  and infrastructure leaders, and researchers at leading AI labs
+    as well as Columbia.  These include [Jason Wei](https://www.linkedin.com/in/jason-wei-5a7323b0/)
+    from OpenAI who led  their chain-of-thought and agentic work, Danielle Perszyk
+    from Amazon AGI, Jonathan Frankle  from Databricks, Deepak Dastrala from Intellect,
+    [Cong Yu](https://www.linkedin.com/in/congyu)  who leads AI at Celonis, and more.
 
 - title: Spring 2025 Agentic System Made Real Course
   tag: Course

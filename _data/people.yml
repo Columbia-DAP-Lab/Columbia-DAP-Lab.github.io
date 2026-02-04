@@ -168,152 +168,165 @@
   category: Faculty
   field: [Advisory Board, CS, UChicago]
 
-# Students
+# Postdoc
+
+- name: Yusen Zhang
+  homepage: https://yuszh.com
+  image: /files/images/avatar/yusen_zhang.png
+  category: Postdoc
+
+# Ph.D.
 
 - name: Jiakai Xu
   homepage: https://alex-xjk.github.io/
   image: /files/images/avatar/jiakai_xu.jpg
-  category: Student
+  category: PhD
 
 - name: Georgios Liargkovas
   homepage: https://liargkovas.com/
   image: /files/images/avatar/georgios_liargkovas.jpg
-  category: Student
+  category: PhD
 
 - name: Nikos Pagonas
   homepage: https://nikpag.github.io/
   image: /files/images/avatar/nikos_pagonas.jpeg
-  category: Student
+  category: PhD
 
 - name: Jenny Ma
   homepage: https://jennygzma.github.io/
   image: /files/images/avatar/jenny_ma.jpeg
-  category: Student
+  category: PhD
 
 - name: Ryan Shea
   image: /files/images/avatar/ryan_shea.jpg
-  category: Student
+  category: PhD
 
 - name: Matthew Toles
   homepage: https://matoles.com/
   image: /files/images/avatar/matthew_toles.jpg
-  category: Student
+  category: PhD
 
 - name: Yuhang Wu
   image: /files/images/avatar/yuhang_wu.JPG
-  category: Student
+  category: PhD
 
 - name: Jiaxiang Jerry Liu
   homepage: https://jerrrrryl.github.io/
   image: /files/images/avatar/jiaxiang_liu.jpeg
-  category: Student
+  category: PhD
 
 # - name: Haonan Peter Wang
 #   homepage: https://www.linkedin.com/in/haonan-wang-3a5955237/
 #   image: /files/images/avatar/haonan_wang.png
-#   category: Student
+#   category: PhD
 
 - name: Haneen Mohammed
   homepage: https://www.linkedin.com/in/haneenmohammed/
   image: /files/images/avatar/haneen_mohammed.jpeg
-  category: Student
+  category: PhD
 
 - name: Reya Vir
   homepage: https://www.linkedin.com/in/reyavir/
   image: /files/images/avatar/reya_vir.avif
-  category: Student
+  category: PhD
 
 - name: Chenxi Huang
   homepage: https://chenxi-huang.com/
   image: /files/images/avatar/chenxi_huang.jpeg
-  category: Student
+  category: PhD
 
 - name: Weiliang Zhao
   homepage: https://www.cs.columbia.edu/~wz2665/weiliang.html
   image: /files/images/avatar/weiliang_zhao.jpg
-  category: Student
+  category: PhD
 
 - name: Elaine Ang
   homepage: https://www.linkedin.com/in/elaine-ang-57077694/
   image: /files/images/avatar/elaine_ang.jpeg
-  category: Student
+  category: PhD
+
+- name: Yunan Lu
+  homepage: https://www.linkedin.com/in/luyunan/
+  image: /files/images/avatar/yunan_lu.jpg
+  category: PhD
+
+- name: Charlie Summers
+  homepage: https://www.linkedin.com/in/charliesummers/
+  image: /files/images/avatar/charlie_summers.jpeg
+  category: PhD
+
+- name: Naimeng Ye
+  homepage: https://naimengye.github.io/
+  image: /files/images/avatar/naimeng_ye.jpg
+  category: PhD
+
+- name: Vivian Liu
+  homepage: https://vivian-liu.com/
+  image: /files/images/avatar/vivian_liu.png
+  category: PhD
+
+- name: Tao Long
+  homepage: https://iamtaolong.github.io/
+  image: /files/images/avatar/tao_long.jpeg
+  category: PhD
+
+- name: Sitong Wang
+  homepage: https://sitong-wang.github.io/
+  image: /files/images/avatar/sitong_wang.jpg
+  category: PhD
+
+- name: Vahab Jabrayilov
+  homepage: https://vjabrayilov.github.io/
+  image: /files/images/avatar/vahab_jabrayilov.jpg
+  category: PhD
+
+- name: Karthik Sreedhar
+  homepage: https://www.linkedin.com/in/karthik-sreedhar/
+  image: /files/images/avatar/karthik_sreedhar.jpg
+  category: PhD
+
+- name: Alex Mathai
+  homepage: https://alexmathai.com
+  image: /files/images/avatar/alex_mathai.png
+  category: PhD
+
+- name: Riya Sahni
+  homepage: https://riyasahni.github.io/
+  image: /files/images/avatar/riya_sahni.jpg
+  category: PhD
+
+- name: Jinhui Liu
+  homepage: https://www.linkedin.com/in/jinhui-liu-ai/
+  image: /files/images/avatar/jinhui_liu.jpg
+  category: PhD
+
+# MS/Undergraduate Students
 
 - name: Tianle Zhou
   homepage: https://www.linkedin.com/in/tian-le-zhou-99a145221/
   image: /files/images/avatar/tianle_zhou.png
   category: Student
-
-- name: Yunan Lu
-  homepage: https://www.linkedin.com/in/luyunan/
-  image: /files/images/avatar/yunan_lu.jpg
-  category: Student
-
-- name: Charlie Summers
-  homepage: https://www.linkedin.com/in/charliesummers/
-  image: /files/images/avatar/charlie_summers.jpeg
-  category: Student
-
-- name: Naimeng Ye
-  homepage: https://naimengye.github.io/
-  image: /files/images/avatar/naimeng_ye.jpg
-  category: Student
-
-- name: Vivian Liu
-  homepage: https://vivian-liu.com/
-  image: /files/images/avatar/vivian_liu.png
-  category: Student
-
-- name: Tao Long
-  homepage: https://iamtaolong.github.io/
-  image: /files/images/avatar/tao_long.jpeg
-  category: Student
-
-- name: Sitong Wang
-  homepage: https://sitong-wang.github.io/
-  image: /files/images/avatar/sitong_wang.jpg
-  category: Student
-
-- name: Vahab Jabrayilov
-  homepage: https://vjabrayilov.github.io/
-  image: /files/images/avatar/vahab_jabrayilov.jpg
-  category: Student
-
-- name: Arnav Ahuja
-  homepage: https://arnavahuja.github.io/
-  image: /files/images/avatar/arnav_ahuja.jpeg
-  category: Student
-
-- name: Anushka Bhatnagar
-  homepage: https://anushkabhatnagar.github.io/
-  image: /files/images/avatar/anushka_bhatnagar.jpg
-  category: Student  # MS Graduted in Dec 2025
+  advisor:
+    - Eugene Wu
 
 - name: Eric Choi
   homepage: https://www.linkedin.com/in/eric-s-choi/
   image: /files/images/avatar/eric_choi.jpeg
   category: Student
+  advisor:
+    - Eugene Wu
 
-- name: Karthik Sreedhar
-  homepage: https://www.linkedin.com/in/karthik-sreedhar/
-  image: /files/images/avatar/karthik_sreedhar.jpg
+- name: Anushka Bhatnagar
+  homepage: https://anushkabhatnagar.github.io/
+  image: /files/images/avatar/anushka_bhatnagar.jpg
   category: Student
+  advisor:
+    - Lydia Chilton
 
-- name: Alex Mathai
-  homepage: https://alexmathai.com
-  image: /files/images/avatar/alex_mathai.png
+- name: Arnav Ahuja
+  homepage: https://arnavahuja.github.io/
+  image: /files/images/avatar/arnav_ahuja.jpeg
   category: Student
-
-- name: Riya Sahni
-  homepage: https://riyasahni.github.io/
-  image: /files/images/avatar/riya_sahni.jpg
-  category: Student
-
-- name: Jinhui Liu
-  homepage: https://www.linkedin.com/in/jinhui-liu-ai/
-  image: /files/images/avatar/jinhui_liu.jpg
-  category: Student
-
-- name: Yusen Zhang
-  homepage: https://yuszh.com
-  image: /files/images/avatar/yusen_zhang.png
-  category: Student  # Postdoc
+  advisor:
+    - Tianyi Peng
+    - Kostis Kaffes

@@ -2,39 +2,53 @@
 
 The official website for the Data, Agents, and Processes Lab (DAPLab) at Columbia University.
 
+
 ## Editing Content
 
-After editing, please test your changes locally using Docker (see below), submit a Pull Request to [Columbia-DAP-Lab.github.io](https://github.com/Columbia-DAP-Lab/Columbia-DAP-Lab.github.io), and request @Alex-XJK (for students or general inquiries) or @sirrice (for faculty-related inquiries) to review and merge.
+After editing, please test your changes locally using Docker (see below), submit a Pull Request to [Columbia-DAP-Lab.github.io](https://github.com/Columbia-DAP-Lab/Columbia-DAP-Lab.github.io), and request [@Alex-XJK](https://github.com/Alex-XJK/) (for students or general inquiries) or [@sirrice](https://github.com/sirrice) (for faculty-related inquiries) to review and merge.
 
 If you are adding a new feature or making significant changes, please talk to our maintaining team in advance.
+
 
 ### Contributing Your Profile
 
 You can now add yourself or update your profile by editing the `_data/people.yml` file.
 
-For Faculty members:
-```yaml
-- name: Your Name
-  homepage: (optional) https://your.website
-  image: (optional) /files/images/avatar/your_image.jpg
-  bio: >
-    (optional) A brief multi-line introduction
-  category: Faculty
-  field: [CS, Systems...]  # comma-separated research fields
-```
-For Students and Researchers:
-```yaml
-- name: Your Name
-  homepage: (optional) https://your.website
-  image: (optional) /files/images/avatar/your_fullname.jpg
-  category: Student
-```
+- For Faculty members:  
+  ```yaml
+  - name: Your Name
+    homepage: (optional) https://your.website
+    image: (optional) /files/images/avatar/your_image.jpg
+    bio: >
+      (optional) A brief multi-line introduction
+    category: Faculty
+    field: [CS, Systems...]  # comma-separated research fields
+  ```
+
+- For Postdoc and PhD Students:  
+  If you are adding yourself as a **new** member, you must include **your supervisor's name** in your PR description for verification. Without that, your PR may be delayed or rejected!
+  ```yaml
+  - name: Your Name
+    homepage: (optional) https://your.website
+    image: (optional) /files/images/avatar/your_fullname.jpg
+    category: Postdoc/PhD
+  ```
+
+- For MS/Undergraduate Students:  
+  For **new** members, please ask your advisor or advising PhD to make the PR **on your behalf** for verification. Personal PRs will be directly rejected without review.
+  ```yaml
+  - name: Your Name
+    image: (optional) /files/images/avatar/your_fullname.jpg
+    category: Student
+    advisor:
+      - Advisor Name 1
+      - Advisor Name 2  # add more if you have multiple advisors
+  ```
 
 Please upload your avatar image to `/files/images/avatar/` and use that full path above. Please ensure your image is in square format and appropriately sized *under 1MB* for the best display.
 
-For adding yourself as a **new** member, please include **your supervisor's name** in your PR description for verification. Without that, your PR may be delayed or rejected!
-
 For Students and Researchers ordering: Since commit a92a4bc, for ease of maintenance, student categories no longer need to be sorted; Liquid will automatically sort them at deployment-time.
+
 
 ### Updating Publications
 
@@ -51,6 +65,7 @@ Edit `_data/pubs.yml` and follow the existing format to add your publications. B
 ```
 A explanation of the publication date: Only the year and month will be displayed, but you need to provide complete information for sorting purposes.
 
+
 ### Managing Events
 
 To manage events,
@@ -59,18 +74,18 @@ To manage events,
 
 > Note: The Google Sheet method is temporarily disabled due to the low frequency of use after Sept. 9, 2025. Please edit the YAML file directly for now.
 
+However, if you are in charge of regularly adding events (such as seminar organizers), please contact our maintaining team for further assistance.
+
+
 ### Adding Blog Posts
 
 To create a new blog post, follow these steps:
 
 #### 1. Create the post file
-
 Create a new file in `_posts/` with the name format: `YYYY-MM-DD-slug.md` (e.g., `2026-01-16-my-great-post.md`).
 
 #### 2. Add front-matter
-
 Include the following required fields at the top of your post:
-
 ```yaml
 ---
 layout: post
@@ -88,11 +103,9 @@ slug: "my-great-post"  # Must match the filename slug
 ```
 
 #### 3. Write your content
-
 Use standard Markdown syntax. For best readability, keep your article within ~900px width (this is enforced by the layout).
 
 #### 4. Add images
-
 - Create a folder: `files/images/blog/{slug}/` (e.g., `files/images/blog/my-great-post/`)
 - Place your images there
 - In your post, reference images using the `blog-image` include:
@@ -112,14 +125,12 @@ Use standard Markdown syntax. For best readability, keep your article within ~90
   ```
 
 #### 5. Link to other blog posts
-
 Use Jekyll's standard `{% link %}` syntax to reference other posts:
 ```liquid
 As {% link _posts/2026-01-01-my-other-post.md %} shows, ...
 ```
 
 #### 6. Add custom styles (optional)
-
 You can define custom CSS directly in your post using a `<style>` block:
 ```html
 <style>
@@ -133,11 +144,9 @@ You can define custom CSS directly in your post using a `<style>` block:
 ```
 
 #### 7. Test locally
-
 See the [Local Development with Docker](#local-development-with-docker) section below for complete testing instructions.
 
 #### 8. Submit a Pull Request
-
 Push your changes to a branch and open a PR for review.
 
 

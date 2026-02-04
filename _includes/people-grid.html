@@ -1,13 +1,14 @@
 {% assign field_colors = site.data.field_colors %}
 {% assign people = site.data.people | where: "category", include.category %}
+{% assign category_title = include.title | default: include.category %}
 {% assign show_bio = include.show_bio | default: false %}
 {% assign fallback_image = "/files/images/avatar/avatar-default.png" %}
 {% assign avatar_size = 120 %}
-{% if include.category == "Student" %}
+{% if include.category != "Faculty" %}
   {% assign people = people | sort: "name" %}
 {% endif %}
 
-<h2 class="mt-5">{{ include.category }}</h2>
+<h2 class="mt-5">{{ category_title }}</h2>
 <div class="container">
   <div class="row">
     {% for person in people %}
@@ -20,7 +21,7 @@
                 alt="{{ person.name }}"
                 class="card-img-top rounded-circle mx-auto mt-3 bio-img"
                 style="--avatar-size: {{ avatar_size }}px; width: var(--avatar-size); height: var(--avatar-size); object-fit: cover;">
-            
+
             {% if show_bio and person.bio %}
               <div class="overlay-bio">
                 <div class="overlay-content">
@@ -32,7 +33,7 @@
 
           <div class="card-body">
             {% assign first_names_count = name_parts.size | minus: 1 %}
-            {% if person.homepage %}
+            {% if person.homepage and person.category != "Student" %}
               <h5 class="card-title mb-1"><a href="{{ person.homepage }}" target="_blank" style="text-decoration: none;">{{ name_parts | slice: 0, first_names_count | join: ' ' }}<br>{{ name_parts.last }}</a></h5>
             {% else %}
               <h5 class="card-title mb-1">{{ name_parts | slice: 0, first_names_count | join: ' ' }}<br>{{ name_parts.last }}</h5>
