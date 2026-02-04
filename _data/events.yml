@@ -12,6 +12,15 @@
 # 
 #
 
+- title: 'TBA'
+  tag: Seminar
+  date: '2026-03-31'
+  who: Vaikkunth Mugunthan
+  where: CSB 453
+  time: 12PM
+  description:
+  bio:
+
 - title: 'We solved trust for AI Agents in 1973 (we just forgot)'
   tag: Seminar
   date: '2026-02-17'
