@@ -340,3 +340,10 @@
   advisor:
     - Tianyi Peng
     - Kostis Kaffes
+
+- name: Shuze Chen
+  homepage: https://shuzechen.github.io/
+  image: /files/images/avatar/Shuze_Chen.jpeg
+  category: Student
+  advisor:
+    - Tianyi Peng
