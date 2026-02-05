@@ -310,6 +310,11 @@
   image: /files/images/avatar/siyan_li.jpg
   category: PhD
 
+- name: Shuze Chen
+  homepage: https://shuzechen.github.io/
+  image: /files/images/avatar/shuze_chen.jpg
+  category: PhD
+
 # MS/Undergraduate Students
 
 - name: Tianle Zhou
@@ -340,10 +345,3 @@
   advisor:
     - Tianyi Peng
     - Kostis Kaffes
-
-- name: Shuze Chen
-  homepage: https://shuzechen.github.io/
-  image: /files/images/avatar/shuze_chen.jpg
-  category: Student
-  advisor:
-    - Tianyi Peng
