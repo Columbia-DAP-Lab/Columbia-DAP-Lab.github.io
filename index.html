@@ -95,11 +95,11 @@ layout: default
             <h4 class="mb-0">Publications</h4>
           </div>
           <div class="card-body p-3">
-            {% assign recent_pubs = site.data.pubs | sort: "pub_date" | reverse | slice: 0, 8 %}
+            {% assign recent_pubs = site.data.pubs | sort: "pub_date" | reverse | slice: 0, 7 %}
             <ul class="list-unstyled">
               {% for pub in recent_pubs %}
               <li class="mb-2">
-                <span class="text-muted">{{ pub.pub_date | date: "%B %Y" }}</span><br>
+                <small class="text-muted">{{ pub.pub_date | date: "%b %Y" }}, {{ pub.conf }}</small><br>
                 <a href="{{ pub.url }}" style="text-decoration: none;">{{ pub.title }}</a>
               </li>
               {% endfor %}
