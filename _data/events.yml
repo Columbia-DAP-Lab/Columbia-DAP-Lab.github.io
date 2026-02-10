@@ -21,6 +21,46 @@
   description:
   bio:
 
+- title: 'Scalable Image AI via Self-Designing Storage'
+  tag: Seminar
+  date: '2026-02-24'
+  who: Utku Sirin
+  where: CSB 453
+  time: 12PM
+  description: >
+    Image AI is very expensive. We show that the root cause of the problem is a
+    long-overlooked and largely unexplored dimension: storage. Storage determines
+    how much data is moved and processed. Most images today are stored as JPEG files.
+    JPEG is designed for the human eye. Image AI applications, however, span a wide
+    range of domains, such as histopathology and robotics, each with very different
+    characteristics and requirements. Using a single file format across all applications
+    and domains results in inefficient and costly AI systems. This talk presents Image
+    Calculator, a self-designing file format that finds the optimal storage for a given
+    image AI task. Image Calculator achieves this by identifying design primitives for
+    image storage and co-designing image storage with application domains. It creates
+    a design space of thousands of candidate formats based on these design primitives,
+    each capable of storing and representing data differently, with varying accuracy
+    and cost trade-offs. It efficiently searches within this design space by using
+    locality among its file formats. It exploits the inherent frequency structure
+    in image data to efficiently serve inference and training requests. We evaluate
+    Image Calculator across diverse datasets, tasks, models, and hardware, and show
+    that it can generate file formats that improve accuracy by up to 8%, reduce
+    end-to-end inference and training time by up to 14.2x, and reduce storage space
+    by up to 8.2x compared to state-of-the-art image file formats.
+  bio: >
+    Utku Sirin is a postdoctoral researcher at the Data and AI Systems Lab at Harvard
+    University, advised by Stratos Idreos. He is interested in making AI systems
+    efficient via vertical integration and principled design. His work on images
+    led to the first image file format designed for AI workloads, Image Calculator,
+    enabling a data-centric view of image AI pipelines and novel system architectures.
+    Utku received the Microsoft Research PhD Fellowship in 2017 and the Swiss National
+    Science Foundation Postdoctoral Fellowship in 2020 and 2023. He is also a winner
+    of the ACM SIGMOD Student Research Competition (2017) and a recipient of distinguished
+    reviewer awards at ICDE 2023, EDBT 2025, and VLDB 2025. Prior to Harvard, Utku
+    earned his PhD from the Data-Intensive Applications and Systems Lab at EPFL,
+    advised by Anastasia Ailamaki on hardware-conscious database systems. In his
+    free time, Utku performs theatrical acting and plays classical guitar.
+
 - title: 'We solved trust for AI Agents in 1973 (we just forgot)'
   tag: Seminar
   date: '2026-02-17'
