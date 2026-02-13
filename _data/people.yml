@@ -315,6 +315,11 @@
   image: /files/images/avatar/shuze_chen.jpg
   category: PhD
 
+- name: Xuanming Billy Zhang
+  homepage: https://billyzhang24kobe.github.io/
+  image: /files/images/avatar/xuanming_zhang.jpg
+  category: PhD
+
 # MS/Undergraduate Students
 
 - name: Tianle Zhou
