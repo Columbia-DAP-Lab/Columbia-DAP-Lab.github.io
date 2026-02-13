@@ -4,7 +4,7 @@
 #  tag: Entrepreneurship
 
 
-- title: "It's a surprise!"
+- title: 'The most accurate web search tools for AI'
   date: '2026-02-05'
   tag: Entrepreneurship
   time: 11AM
@@ -13,8 +13,10 @@
   role: CEO and Cofounder
   wholink: https://parallel.ai/
   description: |
-    Parag Agrawal is the founder of Parallel Web Systems, a company unlocking the web for AI agents. Previously, he spent 11 years at Twitter, where he joined as an engineer before serving as CTO, and then CEO. 
-    Parag has a PhD from Stanford University in Computer Science and a Bachelor's degree in Computer Science and Engineering from IIT, Bombay. 
+    Parag Agrawal is the founder of Parallel Web Systems, a company unlocking the web for AI agents.
+    Previously, he spent 11 years at Twitter, where he joined as an engineer before serving as CTO, and then CEO.
+    Parag has a PhD from Stanford University in Computer Science and a Bachelor's degree in Computer
+    Science and Engineering from IIT, Bombay.
   bio: # Move to description for now
 
 - title: 'TBA'
@@ -25,8 +27,16 @@
   who: Amit Agrawal, Structured Template Labs
   role: CEO and Founder
   wholink: https://www.linkedin.com/company/layerone-ai/
-  description:
-  bio:
+  description: |
+    Amit Agarwal is the founder of Standard Template Labs (STLabs), where he is building a new platform
+    in enterprise software. Before STLabs, Amit spent a year as a General Partner at ICONIQ Capital,
+    investing in and advising technology companies. He also serves on the Board of Directors at Datadog,
+    where he previously spent 13 years as an executive, joining as employee number eight.
+    At Datadog, Amit helped build the company from its earliest days through its growth into a public
+    company. He built and led teams across product, marketing, sales, corporate development, and
+    operations — having started in the early years doing hands-on product management, go-to-market,
+    and customer-facing work.
+  bio: # Move to description for now
 
 - title: 'TBA'
   date: '2026-03-05'
