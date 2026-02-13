@@ -350,3 +350,10 @@
   advisor:
     - Tianyi Peng
     - Kostis Kaffes
+
+- name: Shachaf Rispler
+  homepage: https://shachafha.github.io/
+  image: /files/images/avatar/shachaf_rispler.png
+  category: Student
+  advisor:
+    - Eugene Wu
