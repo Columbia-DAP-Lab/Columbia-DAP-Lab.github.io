@@ -19,7 +19,7 @@
     Science and Engineering from IIT, Bombay.
   bio: # Move to description for now
 
-- title: 'TBA'
+- title: 'A Talk about Structured Template Labs'
   date: '2026-02-19'
   tag: Entrepreneurship
   time: 11:40AM
@@ -28,6 +28,9 @@
   role: CEO and Founder
   wholink: https://www.linkedin.com/company/layerone-ai/
   description: |
+    This talk will provide insights into building and scaling enterprise software companies, from
+    early-stage product development to public company growth.
+  bio: |
     Amit Agarwal is the founder of Standard Template Labs (STLabs), where he is building a new platform
     in enterprise software. Before STLabs, Amit spent a year as a General Partner at ICONIQ Capital,
     investing in and advising technology companies. He also serves on the Board of Directors at Datadog,
@@ -36,7 +39,6 @@
     company. He built and led teams across product, marketing, sales, corporate development, and
     operations — having started in the early years doing hands-on product management, go-to-market,
     and customer-facing work.
-  bio: # Move to description for now
 
 - title: 'TBA'
   date: '2026-03-05'
