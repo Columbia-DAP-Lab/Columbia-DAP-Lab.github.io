@@ -357,3 +357,11 @@
   category: Student
   advisor:
     - Eugene Wu
+
+- name: Aryan Kaul
+  homepage: https://akaul02.github.io
+  image: /files/images/avatar/aryan_kaul.png
+  category: Student
+  advisor:
+    - Zhuo Zhang
+    - Lydia Chilton
