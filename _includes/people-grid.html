@@ -33,7 +33,7 @@
 
           <div class="card-body">
             {% assign first_names_count = name_parts.size | minus: 1 %}
-            {% if person.homepage and person.category != "Student" %}
+            {% if person.homepage %}
               <h5 class="card-title mb-1"><a href="{{ person.homepage }}" target="_blank" style="text-decoration: none;">{{ name_parts | slice: 0, first_names_count | join: ' ' }}<br>{{ name_parts.last }}</a></h5>
             {% else %}
               <h5 class="card-title mb-1">{{ name_parts | slice: 0, first_names_count | join: ' ' }}<br>{{ name_parts.last }}</h5>

@@ -51,16 +51,32 @@
   description:
   bio:
 
-- title: 'TBA'
+- title: 'AI Attacks'
   date: '2026-03-19'
   tag: Entrepreneurship
   time: 11AM
   where: Davis Auditorium
   who: Neil Daswani, Firebolt Ventures
-  role: 
   wholink: https://www.linkedin.com/in/daswani
-  description:
-  bio:
+  description: >
+    We've officially entered the era of non-human adversaries, where AI doesn't just
+    assist hackers—it executes 90% of the attack autonomously. In this talk, I deconstruct
+    the watershed moments of the AI age, from the first documented AI-orchestrated
+    espionage campaigns to multimillion-dollar deepfake heists.
+  bio: >
+    Dr. Neil Daswani is a CISO-in-Residence at [Firebolt Ventures](https://www.fireboltventures.com/)
+    and is Co-Academic Director of [Stanford's Advanced Cybersecurity Program](https://online.stanford.edu/programs/advanced-cybersecurity-program).
+    After completing his PhD at Stanford University, and leading security initiatives at Google,
+    he co-founded Dasient, a cybersecurity company that Google Ventures invested in and was
+    acquired by Twitter/X. After his time at Twitter, he served as CISO of multiple public
+    companies including LifeLock, Symantec's Consumer Business Unit, and QuantumScape.
+    These days, he advises multiple venture capital funds and is focused on both securing
+    artificial intelligence and using AI for cybersecurity applications. He has co-authored
+    two books "Big Breaches: Cybersecurity Lessons for Everyone" and "Foundations of Security:
+    What Every Programmer Needs to Know." Dr. Daswani holds over a dozen patents, has
+    published dozens of technical articles, and speaks frequently at top industry events.
+    He earned a PhD and MS in computer science from Stanford, and his career journey started
+    with earning a BS in computer science with honors with distinction from Columbia University.
 
 - title: 'TBA'
   date: '2026-04-02'
