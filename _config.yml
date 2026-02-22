@@ -1,7 +1,12 @@
-title: "Columbia DAP Lab"
-description: ""
+title: "DAPLab"
+tagline: "Data, Agents, and Processes | Columbia University"
+description: "DAPLab at Columbia University advances research on agent-based automation across systems, AI, HCI, and operations research. We make automation more accountable, reliable, and efficient."
+author: "DAPLab, Columbia University"
+keywords: "DAPLab, Columbia University, agent-based systems, AI, systems research, HCI, automation, large language models, trustworthy AI, cloud computing, RL, ML"
+og_image: "/daplab_logo.png"
 baseurl: "" # Keep this blank for GitHub Pages root
-url: "https://daplab.cs.columbia.edu"
+url: "https://daplab.cs.columbia.edu" # Full site URL without trailing slash
+timezone: "America/New_York"
 theme: minima # Default theme, or replace with your theme
 plugins:
   - jekyll-sitemap

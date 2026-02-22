@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Our People
+title: People
 ---
 
 {% include people-grid.html category="Faculty" show_bio=true %}

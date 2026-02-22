@@ -1,5 +1,6 @@
 ---
 layout: default
+title: Publications
 ---
 
 <h1 ><span id="pubs-title">All Publications</span>
