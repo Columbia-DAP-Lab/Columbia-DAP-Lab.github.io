@@ -37,10 +37,11 @@ title: Events
     <div class="mb-5">
       {% for event in oevents %}
         {% if event.date >= today and event.who != "🤔" %}
-          <div class="mb-4 event-item event-{{ event.tag | downcase | default: 'other' }}" id="{{ event.date | date: '%y%m%d' }}-{{ event.title | slugify }}">
+          {% capture event_id %}{{ event.date | date: '%y%m%d' }}-{{ event.title | slugify }}{% endcapture %}
+          <div class="mb-4 event-item event-{{ event.tag | downcase | default: 'other' }}" id="{{ event_id }}">
             <div class="event-flex">
               <div class="event-main">
-                <h4>
+                <h4 class="event-title">
                 {% if event.link %}
                   <a href="{{ event.link }}">{{ event.title }}</a>
                 {% else %}
@@ -62,6 +63,7 @@ title: Events
                 <p class="text-muted">
                   <span>{{ event.time }}  {{ event.date | date: "%B %d, %Y" }}</span>
                   <span style="margin-left: 2em">{{ event.where }}</span>
+                  <a class="event-link-anchor" href="{{ page.url | relative_url }}#{{ event_id }}" aria-label="Link to this event" title="Link to this event">🔗</a>
                 </p>
                 {% if event.description | strip != "tba" %}
                 <div class="markdown-content">
@@ -105,10 +107,11 @@ title: Events
     <div>
       {% for event in events %}
         {% if event.date < today and event.who != "🤔" %}
-          <div class="mb-4 event-item event-{{ event.tag | downcase | default: 'other' }}" id="{{ event.date | date: '%y%m%d' }}-{{ event.title | slugify }}">
+          {% capture event_id %}{{ event.date | date: '%y%m%d' }}-{{ event.title | slugify }}{% endcapture %}
+          <div class="mb-4 event-item event-{{ event.tag | downcase | default: 'other' }}" id="{{ event_id }}">
             <div class="event-flex">
               <div class="event-main">
-                <h4>
+                <h4 class="event-title">
                 {% if event.link %}
                   <a href="{{ event.link }}">{{ event.title }}</a>
                 {% else %}
@@ -130,6 +133,7 @@ title: Events
                 <p class="text-muted">
                   <span>{{ event.time }}  {{ event.date | date: "%B %d, %Y" }}</span>
                   <span style="margin-left: 2em">{{ event.where }}</span>
+                  <a class="event-link-anchor" href="{{ page.url | relative_url }}#{{ event_id }}" aria-label="Link to this event" title="Link to this event">🔗</a>
                 </p>
                 {% if event.description | strip != "tba" or event.bio %}
                 <div class="event-body clamped">
@@ -224,6 +228,14 @@ title: Events
   flex: 1 1 0;
   min-width: 0;
 }
+.event-title { display: flex; align-items: center; gap: 0.4rem; }
+.event-link-anchor {
+  opacity: 0.4;
+  text-decoration: none;
+  font-size: 0.85rem;
+}
+.event-link-anchor:hover { opacity: 1; text-decoration: none; }
+.event-item:hover .event-link-anchor { opacity: 1; }
 .event-media {
   flex: 0 0 clamp(160px, 33%, 280px); /* up to ~4/12 width */
   display: flex;
