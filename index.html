@@ -41,12 +41,16 @@ layout: default
             <h4 class="mb-0">News & Education</h4>
           </div>
           <div class="card-body p-4">
-            {% for item in site.data.news %}
+            {% assign featured_news = site.data.news | where: 'featured', true %}
+            {% for item in featured_news %}
               <div class="mb-3">
                 <h5>{{ item.title | markdownify }}</h5>
                 <p>{{ item.content | markdownify }}</p>
               </div>
             {% endfor %}
+          </div>
+          <div class="card-footer bg-white border-top-0 text-end">
+            <a href="{{ '/news' | relative_url }}" class="btn btn-sm btn-outline-primary">More news...</a>
           </div>
         </div>
       </div>

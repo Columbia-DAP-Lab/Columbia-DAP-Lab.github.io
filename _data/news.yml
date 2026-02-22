@@ -2,13 +2,41 @@
 # Considering the limited space on the homepage, please add content with caution. 
 # If the content is no longer relevant, please consider moving it to the "events" category.
 #
-# Each event data entry should include the following information:
+# Each news data entry should include the following information:
 #
 # - title: >
 #     Multi-line title in Markdown format
 #   content: >
 #     Multi-line detailed information in Markdown format
+#   featured: true|false   # Whether to show on the homepage
+#   date: YYYY-MM-DD       # Optional; used for sorting on /news
+#   details: |             # Optional; long form shown on /news (falls back to content)
+#     Longer, multi-paragraph Markdown content for the dedicated page
 #
+
+- title: >
+    [2026 North East AI Agents Day](https://ne-agents-day.github.io/)
+  content: >
+    A one-day workshop in New York City (May 8, 2026) bringing together ML,
+    systems, and HCI researchers to discuss reliable, scalable, and debuggable
+    AI agents. Talks, posters, and demos. See the website for details.
+  details: |
+    The 2026 North East AI Agents Day is a one-day workshop that brings together
+    researchers and practitioners across machine learning, systems, and HCI to
+    share progress, compare evaluation practices, and explore opportunities for
+    collaboration on reliable, scalable, and debuggable AI agents.
+
+    The program will feature invited talks, lightning talks, posters, and demos.
+    We welcome short abstracts for lightning talks, posters, and demos from teams
+    working on agent foundations, systems, or real-world deployments.
+
+    - Date: May 8, 2026
+    - Location: New York, NY
+    - Website: [ne-agents-day.github.io](https://ne-agents-day.github.io/)
+
+    Visit the event website for submission timelines, registration, and logistics.
+  featured: true
+  date: 2026-05-08
 
 - title: >
     Spring 2026 [AI Entrepreneurship Series](./entrepreneurship)
@@ -16,6 +44,8 @@
     The DAPLab is organizing a series of events that bring together Columbia students,
     faculty, and industry partners to discuss the process of transitioning lessons from
     research and the classroom into products and value.
+  featured: true
+  date: 2026-01-20
 
 - title: >
     DAPLab Receives Microsoft Azure Credit Award
@@ -24,6 +54,8 @@
     research on robust generalization in agentic AI. The funding enables work on environment
     scaling and diversification to improve the reliability of agentic systems in real-world
     deployments.
+  featured: true
+  date: 2026-02-03
 
 - title: >
     Spring 2026 DAPLab Research Seminar
@@ -31,15 +63,27 @@
     The DAPlab's Tuesday 12PM research seminar in CSB 453 (CS Conference Room) invites speakers
     that can share cutting-edge agent-systems research or can talk about processes in their
     organizations and how they are trying to automate them.
+  featured: true
+  date: 2026-01-01
 
 - title: >
     Student Honors & Fellowships
   content: >
-    Congratulations to DAPLab students on recent achievements:
-    [Jerry Jiaxiang Liu](https://jerrrrryl.github.io/) received an IBM PhD Fellowship for his work
-    on data lake agents, and
-    [Alex Jiakai Xu](https://alex-xjk.github.io/) received the AI & Autonomous Fellowship for
-    his work on AI and agentic systems.
-    [Tianle Zhou](https://www.linkedin.com/in/tian-le-zhou-99a145221/) earned an Honorable Mention
-    in the 2025-2026 CRA Outstanding Undergraduate Researcher Award.
+    Celebrating recent student recognitions: IBM PhD Fellowship (Jerry Jiaxiang Liu),
+    AI & Autonomous Fellowship (Alex Jiakai Xu), and CRA Outstanding Undergraduate
+    Researcher Honorable Mention (Tianle Zhou).
+  details: |
+    We are proud to recognize several outstanding student achievements:
+
+    - [Jerry Jiaxiang Liu](https://jerrrrryl.github.io/) received the IBM PhD Fellowship
+      for research on data lake agents and robust data systems for agentic workflows.
+    - [Alex Jiakai Xu](https://alex-xjk.github.io/) received the AI & Autonomous Fellowship
+      for contributions to AI and agentic systems.
+    - [Tianle Zhou](https://www.linkedin.com/in/tian-le-zhou-99a145221/) earned an Honorable Mention
+      in the 2025-2026 CRA Outstanding Undergraduate Researcher Award.
+
+    These recognitions highlight DAPLab's commitment to building reliable, scalable,
+    and impactful AI agent systems. Congratulations to all awardees!
+  featured: true
+  date: 2025-12-17
 

@@ -1,0 +1,33 @@
+---
+layout: default
+title: News
+---
+
+{% assign items = site.data.news %}
+
+<div class="container my-5">
+  <h2 class="mb-4">News & Education</h2>
+
+  <div class="news-list">
+    {% assign sorted = items | sort: 'date' | reverse %}
+    {% for item in sorted %}
+      <article class="mb-4 pb-3 border-bottom">
+        <header class="mb-1">
+          <h4 class="mb-1">{{ item.title | markdownify }}</h4>
+        </header>
+        {% assign body = item.details | default: item.content %}
+        <div class="markdown-content">
+          {{ body | markdownify }}
+        </div>
+      </article>
+    {% endfor %}
+  </div>
+
+  <div class="mt-4">
+    <a href="{{ '/' | relative_url }}" class="btn btn-sm btn-outline-secondary">Back to home</a>
+  </div>
+</div>
+
+<style>
+.news-list .markdown-content p { margin-bottom: 0.5rem; }
+</style>
