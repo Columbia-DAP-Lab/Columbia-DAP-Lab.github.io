@@ -9,6 +9,7 @@
 # link: title URL
 # video: link to youtube recording
 # slides: link to slides
+# image: relative path (e.g., /files/images/events/foo.jpg) or absolute URL
 # 
 #
 
@@ -251,6 +252,7 @@
     private, invitation-only session for DAPLab industry partners, providing an opportunity
     to deeply engage with Columbia students and faculty, as well as fellow partners, through
     focused discussions and collaborative activities.
+  image: /files/images/events/20251027_workshop_2963_alex.JPG
 
 - title: 'Disaggregated LLM Inference: Past, Present, and Future'
   tag: Seminar

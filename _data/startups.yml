@@ -1,4 +1,5 @@
 #
+# image: relative path (e.g., /files/images/events/foo.jpg) or absolute URL
 #- title: 'TBA'
 #  date: '2026-01-22'
 #  tag: Entrepreneurship
@@ -18,6 +19,7 @@
     Parag has a PhD from Stanford University in Computer Science and a Bachelor's degree in Computer
     Science and Engineering from IIT, Bombay.
   bio: # Move to description for now
+  image: /files/images/events/20260205_entrep_agrawal_alex.jpg
 
 - title: 'A Talk about Structured Template Labs'
   date: '2026-02-19'
@@ -39,6 +41,7 @@
     company. He built and led teams across product, marketing, sales, corporate development, and
     operations — having started in the early years doing hands-on product management, go-to-market,
     and customer-facing work.
+  image: /files/images/events/20260219_entrep_agarwal_alex.jpeg
 
 - title: 'TBA'
   date: '2026-03-05'
