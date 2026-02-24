@@ -13,18 +13,9 @@
 # 
 #
 
-- title: 'TBA'
-  tag: Seminar
-  date: '2026-03-31'
-  who: Vaikkunth Mugunthan
-  where: CSB 453
-  time: 12PM
-  description:
-  bio:
-
 - title: 'Scalable Image AI via Self-Designing Storage'
   tag: Seminar
-  date: '2026-02-24'
+  date: '2026-04-21'
   who: Utku Sirin
   where: CSB 453
   time: 12PM
@@ -61,6 +52,15 @@
     earned his PhD from the Data-Intensive Applications and Systems Lab at EPFL,
     advised by Anastasia Ailamaki on hardware-conscious database systems. In his
     free time, Utku performs theatrical acting and plays classical guitar.
+
+- title: 'TBA'
+  tag: Seminar
+  date: '2026-03-31'
+  who: Vaikkunth Mugunthan
+  where: CSB 453
+  time: 12PM
+  description:
+  bio:
 
 - title: 'We solved trust for AI Agents in 1973 (we just forgot)'
   tag: Seminar

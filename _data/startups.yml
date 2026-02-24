@@ -5,54 +5,32 @@
 #  tag: Entrepreneurship
 
 
-- title: 'The most accurate web search tools for AI'
-  date: '2026-02-05'
-  tag: Entrepreneurship
-  time: 11AM
-  where: Davis Auditorium
-  who: Parag Agrawal, Parallel.ai
-  role: CEO and Cofounder
-  wholink: https://parallel.ai/
-  description: |
-    Parag Agrawal is the founder of Parallel Web Systems, a company unlocking the web for AI agents.
-    Previously, he spent 11 years at Twitter, where he joined as an engineer before serving as CTO, and then CEO.
-    Parag has a PhD from Stanford University in Computer Science and a Bachelor's degree in Computer
-    Science and Engineering from IIT, Bombay.
-  bio: # Move to description for now
-  image: /files/images/events/20260205_entrep_agrawal_alex.jpg
-
-- title: 'A Talk about Structured Template Labs'
-  date: '2026-02-19'
-  tag: Entrepreneurship
-  time: 11:40AM
-  where: Davis Auditorium
-  who: Amit Agrawal, Structured Template Labs
-  role: CEO and Founder
-  wholink: https://www.linkedin.com/company/layerone-ai/
-  description: |
-    This talk will provide insights into building and scaling enterprise software companies, from
-    early-stage product development to public company growth.
-  bio: |
-    Amit Agarwal is the founder of Standard Template Labs (STLabs), where he is building a new platform
-    in enterprise software. Before STLabs, Amit spent a year as a General Partner at ICONIQ Capital,
-    investing in and advising technology companies. He also serves on the Board of Directors at Datadog,
-    where he previously spent 13 years as an executive, joining as employee number eight.
-    At Datadog, Amit helped build the company from its earliest days through its growth into a public
-    company. He built and led teams across product, marketing, sales, corporate development, and
-    operations — having started in the early years doing hands-on product management, go-to-market,
-    and customer-facing work.
-  image: /files/images/events/20260219_entrep_agarwal_alex.jpeg
-
-- title: 'TBA'
+- title: 'Scaling RL Rollouts: Agent-Native Infrastructure with Daytona'
   date: '2026-03-05'
   tag: Entrepreneurship
-  time: 11AM
+  time: 11:30AM
   where: Davis Auditorium
   who: Ivan Burazin, Daytona
   role: CEO and Co-founder
   wholink: https://www.daytona.io/
-  description:
-  bio:
+  description: >
+    In this talk, we'll outline why a new class of agent-native infrastructure is emerging, what
+    problems it is designed to solve, and the core use cases driving it, from autonomous coding
+    agents to large-scale evaluation and training workloads. Daytona is an agent-native control
+    plane designed to orchestrate isolated, stateful sandbox environments at scale. We'll break
+    down the infrastructure challenges behind isolation, state management, and massive parallelism,
+    and why traditional VM and container stacks fall short. As a concrete example, we'll walk
+    through scaling RL rollouts, showing how tens of thousands of environments can be provisioned
+    and orchestrated in minutes as part of a high-throughput RL pipeline.
+  bio: >
+    Ivan Burazin is the co-founder and CEO of Daytona, one of the fastest-growing infrastructure
+    companies of its generation. Daytona is building agent-native cloud infrastructure that enables
+    AI agents to securely run, fork, and manage stateful runtime environments at scale. Backed by
+    $31M, including a $24M Series A led by FirstMark Capital, Daytona powers millions of sandboxes
+    per day for startups and Fortune 500 companies building autonomous AI systems. Previously,
+    Ivan co-founded Codeanywhere, one of the first cloud IDEs (2009), and created Shift, Europe's
+    leading developer conference, acquired by Infobip in 2021. He later joined Infobip's executive
+    board as Chief Developer Experience Officer.
 
 - title: 'AI Attacks'
   date: '2026-03-19'
@@ -113,9 +91,6 @@
   wholink:
   description:
   bio:
-
-
-
 
 
 
@@ -188,17 +163,6 @@
     Vivian Zhang is the Chief Executive Officer of [WarehouseRobot.AI](https://warehouserobot.ai), where she leads research and development in intelligent robotics, large-scale multi-agent coordination, and autonomous warehouse systems. Her work spans planning under uncertainty, human–AI collaboration, and the integration of large language models into embodied intelligence. Vivian’s perspective bridges industrial-scale deployment and AI research, with a focus on how real-world robotics can inform the next generation of AI agents and collective intelligence systems. Her portfolio of AI startups and AI VC fund can be found at [https://viviancompanies.com/](https://viviancompanies.com/) and at [https://extelligenceinvest.com/](https://extelligenceinvest.com/). 
 
     Vivian was named one of the Top 100 Most Influential Chinese by Forbes and recognized among 50 top most well known Data Scientists by CBNData. Vivian’s always happy to hear from founders and fellows — feel free to reach out anytime!
-
-  #- title: 'Software Development Agents are General Agents'
-  #  date: '2025-11-04'
-  #  where: Davis Auditorium
-  #  tag: Entrepreneurship
-  #  time: 7PM
-  #  who: Eno Reyes, Factory
-  #  role: CTO & Co-founder
-  #  wholink: https://enoreyes.com/
-  #  description:  This talk will explore the broad set of tasks a software development agent must be capable of doing to serve the product needs of our customers, and how we built them, alongside our journey to get to where we are today
-  #  bio: Eno Reyes is co-founder and CTO of Factory, a Sequoia-backed startup building an enterprise platform for model-agnostic software development agents. He was previously an ML engineer at Hugging Face, where he helped Fortune 500 organizations manage and deploy LLMs.
 
 - title: 'AI Site Reliability Engineers: Automating Incident Response in Complex Systems'
   date: '2025-11-18'
@@ -276,3 +240,41 @@
     received his Ph.D. degree with distinction in Computer Science from the Vienna University of
     Technology, Austria. His Ph.D. dissertation and continued research on Liquid Neural Networks
     got recognized internationally with numerous nominations and awards.
+
+- title: 'The most accurate web search tools for AI'
+  date: '2026-02-05'
+  tag: Entrepreneurship
+  time: 11AM
+  where: Davis Auditorium
+  who: Parag Agrawal, Parallel.ai
+  role: CEO and Cofounder
+  wholink: https://parallel.ai/
+  description: |
+    Parag Agrawal is the founder of Parallel Web Systems, a company unlocking the web for AI agents.
+    Previously, he spent 11 years at Twitter, where he joined as an engineer before serving as CTO, and then CEO.
+    Parag has a PhD from Stanford University in Computer Science and a Bachelor's degree in Computer
+    Science and Engineering from IIT, Bombay.
+  bio: # Move to description for now
+  image: /files/images/events/20260205_entrep_agrawal_alex.jpg
+
+- title: 'A Talk about Structured Template Labs'
+  date: '2026-02-19'
+  tag: Entrepreneurship
+  time: 11:40AM
+  where: Davis Auditorium
+  who: Amit Agrawal, Structured Template Labs
+  role: CEO and Founder
+  wholink: https://www.linkedin.com/company/layerone-ai/
+  description: |
+    This talk will provide insights into building and scaling enterprise software companies, from
+    early-stage product development to public company growth.
+  bio: |
+    Amit Agarwal is the founder of Standard Template Labs (STLabs), where he is building a new platform
+    in enterprise software. Before STLabs, Amit spent a year as a General Partner at ICONIQ Capital,
+    investing in and advising technology companies. He also serves on the Board of Directors at Datadog,
+    where he previously spent 13 years as an executive, joining as employee number eight.
+    At Datadog, Amit helped build the company from its earliest days through its growth into a public
+    company. He built and led teams across product, marketing, sales, corporate development, and
+    operations — having started in the early years doing hands-on product management, go-to-market,
+    and customer-facing work.
+  image: /files/images/events/20260219_entrep_agarwal_alex.jpeg
