@@ -31,6 +31,47 @@
 #
 # Project specific tags are fine as well.  For instance, precision interfaces has a custom "pi" tag 
 
+- title: "More than Decision Support: Exploring Patients' Longitudinal Usage of Large Language Models in Real-World Healthcare-Seeking Journeys"
+  authors: Yancheng Cao, Yishu Ji, Chris Yue Fu, Sahiti Dharmavaram, Meghan Turchioe, Natalie C Benda, Lena Mamykina, Yuling Sun, Xuhai "Orson" Xu
+  conf: CHI 2026
+  pub_date: "2026-04-13"
+  url: https://arxiv.org/abs/2602.14733
+  tags: 
+    - ai
+    - hac
+
+
+- title: "MIND: Empowering Mental Health Clinicians with Multimodal Data Insights through a Narrative Dashboard"
+  authors: Ruishi Zou, Shiyu Xu, Margaret E Morris, Jihan Ryu, Timothy D. Becker, Nicholas Allen, Anne Marie Albano, Randy Auerbach, Dan Adler, Varun Mishra, Lace Padilla, Dakuo Wang, Ryan Sultan, Xuhai "Orson" Xu
+  conf: CHI 2026
+  pub_date: "2026-04-13"
+  url: https://arxiv.org/abs/2601.14641
+  tags: 
+    - ai
+    - sys
+    - vis
+    - multimodal
+
+- title: "The Anatomy of a Personal Health Agent"
+  authors: A. Ali Heydari, Ken Gu, Vidya Srinivas, Hong Yu, Zhihan Zhang, Yuwei Zhang, Akshay Paruchuri, Qian He, Hamid Palangi, Nova Hammerquist, Ahmed A. Metwally, Brent Winslow, Yubin Kim, Kumar Ayush, Yuzhe Yang, Girish Narayanswamy, Maxwell A. Xu, Jake Garrison, Amy Armento Lee, Jenny Vafeiadou, Ben Graef, Isaac R. Galatzer-Levy, Erik Schenck, Andrew Barakat, Javier Perez, Jacqueline Shreibati, John Hernandez, Anthony Z. Faranesh, Javier L. Prieto, Connor Heneghan, Yun Liu, Jiening Zhan, Mark Malhotra, Shwetak Patel, Tim Althoff, Xin Liu, Daniel McDuff, Xuhai "Orson" Xu
+  conf: ArXiv
+  pub_date: "2025-08-27"
+  url: https://arxiv.org/abs/2508.20148
+  tags: 
+    - ai
+    - hac
+    - whitepaper
+
+- title: "DietGlance: dietary monitoring and personalized analysis at a glance with knowledge-empowered AI assistant"
+  authors: Zhihan Jiang, Running Zhao, Lin Lin, Yue Yu, Handi Chen, Xinchen Zhang, Xuhai "Orson" Xu, Yifang Wang, Xiaojuan Ma, Edith CH Ngai
+  conf: ACM HEALTH
+  pub_date: "2025-02-03"
+  url: https://arxiv.org/abs/2502.01317
+  tags:
+    - ai
+    - sys
+    - retrieval augmented generation
+
 - title: "Fast attention mechanisms: a tale of parallelism"
   authors: Jingwen Liu, Hantao Yu, Clayton Sanford, Alexandr Andoni, Daniel Hsu
   conf: NeurIPS 2025
