@@ -1,0 +1,83 @@
+name: Classify PR by File Changes
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  classify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            profile:
+              - '_data/people.yml'
+              - 'files/images/avatar/**'
+
+            project:
+              - '_data/pubs.yml'
+              - '_projects/**'
+
+            blog:
+              - '_posts/**'
+              - 'files/images/blog/**'
+
+            event:
+              - '_data/events.yml'
+              - '_data/startups.yml'
+              - 'files/images/events/**'
+
+            structural:
+              - '_includes/**'
+              - '_layouts/**'
+              - 'assets/**'
+              - '*.html'
+              - '*.css'
+              - '*.js'
+              - 'Gemfile'
+              - 'Gemfile.lock'
+              - '_config.yml'
+
+      - name: Add profile label
+        if: steps.changes.outputs.profile == 'true'
+        uses: actions-ecosystem/action-add-labels@v1
+        with:
+          labels: profile-update
+
+      - name: Add project label
+        if: steps.changes.outputs.project == 'true'
+        uses: actions-ecosystem/action-add-labels@v1
+        with:
+          labels: project-update
+
+      - name: Add blog label
+        if: steps.changes.outputs.blog == 'true'
+        uses: actions-ecosystem/action-add-labels@v1
+        with:
+          labels: blog-update
+
+      - name: Add event label
+        if: steps.changes.outputs.event == 'true'
+        uses: actions-ecosystem/action-add-labels@v1
+        with:
+          labels: event-update
+
+      - name: Comment if structural files modified
+        if: steps.changes.outputs.structural == 'true'
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            ⚠️ This PR modifies structural or configuration files 
+            (e.g., layouts, includes, HTML/CSS, or Gemfile).
+
+            These files affect global website behavior. 
+            Please confirm this change is intentional.
+
+            If you're only adding/updating content (profile, project, blog, event), 
+            consider limiting modifications to data and content directories.
