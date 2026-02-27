@@ -175,6 +175,16 @@
   image: /files/images/avatar/yusen_zhang.png
   category: Postdoc
 
+- name: Will Ke Wang
+  homepage: https://scholar.google.com/citations?user=H79_VXMAAAAJ&hl=en
+  image: /files/images/avatar/will_wang.jpg
+  category: Postdoc
+
+- name: Zhihan Jiang
+  homepage: https://zhihanjiang.com
+  image: /files/images/avatar/zhihan_jiang.jpg
+  category: Postdoc
+
 # Ph.D.
 
 - name: Jiakai Xu
@@ -318,6 +328,11 @@
 - name: Xuanming Billy Zhang
   homepage: https://billyzhang24kobe.github.io/
   image: /files/images/avatar/xuanming_zhang.jpg
+  category: PhD
+
+- name: Mengyuan Millie Wu
+  homepage: http://milliewu.io/
+  image: /files/images/avatar/millie.jpg
   category: PhD
 
 # MS/Undergraduate Students
