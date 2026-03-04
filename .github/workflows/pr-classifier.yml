@@ -38,6 +38,9 @@ jobs:
               - '_data/startups.yml'
               - 'files/images/events/**'
 
+            lockfile:
+              - 'Gemfile.lock'
+
             structural:
               - '_includes/**'
               - '_layouts/**'
@@ -46,7 +49,6 @@ jobs:
               - '*.css'
               - '*.js'
               - 'Gemfile'
-              - 'Gemfile.lock'
               - '_config.yml'
 
       - name: Add profile label
@@ -72,6 +74,22 @@ jobs:
         uses: actions-ecosystem/action-add-labels@v1
         with:
           labels: event-update
+
+      - name: Comment on Gemfile.lock changes
+        if: steps.changes.outputs.lockfile == 'true'
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            ⚠️ **Notice: `Gemfile.lock` was modified in this PR.**
+
+            For our lab website, we keep `Gemfile.lock` tracked to ensure reproducible CI/CD builds.
+
+            Please confirm whether this change is intentional (e.g., adding or updating a Ruby/Jekyll dependency).
+
+            If this modification was unintended (often caused by running `bundle install` locally), please revert the file to match the base branch.
+
+            Thanks for helping keep our deployment stable 🙌
 
       - name: Comment if structural files modified
         if: steps.changes.outputs.structural == 'true'
