@@ -121,17 +121,8 @@ layout: default
 
 
 <div class="partner-carousel">
-  <div class="partner-track">
-    <img src="files/images/partner-amazon.svg" class="partner-logo" alt="Amazon">
-    <img src="files/images/partner-intellect.png" class="partner-logo" alt="Intellect">
-    <img src="files/images/partner-infosys.svg" class="partner-logo" alt="Infosys">
-    <img src="files/images/partner-tidalwave.png" class="partner-logo" alt="TidalWave">
-    <img src="files/images/partner-veris.svg" class="partner-logo" alt="Veris">
-    <img src="files/images/partner-shopify.svg" class="partner-logo" alt="Shopify">
-    <img src="files/images/partner-microsoft.png" class="partner-logo" alt="Microsoft">
-    <img src="files/images/partner-dandy.png" class="partner-logo" alt="Dandy">
-
-    <!-- duplicate once for seamless looping -->
+  <div class="partner-heading text-center">Thanks to our industry partners</div>
+  <div class="partner-grid">
     <img src="files/images/partner-amazon.svg" class="partner-logo" alt="Amazon">
     <img src="files/images/partner-intellect.png" class="partner-logo" alt="Intellect">
     <img src="files/images/partner-infosys.svg" class="partner-logo" alt="Infosys">
@@ -151,13 +142,17 @@ layout: default
 }
 
 .partner-logo {
+  display: inline-block;
   height: 60px;
+  width: auto;
+  max-width: 100%;
   object-fit: contain;
   opacity: 0.9;
+  flex: 0 0 auto;
 }
 
 .partner-carousel {
-  overflow: hidden;
+  overflow: visible;
   width: 100%;
   margin: 2em 0;
 }
@@ -170,6 +165,22 @@ layout: default
   animation: scroll 30s linear infinite;
 }
 
+.partner-grid {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 24px 40px;
+}
+
+.partner-heading {
+  font-weight: 600;
+  font-size: large;
+  color: #555;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
 @keyframes scroll {
   from {
     transform: translateX(0);
@@ -177,6 +188,11 @@ layout: default
   to {
     transform: translateX(-50%);
   }
+}
+
+@media (max-width: 576px) {
+  .partner-logo { height: 36px; }
+  .partner-grid { gap: 16px 24px; }
 }
 
 </style>
