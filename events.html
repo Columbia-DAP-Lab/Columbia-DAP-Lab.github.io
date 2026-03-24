@@ -92,17 +92,13 @@ title: Events
   border-color: #2563eb;
 }
 
-/* Event layout with optional right-side image */
-.event-flex {
-  display: flex;
-  gap: 1rem;
-  align-items: flex-start;
-}
-.event-main {
-  flex: 1 1 0;
-  min-width: 0;
-}
-.event-title { display: flex; align-items: center; gap: 0.4rem; }
+/* Event layout: simple, natural flow */
+.event-flex { display: block; }
+.event-main { min-width: 0; }
+.event-title { margin: 0 0 0.25rem 0; }
+.event-meta { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.25rem 0.5rem; margin: 0 0 0.5rem 0; color: #6b7280; }
+.event-meta .who { display: inline; color: #374151; margin-right: 0.25rem; }
+.event-tag { display: inline-flex; align-items: center; white-space: nowrap; padding: 0.1rem 0.5rem; border-radius: 9999px; background: #f3f4f6; font-size: 0.8rem; }
 .event-link-anchor {
   opacity: 0.4;
   text-decoration: none;
@@ -110,23 +106,12 @@ title: Events
 }
 .event-link-anchor:hover { opacity: 1; text-decoration: none; }
 .event-item:hover .event-link-anchor { opacity: 1; }
-.event-media {
-  flex: 0 0 clamp(160px, 33%, 280px); /* up to ~4/12 width */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.event-media img {
-  max-width: 100%;
-  max-height: 240px;
-  width: auto;
-  height: auto;
-  object-fit: contain; /* show entire image without cropping */
-  border-radius: 0.5rem;
-}
+
+/* Image floats to top-right on larger screens; stacks on mobile */
+.event-media { float: right; margin: 0.2rem 0 0.75rem 1rem; max-width: 240px; }
+.event-media img { display: block; width: 100%; height: auto; object-fit: contain; border-radius: 0.5rem; }
 @media (max-width: 768px) {
-  .event-flex { flex-direction: column; }
-  .event-media { flex-basis: auto; order: -1; }
+  .event-media { float: none; max-width: none; margin: 0 0 0.75rem 0; }
   .event-media img { max-height: none; width: 100%; height: auto; }
 }
 

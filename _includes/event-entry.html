@@ -3,6 +3,18 @@
 
 <div class="mb-4 event-item event-{{ event.tag | downcase | default: 'other' }}" id="{{ event_id }}">
   <div class="event-flex">
+    {% if event.image %}
+      {% assign img = event.image %}
+      {% if img contains '://' %}
+        {% assign img_url = img %}
+      {% else %}
+        {% assign img_url = img | relative_url %}
+      {% endif %}
+      <div class="event-media">
+        <img src="{{ img_url }}" alt="{{ event.title | escape }}" loading="lazy">
+      </div>
+    {% endif %}
+
     <div class="event-main">
       <h4 class="event-title">
         {% if event.link %}
@@ -10,19 +22,23 @@
         {% else %}
           {{ event.title }}
         {% endif %}
+      </h4>
+
+      {% if event.who or event.tag %}
+      <div class="event-meta">
         {% if event.who %}
           {% if event.wholink %}
-            <a href="{{ event.wholink }}" class="me-2"><span class="who">{{ event.who }}</span> </a>
+            <a href="{{ event.wholink }}" class="who-link"><span class="who">{{ event.who }}</span></a>
           {% else %}
             <span class="who">{{ event.who }}</span>
           {% endif %}
         {% endif %}
         {% if event.tag %}
-          <span class="event-tag event-tag--{{ event.tag | downcase }}">
-            {{ event.tag }}
-          </span>
+          <span class="event-tag event-tag--{{ event.tag | downcase }}">{{ event.tag }}</span>
         {% endif %}
-      </h4>
+      </div>
+      {% endif %}
+
       <p class="text-muted">
         <span>{{ event.time }}  {{ event.date | date: "%B %d, %Y" }}</span>
         <span style="margin-left: 2em">{{ event.where }}</span>
@@ -67,17 +83,5 @@
         {% endif %}
       </div>
     </div>
-
-    {% if event.image %}
-      {% assign img = event.image %}
-      {% if img contains '://' %}
-        {% assign img_url = img %}
-      {% else %}
-        {% assign img_url = img | relative_url %}
-      {% endif %}
-      <div class="event-media">
-        <img src="{{ img_url }}" alt="{{ event.title | escape }}" loading="lazy">
-      </div>
-    {% endif %}
   </div>
 </div>
