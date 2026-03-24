@@ -53,14 +53,22 @@
     advised by Anastasia Ailamaki on hardware-conscious database systems. In his
     free time, Utku performs theatrical acting and plays classical guitar.
 
-# - title: 'TBA'
-#   tag: Seminar
-#   date: '2026-03-31'
-#   who: Vaikkunth Mugunthan
-#   where: CSB 453
-#   time: 12PM
-#   description:
-#   bio:
+- title: 'Early Thoughts on Agentic Data Environments'
+  tag: Seminar
+  date: '2026-03-31'
+  who: Eugene Wu
+  where: CSB 453
+  time: 12PM
+  description: |
+    Autonomous agents promise substantial benefits through speed, scale, and labor savings, but
+    their failures can impose abrupt and irreversible costs. The central challenge for agentic
+    automation is therefore to increase the benefits of automation while bounding the consequences
+    of failure. While databases remain central to modern computing, agents operate across a broader
+    data environment spanning files, APIs, applications, and system state. I will outline some very
+    early work towards Agentic Data Environments — the environment that agents run within — that
+    serve to increase the benefits of automation while bounding their risks. We see data systems
+    as shifting from passive stores of state to active execution substrates that provide safety.
+  bio:
 
 - title: 'Modeling Sequence Data in Financial Services'
   tag: Seminar
