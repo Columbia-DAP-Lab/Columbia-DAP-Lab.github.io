@@ -35,6 +35,7 @@
 - title: "Agentic Data Environments"
   authors: Elaine Ang, Chenxi Huang, Georgios Liargkovas, Jerry Liu, Jinhui Liu, Nikos Pagonas, Charlie Summers, Haonan Wang, Jiakai Xu, Tianle Zhou, Yusen Zhang, Zhou Yu, Zhuo Zhang, Tianyi Peng, Kostis Kaffes, Eugene Wu
   conf: IEEE Data Bulletin 2026
+  pub_date: "2026-04-01"
   url: https://www.dropbox.com/scl/fi/fpjui0mjof5uuddw0oee5/agenticdataenvs-ieeedatabull-submitted.pdf?rlkey=4liqw8dkstwzilpn968y2hxbe&dl=0
   tags:
     - ai
@@ -44,6 +45,7 @@
 - title: "Human-Data Interaction, Exploration, and Visualization in the AI Era: Challenges and Opportunities"
   authors: Jean-Daniel Fekete, Yifan Hu, Dominik Moritz, Arnab Nandi, Senjuti Basu Roy, Eugene Wu, Nikos Bikakis, George Papastefanatos, Panos K. Chrysanthis, Guoliang Li, Lingyun Yu
   url: https://arxiv.org/pdf/2603.05542
+  pub_date: "2026-03-01"
   conf: SIGMOD Record 2026
   tags:
     - hac
