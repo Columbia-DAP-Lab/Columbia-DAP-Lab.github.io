@@ -31,6 +31,26 @@
 #
 # Project specific tags are fine as well.  For instance, precision interfaces has a custom "pi" tag 
 
+
+- title: "Agentic Data Environments"
+  authors: Elaine Ang, Chenxi Huang, Georgios Liargkovas, Jerry Liu, Jinhui Liu, Nikos Pagonas, Charlie Summers, Haonan Wang, Jiakai Xu, Tianle Zhou, Yusen Zhang, Zhou Yu, Zhuo Zhang, Tianyi Peng, Kostis Kaffes, Eugene Wu
+  conf: IEEE Data Bulletin 2026
+  url: https://www.dropbox.com/scl/fi/fpjui0mjof5uuddw0oee5/agenticdataenvs-ieeedatabull-submitted.pdf?rlkey=4liqw8dkstwzilpn968y2hxbe&dl=0
+  tags:
+    - ai
+    - sys
+    - whitepaper
+
+- title: "Human-Data Interaction, Exploration, and Visualization in the AI Era: Challenges and Opportunities"
+  authors: Jean-Daniel Fekete, Yifan Hu, Dominik Moritz, Arnab Nandi, Senjuti Basu Roy, Eugene Wu, Nikos Bikakis, George Papastefanatos, Panos K. Chrysanthis, Guoliang Li, Lingyun Yu
+  url: https://arxiv.org/pdf/2603.05542
+  conf: SIGMOD Record 2026
+  tags:
+    - hac
+    - whitepaper
+    - ai
+    - sys
+
 - title: "More than Decision Support: Exploring Patients' Longitudinal Usage of Large Language Models in Real-World Healthcare-Seeking Journeys"
   authors: Yancheng Cao, Yishu Ji, Chris Yue Fu, Sahiti Dharmavaram, Meghan Turchioe, Natalie C Benda, Lena Mamykina, Yuling Sun, Xuhai "Orson" Xu
   conf: CHI 2026
