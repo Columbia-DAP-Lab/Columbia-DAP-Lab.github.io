@@ -5,72 +5,31 @@
 #  tag: Entrepreneurship
 
 
-- title: 'Scaling RL Rollouts: Agent-Native Infrastructure with Daytona'
-  date: '2026-03-05'
-  tag: Entrepreneurship
-  time: 11:30AM
-  where: Davis Auditorium
-  who: Ivan Burazin, Daytona
-  role: CEO and Co-founder
-  wholink: https://www.daytona.io/
-  description: >
-    In this talk, we'll outline why a new class of agent-native infrastructure is emerging, what
-    problems it is designed to solve, and the core use cases driving it, from autonomous coding
-    agents to large-scale evaluation and training workloads. Daytona is an agent-native control
-    plane designed to orchestrate isolated, stateful sandbox environments at scale. We'll break
-    down the infrastructure challenges behind isolation, state management, and massive parallelism,
-    and why traditional VM and container stacks fall short. As a concrete example, we'll walk
-    through scaling RL rollouts, showing how tens of thousands of environments can be provisioned
-    and orchestrated in minutes as part of a high-throughput RL pipeline.
-  bio: >
-    Ivan Burazin is the co-founder and CEO of Daytona, one of the fastest-growing infrastructure
-    companies of its generation. Daytona is building agent-native cloud infrastructure that enables
-    AI agents to securely run, fork, and manage stateful runtime environments at scale. Backed by
-    $31M, including a $24M Series A led by FirstMark Capital, Daytona powers millions of sandboxes
-    per day for startups and Fortune 500 companies building autonomous AI systems. Previously,
-    Ivan co-founded Codeanywhere, one of the first cloud IDEs (2009), and created Shift, Europe's
-    leading developer conference, acquired by Infobip in 2021. He later joined Infobip's executive
-    board as Chief Developer Experience Officer.
-  image: /files/images/events/20260305_entrep_burazin_alex.jpeg
-
-- title: 'AI Attacks'
-  date: '2026-03-19'
-  tag: Entrepreneurship
-  time: 11:30AM
-  where: Davis Auditorium
-  who: Neil Daswani, Firebolt Ventures
-  wholink: https://www.linkedin.com/in/daswani
-  description: >
-    We've officially entered the era of non-human adversaries, where AI doesn't just
-    assist hackers—it executes 90% of the attack autonomously. In this talk, I deconstruct
-    the watershed moments of the AI age, from the first documented AI-orchestrated
-    espionage campaigns to multimillion-dollar deepfake heists.
-  bio: >
-    Dr. Neil Daswani is a CISO-in-Residence at [Firebolt Ventures](https://www.fireboltventures.com/)
-    and is Co-Academic Director of [Stanford's Advanced Cybersecurity Program](https://online.stanford.edu/programs/advanced-cybersecurity-program).
-    After completing his PhD at Stanford University, and leading security initiatives at Google,
-    he co-founded Dasient, a cybersecurity company that Google Ventures invested in and was
-    acquired by Twitter/X. After his time at Twitter, he served as CISO of multiple public
-    companies including LifeLock, Symantec's Consumer Business Unit, and QuantumScape.
-    These days, he advises multiple venture capital funds and is focused on both securing
-    artificial intelligence and using AI for cybersecurity applications. He has co-authored
-    two books "Big Breaches: Cybersecurity Lessons for Everyone" and "Foundations of Security:
-    What Every Programmer Needs to Know." Dr. Daswani holds over a dozen patents, has
-    published dozens of technical articles, and speaks frequently at top industry events.
-    He earned a PhD and MS in computer science from Stanford, and his career journey started
-    with earning a BS in computer science with honors with distinction from Columbia University.
-  image: /files/images/events/20260319_entrep_daswani_alex.jpeg
-
-- title: 'TBA'
+- title: 'Running AI is Harder Than Training It: The Engineering Behind Inference'
   date: '2026-04-02'
   tag: Entrepreneurship
-  time: 11AM
+  time: 11:30AM
   where: Davis Auditorium
   who: Sidharth Shanker, Baseten
   role:
   wholink:
-  description:
-  bio:
+  description: |
+    In this talk, Sidharth will explore why deploying AI systems in real-world applications
+    presents challenges distinct from model training. He will discuss the engineering complexities
+    behind inference, including serving models securely, reliably, and at scale, and provide
+    insight into the hidden systems work behind a single request to a large language model.
+  bio: |
+    Sidharth Shanker leads the Core Product Engineering team at Baseten, where he focuses on
+    building a robust and scalable platform for deploying and serving machine learning models
+    in production. With over a decade of experience in software engineering, he has worked across
+    a range of industries, including e-commerce, genomics, and social media, developing systems
+    that power real-world applications at scale.
+
+    At Baseten, Sidharth is particularly interested in the challenges of inference infrastructure—
+    ensuring models are served securely, reliably, and efficiently to end users. His work sits at
+    the intersection of machine learning systems and developer experience, with an emphasis on
+    making advanced AI capabilities accessible in production environments.
+
 
 - title: 'TBA'
   date: '2026-04-16'
@@ -93,7 +52,6 @@
   wholink:
   description:
   bio:
-
 
 
 
@@ -280,3 +238,59 @@
     operations — having started in the early years doing hands-on product management, go-to-market,
     and customer-facing work.
   image: /files/images/events/20260219_entrep_agarwal_alex.jpeg
+
+- title: 'Scaling RL Rollouts: Agent-Native Infrastructure with Daytona'
+  date: '2026-03-05'
+  tag: Entrepreneurship
+  time: 11:30AM
+  where: Davis Auditorium
+  who: Ivan Burazin, Daytona
+  role: CEO and Co-founder
+  wholink: https://www.daytona.io/
+  description: >
+    In this talk, we'll outline why a new class of agent-native infrastructure is emerging, what
+    problems it is designed to solve, and the core use cases driving it, from autonomous coding
+    agents to large-scale evaluation and training workloads. Daytona is an agent-native control
+    plane designed to orchestrate isolated, stateful sandbox environments at scale. We'll break
+    down the infrastructure challenges behind isolation, state management, and massive parallelism,
+    and why traditional VM and container stacks fall short. As a concrete example, we'll walk
+    through scaling RL rollouts, showing how tens of thousands of environments can be provisioned
+    and orchestrated in minutes as part of a high-throughput RL pipeline.
+  bio: >
+    Ivan Burazin is the co-founder and CEO of Daytona, one of the fastest-growing infrastructure
+    companies of its generation. Daytona is building agent-native cloud infrastructure that enables
+    AI agents to securely run, fork, and manage stateful runtime environments at scale. Backed by
+    $31M, including a $24M Series A led by FirstMark Capital, Daytona powers millions of sandboxes
+    per day for startups and Fortune 500 companies building autonomous AI systems. Previously,
+    Ivan co-founded Codeanywhere, one of the first cloud IDEs (2009), and created Shift, Europe's
+    leading developer conference, acquired by Infobip in 2021. He later joined Infobip's executive
+    board as Chief Developer Experience Officer.
+  image: /files/images/events/20260305_entrep_burazin_alex.jpeg
+
+- title: 'AI Attacks'
+  date: '2026-03-19'
+  tag: Entrepreneurship
+  time: 11:30AM
+  where: Davis Auditorium
+  who: Neil Daswani, Firebolt Ventures
+  wholink: https://www.linkedin.com/in/daswani
+  description: >
+    We've officially entered the era of non-human adversaries, where AI doesn't just
+    assist hackers—it executes 90% of the attack autonomously. In this talk, I deconstruct
+    the watershed moments of the AI age, from the first documented AI-orchestrated
+    espionage campaigns to multimillion-dollar deepfake heists.
+  bio: >
+    Dr. Neil Daswani is a CISO-in-Residence at [Firebolt Ventures](https://www.fireboltventures.com/)
+    and is Co-Academic Director of [Stanford's Advanced Cybersecurity Program](https://online.stanford.edu/programs/advanced-cybersecurity-program).
+    After completing his PhD at Stanford University, and leading security initiatives at Google,
+    he co-founded Dasient, a cybersecurity company that Google Ventures invested in and was
+    acquired by Twitter/X. After his time at Twitter, he served as CISO of multiple public
+    companies including LifeLock, Symantec's Consumer Business Unit, and QuantumScape.
+    These days, he advises multiple venture capital funds and is focused on both securing
+    artificial intelligence and using AI for cybersecurity applications. He has co-authored
+    two books "Big Breaches: Cybersecurity Lessons for Everyone" and "Foundations of Security:
+    What Every Programmer Needs to Know." Dr. Daswani holds over a dozen patents, has
+    published dozens of technical articles, and speaks frequently at top industry events.
+    He earned a PhD and MS in computer science from Stanford, and his career journey started
+    with earning a BS in computer science with honors with distinction from Columbia University.
+  image: /files/images/events/20260319_entrep_daswani_alex.jpeg
