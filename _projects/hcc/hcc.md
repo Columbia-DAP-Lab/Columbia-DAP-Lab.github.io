@@ -25,5 +25,3 @@ The goal is to give coding agents scoped, up-to-date context at each directory l
 - Optional `llms.txt` generation for web-facing references
 - Designed to reduce irrelevant context and token waste
 
-## Notes
-- Additional project metadata and publication links can be added later.
