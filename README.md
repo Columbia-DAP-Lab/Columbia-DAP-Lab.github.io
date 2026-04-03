@@ -66,6 +66,23 @@ Edit `_data/pubs.yml` and follow the existing format to add your publications. B
 A explanation of the publication date: Only the year and month will be displayed, but you need to provide complete information for sorting purposes.
 
 
+### Adding Projects and Software
+
+All project-like content (including software releases) should be added under `_projects/` using the existing project front matter format.
+
+- To add a regular project, follow the current template and leave `is_software` unset (or set it to `false`).
+- To add software, use the same project format and set:
+  ```yaml
+  is_software: true
+  ```
+- Software and non-software projects are both listed on `/projects/`:
+  - All view: `/projects/?view=all`
+  - Projects view: `/projects/?view=projects`
+  - Software view: `/projects/?view=software`
+
+This keeps contribution in one place and avoids duplicate maintenance across multiple content types.
+
+
 ### Managing Events
 
 To manage events,
