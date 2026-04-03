@@ -4,6 +4,7 @@ subtitle: "CLI that generates hierarchical AGENTS.md context files for coding ag
 date: 2026-03-31
 authors:
   - name: "Reya Vir"
+    url:  "https://www.linkedin.com/in/reyavir/"
 avatar: hcc_image.png
 tags:
   - "AI Agents"
@@ -12,6 +13,7 @@ tags:
 is_software: true
 links:
   github: "https://github.com/reyavir/hierarchical-context-compressor"
+  blog: "https://daplab.cs.columbia.edu/general/2026/03/31/your-ai-agent-doesnt-care-about-your-readme.html"
 ---
 
 `hcc` is a command-line tool for generating a hierarchy of `AGENTS.md` files (and optionally `llms.txt`) from a repository structure.
