@@ -2,7 +2,6 @@
 layout: post
 title: "Your AI Agent Doesn't Care About Your README"
 date: 2026-03-31
-published: false
 categories: [general]
 authors:
   - name: "Reya Vir"
