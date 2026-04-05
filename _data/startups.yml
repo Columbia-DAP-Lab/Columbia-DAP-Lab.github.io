@@ -31,16 +31,23 @@
     making advanced AI capabilities accessible in production environments.
   image: /files/images/events/20260402_entrep_shanker_alex.jpg
 
-- title: 'TBA'
+- title: "A Physicist's Perspective on Building a High-Tech Hardware Startup"
   date: '2026-04-16'
   tag: Entrepreneurship
   time: 11AM
   where: Davis Auditorium
   who: Alexander L. Gaeta
-  role:
-  wholink:
-  description:
-  bio:
+  wholink: https://gaeta.apam.columbia.edu/people/alexander-l-gaeta
+  description: |
+    Becoming a hardware supplier for data centers and hyperscalers is highly challenging for a
+    start-up. I will describe my journey of founding and building a start-up to commercialize
+    high-bandwidth optical interconnects for AI and high-performance computing.
+  bio: |
+    Gaeta joined Columbia University as the David M. Rickey Professor of Applied Physics in 2015.
+    Prior to that, he was the Samuel B. Eckert Professor of Engineering at Cornell University. He
+    has published more than 300 journal articles in the field of quantum and nonlinear photonics.
+    He co-founded Xscape Photonics, served as CEO from 2021 to 2023, and is currently the President
+    and serves on the Board of Directors.
 
 - title: 'TBA'
   date: '2026-04-30'
