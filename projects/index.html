@@ -1,6 +1,7 @@
 ---
 layout: default
 title: Projects
+description: Explore DAPLab projects and software releases.
 ---
 
 <style>
@@ -11,6 +12,35 @@ title: Projects
 .projects-header h1 {
   font-size: 2.5rem;
   margin-bottom: 1rem;
+}
+
+.view-toggle {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.view-toggle-btn {
+  border: 1px solid #c8d6e5;
+  border-radius: 999px;
+  padding: 0.4rem 0.95rem;
+  color: #003262;
+  text-decoration: none;
+  font-weight: 600;
+  background: #f4f8fc;
+}
+
+.view-toggle-btn:hover {
+  background: #e8f1fb;
+  text-decoration: none;
+  color: #003262;
+}
+
+.view-toggle-btn.active {
+  background: #005aaf;
+  border-color: #005aaf;
+  color: #fff;
 }
 
 .search-container {
@@ -80,6 +110,21 @@ title: Projects
   font-size: 0.95rem;
   margin-bottom: 1rem;
   line-height: 1.4;
+}
+
+.project-badge {
+  display: inline-block;
+  width: fit-content;
+  margin-bottom: 0.75rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: #004085;
+  background: #e5f1ff;
+  border: 1px solid #bfdbff;
 }
 
 /* Hidden section for search indexing */
@@ -165,13 +210,43 @@ title: Projects
 </style>
 
 <div class="projects-header">
-  <h1>Projects</h1>
-  
+  <h1 id="projects-page-title">Projects</h1>
+
+  <div class="view-toggle" role="tablist" aria-label="Project categories">
+    <a
+      href="{{ '/projects/' | relative_url }}?view=all"
+      class="view-toggle-btn"
+      data-view="all"
+      role="tab"
+      aria-selected="false"
+    >
+      All
+    </a>
+    <a
+      href="{{ '/projects/' | relative_url }}?view=projects"
+      class="view-toggle-btn active"
+      data-view="projects"
+      role="tab"
+      aria-selected="true"
+    >
+      Projects
+    </a>
+    <a
+      href="{{ '/projects/' | relative_url }}?view=software"
+      class="view-toggle-btn"
+      data-view="software"
+      role="tab"
+      aria-selected="false"
+    >
+      Software
+    </a>
+  </div>
+
   <div class="search-container">
-    <input 
-      type="text" 
-      id="search-input" 
-      class="search-input" 
+    <input
+      type="text"
+      id="search-input"
+      class="search-input"
       placeholder="Search projects..."
       aria-label="Search projects"
     >
@@ -185,13 +260,25 @@ title: Projects
 <div class="projects-grid masonry" id="projects-grid">
   {% assign sorted_projects = site.projects | sort: 'date' | reverse %}
   {% for project in sorted_projects %}
-  <div class="project-card masonry-item" data-tags="{{ project.tags | join: ',' | downcase }}" data-title="{{ project.title | downcase }}" data-authors="{% for author in project.authors %}{{ author.name | downcase }}{% unless forloop.last %},{% endunless %}{% endfor %}">
-    {% if project.avatar %}
+  <div
+    class="project-card masonry-item"
+    data-tags="{{ project.tags | join: ',' | downcase }}"
+    data-title="{{ project.title | downcase }}"
+    data-authors="{% for author in project.authors %}{{ author.name | downcase }}{% unless forloop.last %},{% endunless %}{% endfor %}"
+    data-is-software="{% if project.is_software %}true{% else %}false{% endif %}"
+  >
+    {% if project.avatar_url %}
+    <img src="{{ project.avatar_url | relative_url }}" alt="{{ project.title }}" class="project-avatar">
+    {% elsif project.avatar %}
     <img src="/_projects/{{ project.slug }}/{{ project.avatar }}" alt="{{ project.title }}" class="project-avatar">
     {% endif %}
-    
+
+    {% if project.is_software %}
+    <span class="project-badge">Software</span>
+    {% endif %}
+
     <a href="{{ project.url }}" class="project-title">{{ project.title }}</a>
-    
+
     {% if project.subtitle %}
     <div class="project-subtitle">{{ project.subtitle }}</div>
     {% endif %}
@@ -223,50 +310,219 @@ title: Projects
 </div>
 
 <script>
-function searchProjects() {
-  const searchTerm = document.getElementById('search-input').value.toLowerCase();
-  // Select project cards directly so grid column classes work correctly
-  const cols = document.querySelectorAll('.projects-grid > .project-card');
+const VIEW_ALL = 'all';
+const VIEW_PROJECTS = 'projects';
+const VIEW_SOFTWARE = 'software';
+const DEFAULT_VIEW = VIEW_SOFTWARE;
+
+const VIEW_CONFIG = {
+  [VIEW_ALL]: {
+    heading: 'All Projects and Software',
+    searchPlaceholder: 'Search all projects and software...',
+    noResultsTitle: 'No entries found',
+    noResultsEmpty: 'No projects or software in this category yet',
+    noResultsSearch: 'Try adjusting your search terms',
+    docTitle: 'Projects and Software',
+    metaDescription: 'Browse all DAPLab projects and software releases.'
+  },
+  [VIEW_PROJECTS]: {
+    heading: 'Projects',
+    searchPlaceholder: 'Search projects...',
+    noResultsTitle: 'No projects found',
+    noResultsEmpty: 'No projects in this category yet',
+    noResultsSearch: 'Try adjusting your search terms',
+    docTitle: 'Projects',
+    metaDescription: 'Browse DAPLab research projects.'
+  },
+  [VIEW_SOFTWARE]: {
+    heading: 'Software',
+    searchPlaceholder: 'Search software...',
+    noResultsTitle: 'No software found',
+    noResultsEmpty: 'No software in this category yet',
+    noResultsSearch: 'Try adjusting your search terms',
+    docTitle: 'Software',
+    metaDescription: 'Browse DAPLab software releases and open-source tools.'
+  }
+};
+
+const pageTitle = document.getElementById('projects-page-title');
+const searchInput = document.getElementById('search-input');
+const cards = Array.from(document.querySelectorAll('.projects-grid > .project-card'));
+const noResults = document.getElementById('no-results');
+const noResultsTitle = noResults.querySelector('h3');
+const noResultsText = noResults.querySelector('p');
+const viewButtons = Array.from(document.querySelectorAll('.view-toggle-btn'));
+const initialDocumentTitle = document.title;
+const titleSuffix = initialDocumentTitle.includes(' | ')
+  ? initialDocumentTitle.slice(initialDocumentTitle.indexOf(' | '))
+  : '';
+const metaDescriptionTag = document.querySelector('meta[name="description"]');
+const ogTitleTag = document.querySelector('meta[property="og:title"]');
+const twitterTitleTag = document.querySelector('meta[name="twitter:title"]');
+const ogDescriptionTag = document.querySelector('meta[property="og:description"]');
+const twitterDescriptionTag = document.querySelector('meta[name="twitter:description"]');
+const ogUrlTag = document.querySelector('meta[property="og:url"]');
+const canonicalTag = document.querySelector('link[rel="canonical"]');
+const webPageSchemaTag = document.querySelector('script[type="application/ld+json"]');
+
+function getViewFromURL() {
+  const params = new URLSearchParams(window.location.search);
+  const view = params.get('view');
+  return isValidView(view) ? view : DEFAULT_VIEW;
+}
+
+function isValidView(view) {
+  return view === VIEW_ALL || view === VIEW_PROJECTS || view === VIEW_SOFTWARE;
+}
+
+function setActiveView(view, pushState) {
+  const safeView = isValidView(view) ? view : DEFAULT_VIEW;
+  const url = new URL(window.location.href);
+  url.searchParams.set('view', safeView);
+
+  if (pushState) {
+    window.history.pushState({ view: safeView }, '', url);
+  } else {
+    window.history.replaceState({ view: safeView }, '', url);
+  }
+
+  updateViewButtons(safeView);
+  updateViewText(safeView);
+  updateMetadata(safeView, url.toString());
+  applyFilters(safeView);
+}
+
+function updateViewButtons(activeView) {
+  viewButtons.forEach(btn => {
+    const isActive = btn.getAttribute('data-view') === activeView;
+    btn.classList.toggle('active', isActive);
+    btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+  });
+}
+
+function updateViewText(activeView) {
+  const viewConfig = VIEW_CONFIG[activeView] || VIEW_CONFIG[DEFAULT_VIEW];
+  pageTitle.textContent = viewConfig.heading;
+  searchInput.placeholder = viewConfig.searchPlaceholder;
+  noResultsTitle.textContent = viewConfig.noResultsTitle;
+}
+
+function updateMetadata(activeView, currentURL) {
+  const viewConfig = VIEW_CONFIG[activeView] || VIEW_CONFIG[DEFAULT_VIEW];
+  const fullTitle = `${viewConfig.docTitle}${titleSuffix}`;
+  document.title = fullTitle;
+
+  if (ogTitleTag) {
+    ogTitleTag.setAttribute('content', fullTitle);
+  }
+  if (twitterTitleTag) {
+    twitterTitleTag.setAttribute('content', fullTitle);
+  }
+
+  if (metaDescriptionTag) {
+    metaDescriptionTag.setAttribute('content', viewConfig.metaDescription);
+  }
+  if (ogDescriptionTag) {
+    ogDescriptionTag.setAttribute('content', viewConfig.metaDescription);
+  }
+  if (twitterDescriptionTag) {
+    twitterDescriptionTag.setAttribute('content', viewConfig.metaDescription);
+  }
+  if (ogUrlTag) {
+    ogUrlTag.setAttribute('content', currentURL);
+  }
+  if (canonicalTag) {
+    canonicalTag.setAttribute('href', currentURL);
+  }
+
+  if (webPageSchemaTag && webPageSchemaTag.textContent) {
+    try {
+      const schema = JSON.parse(webPageSchemaTag.textContent);
+      if (schema && schema['@type'] === 'WebPage') {
+        schema.name = fullTitle;
+        schema.url = currentURL;
+        schema.description = viewConfig.metaDescription;
+        webPageSchemaTag.textContent = JSON.stringify(schema, null, 2);
+      }
+    } catch (error) {
+      // Keep existing structured data when it cannot be safely parsed.
+    }
+  }
+}
+
+function matchesActiveView(card, activeView) {
+  if (activeView === VIEW_ALL) {
+    return true;
+  }
+  const isSoftware = card.getAttribute('data-is-software') === 'true';
+  return activeView === VIEW_SOFTWARE ? isSoftware : !isSoftware;
+}
+
+function applyFilters(activeView) {
+  const currentView = isValidView(activeView) ? activeView : getViewFromURL();
+  const searchTerm = searchInput.value.trim().toLowerCase();
   let visibleCount = 0;
-  
-  cols.forEach(col => {
-  const title = (col.getAttribute('data-title') || '').toLowerCase();
-  const tags = (col.getAttribute('data-tags') || '').toLowerCase();
-  const authors = (col.getAttribute('data-authors') || '').toLowerCase();
-  const content = (col.textContent || '').toLowerCase();
-    
-    if (title.includes(searchTerm) || 
-        tags.includes(searchTerm) || 
-        authors.includes(searchTerm) ||
-        content.includes(searchTerm)) {
-      col.style.display = 'block';
+
+  cards.forEach(card => {
+    const inCurrentView = matchesActiveView(card, currentView);
+    const title = (card.getAttribute('data-title') || '').toLowerCase();
+    const tags = (card.getAttribute('data-tags') || '').toLowerCase();
+    const authors = (card.getAttribute('data-authors') || '').toLowerCase();
+    const content = (card.textContent || '').toLowerCase();
+    const matchesSearch = !searchTerm ||
+      title.includes(searchTerm) ||
+      tags.includes(searchTerm) ||
+      authors.includes(searchTerm) ||
+      content.includes(searchTerm);
+
+    if (inCurrentView && matchesSearch) {
+      card.style.display = 'block';
       visibleCount++;
     } else {
-      col.style.display = 'none';
+      card.style.display = 'none';
     }
   });
-  
-  const noResults = document.getElementById('no-results');
+
   if (visibleCount === 0) {
     noResults.classList.add('show');
+    const viewConfig = VIEW_CONFIG[currentView] || VIEW_CONFIG[DEFAULT_VIEW];
+    noResultsText.textContent = searchTerm ? viewConfig.noResultsSearch : viewConfig.noResultsEmpty;
   } else {
     noResults.classList.remove('show');
   }
 }
 
-function resetSearch() {
-  document.getElementById('search-input').value = '';
-  const cols = document.querySelectorAll('.projects-grid > .project-card');
-  cols.forEach(col => {
-    col.style.display = 'block';
-  });
-  document.getElementById('no-results').classList.remove('show');
+function searchProjects() {
+  applyFilters(getViewFromURL());
 }
 
+function resetSearch() {
+  searchInput.value = '';
+  applyFilters(getViewFromURL());
+}
+
+viewButtons.forEach(btn => {
+  btn.addEventListener('click', function(e) {
+    e.preventDefault();
+    const view = btn.getAttribute('data-view');
+    setActiveView(view, true);
+  });
+});
+
+window.addEventListener('popstate', function() {
+  const view = getViewFromURL();
+  updateViewButtons(view);
+  updateViewText(view);
+  updateMetadata(view, window.location.href);
+  applyFilters(view);
+});
+
 // Allow Enter key to trigger search
-document.getElementById('search-input').addEventListener('keypress', function(e) {
+searchInput.addEventListener('keypress', function(e) {
   if (e.key === 'Enter') {
     searchProjects();
   }
 });
+
+setActiveView(getViewFromURL(), false);
 </script>
