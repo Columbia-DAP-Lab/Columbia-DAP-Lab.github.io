@@ -158,7 +158,7 @@
 - name: Asaf Cidon
   homepage: https://www.asafcidon.com/
   image: /files/images/avatar/asafcidon.jpg
-  bio: Expert in distributed storage systems, machine learning for systems, and cybersecurity. 
+  bio: Expert in datacenter system infrastructure and security. Founded Sookasa (acquired by Barracuda Networks). Best papers in top systems, database and security conferences.
   category: Faculty
   field: [CS, Systems, Security]
   
