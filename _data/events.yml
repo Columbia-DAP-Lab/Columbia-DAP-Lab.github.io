@@ -13,6 +13,39 @@
 # 
 #
 
+- title: 'Agentic Risk Standard'
+  tag: Seminar
+  date: '2026-05-05'
+  who: Wenyue Hua
+  where: CSB 453
+  time: 12PM
+  description: |
+    Prior work on trustworthy AI emphasizes model-internal properties such as bias mitigation,
+    adversarial robustness, and interpretability. As AI systems evolve into autonomous agents
+    deployed in open environments and increasingly connected to payments or assets, the operational
+    meaning of trust shifts to end-to-end outcomes: whether an agent completes tasks, follows user
+    intent, and avoids failures that cause material or psychological harm. These risks are
+    fundamentally product-level and cannot be eliminated by technical safeguards alone because
+    agent behavior is inherently stochastic. To address this gap between model-level reliability
+    and user-facing guarantees, we propose a complementary paradigm grounded in risk management.
+    Inspired by financial underwriting, we introduce a mechanism for AI-mediated transactions
+    that quantify and price task risk and protect user interests through contractual guarantees.
+    Under this mechanism, users receive contractual and deterministic compensation for execution
+    failure, misalignment, or unintended outcomes, shifting trust from an implicit technical
+    property to a measurable and enforceable product guarantee. Towards this goal, we present an
+    end-to-end standard, Agentic Risk Standard, integrating risk assessment, underwriting, and
+    compensation, along with a simulation for evaluation. This standard links technical
+    reliability with economic accountability to enable operational trust in AI agents.
+    ARS's implementation can be found at [t54-labs/AgenticRiskStandard](https://github.com/t54-labs/AgenticRiskStandard).
+  bio: |
+    Wenyue Hua is currently a senior researcher at Microsoft Research, AI Frontiers. She was a
+    CS postdoctoral researcher at UCSB working with Prof. William Yang Wang. She received her Ph.D.
+    from Rutgers University-New Brunswick, under the supervision of Professor Yongfeng Zhang.
+    Her research focuses on the safety and efficiency of LLM agents, multi-agent reinforcement
+    learning, and LLM reasoning. She was selected as KAUST AI Rising Star in 2025, published
+    over 60 papers at top natural language processing and machine learning conferences such as
+    ACL, EMNLP, ICLR, NeurIPS, TACL.
+
 - title: 'Scalable Image AI via Self-Designing Storage'
   tag: Seminar
   date: '2026-04-21'

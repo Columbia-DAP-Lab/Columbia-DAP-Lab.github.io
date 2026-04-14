@@ -66,6 +66,103 @@ Edit `_data/pubs.yml` and follow the existing format to add your publications. B
 A explanation of the publication date: Only the year and month will be displayed, but you need to provide complete information for sorting purposes.
 
 
+### Adding Projects and Software
+
+All project-like content (including software releases) should be added under `_projects/` using one shared format.
+
+#### 1. Create a project folder and markdown file
+
+Use this exact structure:
+```text
+_projects/<slug>/<slug>.md
+```
+
+Example:
+```text
+_projects/my-cool-project/my-cool-project.md
+```
+
+Important:
+- Keep `<slug>` lowercase and hyphen-separated (no spaces).
+- The folder name and markdown filename should match.
+- This keeps URLs and image paths predictable.
+
+#### 2. Add front matter
+
+Copy this template and fill it in:
+
+```yaml
+---
+title: "Project Title"
+subtitle: "One-line summary (optional but recommended)"
+date: 2026-04-02
+authors:
+  - name: "Author One"
+    url: "https://author.website"  # optional
+  - name: "Author Two"
+
+avatar: project-image.png  # optional; place file in same folder as this .md
+# avatar_url: /files/images/...  # optional alternative to avatar
+
+tags:
+  - "Tag1"
+  - "Tag2"
+
+# Set this only for open-sourced software entries:
+# is_software: true
+
+links:  # optional; currently supported keys are github/pypi/blog/demo
+  github: "https://github.com/org/repo"
+  pypi: "https://pypi.org/project/your-package/"
+  blog: "https://link.to/blog-post"
+  demo: "https://link.to/demo"
+
+publications:  # optional
+  - title: "Paper Title"
+    venue: "Conference/Journal"
+    url: "https://paper-link"
+    year: 2026
+---
+```
+
+Field requirements:
+- Required/recommended for all entries:
+  - `title`
+  - `date` (`YYYY-MM-DD`)
+  - at least one author under `authors`
+- Optional:
+  - `subtitle`, `avatar`/`avatar_url`, `tags`, `links`, `publications`
+- For software:
+  - set `is_software: true`
+- For normal projects:
+  - leave `is_software` unset (or set `false`)
+
+#### 3. Write the project/software description
+
+After front matter, write normal Markdown content for overview, features, methods, etc.
+
+To reference files in the same project folder, use:
+```text
+/_projects/<slug>/<filename>
+```
+
+Example:
+```md
+![Architecture](/_projects/my-cool-project/architecture.png)
+```
+
+#### 4. Where your entry appears
+
+- All entries: `/projects/?view=all`
+- Non-software projects: `/projects/?view=projects`
+- Software entries (`is_software: true`): `/projects/?view=software`
+
+Each entry also gets its own detail page at:
+```text
+/projects/<slug>/
+```
+
+
 ### Managing Events
 
 To manage events,

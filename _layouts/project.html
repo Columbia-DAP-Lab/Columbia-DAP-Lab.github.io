@@ -175,7 +175,11 @@ layout: default
 </style>
 
 <div class="project-detail">
-  <a href="/projects/" class="back-link">Back to Projects</a>
+  {% if page.is_software %}
+  <a href="{{ '/projects/?view=software' | relative_url }}" class="back-link">Back to Software</a>
+  {% else %}
+  <a href="{{ '/projects/?view=projects' | relative_url }}" class="back-link">Back to Projects</a>
+  {% endif %}
   
   <div class="project-header">
     <h1>{{ page.title }}</h1>
@@ -197,7 +201,9 @@ layout: default
     </div>
   </div>
   
-  {% if page.avatar %}
+  {% if page.avatar_url %}
+  <img src="{{ page.avatar_url | relative_url }}" alt="{{ page.title }}" class="project-avatar-large">
+  {% elsif page.avatar %}
   <img src="/_projects/{{ page.slug }}/{{ page.avatar }}" alt="{{ page.title }}" class="project-avatar-large">
   {% endif %}
   

@@ -1,9 +1,43 @@
-#
-# image: relative path (e.g., /files/images/events/foo.jpg) or absolute URL
+# 
 #- title: 'TBA'
 #  date: '2026-01-22'
 #  tag: Entrepreneurship
+#  time: xx[A,P]M
+#  where: Davis Auditorium
+#  who:
+#  description: [|,>]
+#  bio: [|,>]
+#  image: relative path (e.g., /files/images/events/{YYYYMMDD}_{category}_{topic}_{photographer}.jpg) or absolute URL
+# 
 
+- title: 'TBA'
+  date: '2026-04-30'
+  tag: Entrepreneurship
+  time: 11AM
+  where: Davis Auditorium
+  who: Leon Song, Together.AI
+  role: VP of Research
+  wholink:
+  description:
+  bio:
+
+- title: "A Physicist's Perspective on Building a High-Tech Hardware Startup"
+  date: '2026-04-16'
+  tag: Entrepreneurship
+  time: 11AM
+  where: Davis Auditorium
+  who: Alexander L. Gaeta
+  wholink: https://gaeta.apam.columbia.edu/people/alexander-l-gaeta
+  description: |
+    Becoming a hardware supplier for data centers and hyperscalers is highly challenging for a
+    start-up. I will describe my journey of founding and building a start-up to commercialize
+    high-bandwidth optical interconnects for AI and high-performance computing.
+  bio: |
+    Gaeta joined Columbia University as the David M. Rickey Professor of Applied Physics in 2015.
+    Prior to that, he was the Samuel B. Eckert Professor of Engineering at Cornell University. He
+    has published more than 300 journal articles in the field of quantum and nonlinear photonics.
+    He co-founded Xscape Photonics, served as CEO from 2021 to 2023, and is currently the President
+    and serves on the Board of Directors.
 
 - title: 'Running AI is Harder Than Training It: The Engineering Behind Inference'
   date: '2026-04-02'
@@ -29,148 +63,100 @@
     ensuring models are served securely, reliably, and efficiently to end users. His work sits at
     the intersection of machine learning systems and developer experience, with an emphasis on
     making advanced AI capabilities accessible in production environments.
+  image: /files/images/events/20260402_entrep_shanker_alex.jpg
 
-
-- title: 'TBA'
-  date: '2026-04-16'
+- title: 'AI Attacks'
+  date: '2026-03-19'
   tag: Entrepreneurship
-  time: 11AM
+  time: 11:30AM
   where: Davis Auditorium
-  who: Alexander L. Gaeta
-  role:
-  wholink:
-  description:
-  bio:
+  who: Neil Daswani, Firebolt Ventures
+  wholink: https://www.linkedin.com/in/daswani
+  description: >
+    We've officially entered the era of non-human adversaries, where AI doesn't just
+    assist hackers—it executes 90% of the attack autonomously. In this talk, I deconstruct
+    the watershed moments of the AI age, from the first documented AI-orchestrated
+    espionage campaigns to multimillion-dollar deepfake heists.
+  bio: >
+    Dr. Neil Daswani is a CISO-in-Residence at [Firebolt Ventures](https://www.fireboltventures.com/)
+    and is Co-Academic Director of [Stanford's Advanced Cybersecurity Program](https://online.stanford.edu/programs/advanced-cybersecurity-program).
+    After completing his PhD at Stanford University, and leading security initiatives at Google,
+    he co-founded Dasient, a cybersecurity company that Google Ventures invested in and was
+    acquired by Twitter/X. After his time at Twitter, he served as CISO of multiple public
+    companies including LifeLock, Symantec's Consumer Business Unit, and QuantumScape.
+    These days, he advises multiple venture capital funds and is focused on both securing
+    artificial intelligence and using AI for cybersecurity applications. He has co-authored
+    two books "Big Breaches: Cybersecurity Lessons for Everyone" and "Foundations of Security:
+    What Every Programmer Needs to Know." Dr. Daswani holds over a dozen patents, has
+    published dozens of technical articles, and speaks frequently at top industry events.
+    He earned a PhD and MS in computer science from Stanford, and his career journey started
+    with earning a BS in computer science with honors with distinction from Columbia University.
+  image: /files/images/events/20260319_entrep_daswani_alex.jpeg
 
-- title: 'TBA'
-  date: '2026-04-30'
+- title: 'Scaling RL Rollouts: Agent-Native Infrastructure with Daytona'
+  date: '2026-03-05'
   tag: Entrepreneurship
-  time: 11AM
+  time: 11:30AM
   where: Davis Auditorium
-  who: Leon Song, Together.AI
-  role: VP of Research
-  wholink:
-  description:
-  bio:
+  who: Ivan Burazin, Daytona
+  role: CEO and Co-founder
+  wholink: https://www.daytona.io/
+  description: >
+    In this talk, we'll outline why a new class of agent-native infrastructure is emerging, what
+    problems it is designed to solve, and the core use cases driving it, from autonomous coding
+    agents to large-scale evaluation and training workloads. Daytona is an agent-native control
+    plane designed to orchestrate isolated, stateful sandbox environments at scale. We'll break
+    down the infrastructure challenges behind isolation, state management, and massive parallelism,
+    and why traditional VM and container stacks fall short. As a concrete example, we'll walk
+    through scaling RL rollouts, showing how tens of thousands of environments can be provisioned
+    and orchestrated in minutes as part of a high-throughput RL pipeline.
+  bio: >
+    Ivan Burazin is the co-founder and CEO of Daytona, one of the fastest-growing infrastructure
+    companies of its generation. Daytona is building agent-native cloud infrastructure that enables
+    AI agents to securely run, fork, and manage stateful runtime environments at scale. Backed by
+    $31M, including a $24M Series A led by FirstMark Capital, Daytona powers millions of sandboxes
+    per day for startups and Fortune 500 companies building autonomous AI systems. Previously,
+    Ivan co-founded Codeanywhere, one of the first cloud IDEs (2009), and created Shift, Europe's
+    leading developer conference, acquired by Infobip in 2021. He later joined Infobip's executive
+    board as Chief Developer Experience Officer.
+  image: /files/images/events/20260305_entrep_burazin_alex.jpeg
 
-
-
-- title: 'Focus is Everything - How to Effectively Navigate the AI Landscape'
-  date: '2025-09-09'
+- title: 'A Talk about Structured Template Labs'
+  date: '2026-02-19'
   tag: Entrepreneurship
-  time: 7PM
+  time: 11:40AM
   where: Davis Auditorium
-  who: Aaron Vontell, Anthropic
-  role: Member of the Technical Staff
-  wholink: https://www.linkedin.com/in/aaron-vontell
-  description:
-    In this talk, Aaron will walk through his journey building in the AI space, detailing his learnings from Instabase, his own AI startup Regression Games, and now his experience at Anthropic. This talk will focus on the importance of focusing on specific problems and navigating frequently-changing technological landscapes, and how to apply cutting-edge research in record time.
-
-- title: 'Lessons for Building Valuable Domain-Specific AI Products'
-  date: '2025-09-23'
-  tag: Entrepreneurship
-  time: 7PM
-  who: Tom Effland, Noetica
-  where: Davis Auditorium
-  role: Co-founder and CTO
-  wholink: https://www.noetica.ai/
-  bio: Tom Effland is the technical founder and CTO of Noetica AI, a fast-growing VC-backed Series A startup. The company's AI-powered knowledge platform helps many top law firms improve outcomes in valuable corporate debt, securities, and M&A transactions. Before founding Noetica, Tom earned his PhD in Computer Science from Columbia University. He was advised by Prof. Michael Collins and received support from a NSF Graduate Research Fellowship.
-  description:
-    This talk shares lessons learned going from NLP researcher to building Noetica, a platform that analyzes populations of complex contracts to determine market standards for deal terms. Along the way I'll discuss (1) how LLMs have enabled a new opportunity space for hybrid systems that combine extraction capabilities with formal analytical frameworks, (2) how building these systems still requires deep fusion of subject-matter and technical judgment to identify tractable decompositions of seemingly impossible problems, and (3) how this converges to a new version of the Technical Product Manager role. This role is highly suited to technical researchers willing to tackle sector-specific challenges. 
-
-- title: "Agents at Scale: Lessons from LinkedIn's Agent Journey"
-  date: '2025-10-07'
-  tag: Entrepreneurship
-  where: Davis Auditorium
-  time: 7PM
-  who: Xiaofeng Wang, LinkedIn
-  role: Senior Eng Manager, Agents Platform
-  wholink: https://www.linkedin.com/in/wang-xiaofeng/
-  bio: Xiaofeng Wang is a Senior Engineering Manager at LinkedIn, where he leads the Agents Platform team, building the foundational technologies that enable the entire engineering organization to deliver agentic experiences. His team is responsible for the agent runtime platform, agent framework, and Cognitive Memory Agent. He and his team have also been invited to speak at various leading industry conferences. In his previous role at LinkedIn, Xiaofeng led the first team dedicated to Generative AI Foundations, developing infrastructure, platforms, and tooling from the ground up to power all of LinkedIn's member-facing GenAI products since 2022. Before that, he worked as an engineer and data scientist in the Data Science Productivity and Research team, building platforms to automate advanced data science analyses such as A/B testing, deep dives, and observational causal studies. Prior to LinkedIn, Xiaofeng worked at Bank of America Merrill Lynch, where he led the team building recommendation systems for the Merrill Edge's personalized investing platform. He received his Ph.D. in Systems and Information Engineering from the University of Virginia.
-  description: Join Xiaofeng Wang, Sr. Engineering Manager at LinkedIn's Agents Platform, as he takes you behind the scenes of the platform powering all of LinkedIn's member-facing agentic applications at scale. This talk will trace the GenAI product revolution, from simple prompt‑in‑string use cases to the latest LinkedIn Hiring Assistant. It will show how the Agent Platform evolved to enable these experiences. Xiaofeng will share the technical foundations, organizational challenges, hiring strategies, and hard‑won lessons that shaped LinkedIn's journey, highlighting how the team bridged open‑source innovation with enterprise‑grade infrastructure, built seamless developer experiences, and enforced trust and responsible AI from day one. Whether you're a researcher, engineer, product leader, or entrepreneur, this talk offers a front-row look at LinkedIn's agentic journey, the latest trends in agent development, and what it takes to transform prototypes into impactful, production-grade agents at enterprise scale. 
-
-- title: 'How to Build Cursor for Law'
-  date: '2025-10-21'
-  tag: Entrepreneurship
-  time: 7PM
-  who: Thomas Bueler-Faudree, August
-  where: Davis Auditorium
-  role: Co-founder
-  wholink:
-  bio: Thomas Bueler-Faudree is the co-founder of August, where he leads engineering and product. He earned a bachelor's degree in computer science and history from Columbia University. At Columbia he worked in the CRIS Lab and CML.
+  who: Amit Agrawal, Structured Template Labs
+  role: CEO and Founder
+  wholink: https://www.linkedin.com/company/layerone-ai/
   description: |
-    Modern document-heavy work in law, finance, and consulting is repetitive, bespoke, and review heavy. Code generation tools like Cursor have reshaped how developers work, but that shift has not happened in law. Legal tasks are hard to measure and even harder to "unit test," which is why many AI tools miss the mark.
-
-    This talk shows how August is building agents that do better: the right indexing methods, visible state, disciplined tool use, and citations at every step to cleanly automate real professional workflows. We'll walk through a multi-step research agent (e.g., over SEC filings) that plans the task, retrieves the right sources, routes to the relevant sections, and drafts grounded legal answers.
-
-    Attendees will leave with a lightweight design pattern for credence domains like law. We will also share our growth and go-to-market. We are productizing law-firm workflows and, in some cases, selling with the firm to their clients. This is a new model that is gaining traction across professional services. 
-
-- title: 'Warehouse Adaptation of Robots and AI Systems'
-  date: '2025-11-04'
-  where: Davis Auditorium
-  tag: Entrepreneurship
-  time: 7PM
-  who: Vivian Zhang, WarehouseRobot.ai
-  role: CEO
-  wholink: https://warehouserobot.ai/
-  description:  |
-    Autonomous warehouse systems represent one of the most advanced and large-scale examples of embodied multi-agent intelligence operating in the physical world. Thousands of mobile robots collaborate continuously to move, pick, and sort goods in dynamic, uncertain environments—achieving high efficiency, adaptability, and robustness in real time.
-
-    In this talk, I will discuss how warehouse robotics offers both a practical foundation and conceptual inspiration for the design of AI systems. I will introduce the market context and technical underpinnings of large-scale robotic automation, then explore how intelligence emerges through coordination, perception, and control across distributed agents. I will also discuss how large language models (LLMs) may extend this paradigm—enabling natural language tasking, high-level reasoning, and seamless human–AI collaboration in embodied systems.
-
-    Finally, I will reflect on how lessons from large-scale robotic coordination can inform the broader design of the warehouse automation ecosystems, highlighting new directions for research at the intersection of autonomy, learning, and collective intelligence.
+    This talk will provide insights into building and scaling enterprise software companies, from
+    early-stage product development to public company growth.
   bio: |
-    Vivian Zhang is the Chief Executive Officer of [WarehouseRobot.AI](https://warehouserobot.ai), where she leads research and development in intelligent robotics, large-scale multi-agent coordination, and autonomous warehouse systems. Her work spans planning under uncertainty, human–AI collaboration, and the integration of large language models into embodied intelligence. Vivian’s perspective bridges industrial-scale deployment and AI research, with a focus on how real-world robotics can inform the next generation of AI agents and collective intelligence systems. Her portfolio of AI startups and AI VC fund can be found at [https://viviancompanies.com/](https://viviancompanies.com/) and at [https://extelligenceinvest.com/](https://extelligenceinvest.com/). 
+    Amit Agarwal is the founder of Standard Template Labs (STLabs), where he is building a new platform
+    in enterprise software. Before STLabs, Amit spent a year as a General Partner at ICONIQ Capital,
+    investing in and advising technology companies. He also serves on the Board of Directors at Datadog,
+    where he previously spent 13 years as an executive, joining as employee number eight.
+    At Datadog, Amit helped build the company from its earliest days through its growth into a public
+    company. He built and led teams across product, marketing, sales, corporate development, and
+    operations — having started in the early years doing hands-on product management, go-to-market,
+    and customer-facing work.
+  image: /files/images/events/20260219_entrep_agarwal_alex.jpeg
 
-    Vivian was named one of the Top 100 Most Influential Chinese by Forbes and recognized among 50 top most well known Data Scientists by CBNData. Vivian’s always happy to hear from founders and fellows — feel free to reach out anytime!
-
-- title: 'AI Site Reliability Engineers: Automating Incident Response in Complex Systems'
-  date: '2025-11-18'
+- title: 'The most accurate web search tools for AI'
+  date: '2026-02-05'
   tag: Entrepreneurship
+  time: 11AM
   where: Davis Auditorium
-  time: 7PM
-  who: Anish Agrawal, Traversal 
-  wholink:  https://www.traversal.com/
-  role: CEO & Co-founder
-  description:  |
-    In this presentation, I will describe ongoing work at Traversal, where our team is developing an
-    AI Site Reliability Engineer (SRE) designed to assist enterprises in diagnosing and mitigating
-    production incidents, with the broader goal of improving the resilience of large-scale, mission-
-    critical systems. I will outline why incident troubleshooting is rapidly becoming a central
-    bottleneck in realizing end-to-end automation of the software development lifecycle (SDLC),
-    particularly as organizations adopt increasingly complex cloud-native architectures and
-    integrate AI-driven tooling across their operational workflows.
-    
-    From a research perspective, automated incident response represents a technically rich and
-    largely underexplored problem space. I will highlight how it brings together challenges at the
-    intersection of agentic system design, large language model evaluation, causal inference on
-    unstructured data, and time-series modeling of high-dimensional telemetry. These domains
-    converge in the task of enabling AI systems to form hypotheses, reason under uncertainty,
-    and propose actionable remediations in environments characterized by incomplete information,
-    noisy signals, and strict reliability constraints. Our goal in this work is not only to build a
-    practical system, but also to surface open problems and novel research opportunities for the
-    broader community.
+  who: Parag Agrawal, Parallel.ai
+  role: CEO and Cofounder
+  wholink: https://parallel.ai/
   bio: |
-    Anish Agarwal is the CEO and Cofounder of Traversal, a startup building AI Site Reliability
-    Engineer agents to help teams diagnose and remediate complex production incidents, and an
-    Assistant Professor at Columbia University. His work focuses on causal machine learning and
-    data-driven decision-making in complex, real-world systems.
-
-- title: 'AI Entrepreneurship: Obstacles, Opportunities, and Outcomes'
-  date: '2025-12-02'
-  tag: Entrepreneurship
-  where: Davis Auditorium
-  time: 7PM
-  who: Anish Das Sarma, Reinforce Labs
-  role: Founder and CEO
-  wholink: https://www.reinforcelabs.ai/
-  description:  |
-    Building an AI startup today is exciting, but also uniquely challenging. In this talk, I’ll offer a transparent, behind-the-scenes look at the realities of modern AI entrepreneurship. We are in one of the fastest-moving technology cycles in history. Drawing from firsthand experience as a repeat founder, I’ll unpack the full spectrum of an entrepreneur’s journey exploring obstacles, opportunities, and outcomes. You will leave with an honest, grounded understanding of what it takes, what to expect, and why, despite the challenges, this may be one of the most exciting times in history to build in AI.
-
-  bio:  |
-    Anish Das Sarma is the Founder and CEO of Reinforce Labs, a startup dedicated to ensuring safe, secure, and compliant adoption of enterprise AI systems. A repeat founder, Anish previously built Trooly, an AI-powered identity and trust platform that was acquired by Airbnb, where he went on to lead key initiatives in AI, trust & safety. Most recently, Anish served as a Director of Engineering at Google, where he led large-scale AI/ML teams across Google Ads Safety. 
-
-    Anish holds a Ph.D. in Computer Science from Stanford University and a B.Tech in Computer Science from IIT Bombay. Across more than a decade in AI, he has combined deep technical expertise with hands-on operational leadership, building products and teams across multiple domains of applied ML.
+    Parag Agrawal is the founder of Parallel Web Systems, a company unlocking the web for AI agents.
+    Previously, he spent 11 years at Twitter, where he joined as an engineer before serving as CTO, and then CEO.
+    Parag has a PhD from Stanford University in Computer Science and a Bachelor's degree in Computer
+    Science and Engineering from IIT, Bombay.
+  image: /files/images/events/20260205_entrep_agrawal_alex.jpg
 
 - title: 'Building Liquid AI'
   date: '2025-12-16'
@@ -201,96 +187,204 @@
     Technology, Austria. His Ph.D. dissertation and continued research on Liquid Neural Networks
     got recognized internationally with numerous nominations and awards.
 
-- title: 'The most accurate web search tools for AI'
-  date: '2026-02-05'
+- title: 'AI Entrepreneurship: Obstacles, Opportunities, and Outcomes'
+  date: '2025-12-02'
   tag: Entrepreneurship
-  time: 11AM
   where: Davis Auditorium
-  who: Parag Agrawal, Parallel.ai
-  role: CEO and Cofounder
-  wholink: https://parallel.ai/
-  description: |
-    Parag Agrawal is the founder of Parallel Web Systems, a company unlocking the web for AI agents.
-    Previously, he spent 11 years at Twitter, where he joined as an engineer before serving as CTO, and then CEO.
-    Parag has a PhD from Stanford University in Computer Science and a Bachelor's degree in Computer
-    Science and Engineering from IIT, Bombay.
-  bio: # Move to description for now
-  image: /files/images/events/20260205_entrep_agrawal_alex.jpg
+  time: 7PM
+  who: Anish Das Sarma, Reinforce Labs
+  role: Founder and CEO
+  wholink: https://www.reinforcelabs.ai/
+  description:  |
+    Building an AI startup today is exciting, but also uniquely challenging. In this talk,
+    I'll offer a transparent, behind-the-scenes look at the realities of modern AI entrepreneurship.
+    We are in one of the fastest-moving technology cycles in history. Drawing from firsthand
+    experience as a repeat founder, I'll unpack the full spectrum of an entrepreneur's journey
+    exploring obstacles, opportunities, and outcomes. You will leave with an honest, grounded
+    understanding of what it takes, what to expect, and why, despite the challenges, this may be
+    one of the most exciting times in history to build in AI.
+  bio:  |
+    Anish Das Sarma is the Founder and CEO of Reinforce Labs, a startup dedicated to ensuring safe,
+    secure, and compliant adoption of enterprise AI systems. A repeat founder, Anish previously
+    built Trooly, an AI-powered identity and trust platform that was acquired by Airbnb, where he
+    went on to lead key initiatives in AI, trust & safety. Most recently, Anish served as a
+    Director of Engineering at Google, where he led large-scale AI/ML teams across Google Ads Safety.
 
-- title: 'A Talk about Structured Template Labs'
-  date: '2026-02-19'
+    Anish holds a Ph.D. in Computer Science from Stanford University and a B.Tech in Computer
+    Science from IIT Bombay. Across more than a decade in AI, he has combined deep technical
+    expertise with hands-on operational leadership, building products and teams across multiple
+    domains of applied ML.
+
+- title: 'AI Site Reliability Engineers: Automating Incident Response in Complex Systems'
+  date: '2025-11-18'
   tag: Entrepreneurship
-  time: 11:40AM
   where: Davis Auditorium
-  who: Amit Agrawal, Structured Template Labs
-  role: CEO and Founder
-  wholink: https://www.linkedin.com/company/layerone-ai/
-  description: |
-    This talk will provide insights into building and scaling enterprise software companies, from
-    early-stage product development to public company growth.
+  time: 7PM
+  who: Anish Agrawal, Traversal
+  wholink:  https://www.traversal.com/
+  role: CEO & Co-founder
+  description:  |
+    In this presentation, I will describe ongoing work at Traversal, where our team is developing an
+    AI Site Reliability Engineer (SRE) designed to assist enterprises in diagnosing and mitigating
+    production incidents, with the broader goal of improving the resilience of large-scale, mission-
+    critical systems. I will outline why incident troubleshooting is rapidly becoming a central
+    bottleneck in realizing end-to-end automation of the software development lifecycle (SDLC),
+    particularly as organizations adopt increasingly complex cloud-native architectures and
+    integrate AI-driven tooling across their operational workflows.
+
+    From a research perspective, automated incident response represents a technically rich and
+    largely underexplored problem space. I will highlight how it brings together challenges at the
+    intersection of agentic system design, large language model evaluation, causal inference on
+    unstructured data, and time-series modeling of high-dimensional telemetry. These domains
+    converge in the task of enabling AI systems to form hypotheses, reason under uncertainty,
+    and propose actionable remediations in environments characterized by incomplete information,
+    noisy signals, and strict reliability constraints. Our goal in this work is not only to build a
+    practical system, but also to surface open problems and novel research opportunities for the
+    broader community.
   bio: |
-    Amit Agarwal is the founder of Standard Template Labs (STLabs), where he is building a new platform
-    in enterprise software. Before STLabs, Amit spent a year as a General Partner at ICONIQ Capital,
-    investing in and advising technology companies. He also serves on the Board of Directors at Datadog,
-    where he previously spent 13 years as an executive, joining as employee number eight.
-    At Datadog, Amit helped build the company from its earliest days through its growth into a public
-    company. He built and led teams across product, marketing, sales, corporate development, and
-    operations — having started in the early years doing hands-on product management, go-to-market,
-    and customer-facing work.
-  image: /files/images/events/20260219_entrep_agarwal_alex.jpeg
+    Anish Agarwal is the CEO and Cofounder of Traversal, a startup building AI Site Reliability
+    Engineer agents to help teams diagnose and remediate complex production incidents, and an
+    Assistant Professor at Columbia University. His work focuses on causal machine learning and
+    data-driven decision-making in complex, real-world systems.
 
-- title: 'Scaling RL Rollouts: Agent-Native Infrastructure with Daytona'
-  date: '2026-03-05'
-  tag: Entrepreneurship
-  time: 11:30AM
+- title: 'Warehouse Adaptation of Robots and AI Systems'
+  date: '2025-11-04'
   where: Davis Auditorium
-  who: Ivan Burazin, Daytona
-  role: CEO and Co-founder
-  wholink: https://www.daytona.io/
-  description: >
-    In this talk, we'll outline why a new class of agent-native infrastructure is emerging, what
-    problems it is designed to solve, and the core use cases driving it, from autonomous coding
-    agents to large-scale evaluation and training workloads. Daytona is an agent-native control
-    plane designed to orchestrate isolated, stateful sandbox environments at scale. We'll break
-    down the infrastructure challenges behind isolation, state management, and massive parallelism,
-    and why traditional VM and container stacks fall short. As a concrete example, we'll walk
-    through scaling RL rollouts, showing how tens of thousands of environments can be provisioned
-    and orchestrated in minutes as part of a high-throughput RL pipeline.
-  bio: >
-    Ivan Burazin is the co-founder and CEO of Daytona, one of the fastest-growing infrastructure
-    companies of its generation. Daytona is building agent-native cloud infrastructure that enables
-    AI agents to securely run, fork, and manage stateful runtime environments at scale. Backed by
-    $31M, including a $24M Series A led by FirstMark Capital, Daytona powers millions of sandboxes
-    per day for startups and Fortune 500 companies building autonomous AI systems. Previously,
-    Ivan co-founded Codeanywhere, one of the first cloud IDEs (2009), and created Shift, Europe's
-    leading developer conference, acquired by Infobip in 2021. He later joined Infobip's executive
-    board as Chief Developer Experience Officer.
-  image: /files/images/events/20260305_entrep_burazin_alex.jpeg
+  tag: Entrepreneurship
+  time: 7PM
+  who: Vivian Zhang, WarehouseRobot.ai
+  role: CEO
+  wholink: https://warehouserobot.ai/
+  description:  |
+    Autonomous warehouse systems represent one of the most advanced and large-scale examples of
+    embodied multi-agent intelligence operating in the physical world. Thousands of mobile robots
+    collaborate continuously to move, pick, and sort goods in dynamic, uncertain environments—
+    achieving high efficiency, adaptability, and robustness in real time.
 
-- title: 'AI Attacks'
-  date: '2026-03-19'
+    In this talk, I will discuss how warehouse robotics offers both a practical foundation and
+    conceptual inspiration for the design of AI systems. I will introduce the market context and
+    technical underpinnings of large-scale robotic automation, then explore how intelligence
+    emerges through coordination, perception, and control across distributed agents. I will also
+    discuss how large language models (LLMs) may extend this paradigm—enabling natural language
+    tasking, high-level reasoning, and seamless human-AI collaboration in embodied systems.
+
+    Finally, I will reflect on how lessons from large-scale robotic coordination can inform the
+    broader design of the warehouse automation ecosystems, highlighting new directions for research
+    at the intersection of autonomy, learning, and collective intelligence.
+  bio: |
+    Vivian Zhang is the Chief Executive Officer of [WarehouseRobot.AI](https://warehouserobot.ai),
+    where she leads research and development in intelligent robotics, large-scale multi-agent
+    coordination, and autonomous warehouse systems. Her work spans planning under uncertainty,
+    human-AI collaboration, and the integration of large language models into embodied intelligence.
+    Vivian's perspective bridges industrial-scale deployment and AI research, with a focus on how
+    real-world robotics can inform the next generation of AI agents and collective intelligence
+    systems. Her portfolio of AI startups and AI VC fund can be found at
+    [https://viviancompanies.com/](https://viviancompanies.com/) and at
+    [https://extelligenceinvest.com/](https://extelligenceinvest.com/).
+
+    Vivian was named one of the Top 100 Most Influential Chinese by Forbes and recognized among
+    50 top most well known Data Scientists by CBNData. Vivian's always happy to hear from founders
+    and fellows — feel free to reach out anytime!
+
+- title: 'How to Build Cursor for Law'
+  date: '2025-10-21'
   tag: Entrepreneurship
-  time: 11:30AM
+  time: 7PM
+  who: Thomas Bueler-Faudree, August
   where: Davis Auditorium
-  who: Neil Daswani, Firebolt Ventures
-  wholink: https://www.linkedin.com/in/daswani
-  description: >
-    We've officially entered the era of non-human adversaries, where AI doesn't just
-    assist hackers—it executes 90% of the attack autonomously. In this talk, I deconstruct
-    the watershed moments of the AI age, from the first documented AI-orchestrated
-    espionage campaigns to multimillion-dollar deepfake heists.
+  role: Co-founder
+  wholink:
+  bio: |
+    Thomas Bueler-Faudree is the co-founder of August, where he leads engineering and product.
+    He earned a bachelor's degree in computer science and history from Columbia University.
+    At Columbia he worked in the CRIS Lab and CML.
+  description: |
+    Modern document-heavy work in law, finance, and consulting is repetitive, bespoke, and review
+    heavy. Code generation tools like Cursor have reshaped how developers work, but that shift has
+    not happened in law. Legal tasks are hard to measure and even harder to "unit test," which is
+    why many AI tools miss the mark.
+
+    This talk shows how August is building agents that do better: the right indexing methods,
+    visible state, disciplined tool use, and citations at every step to cleanly automate real
+    professional workflows. We'll walk through a multi-step research agent (e.g., over SEC filings)
+    that plans the task, retrieves the right sources, routes to the relevant sections, and drafts
+    grounded legal answers.
+
+    Attendees will leave with a lightweight design pattern for credence domains like law. We will
+    also share our growth and go-to-market. We are productizing law-firm workflows and, in some
+    cases, selling with the firm to their clients. This is a new model that is gaining traction
+    across professional services.
+
+- title: "Agents at Scale: Lessons from LinkedIn's Agent Journey"
+  date: '2025-10-07'
+  tag: Entrepreneurship
+  where: Davis Auditorium
+  time: 7PM
+  who: Xiaofeng Wang, LinkedIn
+  role: Senior Eng Manager, Agents Platform
+  wholink: https://www.linkedin.com/in/wang-xiaofeng/
   bio: >
-    Dr. Neil Daswani is a CISO-in-Residence at [Firebolt Ventures](https://www.fireboltventures.com/)
-    and is Co-Academic Director of [Stanford's Advanced Cybersecurity Program](https://online.stanford.edu/programs/advanced-cybersecurity-program).
-    After completing his PhD at Stanford University, and leading security initiatives at Google,
-    he co-founded Dasient, a cybersecurity company that Google Ventures invested in and was
-    acquired by Twitter/X. After his time at Twitter, he served as CISO of multiple public
-    companies including LifeLock, Symantec's Consumer Business Unit, and QuantumScape.
-    These days, he advises multiple venture capital funds and is focused on both securing
-    artificial intelligence and using AI for cybersecurity applications. He has co-authored
-    two books "Big Breaches: Cybersecurity Lessons for Everyone" and "Foundations of Security:
-    What Every Programmer Needs to Know." Dr. Daswani holds over a dozen patents, has
-    published dozens of technical articles, and speaks frequently at top industry events.
-    He earned a PhD and MS in computer science from Stanford, and his career journey started
-    with earning a BS in computer science with honors with distinction from Columbia University.
-  image: /files/images/events/20260319_entrep_daswani_alex.jpeg
+    Xiaofeng Wang is a Senior Engineering Manager at LinkedIn, where he leads the Agents Platform
+    team, building the foundational technologies that enable the entire engineering organization
+    to deliver agentic experiences. His team is responsible for the agent runtime platform, agent
+    framework, and Cognitive Memory Agent. He and his team have also been invited to speak at
+    various leading industry conferences. In his previous role at LinkedIn, Xiaofeng led the first
+    team dedicated to Generative AI Foundations, developing infrastructure, platforms, and tooling
+    from the ground up to power all of LinkedIn's member-facing GenAI products since 2022.
+    Before that, he worked as an engineer and data scientist in the Data Science Productivity and
+    Research team, building platforms to automate advanced data science analyses such as A/B
+    testing, deep dives, and observational causal studies. Prior to LinkedIn, Xiaofeng worked
+    at Bank of America Merrill Lynch, where he led the team building recommendation systems for
+    the Merrill Edge's personalized investing platform. He received his Ph.D. in Systems and
+    Information Engineering from the University of Virginia.
+  description: >
+    Join Xiaofeng Wang, Sr. Engineering Manager at LinkedIn's Agents Platform, as he takes you
+    behind the scenes of the platform powering all of LinkedIn's member-facing agentic applications
+    at scale. This talk will trace the GenAI product revolution, from simple prompt-in-string use
+    cases to the latest LinkedIn Hiring Assistant. It will show how the Agent Platform evolved to
+    enable these experiences. Xiaofeng will share the technical foundations, organizational
+    challenges, hiring strategies, and hard-won lessons that shaped LinkedIn's journey,
+    highlighting how the team bridged open-source innovation with enterprise-grade infrastructure,
+    built seamless developer experiences, and enforced trust and responsible AI from day one.
+    Whether you're a researcher, engineer, product leader, or entrepreneur, this talk offers a
+    front-row look at LinkedIn's agentic journey, the latest trends in agent development, and what
+    it takes to transform prototypes into impactful, production-grade agents at enterprise scale.
+
+- title: 'Lessons for Building Valuable Domain-Specific AI Products'
+  date: '2025-09-23'
+  tag: Entrepreneurship
+  time: 7PM
+  who: Tom Effland, Noetica
+  where: Davis Auditorium
+  role: Co-founder and CTO
+  wholink: https://www.noetica.ai/
+  bio: >
+    Tom Effland is the technical founder and CTO of Noetica AI, a fast-growing VC-backed Series
+    A startup. The company's AI-powered knowledge platform helps many top law firms improve
+    outcomes in valuable corporate debt, securities, and M&A transactions. Before founding Noetica,
+    Tom earned his PhD in Computer Science from Columbia University. He was advised by
+    Prof. Michael Collins and received support from a NSF Graduate Research Fellowship.
+  description: >
+    This talk shares lessons learned going from NLP researcher to building Noetica, a platform
+    that analyzes populations of complex contracts to determine market standards for deal terms.
+    Along the way I'll discuss (1) how LLMs have enabled a new opportunity space for hybrid
+    systems that combine extraction capabilities with formal analytical frameworks, (2) how
+    building these systems still requires deep fusion of subject-matter and technical judgment
+    to identify tractable decompositions of seemingly impossible problems, and (3) how this
+    converges to a new version of the Technical Product Manager role. This role is highly
+    suited to technical researchers willing to tackle sector-specific challenges.
+
+- title: 'Focus is Everything - How to Effectively Navigate the AI Landscape'
+  date: '2025-09-09'
+  tag: Entrepreneurship
+  time: 7PM
+  where: Davis Auditorium
+  who: Aaron Vontell, Anthropic
+  role: Member of the Technical Staff
+  wholink: https://www.linkedin.com/in/aaron-vontell
+  description:
+    In this talk, Aaron will walk through his journey building in the AI space, detailing his
+    learnings from Instabase, his own AI startup Regression Games, and now his experience at
+    Anthropic. This talk will focus on the importance of focusing on specific problems and
+    navigating frequently-changing technological landscapes, and how to apply cutting-edge
+    research in record time.

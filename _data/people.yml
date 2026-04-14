@@ -147,6 +147,22 @@
   category: Faculty
   field: [CS, Security, Software]
 
+- name: Silvia Sellán
+  homepage: https://www.silviasellan.com/
+  image: /files/images/avatar/silviasellan.jpg
+  bio: >
+    Specializes in computer graphics and geometry processing; in particular, on implicit shape representations and surface reconstruction. 
+  category: Faculty
+  field: [CS, Graphics, Digital Twins]
+
+- name: Asaf Cidon
+  homepage: https://www.asafcidon.com/
+  image: /files/images/avatar/asafcidon.jpg
+  bio: Expert in datacenter system infrastructure and security. Founded Sookasa (acquired by Barracuda Networks). Best papers in top systems, database and security conferences.
+  category: Faculty
+  field: [CS, Systems, Security]
+  
+  
 # Advisory Board (Categorized under Faculty)
 
 - name: Richard Zemel
