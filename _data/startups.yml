@@ -13,7 +13,7 @@
 - title: 'TBA'
   date: '2026-04-30'
   tag: Entrepreneurship
-  time: 11AM
+  time: 11:30AM
   where: Davis Auditorium
   who: Leon Song, Together.AI
   role: VP of Research
@@ -24,7 +24,7 @@
 - title: "A Physicist's Perspective on Building a High-Tech Hardware Startup"
   date: '2026-04-16'
   tag: Entrepreneurship
-  time: 11AM
+  time: 11:30AM
   where: Davis Auditorium
   who: Alexander L. Gaeta
   wholink: https://gaeta.apam.columbia.edu/people/alexander-l-gaeta
@@ -38,6 +38,7 @@
     has published more than 300 journal articles in the field of quantum and nonlinear photonics.
     He co-founded Xscape Photonics, served as CEO from 2021 to 2023, and is currently the President
     and serves on the Board of Directors.
+  image: /files/images/events/20260416_entrep_gaeta_yijia.jpg
 
 - title: 'Running AI is Harder Than Training It: The Engineering Behind Inference'
   date: '2026-04-02'
