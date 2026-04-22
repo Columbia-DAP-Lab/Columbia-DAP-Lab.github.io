@@ -52,7 +52,7 @@
   who: Gregory Benton, Alison Bartsch, Michael O'Brien, Lindsey Poisson
   where: CSB 453
   time: 12PM
-  description: >
+  description: |
     Dandy is revolutionizing the dental industry by combining cutting-edge technology with modern
     manufacturing to build the dental lab of the future. As a fully digital dental lab, Dandy
     empowers dentists across the country with smarter workflows, faster turnaround times, and
@@ -60,12 +60,12 @@
     From AI-driven diagnostics, to proprietary ML/AI models, and bespoke automation software,
     Dandy sits at the intersection of healthcare and deep tech, tackling real-world problems at
     massive scale.
-  bio: >
-    Gregory Benton is a Senior ML Engineer at Dandy. He earned his PhD in Computer Science with
+  bio: |
+    Speakers
+    - Gregory Benton is a Senior ML Engineer at Dandy. He earned his PhD in Computer Science with
     a focus in probabilistic machine learning from New York University, and both a Bachelor's and
     Master's in Applied Mathematics from the University of Colorado Boulder.
-
-    Alison Bartsch is an ML Engineer at Dandy specializing in Computer Vision. She holds a PhD in
+    - Alison Bartsch is an ML Engineer at Dandy specializing in Computer Vision. She holds a PhD in
     Mechanical Engineering with a focus in 3D machine learning methods for robotic manipulation
     from Carnegie Mellon University and a Bachelor's degree in Aeronautics and Astronautics
     from Stanford University.
