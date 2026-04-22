@@ -10,16 +10,30 @@
 #  image: relative path (e.g., /files/images/events/{YYYYMMDD}_{category}_{topic}_{photographer}.jpg) or absolute URL
 # 
 
-- title: 'TBA'
+- title: "Empowering Future Gen-AI Enterprise and Research Through AI-Native Cloud: Together AI's Perspective"
   date: '2026-04-30'
   tag: Entrepreneurship
   time: 11:30AM
   where: Davis Auditorium
   who: Leon Song, Together.AI
   role: VP of Research
-  wholink:
-  description:
-  bio:
+  description: |
+    We are living in the era of GenAI, which has transformed not only the computing industry but
+    also our daily lives. Today, I will discuss our journey building the Together AI Native Cloud —
+    designed to empower next-generation large-scale enterprise Gen AI with customized end-to-end
+    solutions that target the entire AI lifecycle, powered by open source models. I will share
+    insights into some of our innovations in the inference system research space, highlighting
+    how these advancements shape our services and real-world applications. Lastly, I will
+    explore future trends in Gen AI and discuss how Together AI's cutting-edge technologies
+    are driving the next-generation AI cloud revolution: large-scale agentic system building,
+    multi-silicon adoption and more.
+  bio: |
+    Leon Song is the vice president of research at Together AI, leading the R&D org to produce
+    industry-leading inference system solutions at large scale. Prior to Together AI, Leon was
+    a senior principal research manager for DeepSpeed and Brainwave at Bing. He was also the
+    chief scientist for the DeepSpeed4Science initiative at Microsoft. Before Microsoft, Leon
+    was a tenured computer science professor and also spent several years working for DoE.
+    Leon is an ACM distinguished speaker.
 
 - title: "A Physicist's Perspective on Building a High-Tech Hardware Startup"
   date: '2026-04-16'
