@@ -402,3 +402,10 @@
   advisor:
     - Zhuo Zhang
     - Lydia Chilton
+
+- name: Zeming Liang
+  homepage: https://www.linkedin.com/in/zemingliang
+  image: /files/images/avatar/zeming_liang.jpg
+  category: Student
+  advisor:
+    - Tianyi Peng
