@@ -13,6 +13,24 @@
 # 
 #
 
+- title: '2026 North East AI Agents Day'
+  tag: Workshop
+  date: '2026-05-08'
+  where: 'Jane Street Offices, New York'
+  time: 9AM
+  link: https://ne-agents-day.github.io/
+  description: |
+    The 2026 North East AI Agents Day is a one-day workshop that brings together
+    researchers and practitioners across machine learning, systems, and HCI to
+    share progress, compare evaluation practices, and explore opportunities for
+    collaboration on reliable, scalable, and debuggable AI agents.
+
+    The program will feature invited talks, lightning talks, posters, and demos.
+    We welcome short abstracts for lightning talks, posters, and demos from teams
+    working on agent foundations, systems, or real-world deployments.
+
+    Visit the event website for submission timelines, registration, and logistics.
+
 - title: 'Agentic Risk Standard'
   tag: Seminar
   date: '2026-05-05'
@@ -377,7 +395,7 @@
   date: '2025-10-27'
   time: 9AM
   link: https://daplab.cs.columbia.edu/workshop/2025-10/
-  description: >
+  description: |
     On October 27, 2025, DAPLab ran the second iteration of the AI Agents for Work workshop.
     The two-day event brought together researchers, practitioners, students, faculty, and
     industry partners to explore the latest advances and real-world deployments of agentic
@@ -651,7 +669,7 @@
   date: '2025-03-12'
   time: 10AM
   link: https://daplab.cs.columbia.edu/workshop/2025-03/
-  description: >
+  description: |
     On March 12, 2025, DAPLab ran the first annual workshop at the Columbia Business
     School.  The one-day workshop to brought together over 200 industry leaders, Columbia
     faculty and students,  and technologists who are interested in the concept of
