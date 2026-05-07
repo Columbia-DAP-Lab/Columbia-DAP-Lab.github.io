@@ -409,3 +409,10 @@
   category: Student
   advisor:
     - Tianyi Peng
+
+- name: Danielle Gillai
+  homepage: https://www.linkedin.com/in/danielle-g-3121662ba
+  image: /files/images/avatar/danielle_gillai.jpeg
+  category: Student
+  advisor:
+    - Kostis Kaffes
