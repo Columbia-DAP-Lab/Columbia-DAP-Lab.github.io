@@ -13,15 +13,16 @@
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav ms-auto">
         <a class="nav-link" href="{{ './people' | relative_url }}">People</a>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="{{ '/projects/?view=all' | relative_url }}" id="projectsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+	<!--<li class="nav-item dropdown">-->
+          <a class="nav-link " href="{{ '/projects/?view=all' | relative_url }}" id="projectsDropdown" role="button" >
             Projects
           </a>
-          <ul class="dropdown-menu" aria-labelledby="projectsDropdown">
+          <!--<ul class="dropdown-menu" aria-labelledby="projectsDropdown">
+            <li><a class="dropdown-item" href="{{ '/projects/?view=all' | relative_url }}">All</a></li>
             <li><a class="dropdown-item" href="{{ '/projects/?view=projects' | relative_url }}">Projects</a></li>
             <li><a class="dropdown-item" href="{{ '/projects/?view=software' | relative_url }}">Software</a></li>
-          </ul>
-        </li>
+	  </ul>-->
+	  <!--</li>-->
         <a class="nav-link" href="{{ './blog' | relative_url }}">Blog</a>
         <a class="nav-link" href="{{ './publications' | relative_url }}">Publications</a>
         <a class="nav-link" href="{{ './events' | relative_url }}">Events</a>

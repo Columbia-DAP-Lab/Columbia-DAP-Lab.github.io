@@ -32,6 +32,35 @@
 # Project specific tags are fine as well.  For instance, precision interfaces has a custom "pi" tag 
 
 
+- title: "BranchBench: An Extensible Benchmark for Agentic Database Branching"
+  authors: Elaine Ang, Kostis Kaffes, Eugene Wu
+  conf: CAIS Workshop 2026
+  pub_date: "2026-07-01"
+  tags:
+    - ai
+    - sys
+    - bench
+
+- title: "LAKEQA: An Exploratory QA Benchmark over a Million-Scale Data Lake"
+  authors: Haonan Wang*, Jiaxiang Liu*, Yurong Liu, Austin Senna Wijaya, Tianle Zhou, Eden Wu, Yijia Chen, Wanting You, Reya Vir, Daniela Pinto Veizaga, Grace Fan, Yusen Zhang, Juliana Freire, Eugene Wu
+  conf: ICML 2026
+  pub_date: "2026-07-01"
+  tags:
+    - ai
+    - bench
+    - sys
+
+- title: "Outrunning LLM Cutoffs: A Live Kernel Crash Resolution Benchmark for All"
+  authors: Chenxi Huang, Alex Mathai, Feiyang Yu, Aleksandr Nogikh, Petros Maniatis, Franjo Ivancic, Eugene Wu, Kostis Kaffes, Junfeng Yang, Baishakhi Ray
+  conf: ICML 2026
+  pub_date: "2026-07-01"
+  url: https://arxiv.org/abs/2602.02690
+  tags:
+    - ai
+    - sys
+    - bench
+    - agent-debug
+
 - title: "Agentic Data Environments"
   authors: Elaine Ang, Chenxi Huang, Georgios Liargkovas, Jerry Liu, Jinhui Liu, Nikos Pagonas, Charlie Summers, Haonan Wang, Jiakai Xu, Tianle Zhou, Yusen Zhang, Zhou Yu, Zhuo Zhang, Tianyi Peng, Kostis Kaffes, Eugene Wu
   conf: IEEE Data Bulletin 2026
@@ -462,6 +491,56 @@
     - system
     - automation
     - hac
+
+- title: "PickleBall: Secure Deserialization of Pickle-based Machine Learning Models"
+  authors: Andreas Kellas, Neophytos Christou, Wenxin Jiang, Penghui Li, Laurent Simon, Yaniv David, Vasileios P. Kemerlis, James C. Davis, Junfeng Yang
+  conf: CCS 2025
+  pub_date: "2025-10-01"
+  url: https://arxiv.org/abs/2508.15987
+  comment: Distinguished Artifact Award
+  tags:
+    - ai
+    - safety
+    - security
+
+- title: "Your Compiler is Backdooring Your Model: Understanding and Exploiting Compilation Inconsistency Vulnerabilities in Deep Learning Compilers"
+  authors: Simin Chen, Jinjun Peng, Yixin He, Junfeng Yang, Baishakhi Ray
+  conf: IEEE S&P 2026
+  pub_date: "2026-05-01"
+  url: https://arxiv.org/abs/2509.11173
+  tags:
+    - ai
+    - safety
+    - security
+
+- title: "Learning to Rewrite: Generalized LLM-Generated Text Detection"
+  authors: Ran Li, Wei Hao, Weiliang Zhao, Junfeng Yang, Chengzhi Mao
+  conf: ACL 2025
+  pub_date: "2025-07-01"
+  url: https://arxiv.org/abs/2408.04237
+  tags:
+    - ai
+    - safety
+
+- title: "EditLord: Learning Code Transformation Rules for Code Editing"
+  authors: Weichen Li, Albert Jan, Baishakhi Ray, Chengzhi Mao, Junfeng Yang, Kexin Pei
+  conf: ICML 2025
+  pub_date: "2025-07-01"
+  url: https://arxiv.org/abs/2504.15284
+  rate: "26.9% (3,260/12,107)"
+  tags:
+    - ai
+    - automation
+
+- title: "Do Spammers Dream of Electric Sheep? Characterizing the Prevalence of LLM-Generated Malicious Emails"
+  authors: Wei Hao, Van Tran, Vincent Rideout, Zixi Wang, AnMei Dasbach-Prisk, M. H. Afifi, Junfeng Yang, Ethan Katz-Bassett, Grant Ho, Asaf Cidon
+  conf: IMC 2025
+  pub_date: "2025-10-01"
+  url: https://www.cs.columbia.edu/~junfeng/papers/ai-email-imc25.pdf
+  tags:
+    - ai
+    - safety
+    - security
 
 - title: "Diversity Helps Jailbreak Large Language Models"
   authors: Weiliang Zhao, Daneil Ben-Levi, Wei Hao, Junfeng Yang, Chengzhi Mao

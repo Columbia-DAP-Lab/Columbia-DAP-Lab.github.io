@@ -7,6 +7,7 @@ tags:
   - Decompiler
   - Program Analysis
   - Systems
+is_software: true
 links:
   demo: https://tiny-dec.zzhang.xyz/
 ---
