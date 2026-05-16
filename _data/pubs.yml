@@ -32,6 +32,19 @@
 # Project specific tags are fine as well.  For instance, precision interfaces has a custom "pi" tag 
 
 
+
+
+- title: "Law-Abiding Agents: Demonstrating Safe Tax Preparation with Data Flow Control"
+  authors: Charlie Summers, Prajwal Raghunath, Zhibin Shen, Hardik Gupta, Eric Choi, Mayur Kulkarni, Sally Go, Peter Yu, Akriti Agarwal, Zhuo Zhang, Oliver Kennedy, Eugene Wu
+  future: true
+  short: true
+  conf: Preprint 2026
+  tags:
+    - ai
+    - sys
+    - hac
+
+
 - title: "BranchBench: An Extensible Benchmark for Agentic Database Branching"
   authors: Elaine Ang, Kostis Kaffes, Eugene Wu
   conf: CAIS Workshop 2026
