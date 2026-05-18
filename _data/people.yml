@@ -416,3 +416,10 @@
   category: Student
   advisor:
     - Kostis Kaffes
+
+- name: Grace Li
+  homepage: https://www.ggracelii.com/
+  image: /files/images/avatar/grace_li.png
+  category: Student
+  advisor:
+    - Nikos Pagonas
