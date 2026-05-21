@@ -5,6 +5,7 @@ date: 2026-05-24 12:00:00 -0400
 categories: [general]
 authors:
   - name: "Elaine Ang"
+  - name: "Kostis Kaffes"
   - name: "Eugene Wu"
     url: "https://www.cs.columbia.edu/~ewu/"
 excerpt: "We built BranchBench to ask a simple question: can today's branchable databases handle agentic workloads? Not yet."
@@ -15,7 +16,7 @@ slug: "branchable-databases-arent-ready-for-agentic-workloads"
 
 ---
 
-Database branching will soon shift from developer convenience to fundamental agent infrastructure.
+Database branching will soon shift from developer convenience to <a href="https://davistreybig.substack.com/p/how-agents-use-systems-differently">fundamental agent infrastructure</a>.
 
 Today, a human might create one branch to test a migration, and many of today's agent workflows mimic this linear approach. Future agents will create *thousands* — forking a candidate state, mutating it, evaluating the result (perhaps against other branches), pruning irrelevant states, and repeating. The database becomes the agent's state management for safe exploration.
 
@@ -46,11 +47,15 @@ Ideally, a branchable database for agents would sit in the upper-right of this d
 
 {% include blog-image.html file="design_space.png" width="400px" alt="Design space: branching agility vs. branch-local performance, showing the tradeoff between measured systems" %}
 
-Even the basics are hard. Agentic workloads need dozens, hundreds, or thousands of live branches — not just a branch abstraction on paper. In our experiments, systems hit practical limits quickly: active-branch caps, expensive branch creation, slow connect/switch operations, or degraded reads inside heavily branched histories. "Supports branching" is not enough; agents need branching to be **cheap, concurrent, and query-efficient**.
+
+In fact, even the basics are hard. Agentic workloads need dozens, hundreds, or thousands of live branches, not just a branch abstraction on paper. In our experiments, systems hit practical limits quickly: active-branch caps, expensive branch creation, slow connect/switch operations, or degraded reads inside heavily branched histories. 
+
+“Supports branching” is not enough; agents need branching to be **cheap, concurrent, and query-efficient**.
+
 
 {% include blog-image.html file="branch_basics.png" alt="Microbenchmark of basic branch operations across systems: creation, connect, switch, delete" %}
 
-> **Baselines tested:** TXN (Postgres transactions), `FILE_COPY` (Postgres 18 copy-on-write DB clone), Dolt, Neon, TigerData, and Xata.
+<center style="font-size: smaller;">Baselines: TXN (Postgres transactions), FILE_COPY (Postgres 18 <a href="https://boringsql.com/posts/instant-database-clones/">copy-on-write DB clone</a>), <a href="https://www.dolthub.com/">Dolt</a>, <a href="https://neon.com/">Neon</a>, <a href="https://www.tigerdata.com/">TigerData</a>, and <a href="https://xata.io/">Xata</a>.</center>
 
 ## We Built BranchBench to Measure Agentic Branching
 
@@ -66,7 +71,11 @@ The benchmark currently includes five ready-to-run workflows with configurable b
 
 When we ran experiments in March, existing systems could not consistently finish all proposed workflows within a two-hour timeout. [TigerData](https://www.tigerdata.com/) and [Xata](https://xata.io/) did not run reliably enough to draw meaningful conclusions. [Neon](https://neon.com/) and [Dolt](https://www.dolthub.com/) completed enough of the benchmark to reveal core trade-offs.
 
-> Interested in running BranchBench on your system? Reach out at [ra3448@columbia.edu](mailto:ra3448@columbia.edu).
+<div style="background:linear-gradient(135deg,#f0f4ff 0%,#e8eef8 100%);border:1px solid #c5d0e8;border-radius:10px;padding:1.5rem 2rem;margin:1.75rem 0;text-align:center;">
+  <div style="font-size:0.75rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#012169;margin-bottom:0.6rem;">Collaborate with us</div>
+  <p style="margin:0 0 1.1rem;font-size:1.05rem;color:#222;font-weight:500;">Do you have a branchable database, a workload that creates many candidate states, or an agent that needs safe exploration over data?</p>
+  <a href="mailto:ra3448@columbia.edu" style="display:inline-block;background:#012169;color:white;padding:0.5rem 1.4rem;border-radius:5px;text-decoration:none;font-weight:600;font-size:0.9rem;">Reach out at ra3448@columbia.edu →</a>
+</div>
 
 ## Zooming Into One Workload: MCTS
 
