@@ -1,8 +1,8 @@
 title: "DAPLab"
-tagline: "Data, Agents, and Processes | Columbia University"
-description: "DAPLab at Columbia University advances research on agent-based automation across systems, AI, HCI, and operations research. We make automation more accountable, reliable, and efficient."
+tagline: "Infrastructure for Trustworthy Agent Automation | Columbia University"
+description: "DAPLab at Columbia University develops full-stack infrastructure for trustworthy AI agent automation in real-world environments. We vertically integrate expertise across operating systems, data systems, AI, HCI, security, and enterprise workflows to build end-to-end agentic systems with real guarantees around reliability, observability, safety, and control."
 author: "DAPLab, Columbia University"
-keywords: "DAPLab, Columbia University, agent-based systems, AI, systems research, HCI, automation, large language models, trustworthy AI, cloud computing, RL, ML"
+keywords: "DAPLab, Columbia University, trustworthy AI agents, agent automation, agentic systems, systems research, HCI, data systems, safety, reliability, observability, large language models, vertical integration"
 og_image: "/daplab_logo.png"
 baseurl: "" # Keep this blank for GitHub Pages root
 url: "https://daplab.cs.columbia.edu" # Full site URL without trailing slash

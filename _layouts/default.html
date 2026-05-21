@@ -11,7 +11,7 @@
   {% assign base_url = site.url | default: "https://daplab.cs.columbia.edu" %}
   {% assign page_title = page.title %}
   {% assign full_title = page_title | append: " | " | append: site_title %}
-  {% assign raw_desc = page.description | default: page.excerpt | default: site.description | default: "DAPLab at Columbia University advances research on agent-based automation across systems, AI, HCI, and operations research. We make automation more accountable, reliable, and efficient." %}
+  {% assign raw_desc = page.description | default: page.excerpt | default: site.description | default: "DAPLab at Columbia University develops full-stack infrastructure for trustworthy AI agent automation in real-world environments." %}
   {% assign meta_description = raw_desc | strip_html | normalize_whitespace | truncate: 200 %}
   {% assign meta_keywords = page.keywords | default: site.keywords | default: "DAPLab, Columbia University, agent-based systems, AI, systems research, HCI, automation" %}
   {% assign rel_image = page.image | default: site.og_image | default: "/daplab_logo.png" | relative_url %}
@@ -46,7 +46,7 @@
       "@context": "https://schema.org",
       "@type": "Organization",
       "name": "{{ site.title | default: 'DAPLab' }}",
-      "description": "{{ site.description | default: 'DAPLab at Columbia University advances research on agent-based automation across systems, AI, HCI, and operations research. We make automation more accountable, reliable, and efficient.' }}",
+      "description": "{{ site.description | default: 'DAPLab at Columbia University develops full-stack infrastructure for trustworthy AI agent automation in real-world environments.' }}",
       "address": {
         "@type": "PostalAddress",
         "addressLocality": "New York, New York",
