@@ -77,7 +77,7 @@ Where today's data systems passively serve an agent's requests, Agentic Data Env
 
 ## Upcoming in the Series
 
-This is the first in a series of posts laying out what Agentic Data Environments look like in practice.
+This is the first in a series of posts that we will release over the next two weeks that lays out a research agenda for Agentic Data Environments.
 
 To bound the risks, we will introduce:
 
