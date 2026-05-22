@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Branchable Databases Aren't Ready for Agentic Workloads"
-date: 2026-05-24 12:00:00 -0400
+date: 2026-05-26 12:00:00 -0400
 categories: [general]
 authors:
   - name: "Elaine Ang"
