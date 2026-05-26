@@ -15,6 +15,25 @@
 #
 
 - title: >
+    New Blog Series: [Agentic Data Environments](/general/2026/05/21/the-need-for-agentic-data-environments.html)
+  content: >
+    We're publishing a series of posts on what it takes to build data environments for AI agents.
+    The first post lays out the vision; the second digs into [why today's branchable databases
+    aren't ready for agentic workloads](/general/2026/05/26/branchable-databases-arent-ready-for-agentic-workloads.html).
+    More posts coming soon.
+  featured: true
+  date: 2026-05-26
+
+- title: >
+    [Trustworthy AI for Code, Industry Roundtable NYC](https://spartan-nus.github.io/ai4code-roundtable-nyc.html)
+  content: >
+    A curated, invite-only gathering of industry and academic leaders at the IBM Flagship Office
+    in New York City (June 3, 2026) to discuss trustworthy AI for code. Co-organized by DAPLab
+    (Eugene Wu), Baishakhi Ray (Columbia), Abhik Roychoudhury (NUS), and IBM Research.
+  featured: true
+  date: 2026-06-03
+
+- title: >
     [2026 North East AI Agents Day](https://ne-agents-day.github.io/)
   content: >
     A one-day workshop in New York City (May 8, 2026) bringing together ML,

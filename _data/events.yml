@@ -13,6 +13,22 @@
 # 
 #
 
+- title: 'Trustworthy AI for Code, Industry Roundtable NYC'
+  tag: Workshop
+  date: '2026-06-03'
+  who: Baishakhi Ray, Eugene Wu, Abhik Roychoudhury, Maja Vukovic
+  where: IBM Flagship Office, New York City
+  time: 9AM–5PM
+  link: https://spartan-nus.github.io/ai4code-roundtable-nyc.html
+  description: |
+    A curated gathering of leaders from industry and academia for a day of invited talks,
+    sharp discussion, and agenda-setting conversations on trustworthy AI for code. Co-hosted
+    by Columbia University's DAP Lab, NUS, and IBM Research.
+
+    The goal is to develop a shared understanding of trustworthy AI for code — including open
+    technical challenges, evaluation criteria, and concrete opportunities for collaboration.
+    Speakers include researchers from Google, Harvard, Princeton, and UC Berkeley.
+
 - title: '2026 North East AI Agents Day'
   tag: Workshop
   date: '2026-05-08'
