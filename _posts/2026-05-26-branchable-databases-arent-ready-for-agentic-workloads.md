@@ -92,7 +92,10 @@ Neon documents this as a soft limit, but for workloads that require many concurr
 
 **Dolt** had the opposite profile. Branch creation and checkout were cheap metadata operations over versioned roots — attractive for workloads that create many speculative states. However, larger reads and joins dominated runtime. In read-heavy macrobenchmarks, Dolt spent most of its time in branch-local data operations rather than branch management.
 
-{% include blog-image.html file="mcts_results.png" alt="MCTS workload results: Neon vs. Dolt — branch management cost vs. branch-local query cost" %}
+<figure>
+  {% include blog-image.html file="unfinished-mcts.png" alt="MCTS workload results: Neon vs. Dolt — branch management cost vs. branch-local query cost" %}
+  <figcaption style="text-align: center; font-size: 0.8rem; color: #6c757d; margin-top: 0.35rem;">In a 1000-step MCTS workload, Neon finished 33/1000 steps before hitting active branch limit v.s. Dolt finished 170 steps before hitting a 2-hr time out.</figcaption>
+</figure>
 
 For a detailed analysis of branch metadata costs versus branch-local data and schema-operation costs, [see the full paper](https://arxiv.org/pdf/2604.17180).
 
