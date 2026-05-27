@@ -37,11 +37,11 @@ h1, h2, h3, h4, h5, h6 {
 /* For member avatar cards */
 .card {
   /* overflow: hidden; */
-  transition: transform 0.2s ease;
+  transition: box-shadow 0.2s ease;
 }
 
-.card:hover {
-  transform: scale(1.02);
+.card:not(.border-0):hover {
+  box-shadow: 0 0 0 2px #2563eb, 0 4px 12px rgba(0,0,0,0.08);
 }
 
 .card-img-container {
