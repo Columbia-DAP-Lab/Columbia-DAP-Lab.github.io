@@ -53,9 +53,10 @@ In fact, even the basics are hard. Agentic workloads need dozens, hundreds, or t
 “Supports branching” is not enough; agents need branching to be **cheap, concurrent, and query-efficient**.
 
 
-{% include blog-image.html file="branch_basics.png" alt="Microbenchmark of basic branch operations across systems: creation, connect, switch, delete" %}
-
-<center style="font-size: smaller;">Baselines: TXN (Postgres transactions), FILE_COPY (Postgres 18 <a href="https://boringsql.com/posts/instant-database-clones/">copy-on-write DB clone</a>), <a href="https://www.dolthub.com/">Dolt</a>, <a href="https://neon.com/">Neon</a>, <a href="https://www.tigerdata.com/">TigerData</a>, and <a href="https://xata.io/">Xata</a>.</center>
+<figure>
+  {% include blog-image.html file="branch_basics.png" alt="Microbenchmark of basic branch operations across systems: creation, connect, switch, delete" %}
+  <figcaption style="text-align: center; font-size: 0.8rem; color: #6c757d; margin-top: 0.35rem;">Baselines: TXN (Postgres transactions), FILE_COPY (Postgres 18 <a href="https://boringsql.com/posts/instant-database-clones/">copy-on-write DB clone</a>), <a href="https://www.dolthub.com/">Dolt</a>, <a href="https://neon.com/">Neon</a>, <a href="https://www.tigerdata.com/">TigerData</a>, and <a href="https://xata.io/">Xata</a>.</figcaption>
+</figure>
 
 ## We Built BranchBench to Measure Agentic Branching
 
@@ -92,9 +93,9 @@ Neon documents this as a soft limit, but for workloads that require many concurr
 
 **Dolt** had the opposite profile. Branch creation and checkout were cheap metadata operations over versioned roots — attractive for workloads that create many speculative states. However, larger reads and joins dominated runtime. In read-heavy macrobenchmarks, Dolt spent most of its time in branch-local data operations rather than branch management.
 
-<figure>
-  {% include blog-image.html file="unfinished-mcts.png" alt="MCTS workload results: Neon vs. Dolt — branch management cost vs. branch-local query cost" %}
-  <figcaption style="text-align: center; font-size: 0.8rem; color: #6c757d; margin-top: 0.35rem;">In a 1000-step MCTS workload, Neon finished 33/1000 steps before hitting active branch limit v.s. Dolt finished 170 steps before hitting a 2-hr time out.</figcaption>
+<figure style="text-align: center;">
+  <img src="{{ site.baseurl }}/files/images/blog/{{ page.slug }}/unfinished-mcts.png" alt="MCTS workload results: Neon vs. Dolt — branch management cost vs. branch-local query cost" class="img-fluid mx-auto d-block" style="max-width: 60%;" loading="lazy">
+  <figcaption style="text-align: center; font-size: 0.8rem; color: #6c757d; margin-top: 0.35rem;">In a 1000-step MCTS workload, Neon finished 33/1000 steps before hitting active branch limit; Dolt finished 170 steps before hitting a 2-hr time out.</figcaption>
 </figure>
 
 For a detailed analysis of branch metadata costs versus branch-local data and schema-operation costs, [see the full paper](https://arxiv.org/pdf/2604.17180).
