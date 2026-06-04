@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "StateFork: Give Agents a Rewind Button"
-date: 2026-06-05 09:00:00 -0400
+date: 2026-06-04 09:00:00 -0400
 categories: [general]
 authors:
   - name: "Alex Xu"
