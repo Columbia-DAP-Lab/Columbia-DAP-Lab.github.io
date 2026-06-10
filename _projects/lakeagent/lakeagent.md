@@ -10,6 +10,7 @@ authors:
 avatar: image.png
 tags:
   - "Agents"
+is_project: true
 is_software: true
 links:
   github: "https://github.com/lakeagent/datalake-qa"

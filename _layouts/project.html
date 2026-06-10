@@ -175,7 +175,16 @@ layout: default
 </style>
 
 <div class="project-detail">
-  {% if page.is_software %}
+  {% assign is_project_entry = false %}
+  {% if page.is_project %}
+    {% assign is_project_entry = true %}
+  {% elsif page.is_software != true %}
+    {% assign is_project_entry = true %}
+  {% endif %}
+
+  {% if page.is_software and is_project_entry %}
+  <a href="{{ '/projects/?view=all' | relative_url }}" class="back-link">Back to Projects and Software</a>
+  {% elsif page.is_software %}
   <a href="{{ '/projects/?view=software' | relative_url }}" class="back-link">Back to Software</a>
   {% else %}
   <a href="{{ '/projects/?view=projects' | relative_url }}" class="back-link">Back to Projects</a>

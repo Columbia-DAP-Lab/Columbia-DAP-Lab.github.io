@@ -297,6 +297,7 @@ description: DAPLab develops the infrastructure needed to make AI agents safe, r
     data-title="{{ project.title | downcase }}"
     data-authors="{% for author in project.authors %}{{ author.name | downcase }}{% unless forloop.last %},{% endunless %}{% endfor %}"
     data-is-software="{% if project.is_software %}true{% else %}false{% endif %}"
+    data-is-project="{% if project.is_project %}true{% elsif project.is_software %}false{% else %}true{% endif %}"
   >
     {% if project.avatar_url %}
     <img src="{{ project.avatar_url | relative_url }}" alt="{{ project.title }}" class="project-avatar">
@@ -486,7 +487,11 @@ function matchesActiveView(card, activeView) {
     return true;
   }
   const isSoftware = card.getAttribute('data-is-software') === 'true';
-  return activeView === VIEW_SOFTWARE ? isSoftware : !isSoftware;
+  const isProject = card.getAttribute('data-is-project') === 'true';
+  if (activeView === VIEW_SOFTWARE) {
+    return isSoftware;
+  }
+  return isProject;
 }
 
 function applyFilters(activeView) {
