@@ -10,7 +10,15 @@ authors:
 avatar: image.png
 tags:
   - "Agents"
+is_software: true
+links:
+  github: "https://github.com/lakeagent/datalake-qa"
+  leaderboard: "https://lakeqa-bench.github.io/"
 publications:
+  - title: "LakeQA: An Exploratory QA Benchmark over a Million-Scale Data Lake"
+    venue: "ICML"
+    url: "https://arxiv.org/pdf/2606.10460v1"
+    year: 2026
   - title: "Suna: Scalable Causal Confounder Discovery over Relational Data"
     venue: "VLDB"
     url: "https://www.vldb.org/pvldb/vol18/p4158-liu.pdf"
