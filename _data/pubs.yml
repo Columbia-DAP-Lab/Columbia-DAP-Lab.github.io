@@ -75,6 +75,15 @@
     - bench
     - agent-debug
 
+- title: "Latent Cache Flow: Model-to-Model Communication Without Text"
+  authors: Maximillian Rossi, Prajwal Raghunath, Eugene Wu
+  conf: AdaptFM Workshop at ICML 2026
+  pub_date: "2026-07-01"
+  url: https://arxiv.org/abs/2605.22863
+  tags:
+    - sys
+    - ai
+
 - title: "Agentic Data Environments"
   authors: Elaine Ang, Chenxi Huang, Georgios Liargkovas, Jerry Liu, Jinhui Liu, Nikos Pagonas, Charlie Summers, Haonan Wang, Jiakai Xu, Tianle Zhou, Yusen Zhang, Zhou Yu, Zhuo Zhang, Tianyi Peng, Kostis Kaffes, Eugene Wu
   conf: IEEE Data Bulletin 2026
