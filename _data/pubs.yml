@@ -45,9 +45,20 @@
     - hac
 
 
+- title: "BranchBench: Aligning Database Branching with Agentic Demands"
+  authors: Elaine Ang, Sam Weldon, In Keun Kim, Kevin Durand, Kostis Kaffes, Eugene Wu
+  conf: arXiv 2026
+  url: https://arxiv.org/abs/2604.17180
+  pub_date: "2026-04-23"
+  tags:
+    - ai
+    - sys
+    - bench
+
 - title: "BranchBench: An Extensible Benchmark for Agentic Database Branching"
   authors: Elaine Ang, Kostis Kaffes, Eugene Wu
   conf: CAIS Workshop 2026
+  url: https://bauplanlabs.github.io/SAO-workshop/papers/37.pdf
   pub_date: "2026-07-01"
   tags:
     - ai

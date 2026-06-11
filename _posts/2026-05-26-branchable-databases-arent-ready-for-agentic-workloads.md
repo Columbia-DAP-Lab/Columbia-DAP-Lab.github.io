@@ -14,6 +14,9 @@ slug: "branchable-databases-arent-ready-for-agentic-workloads"
 
 *This is the second post in our series on [Agentic Data Environments]({{ '/general/2026/05/21/the-need-for-agentic-data-environments.html' | relative_url }}). It describes a newly released [Branchable Database Benchmark called BranchBench](https://github.com/ElaineAng/db-fork) and select results from our [arXiv paper](https://arxiv.org/pdf/2604.17180).*
 
+
+**Update:** We've been grateful to see the community engaging with BranchBench. DoltHub wrote a detailed response — [Branch Bench: Database Benchmarking for Agentic Workflows](https://www.dolthub.com/blog/2026-06-03-branch-bench-database-benchmarking-for-agentic-workflows/) — where they analyzed their results, acknowledged the performance gap, and committed to integrating BranchBench into their standard performance tracking. Thanks to Aaron and the DoltHub team!
+
 ---
 
 Database branching will soon shift from developer convenience to <a href="https://davistreybig.substack.com/p/how-agents-use-systems-differently">fundamental agent infrastructure</a>.
