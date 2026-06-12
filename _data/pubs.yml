@@ -33,6 +33,150 @@
 
 
 
+- title: "VISTA: A Versatile Interactive User Simulation Toolkit for Agent Evaluation"
+  authors: Yunan Lu, Ryan Shea, Yusen Zhang, Zhou Yu
+  conf: arXiv 2026
+  pub_date: "2026-06-09"
+  url: https://arxiv.org/abs/2606.11079
+  tags:
+    - ai
+    - bench
+    - hac
+
+- title: "Data Flow Control: Data Safety Policies for AI Agents"
+  authors: Charlie Summers, Eugene Wu
+  conf: arXiv 2026
+  pub_date: "2026-06-04"
+  url: https://arxiv.org/abs/2606.05679
+  tags:
+    - ai
+    - sys
+
+- title: "AutoRPA: Efficient GUI Automation through LLM-Driven Code Synthesis from Interactions"
+  authors: Minghao Chen, Xinyi Hu, Zhou Yu, Yufei Yin
+  conf: ICML 2026
+  pub_date: "2026-05-20"
+  url: https://arxiv.org/abs/2605.21082
+  tags:
+    - automation
+    - ai
+
+- title: "PQR: A Framework to Generate Diverse and Realistic User Queries that Elicit QA Agent Failures"
+  authors: Yunan Lu, Luigi Liu, Omar Yahia, Arpit Sharma, Zhou Yu
+  conf: arXiv 2026
+  pub_date: "2026-05-15"
+  url: https://arxiv.org/abs/2605.16551
+  tags:
+    - ai
+    - bench
+
+- title: "Detecting Privilege Escalation in Polyglot Microservices via Agentic Program Analysis"
+  authors: Penghui Li, Hong Yau Chong, Yinzhi Cao, Junfeng Yang
+  conf: IEEE S&P 2026
+  pub_date: "2026-05-15"
+  url: https://arxiv.org/abs/2605.15569
+  tags:
+    - ai
+    - sys
+
+- title: "SemaTune: Semantic-Aware Online OS Tuning with Large Language Models"
+  authors: Georgios Liargkovas, Mihir Nitin Joshi, Hubertus Franke, Kostis Kaffes
+  conf: arXiv 2026
+  pub_date: "2026-05-14"
+  url: https://arxiv.org/abs/2605.15026
+  tags:
+    - sys
+    - ai
+
+- title: "Orchard: An Open-Source Agentic Modeling Framework"
+  authors: Baolin Peng, Wenlin Yao, Qianhui Wu, Hao Cheng, Xiao Yu, Rui Yang, Tao Ge, Alessandro Sordoni, Xingdi Yuan, Yelong Shen, Pengcheng He, Tong Zhang, Zhou Yu, Jianfeng Gao
+  conf: arXiv 2026
+  pub_date: "2026-05-14"
+  url: https://arxiv.org/abs/2605.15040
+  tags:
+    - sys
+    - ai
+
+- title: "Conversational Customization of Productivity Systems: A Design Probe of Malleable AI Interfaces"
+  authors: Karthik Sreedhar, Aryan Kaul, Lydia B. Chilton
+  conf: arXiv 2026
+  pub_date: "2026-05-11"
+  url: https://arxiv.org/abs/2605.11149
+  tags:
+    - hac
+    - ai
+
+- title: "ScarfBench: A Benchmark for Cross-Framework Application Migration in Enterprise Java"
+  authors: Advait Pavuluri, Bridget McGinn, Ashita Saxena, George Safta, Srikanth Tamilselvam, Raju Pavuluri, Michele Merler, Baishakhi Ray, Rahul Krishna
+  conf: arXiv 2026
+  pub_date: "2026-05-07"
+  url: https://arxiv.org/abs/2605.06754
+  tags:
+    - bench
+    - ai
+    - automation
+
+- title: "Estimating Tail Risks in Language Model Output Distributions"
+  authors: Rico Angell, Raghav Singhal, Zachary Horvitz, Zhou Yu, Rajesh Ranganath, Kathleen McKeown, He He
+  conf: ICML 2026
+  pub_date: "2026-04-24"
+  url: https://arxiv.org/abs/2604.22167
+  tags:
+    - ai
+
+- title: "VineLM: Trie-Based Fine-Grained Control for Agentic Workflows"
+  authors: Nikos Pagonas, Matthew Lou, Tianyi Peng, Dan Rubenstein, Kostis Kaffes
+  conf: arXiv 2026
+  pub_date: "2026-04-09"
+  url: https://arxiv.org/abs/2605.23914
+  tags:
+    - sys
+    - ai
+
+- title: "SYN-DIGITS: A Synthetic Control Framework for Calibrated Digital Twin Simulation"
+  authors: Grace Jiarui Fan, Chengpiao Huang, Tianyi Peng, Kaizheng Wang, Yuhang Wu
+  conf: arXiv 2026
+  pub_date: "2026-04-08"
+  url: https://arxiv.org/abs/2604.07513
+  tags:
+    - digi-twin
+    - ai
+
+- title: "AgentOpt v0.1 Technical Report: Client-Side Optimization for LLM-Based Agents"
+  authors: Wenyue Hua, Sripad Karne, Qian Xie, Armaan Agrawal, Nikos Pagonas, Kostis Kaffes, Tianyi Peng
+  conf: arXiv 2026
+  pub_date: "2026-04-07"
+  url: https://arxiv.org/abs/2604.06296
+  tags:
+    - ai
+    - sys
+
+- title: "Quantifying Trust: Financial Risk Management for Trustworthy AI Agents"
+  authors: Wenyue Hua, Tianyi Peng, Chi Wang, Jiaxin Pei, Ian Kaufman, Bryan Lim, Chandler Fang
+  conf: arXiv 2026
+  pub_date: "2026-04-05"
+  url: https://arxiv.org/abs/2604.03976
+  tags:
+    - ai
+    - automation
+
+- title: "Coherence Collapse: Diagnosing Why Code Agents Fail After Reaching the Right Code"
+  authors: Myeongsoo Kim, Dingmin Wang, Siwei Cui, Farima Farmahinifarahani, Terry Yue Zhuo, Shweta Garg, Baishakhi Ray, Rajdeep Mukherjee, Varun Kumar
+  conf: arXiv 2026
+  pub_date: "2026-03-25"
+  url: https://arxiv.org/abs/2603.24631
+  tags:
+    - ai
+    - bench
+
+- title: "Trustworthy AI Software Engineers"
+  authors: Aldeida Aleti, Baishakhi Ray, Rashina Hoda, Simin Chen
+  conf: arXiv 2026
+  pub_date: "2026-02-06"
+  url: https://arxiv.org/abs/2602.06310
+  tags:
+    - ai
+    - whitepaper
 
 - title: "Law-Abiding Agents: Demonstrating Safe Tax Preparation with Data Flow Control"
   authors: Charlie Summers, Prajwal Raghunath, Zhibin Shen, Hardik Gupta, Eric Choi, Mayur Kulkarni, Sally Go, Peter Yu, Akriti Agarwal, Zhuo Zhang, Oliver Kennedy, Eugene Wu
