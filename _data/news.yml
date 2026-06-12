@@ -54,7 +54,7 @@
     - Website: [ne-agents-day.github.io](https://ne-agents-day.github.io/)
 
     Visit the event website for submission timelines, registration, and logistics.
-  featured: true
+  featured: false
   date: 2026-05-08
 
 - title: >
@@ -63,7 +63,7 @@
     The DAPLab is organizing a series of events that bring together Columbia students,
     faculty, and industry partners to discuss the process of transitioning lessons from
     research and the classroom into products and value.
-  featured: true
+  featured: false
   date: 2026-01-20
 
 - title: >
