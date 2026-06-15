@@ -143,9 +143,22 @@ description: DAPLab develops the infrastructure needed to make AI agents safe, r
 
 .project-meta {
   display: flex;
-  align-items: center;
-  gap: 0.35rem;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.3rem;
   flex-shrink: 0;
+}
+
+.project-meta-tags {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.project-meta-links {
+  display: flex;
+  gap: 0.35rem;
 }
 
 .project-tag {
@@ -160,19 +173,20 @@ description: DAPLab develops the infrastructure needed to make AI agents safe, r
 
 .project-link-btn {
   font-size: 0.75rem;
-  font-weight: 500;
+  font-weight: 600;
   padding: 0.25em 0.7em;
   border-radius: 4px;
-  background: #f4f8fc;
-  color: #003262;
-  border: 1px solid #c8d6e5;
+  background: #fef3c7;
+  color: #78350f;
+  border: 1px solid #fcd34d;
   text-decoration: none;
   white-space: nowrap;
 }
 
 .project-link-btn:hover {
-  background: #003262;
-  color: white;
+  background: #fde68a;
+  border-color: #f59e0b;
+  color: #78350f;
   text-decoration: none;
 }
 
@@ -296,13 +310,19 @@ description: DAPLab develops the infrastructure needed to make AI agents safe, r
     </div>
 
     <div class="project-meta">
-      {% for tag in project.tags %}
-      <span class="project-tag">{{ tag }}</span>
-      {% endfor %}
-      {% if project.links.github %}
-      <a href="{{ project.links.github }}" class="project-link-btn">Code ↗</a>
+      {% if project.tags %}
+      <div class="project-meta-tags">
+        {% for tag in project.tags %}
+        <span class="project-tag">{{ tag }}</span>
+        {% endfor %}
+      </div>
       {% endif %}
-      <a href="{{ project.url }}" class="project-link-btn">Learn More →</a>
+      <div class="project-meta-links">
+        {% if project.links.github %}
+        <a href="{{ project.links.github }}" class="project-link-btn">Code ↗</a>
+        {% endif %}
+        <a href="{{ project.url }}" class="project-link-btn">Learn More →</a>
+      </div>
     </div>
 
     <div class="project-content">{{ project.content | strip_html }}</div>
