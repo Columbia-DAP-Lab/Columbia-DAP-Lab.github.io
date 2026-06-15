@@ -209,6 +209,16 @@
     - sys
     - bench
 
+- title: "SANA: What Matters for QA Agents over Massive Data Lakes?"
+  authors: Austin Senna Wijaya, Jiaxiang Liu, Haonan Wang, Eugene Wu
+  conf: arXiv 2026
+  pub_date: "2026-06-01"
+  url: https://arxiv.org/abs/2606.13904
+  tags:
+    - ai
+    - sys
+    - bench
+
 - title: "LAKEQA: An Exploratory QA Benchmark over a Million-Scale Data Lake"
   authors: Haonan Wang*, Jiaxiang Liu*, Yurong Liu, Austin Senna Wijaya, Tianle Zhou, Eden Wu, Yijia Chen, Wanting You, Reya Vir, Daniela Pinto Veizaga, Grace Fan, Yusen Zhang, Juliana Freire, Eugene Wu
   conf: ICML 2026

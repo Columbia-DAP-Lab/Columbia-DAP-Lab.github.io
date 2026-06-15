@@ -5,7 +5,17 @@ date: 2025-11-01
 authors:
   - name: "Haonan Wang*"
   - name: "Jiaxiang Liu*"
+  - name: "Yurong Liu"
+  - name: "Austin Senna Wijaya"
   - name: "Tianle Zhou"
+  - name: "Eden Wu"
+  - name: "Yijia Chen"
+  - name: "Wanting You"
+  - name: "Reya Vir"
+  - name: "Daniela Pinto Veizaga"
+  - name: "Grace Fan"
+  - name: "Yusen Zhang"
+  - name: "Juliana Freire"
   - name: "Eugene Wu"
 avatar: image.png
 tags:
@@ -16,6 +26,10 @@ links:
   github: "https://github.com/lakeagent/datalake-qa"
   leaderboard: "https://lakeqa-bench.github.io/"
 publications:
+  - title: "SANA: What Matters for QA Agents over Massive Data Lakes?"
+    venue: "arXiv"
+    url: "https://arxiv.org/abs/2606.13904"
+    year: 2026
   - title: "LakeQA: An Exploratory QA Benchmark over a Million-Scale Data Lake"
     venue: "ICML"
     url: "https://arxiv.org/pdf/2606.10460v1"
