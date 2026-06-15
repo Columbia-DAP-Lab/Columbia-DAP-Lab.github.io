@@ -5,19 +5,11 @@ description: DAPLab develops the infrastructure needed to make AI agents safe, r
 ---
 
 <style>
-.projects-header {
-  margin-bottom: 2rem;
-}
-
-.projects-header h1 {
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
-}
-
 .view-toggle {
   display: flex;
+  align-items: center;
   gap: 0.5rem;
-  margin-bottom: 1.25rem;
+  margin-bottom: 1.5rem;
   flex-wrap: wrap;
 }
 
@@ -29,6 +21,8 @@ description: DAPLab develops the infrastructure needed to make AI agents safe, r
   text-decoration: none;
   font-weight: 600;
   background: #f4f8fc;
+  cursor: pointer;
+  font-size: inherit;
 }
 
 .view-toggle-btn:hover {
@@ -43,159 +37,173 @@ description: DAPLab develops the infrastructure needed to make AI agents safe, r
   color: #fff;
 }
 
-.search-container {
-  margin-bottom: 2rem;
+.view-toggle-spacer { flex: 1; }
+
+.density-toggle-btn {
+  border: 1px solid #c8d6e5;
+  border-radius: 999px;
+  padding: 0.35rem 0.8rem;
+  color: #555;
+  font-size: 0.82rem;
+  font-weight: 500;
+  background: #f4f8fc;
+  cursor: pointer;
 }
 
-.search-input {
-  width: 100%;
-  max-width: 500px;
-  padding: 0.75rem;
-  font-size: 1rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+.density-toggle-btn:hover {
+  background: #e8f1fb;
+  color: #003262;
 }
 
-.search-buttons {
-  margin-top: 0.5rem;
-}
-
+/* Row list layout */
 .projects-grid {
-  margin-top: 2rem;
-  --card-gutter: 0.5rem; /* horizontal gutter between cards */
-  margin-left: calc(var(--card-gutter) * -1);
-  margin-right: calc(var(--card-gutter) * -1);
+  border: 1px solid #e0e8f0;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .project-card {
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  padding: 1.5rem;
+  display: grid;
+  grid-template-columns: 44px 1fr auto;
+  align-items: center;
+  column-gap: 14px;
+  padding: 0.65rem 1rem;
+  border-bottom: 1px solid #e8edf2;
   background: white;
-  transition: box-shadow 0.3s ease, transform 0.3s ease;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-  margin-left: var(--card-gutter);
-  margin-right: var(--card-gutter);
+  transition: background 0.1s;
 }
 
-.project-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  transform: translateY(-2px);
+.project-card:last-child { border-bottom: none; }
+.project-card:hover { background: #f6f9fd; }
+
+.project-avatar-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid #e0e8f0;
+  background: #f4f8fc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: width 0.15s, height 0.15s;
 }
 
 .project-avatar {
   width: 100%;
-  height: 200px;
+  height: 100%;
   object-fit: contain;
-  margin-bottom: 1rem;
-  border-radius: 4px;
+}
+
+.project-avatar-placeholder {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.project-main { min-width: 0; }
+
+.project-title-line {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  margin-bottom: 2px;
 }
 
 .project-title {
-  font-size: 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
   color: #003262;
-  margin-bottom: 0.5rem;
   text-decoration: none;
 }
 
-.project-title:hover {
-  text-decoration: underline;
-}
-
-.project-subtitle {
-  color: #666;
-  font-size: 0.95rem;
-  margin-bottom: 1rem;
-  line-height: 1.4;
-}
+.project-title:hover { text-decoration: underline; }
 
 .project-badge {
-  display: inline-block;
-  width: fit-content;
-  margin-bottom: 0.75rem;
-  padding: 0.2rem 0.55rem;
-  border-radius: 999px;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 700;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
+  padding: 0.1em 0.55em;
+  border-radius: 999px;
   color: #004085;
   background: #e5f1ff;
   border: 1px solid #bfdbff;
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
 }
 
-/* Hidden section for search indexing */
-.project-content, .project-tags {
-  display: none;
+.project-subtitle {
+  font-size: 0.82rem;
+  color: #666;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-/* .project-content {
-  color: #444;
-  font-size: 0.9rem;
-  line-height: 1.6;
-  margin-bottom: 1rem;
-  flex-grow: 1;
-}
-
-.project-tags {
+.project-meta {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
+  align-items: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
 }
 
-.tag {
-  background: #e8f4f8;
-  color: #003262;
-  padding: 0.25rem 0.75rem;
-  border-radius: 12px;
-  font-size: 0.85rem;
-} */
-/* End hidden section */
-
-.project-footer {
-  padding-top: 1rem;
-  border-top: 1px solid #e0e0e0;
+.project-tag {
+  font-size: 0.72rem;
+  padding: 0.15em 0.55em;
+  border-radius: 999px;
+  background: #f0f4f8;
+  color: #4a5568;
+  border: 1px solid #dde3ea;
+  white-space: nowrap;
 }
 
-.learn-more-btn {
-  display: inline-block;
-  background-color: #005aaf;
-  color: white;
-  padding: 0.5rem 1.5rem;
+.project-link-btn {
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.25em 0.7em;
   border-radius: 4px;
+  background: #f4f8fc;
+  color: #003262;
+  border: 1px solid #c8d6e5;
   text-decoration: none;
-  font-size: 0.9rem;
+  white-space: nowrap;
 }
 
-.learn-more-btn:hover {
-  background-color: #003369;
+.project-link-btn:hover {
+  background: #003262;
+  color: white;
+  text-decoration: none;
 }
 
-.masonry {
-  column-count: 3;
-  column-gap: 1.25rem;
+/* Cozy (expanded) mode */
+.projects-grid.cozy .project-card {
+  grid-template-columns: 88px 1fr auto;
+  padding: 0.85rem 1rem;
+  align-items: center;
 }
 
-.masonry-item {
-  break-inside: avoid;
-  margin-bottom: 1.25rem;
+.projects-grid.cozy .project-avatar-wrap {
+  width: 88px;
+  height: 88px;
+  border-radius: 8px;
 }
 
-/* Responsive tweaks, Bootstrap does not handle masonry columns */
-@media (max-width: 992px) {
-  .masonry {
-    column-count: 2;
-  }
+.projects-grid.cozy .project-avatar-placeholder { font-size: 2.5rem; }
+
+.projects-grid.cozy .project-title { font-size: 1.05rem; }
+
+.projects-grid.cozy .project-subtitle {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
+  font-size: 0.875rem;
+  margin-top: 4px;
+  line-height: 1.4;
 }
-@media (max-width: 576px) {
-  .masonry {
-    column-count: 1;
-  }
-}
+
+/* Hidden — used only for search indexing */
+.project-content, .project-tags-hidden { display: none; }
 
 .no-results {
   text-align: center;
@@ -204,8 +212,17 @@ description: DAPLab develops the infrastructure needed to make AI agents safe, r
   display: none;
 }
 
-.no-results.show {
-  display: block;
+.no-results.show { display: block; }
+
+@media (max-width: 768px) {
+  .project-card,
+  .projects-grid.cozy .project-card {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+  .project-avatar-wrap { display: none; }
+  .project-meta { flex-wrap: wrap; }
+  .view-toggle-spacer { display: none; }
 }
 </style>
 
@@ -240,98 +257,55 @@ description: DAPLab develops the infrastructure needed to make AI agents safe, r
   </div>
 </div>
 
-<div class="projects-header">
-  <h1 id="projects-page-title">Projects</h1>
+<h1 id="projects-page-title" style="margin-bottom:1rem;">Projects</h1>
 
-  <div class="view-toggle" role="tablist" aria-label="Project categories">
-    <a
-      href="{{ '/projects/' | relative_url }}?view=all"
-      class="view-toggle-btn"
-      data-view="all"
-      role="tab"
-      aria-selected="false"
-    >
-      All
-    </a>
-    <a
-      href="{{ '/projects/' | relative_url }}?view=projects"
-      class="view-toggle-btn active"
-      data-view="projects"
-      role="tab"
-      aria-selected="true"
-    >
-      Projects
-    </a>
-    <a
-      href="{{ '/projects/' | relative_url }}?view=software"
-      class="view-toggle-btn"
-      data-view="software"
-      role="tab"
-      aria-selected="false"
-    >
-      Software
-    </a>
-  </div>
-
-  <div class="search-container">
-    <input
-      type="text"
-      id="search-input"
-      class="search-input"
-      placeholder="Search projects..."
-      aria-label="Search projects"
-    >
-    <div class="search-buttons">
-      <button class="btn btn-primary" onclick="searchProjects()">Submit</button>
-      <button class="btn btn-secondary" onclick="resetSearch()">Reset</button>
-    </div>
-  </div>
+<div class="view-toggle" role="tablist" aria-label="Project categories">
+  <a href="{{ '/projects/' | relative_url }}?view=all"      class="view-toggle-btn" data-view="all"      role="tab" aria-selected="false">All</a>
+  <a href="{{ '/projects/' | relative_url }}?view=projects" class="view-toggle-btn active" data-view="projects" role="tab" aria-selected="true">Projects</a>
+  <a href="{{ '/projects/' | relative_url }}?view=software" class="view-toggle-btn" data-view="software" role="tab" aria-selected="false">Software</a>
+  <span class="view-toggle-spacer"></span>
+  <button class="density-toggle-btn" id="density-btn" aria-label="Toggle density">⊞ Cozy</button>
 </div>
 
-<div class="projects-grid masonry" id="projects-grid">
+<div class="projects-grid" id="projects-grid">
   {% assign sorted_projects = site.projects | sort: 'date' | reverse %}
   {% for project in sorted_projects %}
   <div
-    class="project-card masonry-item"
-    data-tags="{{ project.tags | join: ',' | downcase }}"
-    data-title="{{ project.title | downcase }}"
-    data-authors="{% for author in project.authors %}{{ author.name | downcase }}{% unless forloop.last %},{% endunless %}{% endfor %}"
+    class="project-card"
     data-is-software="{% if project.is_software %}true{% else %}false{% endif %}"
     data-is-project="{% if project.is_project %}true{% elsif project.is_software %}false{% else %}true{% endif %}"
   >
-    {% if project.avatar_url %}
-    <img src="{{ project.avatar_url | relative_url }}" alt="{{ project.title }}" class="project-avatar">
-    {% elsif project.avatar %}
-    <img src="/_projects/{{ project.slug }}/{{ project.avatar }}" alt="{{ project.title }}" class="project-avatar">
-    {% endif %}
-
-    {% if project.is_software %}
-    <span class="project-badge">Software</span>
-    {% endif %}
-
-    <a href="{{ project.url }}" class="project-title">{{ project.title }}</a>
-
-    {% if project.subtitle %}
-    <div class="project-subtitle">{{ project.subtitle }}</div>
-    {% endif %}
-
-    <!-- This section is used for search indexing -->
-    <div class="project-content">
-      {{ project.content | strip_html }}
+    <div class="project-avatar-wrap">
+      {% if project.avatar_url %}
+      <img src="{{ project.avatar_url | relative_url }}" alt="" class="project-avatar">
+      {% elsif project.avatar %}
+      <img src="/_projects/{{ project.slug }}/{{ project.avatar }}" alt="" class="project-avatar">
+      {% else %}
+      <span class="project-avatar-placeholder" aria-hidden="true">🔬</span>
+      {% endif %}
     </div>
 
-    {% if project.tags %}
-    <div class="project-tags">
+    <div class="project-main">
+      <div class="project-title-line">
+        <a href="{{ project.url }}" class="project-title">{{ project.title }}</a>
+        {% if project.is_software %}<span class="project-badge">Software</span>{% endif %}
+      </div>
+      {% if project.subtitle %}
+      <div class="project-subtitle">{{ project.subtitle }}</div>
+      {% endif %}
+    </div>
+
+    <div class="project-meta">
       {% for tag in project.tags %}
-      <span class="tag">{{ tag }}</span>
+      <span class="project-tag">{{ tag }}</span>
       {% endfor %}
+      {% if project.links.github %}
+      <a href="{{ project.links.github }}" class="project-link-btn">Code ↗</a>
+      {% endif %}
+      <a href="{{ project.url }}" class="project-link-btn">Learn More →</a>
     </div>
-    {% endif %}
-    <!-- End search indexing section -->
 
-    <div class="project-footer">
-      <a href="{{ project.url }}" class="learn-more-btn">Learn More</a>
-    </div>
+    <div class="project-content">{{ project.content | strip_html }}</div>
   </div>
   {% endfor %}
 </div>
@@ -348,76 +322,57 @@ const VIEW_SOFTWARE = 'software';
 const DEFAULT_VIEW = VIEW_SOFTWARE;
 
 const VIEW_CONFIG = {
-  [VIEW_ALL]: {
-    heading: 'All Projects and Software',
-    searchPlaceholder: 'Search all projects and software...',
-    noResultsTitle: 'No entries found',
-    noResultsEmpty: 'No projects or software in this category yet',
-    noResultsSearch: 'Try adjusting your search terms',
-    docTitle: 'Projects and Software',
-    metaDescription: 'Browse all DAPLab projects and software releases.'
-  },
-  [VIEW_PROJECTS]: {
-    heading: 'Projects',
-    searchPlaceholder: 'Search projects...',
-    noResultsTitle: 'No projects found',
-    noResultsEmpty: 'No projects in this category yet',
-    noResultsSearch: 'Try adjusting your search terms',
-    docTitle: 'Projects',
-    metaDescription: 'Browse DAPLab research projects.'
-  },
-  [VIEW_SOFTWARE]: {
-    heading: 'Software',
-    searchPlaceholder: 'Search software...',
-    noResultsTitle: 'No software found',
-    noResultsEmpty: 'No software in this category yet',
-    noResultsSearch: 'Try adjusting your search terms',
-    docTitle: 'Software',
-    metaDescription: 'Browse DAPLab software releases and open-source tools.'
-  }
+  [VIEW_ALL]:      { heading: 'All Projects and Software', docTitle: 'Projects and Software', metaDescription: 'Browse all DAPLab projects and software releases.',    noResultsTitle: 'No entries found',   noResultsEmpty: 'No projects or software in this category yet' },
+  [VIEW_PROJECTS]: { heading: 'Projects',                  docTitle: 'Projects',               metaDescription: 'Browse DAPLab research projects.',                     noResultsTitle: 'No projects found',  noResultsEmpty: 'No projects in this category yet' },
+  [VIEW_SOFTWARE]: { heading: 'Software',                  docTitle: 'Software',               metaDescription: 'Browse DAPLab software releases and open-source tools.', noResultsTitle: 'No software found',  noResultsEmpty: 'No software in this category yet' },
 };
 
-const pageTitle = document.getElementById('projects-page-title');
-const searchInput = document.getElementById('search-input');
-const cards = Array.from(document.querySelectorAll('.projects-grid > .project-card'));
-const noResults = document.getElementById('no-results');
+const pageTitle   = document.getElementById('projects-page-title');
+const grid        = document.getElementById('projects-grid');
+const cards       = Array.from(document.querySelectorAll('.projects-grid > .project-card'));
+const noResults   = document.getElementById('no-results');
 const noResultsTitle = noResults.querySelector('h3');
-const noResultsText = noResults.querySelector('p');
+const noResultsText  = noResults.querySelector('p');
 const viewButtons = Array.from(document.querySelectorAll('.view-toggle-btn'));
+const densityBtn  = document.getElementById('density-btn');
+
 const initialDocumentTitle = document.title;
-const titleSuffix = initialDocumentTitle.includes(' | ')
-  ? initialDocumentTitle.slice(initialDocumentTitle.indexOf(' | '))
-  : '';
-const metaDescriptionTag = document.querySelector('meta[name="description"]');
-const ogTitleTag = document.querySelector('meta[property="og:title"]');
-const twitterTitleTag = document.querySelector('meta[name="twitter:title"]');
-const ogDescriptionTag = document.querySelector('meta[property="og:description"]');
+const titleSuffix = initialDocumentTitle.includes(' | ') ? initialDocumentTitle.slice(initialDocumentTitle.indexOf(' | ')) : '';
+const metaDescriptionTag    = document.querySelector('meta[name="description"]');
+const ogTitleTag            = document.querySelector('meta[property="og:title"]');
+const twitterTitleTag       = document.querySelector('meta[name="twitter:title"]');
+const ogDescriptionTag      = document.querySelector('meta[property="og:description"]');
 const twitterDescriptionTag = document.querySelector('meta[name="twitter:description"]');
-const ogUrlTag = document.querySelector('meta[property="og:url"]');
-const canonicalTag = document.querySelector('link[rel="canonical"]');
-const webPageSchemaTag = document.querySelector('script[type="application/ld+json"]');
+const ogUrlTag              = document.querySelector('meta[property="og:url"]');
+const canonicalTag          = document.querySelector('link[rel="canonical"]');
+const webPageSchemaTag      = document.querySelector('script[type="application/ld+json"]');
+
+// Density toggle
+let cozy = localStorage.getItem('projects-density') === 'cozy';
+function applyDensity() {
+  grid.classList.toggle('cozy', cozy);
+  densityBtn.textContent = cozy ? '≡ Compact' : '⊞ Cozy';
+}
+densityBtn.addEventListener('click', () => {
+  cozy = !cozy;
+  localStorage.setItem('projects-density', cozy ? 'cozy' : 'compact');
+  applyDensity();
+});
+applyDensity();
 
 function getViewFromURL() {
-  const params = new URLSearchParams(window.location.search);
-  const view = params.get('view');
+  const view = new URLSearchParams(window.location.search).get('view');
   return isValidView(view) ? view : DEFAULT_VIEW;
 }
 
-function isValidView(view) {
-  return view === VIEW_ALL || view === VIEW_PROJECTS || view === VIEW_SOFTWARE;
-}
+function isValidView(v) { return v === VIEW_ALL || v === VIEW_PROJECTS || v === VIEW_SOFTWARE; }
 
 function setActiveView(view, pushState) {
   const safeView = isValidView(view) ? view : DEFAULT_VIEW;
   const url = new URL(window.location.href);
   url.searchParams.set('view', safeView);
-
-  if (pushState) {
-    window.history.pushState({ view: safeView }, '', url);
-  } else {
-    window.history.replaceState({ view: safeView }, '', url);
-  }
-
+  if (pushState) window.history.pushState({ view: safeView }, '', url);
+  else           window.history.replaceState({ view: safeView }, '', url);
   updateViewButtons(safeView);
   updateViewText(safeView);
   updateMetadata(safeView, url.toString());
@@ -433,131 +388,61 @@ function updateViewButtons(activeView) {
 }
 
 function updateViewText(activeView) {
-  const viewConfig = VIEW_CONFIG[activeView] || VIEW_CONFIG[DEFAULT_VIEW];
-  pageTitle.textContent = viewConfig.heading;
-  searchInput.placeholder = viewConfig.searchPlaceholder;
-  noResultsTitle.textContent = viewConfig.noResultsTitle;
+  const cfg = VIEW_CONFIG[activeView] || VIEW_CONFIG[DEFAULT_VIEW];
+  pageTitle.textContent = cfg.heading;
+  noResultsTitle.textContent = cfg.noResultsTitle;
 }
 
 function updateMetadata(activeView, currentURL) {
-  const viewConfig = VIEW_CONFIG[activeView] || VIEW_CONFIG[DEFAULT_VIEW];
-  const fullTitle = `${viewConfig.docTitle}${titleSuffix}`;
+  const cfg = VIEW_CONFIG[activeView] || VIEW_CONFIG[DEFAULT_VIEW];
+  const fullTitle = `${cfg.docTitle}${titleSuffix}`;
   document.title = fullTitle;
-
-  if (ogTitleTag) {
-    ogTitleTag.setAttribute('content', fullTitle);
-  }
-  if (twitterTitleTag) {
-    twitterTitleTag.setAttribute('content', fullTitle);
-  }
-
-  if (metaDescriptionTag) {
-    metaDescriptionTag.setAttribute('content', viewConfig.metaDescription);
-  }
-  if (ogDescriptionTag) {
-    ogDescriptionTag.setAttribute('content', viewConfig.metaDescription);
-  }
-  if (twitterDescriptionTag) {
-    twitterDescriptionTag.setAttribute('content', viewConfig.metaDescription);
-  }
-  if (ogUrlTag) {
-    ogUrlTag.setAttribute('content', currentURL);
-  }
-  if (canonicalTag) {
-    canonicalTag.setAttribute('href', currentURL);
-  }
-
+  if (ogTitleTag) ogTitleTag.setAttribute('content', fullTitle);
+  if (twitterTitleTag) twitterTitleTag.setAttribute('content', fullTitle);
+  if (metaDescriptionTag) metaDescriptionTag.setAttribute('content', cfg.metaDescription);
+  if (ogDescriptionTag) ogDescriptionTag.setAttribute('content', cfg.metaDescription);
+  if (twitterDescriptionTag) twitterDescriptionTag.setAttribute('content', cfg.metaDescription);
+  if (ogUrlTag) ogUrlTag.setAttribute('content', currentURL);
+  if (canonicalTag) canonicalTag.setAttribute('href', currentURL);
   if (webPageSchemaTag && webPageSchemaTag.textContent) {
     try {
       const schema = JSON.parse(webPageSchemaTag.textContent);
       if (schema && schema['@type'] === 'WebPage') {
-        schema.name = fullTitle;
-        schema.url = currentURL;
-        schema.description = viewConfig.metaDescription;
+        schema.name = fullTitle; schema.url = currentURL; schema.description = cfg.metaDescription;
         webPageSchemaTag.textContent = JSON.stringify(schema, null, 2);
       }
-    } catch (error) {
-      // Keep existing structured data when it cannot be safely parsed.
-    }
+    } catch (e) {}
   }
-}
-
-function matchesActiveView(card, activeView) {
-  if (activeView === VIEW_ALL) {
-    return true;
-  }
-  const isSoftware = card.getAttribute('data-is-software') === 'true';
-  const isProject = card.getAttribute('data-is-project') === 'true';
-  if (activeView === VIEW_SOFTWARE) {
-    return isSoftware;
-  }
-  return isProject;
 }
 
 function applyFilters(activeView) {
   const currentView = isValidView(activeView) ? activeView : getViewFromURL();
-  const searchTerm = searchInput.value.trim().toLowerCase();
   let visibleCount = 0;
-
   cards.forEach(card => {
-    const inCurrentView = matchesActiveView(card, currentView);
-    const title = (card.getAttribute('data-title') || '').toLowerCase();
-    const tags = (card.getAttribute('data-tags') || '').toLowerCase();
-    const authors = (card.getAttribute('data-authors') || '').toLowerCase();
-    const content = (card.textContent || '').toLowerCase();
-    const matchesSearch = !searchTerm ||
-      title.includes(searchTerm) ||
-      tags.includes(searchTerm) ||
-      authors.includes(searchTerm) ||
-      content.includes(searchTerm);
-
-    if (inCurrentView && matchesSearch) {
-      card.style.display = 'block';
-      visibleCount++;
-    } else {
-      card.style.display = 'none';
-    }
+    const isSoftware = card.getAttribute('data-is-software') === 'true';
+    const isProject  = card.getAttribute('data-is-project') === 'true';
+    const visible = currentView === VIEW_ALL
+      || (currentView === VIEW_SOFTWARE && isSoftware)
+      || (currentView === VIEW_PROJECTS && isProject);
+    card.style.display = visible ? '' : 'none';
+    if (visible) visibleCount++;
   });
-
   if (visibleCount === 0) {
     noResults.classList.add('show');
-    const viewConfig = VIEW_CONFIG[currentView] || VIEW_CONFIG[DEFAULT_VIEW];
-    noResultsText.textContent = searchTerm ? viewConfig.noResultsSearch : viewConfig.noResultsEmpty;
+    noResultsText.textContent = (VIEW_CONFIG[currentView] || VIEW_CONFIG[DEFAULT_VIEW]).noResultsEmpty;
   } else {
     noResults.classList.remove('show');
   }
 }
 
-function searchProjects() {
-  applyFilters(getViewFromURL());
-}
-
-function resetSearch() {
-  searchInput.value = '';
-  applyFilters(getViewFromURL());
-}
-
 viewButtons.forEach(btn => {
-  btn.addEventListener('click', function(e) {
-    e.preventDefault();
-    const view = btn.getAttribute('data-view');
-    setActiveView(view, true);
-  });
+  btn.addEventListener('click', e => { e.preventDefault(); setActiveView(btn.getAttribute('data-view'), true); });
 });
 
-window.addEventListener('popstate', function() {
+window.addEventListener('popstate', () => {
   const view = getViewFromURL();
-  updateViewButtons(view);
-  updateViewText(view);
-  updateMetadata(view, window.location.href);
-  applyFilters(view);
-});
-
-// Allow Enter key to trigger search
-searchInput.addEventListener('keypress', function(e) {
-  if (e.key === 'Enter') {
-    searchProjects();
-  }
+  updateViewButtons(view); updateViewText(view);
+  updateMetadata(view, window.location.href); applyFilters(view);
 });
 
 setActiveView(getViewFromURL(), false);
