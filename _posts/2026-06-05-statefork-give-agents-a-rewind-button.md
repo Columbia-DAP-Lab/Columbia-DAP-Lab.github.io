@@ -4,15 +4,19 @@ title: "StateFork: Give Agents a Rewind Button"
 date: 2026-06-04
 categories: [general]
 authors:
-  - name: "Alex Xu"
+  - name: "Alex Jiakai Xu"
+    url:  "https://alex-xjk.github.io/"
   - name: "Tianle Zhou"
   - name: "Danielle Gillai"
+  - name: "Ruizhe Fu"
+    url:  "https://frzno1.github.io/"
   - name: "Georgios Liargkovas"
-  - name: "Nikos Pagonas"
+    url:  "https://liargkovas.com/"
   - name: "Patrick Shen"
   - name: "Kostis Kaffes"
+    url:  "https://www.cs.columbia.edu/~kkaffes/"
   - name: "Eugene Wu"
-    url: "https://www.cs.columbia.edu/~ewu/"
+    url:  "https://www.cs.columbia.edu/~ewu/"
 excerpt: "Agents need to branch mid-task across the full environment—not just the database. We're releasing StateFork and Waypoint to make that possible."
 slug: "statefork-give-agents-a-rewind-button"
 ---
