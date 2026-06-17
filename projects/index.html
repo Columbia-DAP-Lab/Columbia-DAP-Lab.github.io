@@ -139,7 +139,10 @@ description: DAPLab develops the infrastructure needed to make AI agents safe, r
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  text-decoration: none;
 }
+
+.project-subtitle:hover { text-decoration: underline; color: #666; }
 
 .project-meta {
   display: flex;
@@ -289,7 +292,7 @@ description: DAPLab develops the infrastructure needed to make AI agents safe, r
     data-is-software="{% if project.is_software %}true{% else %}false{% endif %}"
     data-is-project="{% if project.is_project %}true{% elsif project.is_software %}false{% else %}true{% endif %}"
   >
-    <div class="project-avatar-wrap">
+    <a href="{{ project.url }}" class="project-avatar-wrap" tabindex="-1" aria-hidden="true">
       {% if project.avatar_url %}
       <img src="{{ project.avatar_url | relative_url }}" alt="" class="project-avatar">
       {% elsif project.avatar %}
@@ -297,7 +300,7 @@ description: DAPLab develops the infrastructure needed to make AI agents safe, r
       {% else %}
       <span class="project-avatar-placeholder" aria-hidden="true">🔬</span>
       {% endif %}
-    </div>
+    </a>
 
     <div class="project-main">
       <div class="project-title-line">
@@ -305,7 +308,7 @@ description: DAPLab develops the infrastructure needed to make AI agents safe, r
         {% if project.is_software %}<span class="project-badge">Software</span>{% endif %}
       </div>
       {% if project.subtitle %}
-      <div class="project-subtitle">{{ project.subtitle }}</div>
+      <a href="{{ project.url }}" class="project-subtitle">{{ project.subtitle }}</a>
       {% endif %}
     </div>
 
