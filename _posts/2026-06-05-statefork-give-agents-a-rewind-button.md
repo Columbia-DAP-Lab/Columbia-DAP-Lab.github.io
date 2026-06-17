@@ -7,6 +7,7 @@ authors:
   - name: "Alex Jiakai Xu"
     url:  "https://alex-xjk.github.io/"
   - name: "Tianle Zhou"
+    url:  "https://dale1213.github.io/minimal-mistakes/"
   - name: "Danielle Gillai"
   - name: "Ruizhe Fu"
     url:  "https://frzno1.github.io/"
