@@ -354,11 +354,12 @@
 # MS/Undergraduate Students
 
 - name: Tianle Zhou
-  homepage: https://www.linkedin.com/in/tian-le-zhou-99a145221/
+  homepage: https://dale1213.github.io/minimal-mistakes/
   image: /files/images/avatar/tianle_zhou.png
   category: Student
   advisor:
     - Eugene Wu
+    - Jiakai Xu
 
 - name: Eric Choi
   homepage: https://www.linkedin.com/in/eric-s-choi/
@@ -366,6 +367,7 @@
   category: Student
   advisor:
     - Eugene Wu
+    - Charlie Summers
 
 - name: Anushka Bhatnagar
   homepage: https://anushkabhatnagar.github.io/
@@ -388,6 +390,8 @@
   category: Student
   advisor:
     - Eugene Wu
+    - Jiaxiang Jerry Liu
+
 - name: Shachaf Rispler
   homepage: https://shachafha.github.io/
   image: /files/images/avatar/shachaf_rispler.png
@@ -416,10 +420,12 @@
   category: Student
   advisor:
     - Kostis Kaffes
+    - Jiakai Xu
 
 - name: Grace Li
   homepage: https://www.ggracelii.com/
   image: /files/images/avatar/grace_li.png
   category: Student
   advisor:
+    - Kostis Kaffes
     - Nikos Pagonas
