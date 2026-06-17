@@ -52,6 +52,15 @@
     - ai
     - sys
 
+- title: "Orchard: An Open-Source Agentic Modeling Framework"
+  authors: Baolin Peng, Wenlin Yao, Qianhui Wu, Hao Cheng, Xiao Yu, Rui Yang, Tao Ge, Alessandro Sordoni, Xingdi Yuan, Yelong Shen, Pengcheng He, Tong Zhang, Zhou Yu, Jianfeng Gao
+  conf: arXiv 2026
+  pub_date: "2026-05-21"
+  url: https://www.microsoft.com/en-us/research/publication/orchard-an-open-source-agentic-modeling-framework/
+  tags:
+    - automation
+    - ai
+
 - title: "AutoRPA: Efficient GUI Automation through LLM-Driven Code Synthesis from Interactions"
   authors: Minghao Chen, Xinyi Hu, Zhou Yu, Yufei Yin
   conf: ICML 2026
