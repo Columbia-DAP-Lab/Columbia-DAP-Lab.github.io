@@ -33,6 +33,15 @@
 
 
 
+- title: "GIF: Locally Sound Geometric Information Flow Control for LLMs"
+  authors: Adam Storek, Nikolaus Holzer, Zhuo Zhang, Suman Jana
+  conf: arXiv 2026
+  pub_date: "2026-06-22"
+  url: https://arxiv.org/abs/2606.23277
+  tags:
+    - sys
+    - ai
+
 - title: "VISTA: A Versatile Interactive User Simulation Toolkit for Agent Evaluation"
   authors: Yunan Lu, Ryan Shea, Yusen Zhang, Zhou Yu
   conf: arXiv 2026
