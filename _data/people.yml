@@ -429,3 +429,19 @@
   advisor:
     - Kostis Kaffes
     - Nikos Pagonas
+
+- name: Wenyu Wang
+  homepage: https://www.linkedin.com/in/wenyu-wang-505aa5281/ 
+  image: /files/images/avatar/Wenyu_Wang.jpg
+  category: Student
+  advisor:
+    - Eugene Wu
+    - Charlie Summers
+
+- name: Prajwal Raghunath
+  homepage: https://www.linkedin.com/in/prajwal-raghunath/
+  image: /files/images/avatar/praj_daplab.png
+  category: Student
+  advisor:
+    - Eugene Wu
+    - Charlie Summers
