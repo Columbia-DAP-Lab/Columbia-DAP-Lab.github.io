@@ -31,7 +31,21 @@
 #
 # Project specific tags are fine as well.  For instance, precision interfaces has a custom "pi" tag 
 
+- title: "Fixed Universal Transformer"
+  authors: Jingwen Liu, Alexandr Andoni, Daniel Hsu
+  conf: "Mechanistic Interpretability Workshop at ICML 2026"
+  pub_date: "2026-06-11"
+  url: https://openreview.net/forum?id=N9EioZHnUE
+  tags:
+    - ai
 
+- title: "Behavior Cloning is Not All You Need: The Optimality of On-Policy Distillation for Noisy Expert Feedback"
+  authors: Ved Sriraman, Peihan Liu, Daniel Hsu, Adam Block
+  conf: "ICML 2026 Workshop on Decision-Making from Offline Datasets to Online Adaptation: Black-Box Optimization to Reinforcement Learning"
+  pub_date: "2026-06-29"
+  url: https://openreview.net/forum?id=N9EioZHnUE
+  tags:
+    - ai
 
 - title: "GIF: Locally Sound Geometric Information Flow Control for LLMs"
   authors: Adam Storek, Nikolaus Holzer, Zhuo Zhang, Suman Jana
