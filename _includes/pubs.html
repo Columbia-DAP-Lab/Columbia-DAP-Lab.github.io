@@ -1,5 +1,6 @@
 <div class="pubs">
   <ol connect="rows">
+    {% assign lab_authors = site.data.people | map: "name" %}
     {% assign sorted_pubs = site.data.pubs | sort: "pub_date" | reverse %}
     {% for p in sorted_pubs %}
       {% if p.hide == true %}
@@ -20,7 +21,18 @@
           {% else %} 
           <div class="title">{{p.title}}</div>
           {% endif %}
-            <div class="authors">{{p.authors}}</div>
+            <div class="authors">
+              {% assign authors = p.authors | split: "," %}
+              {% for author in authors %}
+                {% assign author_name = author | strip %}
+                {% unless forloop.first %}, {% endunless %}
+                {% if lab_authors contains author_name %}
+                  <strong>{{author_name}}</strong>
+                {% else %}
+                  {{author_name}}
+                {% endif %}
+              {% endfor %}
+            </div>
             <span class="conf">{{{p.conf}}</span>
             {% if p.video %}<a href="{{p.video}}">Talk Video</a>{% endif %}
             {% if p.blog %}<a href="{{p.blog}}">Blogpost</a>{% endif %}
