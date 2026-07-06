@@ -160,6 +160,7 @@ layout: default
     <img src="files/images/partner-dandy.png" class="partner-logo" alt="Dandy">
     <img src="files/images/partner-daytona.png" class="partner-logo" alt="Daytona">
     <img src="files/images/partner-perplexity.png" class="partner-logo" alt="Perplexity">
+    <img src="files/images/partner-toloka.svg" class="partner-logo partner-logo-compact" alt="Toloka">
   </div>
 </div>
 
@@ -178,6 +179,10 @@ layout: default
   object-fit: contain;
   opacity: 0.9;
   flex: 0 0 auto;
+}
+
+.partner-logo-compact {
+  height: 45px;
 }
 
 .partner-carousel {
@@ -221,8 +226,8 @@ layout: default
 
 @media (max-width: 576px) {
   .partner-logo { height: 36px; }
+  .partner-logo-compact { height: 27px; }
   .partner-grid { gap: 16px 24px; }
 }
 
 </style>
-
