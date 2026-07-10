@@ -56,6 +56,44 @@
     - sys
     - ai
 
+- title: "fog: Expressing Motion and Emotion through Function Composition of AI-Generated Code"
+  authors: Vivian Liu, Lydia B. Chilton
+  conf: arXiv 2026
+  pub_date: "2026-07-08"
+  url: https://arxiv.org/abs/2607.07952
+  tags:
+    - hac
+    - ai
+
+- title: "PersonaJudge: Simulating Individual Human Preference Judgments with Evaluator-Specific Demonstration Data"
+  authors: Zeyu He, Xuan Qi, Subramanian Chidambaram, Zhichao Xu, Vinayak Arannil, Lydia Chilton, Alex C. Williams
+  conf: arXiv 2026
+  pub_date: "2026-07-07"
+  url: https://arxiv.org/abs/2607.05742
+  tags:
+    - ai
+    - bench
+    - hac
+
+- title: "OSWorld2.0: Benchmarking Computer Use Agents on Long-Horizon Real-World Tasks"
+  authors: Mengqi Yuan, Zilong Zhou, Xinzhuang Xiong, Weiming Wu, Jiayang Sun, Jiamin Song, Kaiqian Cui, Bowen Wang, Haoyuan Wu, Yitong Li, Dunjie Lu, Haikong Lu, Qi Zhen, Xinyuan Wang, Jiaqi Deng, Yuhao Yang, Cheng Chen, Boyuan Zheng, Alex Su, Xiao Yu, Hao Zou, Saaket Agashe, Xing Han Lu, Manpreet Kaur, Zhengyang Qi, Vincent Sunn Chen, Frederic Sala, Dayiheng Liu, Junyang Lin, Zhou Yu, Yu Su, Siva Reddy, Xin Eric Wang, Peng Qi, Tianbao Xie, Tao Yu
+  conf: arXiv 2026
+  pub_date: "2026-06-28"
+  url: https://arxiv.org/abs/2606.29537
+  tags:
+    - ai
+    - bench
+    - automation
+
+- title: "Invisible Impact of Empathy on Behavioral Change: Isolating the Effect of Empathy in Long-term Physical Activity Coaching Chatbot Interactions"
+  authors: Li Siyan, Kai-Hui Liang, Shopnil Shahriar, Yilin Ye, Shiyoh Goetsu, Wei-Wei Du, Masahiro Yoshida, Tsunayuki Ohwa, Xuhai Xu, Zhou Yu
+  conf: arXiv 2026
+  pub_date: "2026-06-25"
+  url: https://arxiv.org/abs/2606.26641
+  tags:
+    - ai
+    - hac
+
 - title: "Skills for the Future Software Profession: Beyond Agentic AI!"
   authors: Sungmin Kang, Baishakhi Ray, Abhik Roychoudhury
   conf: arXiv 2026
