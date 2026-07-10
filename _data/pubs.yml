@@ -56,6 +56,32 @@
     - sys
     - ai
 
+- title: "Skills for the Future Software Profession: Beyond Agentic AI!"
+  authors: Sungmin Kang, Baishakhi Ray, Abhik Roychoudhury
+  conf: arXiv 2026
+  pub_date: "2026-06-20"
+  url: https://arxiv.org/abs/2606.21894
+  tags:
+    - ai
+    - whitepaper
+
+- title: "MortarBench: Evaluating Mortgage Loan Origination Agents"
+  authors: Matthew Toles, Yunan Lu, Manav Munjal, Bojun Liu, Yuanhao Deng, Stephanie Selig, Derek Rindner, Cheng Li, Zhou Yu
+  conf: arXiv 2026
+  pub_date: "2026-06-17"
+  url: https://arxiv.org/abs/2606.19416
+  tags:
+    - ai
+    - bench
+
+- title: "Detect, Remask, Repair: Diffusion Editing for Faithful Summarization of Evolving Contexts"
+  authors: Hao Zou, Zachary Horvitz, Chandhru Karthick, Zhou Yu, Kathleen McKeown
+  conf: arXiv 2026
+  pub_date: "2026-06-11"
+  url: https://arxiv.org/abs/2606.12807
+  tags:
+    - ai
+
 - title: "VISTA: A Versatile Interactive User Simulation Toolkit for Agent Evaluation"
   authors: Yunan Lu, Ryan Shea, Yusen Zhang, Zhou Yu
   conf: arXiv 2026
