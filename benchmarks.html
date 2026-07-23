@@ -1,0 +1,449 @@
+---
+layout: default
+title: Benchmarks
+description: Explore benchmarks from DAPLab for evaluating AI agents in real-world software, data, systems, and human-facing tasks.
+---
+
+<style>
+.benchmarks-hero {
+  max-width: 780px;
+  margin-bottom: 2.5rem;
+}
+
+.benchmarks-hero h1 {
+  color: #003262;
+  font-size: 2.25rem;
+  font-weight: 700;
+  margin-bottom: 0.8rem;
+}
+
+.benchmarks-hero .lead {
+  color: #444;
+  line-height: 1.65;
+}
+
+.benchmark-section {
+  margin-bottom: 3rem;
+}
+
+.benchmark-section-heading {
+  align-items: baseline;
+  border-bottom: 1px solid #dfe7ef;
+  display: flex;
+  gap: 0.8rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.6rem;
+}
+
+.benchmark-section-heading h2 {
+  color: #003262;
+  font-size: 1.45rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.benchmark-section-heading span {
+  color: #667;
+  font-size: 0.85rem;
+}
+
+.benchmark-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.benchmark-card {
+  background: #fff;
+  border: 1px solid #dfe7ef;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 1.25rem;
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+}
+
+.benchmark-card:hover {
+  border-color: #b9cde1;
+  box-shadow: 0 4px 14px rgba(0, 50, 98, 0.08);
+  transform: translateY(-1px);
+}
+
+.benchmark-card-topline {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.55rem;
+}
+
+.benchmark-card h3 {
+  color: #003262;
+  font-size: 1.12rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.benchmark-status {
+  background: #e5f1ff;
+  border: 1px solid #bfdbff;
+  border-radius: 999px;
+  color: #004085;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 0.12rem 0.55rem;
+  text-transform: uppercase;
+}
+
+.benchmark-status.in-progress {
+  background: #fff7df;
+  border-color: #f3d486;
+  color: #76520a;
+}
+
+.benchmark-updated {
+  color: #7a8591;
+  font-size: 0.72rem;
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.benchmark-kicker {
+  color: #5b6570;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  margin-bottom: 0.65rem;
+  text-transform: uppercase;
+}
+
+.benchmark-card p {
+  color: #4b5560;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  margin-bottom: 1rem;
+}
+
+.benchmark-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+}
+
+.benchmark-fact {
+  background: #f3f6f9;
+  border: 1px solid #e0e6ec;
+  border-radius: 999px;
+  color: #425466;
+  font-size: 0.74rem;
+  padding: 0.18rem 0.58rem;
+}
+
+.benchmark-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: auto;
+}
+
+.benchmark-link {
+  background: #fef3c7;
+  border: 1px solid #f2cf55;
+  border-radius: 4px;
+  color: #78350f;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.3rem 0.72rem;
+  text-decoration: none;
+}
+
+.benchmark-link:hover {
+  background: #fde68a;
+  color: #78350f;
+  text-decoration: none;
+}
+
+.benchmark-note {
+  background: #f5f8fb;
+  border-left: 4px solid #005aaf;
+  color: #4b5560;
+  font-size: 0.86rem;
+  line-height: 1.5;
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+}
+
+@media (max-width: 768px) {
+  .benchmark-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .benchmarks-hero h1 {
+    font-size: 1.9rem;
+  }
+
+  .benchmark-section-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+}
+</style>
+
+<div class="benchmarks-hero">
+  <h1>Benchmarks</h1>
+  <p class="lead">Real-world AI agents need evaluations that reflect the environments where they will actually operate. DAPLab builds benchmarks for complex, stateful tasks across software, data systems, and human-facing workflows—with verifiable outcomes and an emphasis on contamination-resistant evaluation.</p>
+</div>
+
+<section class="benchmark-section" aria-labelledby="released-benchmarks">
+  <div class="benchmark-section-heading">
+    <h2 id="released-benchmarks">Released</h2>
+    <span>Published benchmarks, datasets, and evaluation environments</span>
+  </div>
+
+  <div class="benchmark-grid">
+    <article class="benchmark-card">
+      <div class="benchmark-card-topline">
+        <h3>LAKEQA</h3>
+        <span class="benchmark-status">Released</span>
+        <span class="benchmark-updated">Updated Jun 2026</span>
+      </div>
+      <div class="benchmark-kicker">Exploratory QA over data lakes</div>
+      <p>Evaluates whether deep-research agents can discover and reason over relevant structured datasets in a million-scale data lake, then produce verifiable answers with explicit provenance.</p>
+      <div class="benchmark-facts">
+        <span class="benchmark-fact">Million-scale data lake</span>
+        <span class="benchmark-fact">ICML 2026</span>
+      </div>
+      <div class="benchmark-links">
+        <a class="benchmark-link" href="{{ '/benchmarks/lakeqa/' | relative_url }}">View Details →</a>
+        <a class="benchmark-link" href="{{ '/projects/lakeagent/' | relative_url }}">Project →</a>
+        <a class="benchmark-link" href="https://lakeqa-bench.github.io/">Leaderboard ↗</a>
+        <a class="benchmark-link" href="https://arxiv.org/abs/2606.10460">Paper ↗</a>
+      </div>
+    </article>
+
+    <article class="benchmark-card">
+      <div class="benchmark-card-topline">
+        <h3>Live Kernel Crash Resolution</h3>
+        <span class="benchmark-status">Released</span>
+        <span class="benchmark-updated">Updated Feb 2026</span>
+      </div>
+      <div class="benchmark-kicker">Post-cutoff software repair</div>
+      <p>Continuously draws from newly reported Linux kernel crashes to test whether agents can diagnose and resolve real, post-cutoff failures without relying on memorized fixes.</p>
+      <div class="benchmark-facts">
+        <span class="benchmark-fact">Live tasks</span>
+        <span class="benchmark-fact">Contamination resistant</span>
+        <span class="benchmark-fact">ICML 2026</span>
+      </div>
+      <div class="benchmark-links">
+        <a class="benchmark-link" href="{{ '/benchmarks/live-kernel-crash/' | relative_url }}">View Details →</a>
+        <a class="benchmark-link" href="{{ '/projects/kagent/' | relative_url }}">Project →</a>
+        <a class="benchmark-link" href="https://arxiv.org/abs/2602.02690">Paper ↗</a>
+      </div>
+    </article>
+
+    <article class="benchmark-card">
+      <div class="benchmark-card-topline">
+        <h3>BranchBench</h3>
+        <span class="benchmark-status">Released</span>
+        <span class="benchmark-updated">Updated Apr 2026</span>
+      </div>
+      <div class="benchmark-kicker">Agentic database branching</div>
+      <p>Measures whether branchable databases can support the creation, exploration, and pruning patterns of agentic workloads across configurable branch shapes, schemas, and operations.</p>
+      <div class="benchmark-facts">
+        <span class="benchmark-fact">5 workflows</span>
+        <span class="benchmark-fact">Extensible</span>
+        <span class="benchmark-fact">Multiple backends</span>
+      </div>
+      <div class="benchmark-links">
+        <a class="benchmark-link" href="{{ '/benchmarks/branchbench/' | relative_url }}">View Details →</a>
+        <a class="benchmark-link" href="https://github.com/ElaineAng/db-fork">Code ↗</a>
+        <a class="benchmark-link" href="https://arxiv.org/abs/2604.17180">Paper ↗</a>
+        <a class="benchmark-link" href="{{ '/general/2026/05/26/branchable-databases-arent-ready-for-agentic-workloads.html' | relative_url }}">Blog →</a>
+      </div>
+    </article>
+
+    <article class="benchmark-card">
+      <div class="benchmark-card-topline">
+        <h3>kBench &amp; kGym</h3>
+        <span class="benchmark-status">Released</span>
+        <span class="benchmark-updated">Updated 2024</span>
+      </div>
+      <div class="benchmark-kicker">Linux kernel debugging</div>
+      <p>Pairs a curated dataset of real Linux kernel bugs with deterministic reproduction scripts and a sandboxed experimentation platform for evaluating agent-driven crash diagnosis and patching.</p>
+      <div class="benchmark-facts">
+        <span class="benchmark-fact">Real kernel bugs</span>
+        <span class="benchmark-fact">Deterministic reproduction</span>
+        <span class="benchmark-fact">NeurIPS 2024</span>
+      </div>
+      <div class="benchmark-links">
+        <a class="benchmark-link" href="{{ '/benchmarks/kbench-kgym/' | relative_url }}">View Details →</a>
+        <a class="benchmark-link" href="{{ '/projects/kagent/' | relative_url }}">Project →</a>
+        <a class="benchmark-link" href="https://proceedings.neurips.cc/paper_files/paper/2024/hash/8e9ed2a28af7d9085180e3817b2c9a57-Abstract-Datasets_and_Benchmarks_Track.html">Paper ↗</a>
+      </div>
+    </article>
+
+    <article class="benchmark-card">
+      <div class="benchmark-card-topline">
+        <h3>Twin-2K-500</h3>
+        <span class="benchmark-status">Released</span>
+        <span class="benchmark-updated">Updated 2025</span>
+      </div>
+      <div class="benchmark-kicker">Digital twin fidelity</div>
+      <p>A benchmark dataset for building and evaluating digital twins based on real people, designed to study how faithfully agents capture individual behavior and variation across domains.</p>
+      <div class="benchmark-facts">
+        <span class="benchmark-fact">2,000+ people</span>
+        <span class="benchmark-fact">500+ questions</span>
+        <span class="benchmark-fact">19 domains</span>
+      </div>
+      <div class="benchmark-links">
+        <a class="benchmark-link" href="{{ '/benchmarks/twin-2k-500/' | relative_url }}">View Details →</a>
+        <a class="benchmark-link" href="{{ '/projects/digitaltwins/' | relative_url }}">Project →</a>
+        <a class="benchmark-link" href="https://pubsonline.informs.org/doi/10.1287/mksc.2025.0262">Paper ↗</a>
+      </div>
+    </article>
+
+    <article class="benchmark-card">
+      <div class="benchmark-card-topline">
+        <h3>VISTA</h3>
+        <span class="benchmark-status">Released</span>
+        <span class="benchmark-updated">Updated Jun 2026</span>
+      </div>
+      <div class="benchmark-kicker">Interactive agent evaluation</div>
+      <p>A versatile user-simulation toolkit for evaluating interactive agents through realistic multi-turn behavior, reducing dependence on costly human evaluation.</p>
+      <div class="benchmark-facts">
+        <span class="benchmark-fact">User simulation</span>
+        <span class="benchmark-fact">Multi-turn agents</span>
+      </div>
+      <div class="benchmark-links">
+        <a class="benchmark-link" href="{{ '/benchmarks/vista/' | relative_url }}">View Details →</a>
+        <a class="benchmark-link" href="{{ '/projects/sage/' | relative_url }}">Related project →</a>
+        <a class="benchmark-link" href="https://arxiv.org/abs/2606.11079">Paper ↗</a>
+      </div>
+    </article>
+
+    <article class="benchmark-card">
+      <div class="benchmark-card-topline">
+        <h3>PQR</h3>
+        <span class="benchmark-status">Released</span>
+        <span class="benchmark-updated">Updated May 2026</span>
+      </div>
+      <div class="benchmark-kicker">Failure-eliciting QA evaluation</div>
+      <p>Generates diverse, realistic user queries specifically designed to expose QA-agent failures, supporting more rigorous evaluation than static, average-case question sets.</p>
+      <div class="benchmark-facts">
+        <span class="benchmark-fact">QA agents</span>
+        <span class="benchmark-fact">Failure discovery</span>
+      </div>
+      <div class="benchmark-links">
+        <a class="benchmark-link" href="{{ '/benchmarks/pqr/' | relative_url }}">View Details →</a>
+        <a class="benchmark-link" href="https://arxiv.org/abs/2605.16551">Paper ↗</a>
+      </div>
+    </article>
+
+    <article class="benchmark-card">
+      <div class="benchmark-card-topline">
+        <h3>ScarfBench</h3>
+        <span class="benchmark-status">Released</span>
+        <span class="benchmark-updated">Updated May 2026</span>
+      </div>
+      <div class="benchmark-kicker">Enterprise application migration</div>
+      <p>Evaluates whether coding agents can migrate enterprise Java applications across frameworks while preserving behavior and handling changes that span a real application.</p>
+      <div class="benchmark-facts">
+        <span class="benchmark-fact">Enterprise Java</span>
+        <span class="benchmark-fact">Cross-framework migration</span>
+      </div>
+      <div class="benchmark-links">
+        <a class="benchmark-link" href="{{ '/benchmarks/scarfbench/' | relative_url }}">View Details →</a>
+        <a class="benchmark-link" href="https://arxiv.org/abs/2605.06754">Paper ↗</a>
+      </div>
+    </article>
+
+    <article class="benchmark-card">
+      <div class="benchmark-card-topline">
+        <h3>Coherence Collapse</h3>
+        <span class="benchmark-status">Released</span>
+        <span class="benchmark-updated">Updated Mar 2026</span>
+      </div>
+      <div class="benchmark-kicker">Coding-agent failure analysis</div>
+      <p>Diagnoses why coding agents can still fail after reaching the correct region of a codebase, exposing breakdowns in maintaining coherent reasoning and edits over time.</p>
+      <div class="benchmark-facts">
+        <span class="benchmark-fact">Coding agents</span>
+        <span class="benchmark-fact">Failure diagnosis</span>
+      </div>
+      <div class="benchmark-links">
+        <a class="benchmark-link" href="{{ '/benchmarks/coherence-collapse/' | relative_url }}">View Details →</a>
+        <a class="benchmark-link" href="https://arxiv.org/abs/2603.24631">Paper ↗</a>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section class="benchmark-section" aria-labelledby="in-progress-benchmarks">
+  <div class="benchmark-section-heading">
+    <h2 id="in-progress-benchmarks">In progress</h2>
+    <span>Benchmarks currently under development</span>
+  </div>
+
+  <div class="benchmark-grid">
+    <article class="benchmark-card">
+      <div class="benchmark-card-topline">
+        <h3>SRE-Bench</h3>
+        <span class="benchmark-status in-progress">In progress</span>
+        <span class="benchmark-updated">Updated Jul 2026</span>
+      </div>
+      <div class="benchmark-kicker">Software reverse engineering</div>
+      <p>Tests whether AI agents can understand software without source code—a common reality in malware, firmware, and proprietary-software analysis. Every program is built from scratch to prevent data contamination and hardened with modern anti-analysis protections.</p>
+      <div class="benchmark-facts">
+        <span class="benchmark-fact">262 binaries</span>
+        <span class="benchmark-fact">1,572 verifiable tasks</span>
+        <span class="benchmark-fact">5 real-world scenarios</span>
+        <span class="benchmark-fact">18K average lines of code</span>
+      </div>
+      <div class="benchmark-links">
+        <a class="benchmark-link" href="{{ '/benchmarks/sre-bench/' | relative_url }}">View Details →</a>
+      </div>
+    </article>
+
+    <article class="benchmark-card">
+      <div class="benchmark-card-topline">
+        <h3>ConcurBugBench</h3>
+        <span class="benchmark-status in-progress">In progress</span>
+        <span class="benchmark-updated">Updated Jul 2026</span>
+      </div>
+      <div class="benchmark-kicker">Concurrency bug discovery and repair</div>
+      <p>Tests whether agents can find, reproduce, and repair real concurrency bugs whose failures depend on particular interactions among threads, timing, and shared state. Each bug includes a specific oracle for validating both reproduction and repair.</p>
+      <div class="benchmark-facts">
+        <span class="benchmark-fact">Nearly 200 real bugs</span>
+        <span class="benchmark-fact">Go · Rust · C · C++</span>
+        <span class="benchmark-fact">Bug-specific oracles</span>
+      </div>
+      <div class="benchmark-links">
+        <a class="benchmark-link" href="{{ '/benchmarks/concurbugbench/' | relative_url }}">View Details →</a>
+      </div>
+    </article>
+
+    <article class="benchmark-card">
+      <div class="benchmark-card-topline">
+        <h3>TaxBench</h3>
+        <span class="benchmark-status in-progress">In progress</span>
+        <span class="benchmark-updated">Updated Jul 2026</span>
+      </div>
+      <div class="benchmark-kicker">Faithful tax preparation</div>
+      <p>Evaluates whether agents can prepare 2025 tax returns accurately, request missing taxpayer information, and apply the correct rule when multiple provisions govern the same field. The benchmark is built from a structured, deterministic tax-rule system and realistic taxpayer scenarios.</p>
+      <div class="benchmark-facts">
+        <span class="benchmark-fact">500+ rules (target)</span>
+        <span class="benchmark-fact">50+ scenarios (target)</span>
+        <span class="benchmark-fact">Reference returns</span>
+        <span class="benchmark-fact">Expert review in progress</span>
+      </div>
+      <div class="benchmark-links">
+        <a class="benchmark-link" href="{{ '/benchmarks/taxbench/' | relative_url }}">View Details →</a>
+      </div>
+    </article>
+  </div>
+
+  <div class="benchmark-note">Counts and specifications for in-progress benchmarks may change before release.</div>
+</section>

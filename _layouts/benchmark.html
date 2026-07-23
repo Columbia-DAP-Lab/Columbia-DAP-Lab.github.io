@@ -1,0 +1,323 @@
+---
+layout: default
+---
+
+<style>
+.benchmark-detail {
+  color: #334155;
+  margin: 0 auto 4rem;
+  max-width: 1040px;
+}
+
+.benchmark-breadcrumb {
+  color: #6b7280;
+  font-size: 0.85rem;
+  margin-bottom: 1.4rem;
+}
+
+.benchmark-breadcrumb a {
+  color: #005aaf;
+  text-decoration: none;
+}
+
+.benchmark-detail-hero {
+  border-bottom: 1px solid #dfe7ef;
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+}
+
+.benchmark-detail-topline {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin-bottom: 0.7rem;
+}
+
+.benchmark-detail h1 {
+  color: #003262;
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  font-weight: 750;
+  letter-spacing: -0.025em;
+  margin: 0;
+}
+
+.benchmark-detail-status {
+  background: #e5f1ff;
+  border: 1px solid #bfdbff;
+  border-radius: 999px;
+  color: #004085;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 0.18rem 0.6rem;
+  text-transform: uppercase;
+}
+
+.benchmark-detail-status.in-progress {
+  background: #fff7df;
+  border-color: #f3d486;
+  color: #76520a;
+}
+
+.benchmark-detail-kicker {
+  color: #5d6875;
+  font-size: 0.84rem;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+}
+
+.benchmark-detail-lead {
+  color: #475569;
+  font-size: 1.08rem;
+  line-height: 1.7;
+  margin: 0;
+  max-width: 800px;
+}
+
+.benchmark-detail-updated {
+  color: #78838f;
+  font-size: 0.8rem;
+  margin-top: 0.8rem;
+}
+
+.benchmark-stat-grid {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+  margin-top: 1.5rem;
+}
+
+.benchmark-stat {
+  background: #f5f8fb;
+  border: 1px solid #dfe7ef;
+  border-radius: 7px;
+  padding: 0.8rem 0.9rem;
+}
+
+.benchmark-stat-value {
+  color: #003262;
+  display: block;
+  font-size: 1.15rem;
+  font-weight: 750;
+  line-height: 1.2;
+}
+
+.benchmark-stat-label {
+  color: #687482;
+  display: block;
+  font-size: 0.72rem;
+  margin-top: 0.25rem;
+  text-transform: uppercase;
+}
+
+.benchmark-detail-grid {
+  display: grid;
+  gap: 2.5rem;
+  grid-template-columns: minmax(0, 1fr) 245px;
+}
+
+.benchmark-detail-content {
+  min-width: 0;
+}
+
+.benchmark-detail-content h2 {
+  color: #003262;
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 2.15rem 0 0.75rem;
+}
+
+.benchmark-detail-content h2:first-child {
+  margin-top: 0;
+}
+
+.benchmark-detail-content h3 {
+  color: #174f7d;
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-top: 1.5rem;
+}
+
+.benchmark-detail-content p,
+.benchmark-detail-content li {
+  line-height: 1.65;
+}
+
+.benchmark-detail-content li + li {
+  margin-top: 0.35rem;
+}
+
+.benchmark-detail-content blockquote {
+  background: #f5f8fb;
+  border-left: 4px solid #005aaf;
+  color: #44515e;
+  margin: 1rem 0;
+  padding: 0.9rem 1rem;
+}
+
+.benchmark-detail-content blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+.benchmark-detail-sidebar {
+  align-self: start;
+  background: #f8fafc;
+  border: 1px solid #dfe7ef;
+  border-radius: 8px;
+  padding: 1rem;
+  position: sticky;
+  top: 5.5rem;
+}
+
+.benchmark-detail-sidebar h2 {
+  color: #003262;
+  font-size: 0.92rem;
+  font-weight: 750;
+  margin: 0 0 0.9rem;
+  text-transform: uppercase;
+}
+
+.benchmark-meta-row + .benchmark-meta-row {
+  border-top: 1px solid #e3e9ef;
+  margin-top: 0.7rem;
+  padding-top: 0.7rem;
+}
+
+.benchmark-meta-label {
+  color: #7a8591;
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.benchmark-meta-value {
+  color: #344252;
+  display: block;
+  font-size: 0.84rem;
+  line-height: 1.35;
+  margin-top: 0.12rem;
+}
+
+.benchmark-resource-links {
+  display: grid;
+  gap: 0.45rem;
+  margin-top: 1rem;
+}
+
+.benchmark-resource-link {
+  background: #fef3c7;
+  border: 1px solid #f2cf55;
+  border-radius: 4px;
+  color: #78350f;
+  font-size: 0.78rem;
+  font-weight: 650;
+  padding: 0.42rem 0.65rem;
+  text-align: center;
+  text-decoration: none;
+}
+
+.benchmark-resource-link:hover {
+  background: #fde68a;
+  color: #78350f;
+  text-decoration: none;
+}
+
+.benchmark-development-note {
+  background: #fff9e9;
+  border: 1px solid #f0d994;
+  border-radius: 6px;
+  color: #68531a;
+  font-size: 0.84rem;
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+  padding: 0.75rem 0.9rem;
+}
+
+@media (max-width: 820px) {
+  .benchmark-detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .benchmark-detail-sidebar {
+    grid-row: 1;
+    position: static;
+  }
+}
+</style>
+
+<article class="benchmark-detail">
+  <div class="benchmark-breadcrumb">
+    <a href="{{ '/benchmarks' | relative_url }}">Benchmarks</a> / {{ page.title }}
+  </div>
+
+  <header class="benchmark-detail-hero">
+    <div class="benchmark-detail-topline">
+      <h1>{{ page.title }}</h1>
+      <span class="benchmark-detail-status{% if page.status == 'In progress' %} in-progress{% endif %}">{{ page.status }}</span>
+    </div>
+    <div class="benchmark-detail-kicker">{{ page.domain }}</div>
+    <p class="benchmark-detail-lead">{{ page.tagline }}</p>
+    {% if page.updated %}<div class="benchmark-detail-updated">Updated {{ page.updated }}</div>{% endif %}
+
+    {% if page.stats %}
+    <div class="benchmark-stat-grid" aria-label="Benchmark scale">
+      {% for stat in page.stats %}
+      <div class="benchmark-stat">
+        <span class="benchmark-stat-value">{{ stat.value }}</span>
+        <span class="benchmark-stat-label">{{ stat.label }}</span>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </header>
+
+  <div class="benchmark-detail-grid">
+    <div class="benchmark-detail-content">
+      {% if page.status == 'In progress' %}
+      <div class="benchmark-development-note">This benchmark is under active development. Dataset counts, task definitions, and evaluation procedures may change before release.</div>
+      {% endif %}
+      {{ content }}
+    </div>
+
+    <aside class="benchmark-detail-sidebar" aria-label="Benchmark details">
+      <h2>At a glance</h2>
+      {% if page.evaluation_unit %}
+      <div class="benchmark-meta-row">
+        <span class="benchmark-meta-label">Evaluation unit</span>
+        <span class="benchmark-meta-value">{{ page.evaluation_unit }}</span>
+      </div>
+      {% endif %}
+      {% if page.verification %}
+      <div class="benchmark-meta-row">
+        <span class="benchmark-meta-label">Verification</span>
+        <span class="benchmark-meta-value">{{ page.verification }}</span>
+      </div>
+      {% endif %}
+      {% if page.availability %}
+      <div class="benchmark-meta-row">
+        <span class="benchmark-meta-label">Availability</span>
+        <span class="benchmark-meta-value">{{ page.availability }}</span>
+      </div>
+      {% endif %}
+      {% if page.languages %}
+      <div class="benchmark-meta-row">
+        <span class="benchmark-meta-label">Languages / environment</span>
+        <span class="benchmark-meta-value">{{ page.languages }}</span>
+      </div>
+      {% endif %}
+
+      {% if page.resources %}
+      <div class="benchmark-resource-links">
+        {% for resource in page.resources %}
+        <a class="benchmark-resource-link" href="{{ resource.url | relative_url }}">{{ resource.label }} {% if resource.external %}↗{% else %}→{% endif %}</a>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </aside>
+  </div>
+</article>
