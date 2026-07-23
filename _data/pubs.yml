@@ -31,7 +31,94 @@
 #
 # Project specific tags are fine as well.  For instance, precision interfaces has a custom "pi" tag 
 
+- title: "Fixed Universal Transformer"
+  authors: Jingwen Liu, Alexandr Andoni, Daniel Hsu
+  conf: "Mechanistic Interpretability Workshop at ICML 2026"
+  pub_date: "2026-06-11"
+  url: https://arxiv.org/abs/2605.31423
+  tags:
+    - ai
 
+- title: "Behavior Cloning is Not All You Need: The Optimality of On-Policy Distillation for Noisy Expert Feedback"
+  authors: Ved Sriraman, Peihan Liu, Daniel Hsu, Adam Block
+  conf: "ICML 2026 Workshop on Decision-Making from Offline Datasets to Online Adaptation: Black-Box Optimization to Reinforcement Learning"
+  pub_date: "2026-06-29"
+  url: https://arxiv.org/abs/2606.30923
+  tags:
+    - ai
+
+- title: "GIF: Locally Sound Geometric Information Flow Control for LLMs"
+  authors: Adam Storek, Nikolaus Holzer, Zhuo Zhang, Suman Jana
+  conf: arXiv 2026
+  pub_date: "2026-06-22"
+  url: https://arxiv.org/abs/2606.23277
+  tags:
+    - sys
+    - ai
+
+- title: "fog: Expressing Motion and Emotion through Function Composition of AI-Generated Code"
+  authors: Vivian Liu, Lydia B. Chilton
+  conf: arXiv 2026
+  pub_date: "2026-07-08"
+  url: https://arxiv.org/abs/2607.07952
+  tags:
+    - hac
+    - ai
+
+- title: "PersonaJudge: Simulating Individual Human Preference Judgments with Evaluator-Specific Demonstration Data"
+  authors: Zeyu He, Xuan Qi, Subramanian Chidambaram, Zhichao Xu, Vinayak Arannil, Lydia Chilton, Alex C. Williams
+  conf: arXiv 2026
+  pub_date: "2026-07-07"
+  url: https://arxiv.org/abs/2607.05742
+  tags:
+    - ai
+    - bench
+    - hac
+
+- title: "OSWorld2.0: Benchmarking Computer Use Agents on Long-Horizon Real-World Tasks"
+  authors: Mengqi Yuan, Zilong Zhou, Xinzhuang Xiong, Weiming Wu, Jiayang Sun, Jiamin Song, Kaiqian Cui, Bowen Wang, Haoyuan Wu, Yitong Li, Dunjie Lu, Haikong Lu, Qi Zhen, Xinyuan Wang, Jiaqi Deng, Yuhao Yang, Cheng Chen, Boyuan Zheng, Alex Su, Xiao Yu, Hao Zou, Saaket Agashe, Xing Han Lu, Manpreet Kaur, Zhengyang Qi, Vincent Sunn Chen, Frederic Sala, Dayiheng Liu, Junyang Lin, Zhou Yu, Yu Su, Siva Reddy, Xin Eric Wang, Peng Qi, Tianbao Xie, Tao Yu
+  conf: arXiv 2026
+  pub_date: "2026-06-28"
+  url: https://arxiv.org/abs/2606.29537
+  tags:
+    - ai
+    - bench
+    - automation
+
+- title: "Invisible Impact of Empathy on Behavioral Change: Isolating the Effect of Empathy in Long-term Physical Activity Coaching Chatbot Interactions"
+  authors: Li Siyan, Kai-Hui Liang, Shopnil Shahriar, Yilin Ye, Shiyoh Goetsu, Wei-Wei Du, Masahiro Yoshida, Tsunayuki Ohwa, Xuhai Xu, Zhou Yu
+  conf: arXiv 2026
+  pub_date: "2026-06-25"
+  url: https://arxiv.org/abs/2606.26641
+  tags:
+    - ai
+    - hac
+
+- title: "Skills for the Future Software Profession: Beyond Agentic AI!"
+  authors: Sungmin Kang, Baishakhi Ray, Abhik Roychoudhury
+  conf: arXiv 2026
+  pub_date: "2026-06-20"
+  url: https://arxiv.org/abs/2606.21894
+  tags:
+    - ai
+    - whitepaper
+
+- title: "MortarBench: Evaluating Mortgage Loan Origination Agents"
+  authors: Matthew Toles, Yunan Lu, Manav Munjal, Bojun Liu, Yuanhao Deng, Stephanie Selig, Derek Rindner, Cheng Li, Zhou Yu
+  conf: arXiv 2026
+  pub_date: "2026-06-17"
+  url: https://arxiv.org/abs/2606.19416
+  tags:
+    - ai
+    - bench
+
+- title: "Detect, Remask, Repair: Diffusion Editing for Faithful Summarization of Evolving Contexts"
+  authors: Hao Zou, Zachary Horvitz, Chandhru Karthick, Zhou Yu, Kathleen McKeown
+  conf: arXiv 2026
+  pub_date: "2026-06-11"
+  url: https://arxiv.org/abs/2606.12807
+  tags:
+    - ai
 
 - title: "VISTA: A Versatile Interactive User Simulation Toolkit for Agent Evaluation"
   authors: Yunan Lu, Ryan Shea, Yusen Zhang, Zhou Yu
@@ -107,7 +194,7 @@
     - ai
 
 - title: "Conversational Customization of Productivity Systems: A Design Probe of Malleable AI Interfaces"
-  authors: Karthik Sreedhar, Aryan Kaul, Lydia B. Chilton
+  authors: Karthik Sreedhar, Aryan Kaul, Lydia Chilton
   conf: arXiv 2026
   pub_date: "2026-05-11"
   url: https://arxiv.org/abs/2605.11149
@@ -280,7 +367,7 @@
     - sys
 
 - title: "More than Decision Support: Exploring Patients' Longitudinal Usage of Large Language Models in Real-World Healthcare-Seeking Journeys"
-  authors: Yancheng Cao, Yishu Ji, Chris Yue Fu, Sahiti Dharmavaram, Meghan Turchioe, Natalie C Benda, Lena Mamykina, Yuling Sun, Xuhai "Orson" Xu
+  authors: Yancheng Cao, Yishu Ji, Chris Yue Fu, Sahiti Dharmavaram, Meghan Turchioe, Natalie C Benda, Lena Mamykina, Yuling Sun, Xuhai Orson Xu
   conf: CHI 2026
   pub_date: "2026-04-13"
   url: https://arxiv.org/abs/2602.14733
@@ -290,7 +377,7 @@
 
 
 - title: "MIND: Empowering Mental Health Clinicians with Multimodal Data Insights through a Narrative Dashboard"
-  authors: Ruishi Zou, Shiyu Xu, Margaret E Morris, Jihan Ryu, Timothy D. Becker, Nicholas Allen, Anne Marie Albano, Randy Auerbach, Dan Adler, Varun Mishra, Lace Padilla, Dakuo Wang, Ryan Sultan, Xuhai "Orson" Xu
+  authors: Ruishi Zou, Shiyu Xu, Margaret E Morris, Jihan Ryu, Timothy D. Becker, Nicholas Allen, Anne Marie Albano, Randy Auerbach, Dan Adler, Varun Mishra, Lace Padilla, Dakuo Wang, Ryan Sultan, Xuhai Orson Xu
   conf: CHI 2026
   pub_date: "2026-04-13"
   url: https://arxiv.org/abs/2601.14641
@@ -301,8 +388,8 @@
     - multimodal
 
 - title: "The Anatomy of a Personal Health Agent"
-  authors: A. Ali Heydari, Ken Gu, Vidya Srinivas, Hong Yu, Zhihan Zhang, Yuwei Zhang, Akshay Paruchuri, Qian He, Hamid Palangi, Nova Hammerquist, Ahmed A. Metwally, Brent Winslow, Yubin Kim, Kumar Ayush, Yuzhe Yang, Girish Narayanswamy, Maxwell A. Xu, Jake Garrison, Amy Armento Lee, Jenny Vafeiadou, Ben Graef, Isaac R. Galatzer-Levy, Erik Schenck, Andrew Barakat, Javier Perez, Jacqueline Shreibati, John Hernandez, Anthony Z. Faranesh, Javier L. Prieto, Connor Heneghan, Yun Liu, Jiening Zhan, Mark Malhotra, Shwetak Patel, Tim Althoff, Xin Liu, Daniel McDuff, Xuhai "Orson" Xu
-  conf: ArXiv
+  authors: A. Ali Heydari, Ken Gu, Vidya Srinivas, Hong Yu, Zhihan Zhang, Yuwei Zhang, Akshay Paruchuri, Qian He, Hamid Palangi, Nova Hammerquist, Ahmed A. Metwally, Brent Winslow, Yubin Kim, Kumar Ayush, Yuzhe Yang, Girish Narayanswamy, Maxwell A. Xu, Jake Garrison, Amy Armento Lee, Jenny Vafeiadou, Ben Graef, Isaac R. Galatzer-Levy, Erik Schenck, Andrew Barakat, Javier Perez, Jacqueline Shreibati, John Hernandez, Anthony Z. Faranesh, Javier L. Prieto, Connor Heneghan, Yun Liu, Jiening Zhan, Mark Malhotra, Shwetak Patel, Tim Althoff, Xin Liu, Daniel McDuff, Xuhai Orson Xu
+  conf: arXiv 2025
   pub_date: "2025-08-27"
   url: https://arxiv.org/abs/2508.20148
   tags: 
@@ -311,7 +398,7 @@
     - whitepaper
 
 - title: "DietGlance: dietary monitoring and personalized analysis at a glance with knowledge-empowered AI assistant"
-  authors: Zhihan Jiang, Running Zhao, Lin Lin, Yue Yu, Handi Chen, Xinchen Zhang, Xuhai "Orson" Xu, Yifang Wang, Xiaojuan Ma, Edith CH Ngai
+  authors: Zhihan Jiang, Running Zhao, Lin Lin, Yue Yu, Handi Chen, Xinchen Zhang, Xuhai Orson Xu, Yifang Wang, Xiaojuan Ma, Edith CH Ngai
   conf: ACM HEALTH
   pub_date: "2025-02-03"
   url: https://arxiv.org/abs/2502.01317
@@ -546,7 +633,7 @@
 
 - title: "Position Paper: A System-Centric Approach is Necessary for AI Agents"
   authors: Nikos Pagonas, Haonan Wang, Jiaxiang Liu, Tianle Zhou, Deepak Dastrala, Raman Jatkar, Anirudh Sivaraman, Zhou Yu, Kostis Kaffes, Eugene Wu
-  conf: ArXiv 2025
+  conf: arXiv 2025
   pub_date: "2025-06-17"
   url: https://www.dropbox.com/scl/fi/a0ace99pszixy5p39shdz/agentreadysystems-neurips25-submitted.pdf?rlkey=9sc4atktq2igpm1xj9tkpdm0j&dl=0
   tags:
@@ -585,7 +672,7 @@
     - ai
 
 - title: "DynEx: Agentic Assistance to Bridge Design and Code"
-  authors: Jenny Ma, Karthik Sreedhar, Vivian Liu, Pedro Alejandro Perez, Sitong Wang, Riya Sahni, Lydia B. Chilton
+  authors: Jenny Ma, Karthik Sreedhar, Vivian Liu, Pedro Alejandro Perez, Sitong Wang, Riya Sahni, Lydia Chilton
   conf: CHI 2025
   comment: Best Paper Honorable Mention Award (top 5% of submissions)
   pub_date: "2025-02-07"
@@ -596,7 +683,7 @@
     - hac
 
 - title: "AgentDynEx: Nudging the Mechanics and Dynamics of Multi-Agent Simulations"
-  authors: Jenny Ma, Riya Sahni, Karthik Sreedhar, Lydia B. Chilton
+  authors: Jenny Ma, Riya Sahni, Karthik Sreedhar, Lydia Chilton
   conf: Under Submission
   pub_date: "2025-04-07"
   url: https://arxiv.org/abs/2504.09662
@@ -606,7 +693,7 @@
     - hac
 
 - title: "AnimationAgents: A Multi-Modal Team of Agents for Generating, Debugging, and Human Editing of Animation Code"
-  authors: Vivian Liu, Rubaiat Habib Kazi, Li-Yi Wei, Matthew Fisher, Timothy Langlois, Seth Walker, Lydia B. Chilton
+  authors: Vivian Liu, Rubaiat Habib Kazi, Li-Yi Wei, Matthew Fisher, Timothy Langlois, Seth Walker, Lydia Chilton
   conf: CHI 2025
   pub_date: "2025-02-24"
   url: https://vivian-liu.com/#/logomotion
@@ -616,7 +703,7 @@
     - hac
 
 - title: "Simulating Cooperative Prosocial Behavior with Multi-Agent LLMs"
-  authors: Karthik Sreedhar, Alice Cai, Jenny Ma, Jeffrey V. Nickerson, Lydia B. Chilton
+  authors: Karthik Sreedhar, Alice Cai, Jenny Ma, Jeffrey V. Nickerson, Lydia Chilton
   conf: IUI 2025
   pub_date: 
   url: https://arxiv.org/abs/2502.12504
@@ -770,7 +857,7 @@
 - title: "Program Synthesis Dialog Agents for Interactive Decision-Making"
   authors: Matthew Toles, Nikhil Balwani, Rattandeep Singh, Valentina Giulia Sartori Rodriguez, Zhou Yu
   url: https://arxiv.org/abs/2502.19610
-  conf: ArXiv 2025
+  conf: arXiv 2025
   pub_date: "2025-03-17"
   tags: 
     - ai
@@ -779,7 +866,7 @@
 - title: "Fast Userspace Networking for the Rest of Us"
   authors: Alireza Sanaee, Vahab Jabrayilov, Ilias Marinos, Anuj Kalia, Divyanshu Saxena, Prateesh Goyal, Kostis Kaffes, Gianni Antichi
   url: https://arxiv.org/abs/2502.09281
-  conf: ArXiv 2025
+  conf: arXiv 2025
   pub_date: "2025-02-13"
   tags: 
     - systems
