@@ -176,6 +176,59 @@ description: Explore benchmarks from DAPLab for evaluating AI agents in real-wor
   padding: 0.75rem 1rem;
 }
 
+.benchmark-collab {
+  align-items: center;
+  background: #f7f9fb;
+  border: 1px solid #dfe7ef;
+  border-radius: 8px;
+  display: flex;
+  gap: 1.25rem;
+  justify-content: space-between;
+  margin: 0 0 3rem;
+  padding: 1rem 1.15rem;
+}
+
+.benchmark-collab-copy {
+  max-width: 720px;
+}
+
+.benchmark-collab h2 {
+  color: #003262;
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem;
+}
+
+.benchmark-collab p {
+  color: #5b6570;
+  font-size: 0.86rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.benchmark-collab-links {
+  display: flex;
+  flex-shrink: 0;
+  gap: 0.45rem;
+}
+
+.benchmark-collab-link {
+  border: 1px solid #b9cde1;
+  border-radius: 4px;
+  color: #005aaf;
+  font-size: 0.78rem;
+  font-weight: 650;
+  padding: 0.36rem 0.68rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.benchmark-collab-link:hover {
+  background: #eaf2fa;
+  color: #003262;
+  text-decoration: none;
+}
+
 @media (max-width: 768px) {
   .benchmark-grid {
     grid-template-columns: 1fr;
@@ -190,6 +243,11 @@ description: Explore benchmarks from DAPLab for evaluating AI agents in real-wor
     flex-direction: column;
     gap: 0.2rem;
   }
+
+  .benchmark-collab {
+    align-items: flex-start;
+    flex-direction: column;
+  }
 }
 </style>
 
@@ -197,6 +255,17 @@ description: Explore benchmarks from DAPLab for evaluating AI agents in real-wor
   <h1>Benchmarks</h1>
   <p class="lead">Real-world AI agents need evaluations that reflect the environments where they will actually operate. DAPLab builds benchmarks for complex, stateful tasks across software, data systems, and human-facing workflows—with verifiable outcomes and an emphasis on contamination-resistant evaluation.</p>
 </div>
+
+<aside class="benchmark-collab" aria-labelledby="benchmark-collab-title">
+  <div class="benchmark-collab-copy">
+    <h2 id="benchmark-collab-title">Build better evaluations with us</h2>
+    <p>Interested in creating real-world agent benchmarks—or the systems, environments, and verification infrastructure that make them possible? We welcome researchers, engineers, and collaborators who want to work with DAPLab.</p>
+  </div>
+  <div class="benchmark-collab-links">
+    <a class="benchmark-collab-link" href="{{ '/positions' | relative_url }}">Open positions →</a>
+    <a class="benchmark-collab-link" href="mailto:ew2493@columbia.edu">Get in touch →</a>
+  </div>
+</aside>
 
 <section class="benchmark-section" aria-labelledby="released-benchmarks">
   <div class="benchmark-section-heading">
