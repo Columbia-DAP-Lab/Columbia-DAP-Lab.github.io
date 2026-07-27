@@ -31,6 +31,25 @@
 #
 # Project specific tags are fine as well.  For instance, precision interfaces has a custom "pi" tag 
 
+- title: "OpenForgeRL: Train Harness-native Agents in Any Environment"
+  authors: Xiao Yu, Baolin Peng, Ruize Xu, Hao Zou, Qianhui Wu, Hao Cheng, Wenlin Yao, Nikhil Singh, Zhou Yu, Jianfeng Gao
+  conf: arXiv 2026
+  pub_date: "2026-07-23"
+  url: https://arxiv.org/abs/2607.21557
+  tags:
+    - sys
+    - ai
+    - automation
+
+- title: "TRIM: Reducing AI-Generated CodeSlop via Agent Trajectory Minimization"
+  authors: Alex Mathai, Shobini Iyer, Aleksandr Nogikh, Petros Maniatis, Franjo Ivancic, Junfeng Yang, Baishakhi Ray
+  conf: arXiv 2026
+  pub_date: "2026-07-20"
+  url: https://arxiv.org/abs/2607.18161
+  tags:
+    - ai
+    - automation
+
 - title: "Fixed Universal Transformer"
   authors: Jingwen Liu, Alexandr Andoni, Daniel Hsu
   conf: "Mechanistic Interpretability Workshop at ICML 2026"
