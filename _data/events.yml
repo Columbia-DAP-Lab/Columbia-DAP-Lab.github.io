@@ -13,6 +13,54 @@
 # 
 #
 
+- title: 'Summer Agents Research Seminar'
+  tag: Seminar
+  date: '2026-08-04'
+  who: Henry Yuen, Shuze Chen, Tianyi Peng
+  where: CSB 453
+  time: 12PM-1:30PM
+  description: Summer Agents Research Seminar
+
+- title: 'Summer Agents Research Seminar'
+  tag: Seminar
+  date: '2026-07-28'
+  who: Micah Goldblum
+  where: CSB 453
+  time: 12PM-1:30PM
+  description: 'Topic: LLM and Agent Memory'
+
+- title: 'Summer Agents Research Seminar'
+  tag: Seminar
+  date: '2026-07-21'
+  who: Daniel Hsu
+  where: CSB 453
+  time: 12PM-1:30PM
+  description: 'Topic: Theory of LLMs'
+
+- title: 'Summer Agents Research Seminar'
+  tag: Seminar
+  date: '2026-07-14'
+  who: Carl Vondrick
+  where: CSB 453
+  time: 12PM-1:30PM
+  description: 'Topic: Do multimodal models imagine electric sheep?'
+
+- title: 'Summer Agents Research Seminar'
+  tag: Seminar
+  date: '2026-07-07'
+  who: Alex Andoni
+  where: CSB 453
+  time: 12PM-1:30PM
+  description: 'Topic: Nearest Neighbors and more in LLMs'
+
+- title: 'Summer Agents Research Seminar'
+  tag: Seminar
+  date: '2026-06-30'
+  who: Richard Zemel
+  where: CSB 453
+  time: 12PM-1:30PM
+  description: 'Topic: Continuous Learning'
+
 - title: 'Trustworthy AI for Code, Industry Roundtable NYC'
   tag: Workshop
   date: '2026-06-03'
