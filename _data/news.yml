@@ -15,6 +15,16 @@
 #
 
 - title: >
+    MortarBench featured in [Realtor.com](https://www.realtor.com/news/trends/top-ai-mortgage-underwriting-test-failure-new-report/)
+  content: >
+    Realtor.com covered our MortarBench research on AI mortgage origination agents. Top models
+    got nearly 1 in 4 answers wrong under realistic conditions — and showed systematic bias,
+    flagging non-English names as "foreign origin" at 5× the rate of English names.
+    Matthew Toles and Zhou Yu are quoted in the piece.
+  featured: true
+  date: 2026-08-13
+
+- title: >
     Haonan Wang receives inaugural Workday AI PhD Fellowship
   content: >
     Haonan Wang has been awarded the inaugural Workday AI PhD Fellowship to pursue his work on

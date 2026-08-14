@@ -41,6 +41,16 @@
     - ai
     - automation
 
+
+- title: "FlowCheck: Helping End-users Specify and Verify Intent in Vibe-Coded Web Apps"
+  authors: Reya Vir, Lydia Chilton, Zhuo Zhang, Eugene Wu
+  conf: LMPL Workshop at SPLASH 2026
+  url: https://www.dropbox.com/scl/fi/b5ur6pu7m59ktorrza8hu/flowcheck-lmpl26-submitted.pdf?rlkey=96bk53yfnk4mmk44ujs2dq0f0&dl=0
+  tags:
+    - sys 
+    - hac
+
+
 - title: "The Next Challenge for Agentic Cybersecurity: A Realistic, Contamination-Free Reverse Engineering Benchmark"
   authors: Jeremy Spence, Nicholas Assaderaghi, Jinhao Zhu, Nikil Ravi, Raluca Ada Popa, Guannan Wei, Yangruibo Ding, Zhuo Zhang
   conf: arXiv 2026
