@@ -363,9 +363,10 @@ description: DAPLab develops the infrastructure needed to make AI agents safe, r
 <h1 id="projects-page-title" style="margin-bottom:1rem;">Projects</h1>
 
 <div class="view-toggle" role="tablist" aria-label="Project categories">
-  <a href="{{ '/projects/' | relative_url }}?view=all"      class="view-toggle-btn" data-view="all"      role="tab" aria-selected="false">All</a>
-  <a href="{{ '/projects/' | relative_url }}?view=projects" class="view-toggle-btn active" data-view="projects" role="tab" aria-selected="true">Projects</a>
-  <a href="{{ '/projects/' | relative_url }}?view=software" class="view-toggle-btn" data-view="software" role="tab" aria-selected="false">Software</a>
+  <a href="{{ '/projects/' | relative_url }}?view=all"        class="view-toggle-btn" data-view="all"        role="tab" aria-selected="false">All</a>
+  <a href="{{ '/projects/' | relative_url }}?view=projects"  class="view-toggle-btn active" data-view="projects"  role="tab" aria-selected="true">Projects</a>
+  <a href="{{ '/projects/' | relative_url }}?view=software"  class="view-toggle-btn" data-view="software"  role="tab" aria-selected="false">Software</a>
+  <a href="{{ '/projects/' | relative_url }}?view=benchmarks" class="view-toggle-btn" data-view="benchmarks" role="tab" aria-selected="false">Benchmarks</a>
   <span class="view-toggle-spacer"></span>
   <button class="density-toggle-btn" id="density-btn" aria-label="Toggle density">⊞ Cozy</button>
 </div>
@@ -377,6 +378,7 @@ description: DAPLab develops the infrastructure needed to make AI agents safe, r
     class="project-card"
     data-is-software="{% if project.is_software %}true{% else %}false{% endif %}"
     data-is-project="{% if project.is_project %}true{% elsif project.is_software %}false{% else %}true{% endif %}"
+    data-is-benchmark="{% if project.is_benchmark %}true{% else %}false{% endif %}"
   >
     <a href="{{ project.url }}" class="project-avatar-wrap" tabindex="-1" aria-hidden="true">
       {% if project.avatar_url %}
@@ -410,6 +412,9 @@ description: DAPLab develops the infrastructure needed to make AI agents safe, r
         {% if project.links.github %}
         <a href="{{ project.links.github }}" class="project-link-btn">Code ↗</a>
         {% endif %}
+        {% if project.links.leaderboard %}
+        <a href="{{ project.links.leaderboard }}" class="project-link-btn">Leaderboard ↗</a>
+        {% endif %}
         <a href="{{ project.url }}" class="project-link-btn">Learn More →</a>
       </div>
     </div>
@@ -428,12 +433,14 @@ description: DAPLab develops the infrastructure needed to make AI agents safe, r
 const VIEW_ALL = 'all';
 const VIEW_PROJECTS = 'projects';
 const VIEW_SOFTWARE = 'software';
+const VIEW_BENCHMARKS = 'benchmarks';
 const DEFAULT_VIEW = VIEW_SOFTWARE;
 
 const VIEW_CONFIG = {
   [VIEW_ALL]:      { heading: 'All Projects and Software', docTitle: 'Projects and Software', metaDescription: 'Browse all DAPLab projects and software releases.',    noResultsTitle: 'No entries found',   noResultsEmpty: 'No projects or software in this category yet' },
   [VIEW_PROJECTS]: { heading: 'Projects',                  docTitle: 'Projects',               metaDescription: 'Browse DAPLab research projects.',                     noResultsTitle: 'No projects found',  noResultsEmpty: 'No projects in this category yet' },
-  [VIEW_SOFTWARE]: { heading: 'Software',                  docTitle: 'Software',               metaDescription: 'Browse DAPLab software releases and open-source tools.', noResultsTitle: 'No software found',  noResultsEmpty: 'No software in this category yet' },
+  [VIEW_SOFTWARE]:    { heading: 'Software',    docTitle: 'Software',    metaDescription: 'Browse DAPLab software releases and open-source tools.', noResultsTitle: 'No software found',    noResultsEmpty: 'No software in this category yet' },
+  [VIEW_BENCHMARKS]:  { heading: 'Benchmarks',  docTitle: 'Benchmarks',  metaDescription: 'Browse DAPLab benchmarks.',                               noResultsTitle: 'No benchmarks found',  noResultsEmpty: 'No benchmarks in this category yet' },
 };
 
 const pageTitle   = document.getElementById('projects-page-title');
@@ -474,7 +481,7 @@ function getViewFromURL() {
   return isValidView(view) ? view : DEFAULT_VIEW;
 }
 
-function isValidView(v) { return v === VIEW_ALL || v === VIEW_PROJECTS || v === VIEW_SOFTWARE; }
+function isValidView(v) { return v === VIEW_ALL || v === VIEW_PROJECTS || v === VIEW_SOFTWARE || v === VIEW_BENCHMARKS; }
 
 function setActiveView(view, pushState) {
   const safeView = isValidView(view) ? view : DEFAULT_VIEW;
@@ -528,11 +535,13 @@ function applyFilters(activeView) {
   const currentView = isValidView(activeView) ? activeView : getViewFromURL();
   let visibleCount = 0;
   cards.forEach(card => {
-    const isSoftware = card.getAttribute('data-is-software') === 'true';
-    const isProject  = card.getAttribute('data-is-project') === 'true';
+    const isSoftware  = card.getAttribute('data-is-software')  === 'true';
+    const isProject   = card.getAttribute('data-is-project')   === 'true';
+    const isBenchmark = card.getAttribute('data-is-benchmark') === 'true';
     const visible = currentView === VIEW_ALL
-      || (currentView === VIEW_SOFTWARE && isSoftware)
-      || (currentView === VIEW_PROJECTS && isProject);
+      || (currentView === VIEW_SOFTWARE   && isSoftware)
+      || (currentView === VIEW_PROJECTS   && isProject)
+      || (currentView === VIEW_BENCHMARKS && isBenchmark);
     card.style.display = visible ? '' : 'none';
     if (visible) visibleCount++;
   });

@@ -11,6 +11,7 @@ authors:
   - name: Junfeng Yang
   - name: Baishakhi Ray
 avatar: Kernel_Agent_Sharp.png
+is_benchmark: true
 tags:
   - Linux Kernel
   - LLM Agents

@@ -22,6 +22,7 @@ tags:
   - "Agents"
 is_project: true
 is_software: true
+is_benchmark: true
 links:
   github: "https://github.com/lakeagent/datalake-qa"
   leaderboard: "https://lakeqa-bench.github.io/"

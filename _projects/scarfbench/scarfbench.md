@@ -13,6 +13,7 @@ tags:
   - Software Engineering
 is_project: true
 is_software: true
+is_benchmark: true
 links:
   github: "https://github.com/scarfbench/benchmark"
   website: "https://scarfbench.info/"

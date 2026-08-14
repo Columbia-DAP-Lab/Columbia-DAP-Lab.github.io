@@ -11,6 +11,8 @@ authors:
   - name: "Haozhe Chen"
   - name: "Hongseok Namkoong"
 avatar: image.png
+is_project: true
+is_benchmark: true
 tags:
   - "Digital Twins"
   - "Agents"
