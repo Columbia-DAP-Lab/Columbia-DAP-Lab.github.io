@@ -15,6 +15,17 @@
 #
 
 - title: >
+    Haonan Wang receives inaugural Workday AI PhD Fellowship
+  content: >
+    Haonan Wang has been awarded the inaugural Workday AI PhD Fellowship to pursue his work on
+    Data Lake Agents. The core question: how do you teach an enterprise agent to gather sufficient,
+    traceable evidence from an organization's heterogeneous data sources and correctly execute the
+    resulting workflow — while satisfying regulatory requirements, organizational policies,
+    role-based permissions, approval hierarchies, fairness constraints, and operational budgets?
+  featured: true
+  date: 2026-08-12
+
+- title: >
     New Blog Series: [Agentic Data Environments](/general/2026/05/21/the-need-for-agentic-data-environments.html)
   content: >
     We're publishing a series of posts on what it takes to build data environments for AI agents.

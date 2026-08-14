@@ -41,6 +41,24 @@
     - ai
     - automation
 
+- title: "The Next Challenge for Agentic Cybersecurity: A Realistic, Contamination-Free Reverse Engineering Benchmark"
+  authors: Jeremy Spence, Nicholas Assaderaghi, Jinhao Zhu, Nikil Ravi, Raluca Ada Popa, Guannan Wei, Yangruibo Ding, Zhuo Zhang
+  conf: arXiv 2026
+  pub_date: "2026-08-01"
+  url: https://arxiv.org/abs/2608.11469
+  tags:
+    - benchmark
+    - sec
+
+- title: "From Poisoned to Aware: Fostering Backdoor Self-Awareness in LLMs"
+  authors: Guangyu Shen, Siyuan Cheng, Xiangzhe Xu, Yuan Zhou, Hanxi Guo, Zhuo Zhang, Xiangyu Zhang
+  conf: ICML 2026
+  pub_date: "2026-07-06"
+  url: https://arxiv.org/abs/2510.05169
+  tags:
+    - sec
+    - ai
+
 - title: "TRIM: Reducing AI-Generated CodeSlop via Agent Trajectory Minimization"
   authors: Alex Mathai, Shobini Iyer, Aleksandr Nogikh, Petros Maniatis, Franjo Ivancic, Junfeng Yang, Baishakhi Ray
   conf: arXiv 2026
