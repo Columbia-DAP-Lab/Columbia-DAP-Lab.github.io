@@ -47,8 +47,18 @@
   conf: LMPL Workshop at SPLASH 2026
   url: https://www.dropbox.com/scl/fi/b5ur6pu7m59ktorrza8hu/flowcheck-lmpl26-submitted.pdf?rlkey=96bk53yfnk4mmk44ujs2dq0f0&dl=0
   tags:
-    - sys 
+    - sys
     - hac
+
+
+- title: "Passes Alone, Fails Together: Benchmarking Semantic Coordination in Parallel LLM-Agent Development"
+  authors: Haocheng Xia, Eugene Wu, Yongjoo Park
+  conf: SPLASH EXPRESS Workshop 2026
+  short: true
+  tags:
+    - ai
+    - llm
+    - agents
 
 
 - title: "The Next Challenge for Agentic Cybersecurity: A Realistic, Contamination-Free Reverse Engineering Benchmark"
@@ -149,6 +159,23 @@
   tags:
     - ai
     - whitepaper
+
+
+- title: "SANA: What Matters for QA Agents over Massive Data Lakes?"
+  authors: Austin Senna Wijaya, Jiaxiang Liu, Haonan Wang, Eugene Wu
+  conf: VLDB DashSys Workshop 2026
+  short: true
+  pub_date: "2026-09-04"
+  url: https://arxiv.org/abs/2606.13904
+  tags:
+    - ai
+    - llm
+    - db
+    - sys
+    - bench
+    - datasearch
+
+
 
 - title: "MortarBench: Evaluating Mortgage Loan Origination Agents"
   authors: Matthew Toles, Yunan Lu, Manav Munjal, Bojun Liu, Yuanhao Deng, Stephanie Selig, Derek Rindner, Cheng Li, Zhou Yu
@@ -347,16 +374,6 @@
   conf: CAIS Workshop 2026
   url: https://bauplanlabs.github.io/SAO-workshop/papers/37.pdf
   pub_date: "2026-07-01"
-  tags:
-    - ai
-    - sys
-    - bench
-
-- title: "SANA: What Matters for QA Agents over Massive Data Lakes?"
-  authors: Austin Senna Wijaya, Jiaxiang Liu, Haonan Wang, Eugene Wu
-  conf: arXiv 2026
-  pub_date: "2026-06-01"
-  url: https://arxiv.org/abs/2606.13904
   tags:
     - ai
     - sys
