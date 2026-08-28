@@ -31,6 +31,15 @@
 #
 # Project specific tags are fine as well.  For instance, precision interfaces has a custom "pi" tag 
 
+- title: "Dyna-Mind: Learning to Simulate from Experience for Better AI Agents"
+  authors: Xiao Yu, Baolin Peng, Michel Galley, Hao Cheng, Qianhui Wu, Janardhan Kulkarni, Suman Nath, Zhou Yu, Jianfeng Gao
+  conf: ICLR 2026
+  pub_date: "2025-10-10"
+  url: https://proceedings.iclr.cc/paper_files/paper/2026/file/372bd0e47f2d5bceca7e300e1446849c-Paper-Conference.pdf
+  tags:
+    - ai
+    - hac
+
 - title: "OpenForgeRL: Train Harness-native Agents in Any Environment"
   authors: Xiao Yu, Baolin Peng, Ruize Xu, Hao Zou, Qianhui Wu, Hao Cheng, Wenlin Yao, Nikhil Singh, Zhou Yu, Jianfeng Gao
   conf: arXiv 2026
