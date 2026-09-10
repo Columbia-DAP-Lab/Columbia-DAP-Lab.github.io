@@ -4,8 +4,6 @@ title: "Fermat's Last Theorem, Formalized by AI Agents"
 date: 2026-09-09
 categories: [general]
 authors:
-  - name: "Eugene Wu"
-    url: "https://www.cs.columbia.edu/~ewu/"
 excerpt: "DAPLab's Tianyi Peng and Shuze Chen, together with Henry Yuen and Kunal Marwaha, built the platform that enabled Claude to produce the first computer-verified proof of Fermat's Last Theorem."
 slug: "fermats-last-theorem-agents"
 ---
