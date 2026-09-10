@@ -40,6 +40,15 @@
     - ai
     - hac
 
+- title: "Prove2Me: An Open Collaborative Platform for Scaling Math Formalization"
+  authors: Shuze Chen, Kunal Marwaha, Xiaoyang Lu, Henry Yuen, Tianyi Peng
+  conf: arXiv 2026
+  pub_date: "2026-08-28"
+  url: https://arxiv.org/abs/2608.28433
+  tags:
+    - ai
+    - automation
+
 - title: "OpenForgeRL: Train Harness-native Agents in Any Environment"
   authors: Xiao Yu, Baolin Peng, Ruize Xu, Hao Zou, Qianhui Wu, Hao Cheng, Wenlin Yao, Nikhil Singh, Zhou Yu, Jianfeng Gao
   conf: arXiv 2026
