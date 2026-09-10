@@ -445,3 +445,11 @@
   advisor:
     - Eugene Wu
     - Charlie Summers
+
+- name: Tiancheng Ge
+  homepage: https://www.linkedin.com/in/tiancheng-ge-168690290/
+  image: /files/images/avatar/tiancheng_ge.jpg
+  category: Student
+  advisor:
+    - Eugene Wu
+    - Jiakai Xu
