@@ -13,6 +13,71 @@
 # 
 #
 
+- title: 'What would it cost to end extreme poverty?'
+  tag: AI in the Public Interest
+  date: '2026-10-08'
+  who: Roshni Sahoo
+  where: CSB 453
+  time: 3PM-4PM
+  description: >
+    We study poverty minimization via direct transfers, framing this as a statistical learning
+    problem while retaining the information constraints faced by real-world programs. Using
+    nationally representative household consumption surveys from 34 countries that together
+    account for 76% of the world's poor, we estimate that reducing the poverty rate to 1%
+    (from a baseline of 13%) would cost $211B nominal per year. This is 4.0 times the
+    corresponding reduction in the aggregate poverty gap, but only 19% of the cost of universal
+    basic income. Extrapolated globally, the results imply a cost of 0.28% of global GDP to
+    (approximately) end extreme poverty.
+  bio: >
+    Roshni Sahoo is assistant professor in the Decision, Risk, and Operations Division at
+    Columbia Business School. She works on data-driven decision making for social impact.
+    Her research develops statistical methodology to address challenges in public health and
+    economic development, combining tools from machine learning, causal inference, and
+    optimization. Her work has appeared in leading operations research journals (such as
+    Operations Research) and machine learning conferences (such as NeurIPS and ICLR), and has
+    been featured by media outlets including The Economist and Vox. Roshni completed her PhD
+    in Computer Science at Stanford University in 2026. She also received Bachelor of Science
+    degrees in Computer Science and Mathematics at MIT in 2020.
+
+- title: 'Fall 2026 Topics in Agentic Systems Course'
+  tag: Course
+  date: '2026-09-04'
+  end_date: '2026-12-11'
+  time: 10:10AM - 12:00PM F
+  where: MUDD 227
+  who: Kostis Kaffes
+  link: https://daplab.cs.columbia.edu/agentic-systems/
+  description: |
+    COMS6113 Topics in Agentic Systems is a research-oriented course on agentic AI systems:
+    systems that can plan, call tools, coordinate with humans, and act across software, data,
+    and organizational environments.
+
+    The course is targeted toward Ph.D. students and undergraduate or graduate students who are
+    interested in doing research, especially students interested in producing a publication.
+    Students should be ready to read research papers closely, discuss speculative ideas in class,
+    and develop a semester-long research project.
+
+    The course will examine open research problems across the systems stack. Broad questions include:
+
+    * What infrastructure do data systems and ML systems need to support agentic workloads?
+    * How can agents improve the design, operation, and optimization of data and ML systems?
+    * How should systems isolate agent execution and control access to tools, data, and shared resources?
+    * How can we evaluate agentic systems for reliability, performance, and cost on realistic tasks?
+
+- title: 'Fall 2026 Personal Health Assistant Course'
+  tag: Course
+  date: '2026-09-04'
+  end_date: '2026-12-11'
+  time: 8:30AM - 11:30AM F
+  where: 825 MUDD
+  who: Xuhai "Orson" Xu, Eugene Wu
+  link: https://personal-health-agent.github.io/
+  description: >
+    BINF 4070 / COMS 4995 W008. Students build a working personal health assistant that integrates
+    fragmented health data sources — wearables, clinical records, self-report data — and enables
+    LLM-based reasoning over multimodal health information. Topics span health data management,
+    AI agents, HCI, and privacy and ethics in health AI.
+
 - title: 'Summer Agents Research Seminar'
   tag: Seminar
   date: '2026-08-04'

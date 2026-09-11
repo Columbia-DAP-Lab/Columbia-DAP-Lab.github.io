@@ -8,6 +8,7 @@ authors:
   - name: "Xiaoyang Lu"
   - name: "Henry Yuen"
   - name: "Tianyi Peng"
+avatar: image.png
 tags:
   - Agents
   - Mathematics

@@ -15,6 +15,15 @@
 #
 
 - title: >
+    Fall 2026 DAPLab Research Seminar
+  content: >
+    The DAPLab's Tuesday 12PM research seminar continues in CSB 453 (CS Conference Room).
+    We invite internal and external speakers that can share cutting-edge agent-systems research
+    or can talk about processes in their organizations and how they are trying to automate them.
+  featured: true
+  date: 2026-09-02
+
+- title: >
     MortarBench featured in [Realtor.com](https://www.realtor.com/news/trends/top-ai-mortgage-underwriting-test-failure-new-report/)
   content: >
     Realtor.com covered our MortarBench research on AI mortgage origination agents. Top models

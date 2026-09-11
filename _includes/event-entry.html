@@ -1,7 +1,7 @@
 {% assign event = include.event %}
 {% capture event_id %}{{ event.date | date: '%y%m%d' }}-{{ event.title | slugify }}{% endcapture %}
 
-<div class="mb-4 event-item event-{{ event.tag | downcase | default: 'other' }}" id="{{ event_id }}">
+<div class="mb-4 event-item event-{{ event.tag | slugify | default: 'other' }}" id="{{ event_id }}">
   <div class="event-flex">
     {% if event.image %}
       {% assign img = event.image %}
@@ -34,7 +34,7 @@
           {% endif %}
         {% endif %}
         {% if event.tag %}
-          <span class="event-tag event-tag--{{ event.tag | downcase }}">{{ event.tag }}</span>
+          <span class="event-tag event-tag--{{ event.tag | slugify }}">{{ event.tag }}</span>
         {% endif %}
       </div>
       {% endif %}

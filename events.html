@@ -6,10 +6,16 @@ title: Events
 {% assign events = site.data.events | concat: site.data.startups | sort: "date" | reverse %}
 {% assign oevents = events | sort: "date"  %}
 {% assign today = 'now' | date: "%Y-%m-%d" %}
+
+{%- comment -%}
+An event counts as upcoming until its end_date (for multi-week things like
+courses), falling back to its date when no end_date is given.
+{%- endcomment -%}
 {% assign upcoming = false %}
 {% assign past = false %}
 {% for event in events %}
-  {% if event.date >= today %}
+  {% assign until = event.end_date | default: event.date %}
+  {% if until >= today %}
     {% assign upcoming = true %}
   {% else %}
     {% assign past = true %}
@@ -25,18 +31,37 @@ title: Events
 
 <div class="container my-5">
   <div class="event-filter mb-6">
-    <button class="event-filter-btn active" data-filter="all">All</button>
-    <button class="event-filter-btn" data-filter="entrepreneurship">Entrepreneurship</button>
-    <button class="event-filter-btn" data-filter="seminar">Seminar</button>
-    <button class="event-filter-btn" data-filter="course">Course</button>
-    <button class="event-filter-btn" data-filter="workshop">Workshop</button>
-    <button class="event-filter-btn" data-filter="other">Other</button>
+    {% for type in site.data.event_types %}
+      <button class="event-filter-btn{% if type.slug == 'all' %} active{% endif %}" data-filter="{{ type.slug }}">{{ type.label }}</button>
+    {% endfor %}
   </div>
+
+  {% for type in site.data.event_types %}
+    {% if type.description or type.logo %}
+      <div class="series-header" data-series="{{ type.slug }}" hidden>
+        {% if type.logo %}
+          {% if type.logo contains '://' %}
+            {% assign logo_url = type.logo %}
+          {% else %}
+            {% assign logo_url = type.logo | relative_url %}
+          {% endif %}
+          <img class="series-logo" src="{{ logo_url }}" alt="{{ type.label | escape }}">
+        {% endif %}
+        {% if type.description %}
+          <div class="markdown-content">{{ type.description | markdownify }}</div>
+        {% endif %}
+      </div>
+    {% endif %}
+  {% endfor %}
+
+  <p class="event-empty" hidden>No events scheduled yet — check back soon.</p>
+
   {% if upcoming %}
-    <h2 style="color:gray">Upcoming Events</h2>
-    <div class="mb-5">
+    <div class="event-section mb-5">
+      <h2 style="color:gray">Upcoming Events</h2>
       {% for event in oevents %}
-        {% if event.date >= today and event.who != "🤔" %}
+        {% assign until = event.end_date | default: event.date %}
+        {% if until >= today and event.who != "🤔" %}
           {% include event-entry.html event=event is_past=false page_url=page.url %}
         {% endif %}
       {% endfor %}
@@ -44,10 +69,11 @@ title: Events
   {% endif %}
 
   {% if past %}
-    <h2 style="color:gray">Past Events</h2>
-    <div>
+    <div class="event-section">
+      <h2 style="color:gray">Past Events</h2>
       {% for event in events %}
-        {% if event.date < today and event.who != "🤔" %}
+        {% assign until = event.end_date | default: event.date %}
+        {% if until < today and event.who != "🤔" %}
           {% include event-entry.html event=event is_past=true page_url=page.url %}
         {% endif %}
       {% endfor %}
@@ -92,13 +118,36 @@ title: Events
   border-color: #2563eb;
 }
 
+/* Series header: description/logo for event types that run as a series */
+.series-header {
+  margin: 0 0 2rem 0;
+  padding: 1.25rem 1.5rem;
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+}
+.series-header[hidden] { display: none; }
+.series-logo {
+  display: block;
+  width: 100%;
+  max-width: 420px;
+  height: auto;
+  margin-bottom: 1rem;
+}
+.series-header .markdown-content p { margin-bottom: 0.75em; }
+.series-header .markdown-content p:last-child { margin-bottom: 0; }
+
+.event-empty { color: #6b7280; }
+.event-empty[hidden], .event-section[hidden] { display: none; }
+
 /* Event layout: simple, natural flow */
 .event-flex { display: block; }
 .event-main { min-width: 0; }
 .event-title { margin: 0 0 0.25rem 0; }
 .event-meta { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.25rem 0.5rem; margin: 0 0 0.5rem 0; color: #6b7280; }
 .event-meta .who { display: inline; color: #374151; margin-right: 0.25rem; }
-.event-tag { display: inline-flex; align-items: center; white-space: nowrap; padding: 0.1rem 0.5rem; border-radius: 9999px; background: #f3f4f6; font-size: 0.8rem; }
+/* Colors live in files/css/style.css, which loads after this block */
+.event-tag { white-space: nowrap; }
 .event-link-anchor {
   opacity: 0.4;
   text-decoration: none;
@@ -135,28 +184,6 @@ title: Events
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-  // Event category filtering
-  const buttons = document.querySelectorAll(".event-filter-btn");
-  const items = document.querySelectorAll(".event-item");
-
-  buttons.forEach(button => {
-    button.addEventListener("click", () => {
-      // update active button styling
-      buttons.forEach(btn => btn.classList.remove("active"));
-      button.classList.add("active");
-
-      const filter = button.getAttribute("data-filter");
-
-      items.forEach(item => {
-        if (filter === "all" || item.classList.contains("event-" + filter)) {
-          item.style.display = "";
-        } else {
-          item.style.display = "none";
-        }
-      });
-    });
-  });
-
   // Expand/collapse for past events
   const expandBtns = document.querySelectorAll('.expand-btn');
 
@@ -164,6 +191,8 @@ document.addEventListener("DOMContentLoaded", function() {
   function updateExpandButtonVisibility(btn) {
     const body = btn.previousElementSibling;
     if (!body) return;
+    // A hidden event has no measurable height; leave its button alone until shown
+    if (!btn.offsetParent && body.scrollHeight === 0) return;
     // If full content height fits within the (clamped) container, hide the button
     if (body.scrollHeight <= body.clientHeight + 1) {
       btn.style.display = 'none';
@@ -173,9 +202,6 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 
   expandBtns.forEach(btn => {
-    // initial visibility check
-    updateExpandButtonVisibility(btn);
-
     btn.addEventListener('click', () => {
       const body = btn.previousElementSibling;
       if (!body) return;
@@ -183,6 +209,67 @@ document.addEventListener("DOMContentLoaded", function() {
       btn.textContent = body.classList.contains('clamped') ? 'See more' : 'See less';
     });
   });
+
+  // Event category filtering, reflected in the URL as ?type=<slug>
+  const buttons = document.querySelectorAll(".event-filter-btn");
+  const items = document.querySelectorAll(".event-item");
+  const seriesHeaders = document.querySelectorAll(".series-header");
+  const sections = document.querySelectorAll(".event-section");
+  const emptyMsg = document.querySelector(".event-empty");
+  const filters = Array.from(buttons, btn => btn.getAttribute("data-filter"));
+
+  function applyFilter(filter) {
+    if (filters.indexOf(filter) === -1) filter = "all";
+
+    buttons.forEach(btn => {
+      btn.classList.toggle("active", btn.getAttribute("data-filter") === filter);
+    });
+
+    let visible = 0;
+    items.forEach(item => {
+      const show = filter === "all" || item.classList.contains("event-" + filter);
+      item.style.display = show ? "" : "none";
+      if (show) visible++;
+    });
+
+    // Hide section headings ("Upcoming"/"Past") that have nothing left under them
+    sections.forEach(section => {
+      const shown = section.querySelectorAll(".event-item");
+      section.hidden = !Array.prototype.some.call(shown, el => el.style.display !== "none");
+    });
+
+    seriesHeaders.forEach(header => {
+      header.hidden = header.getAttribute("data-series") !== filter;
+    });
+
+    if (emptyMsg) emptyMsg.hidden = visible > 0;
+
+    // Newly revealed events couldn't be measured while hidden
+    expandBtns.forEach(updateExpandButtonVisibility);
+
+    return filter;
+  }
+
+  function currentFilter() {
+    return new URLSearchParams(window.location.search).get("type") || "all";
+  }
+
+  buttons.forEach(button => {
+    button.addEventListener("click", () => {
+      const filter = applyFilter(button.getAttribute("data-filter"));
+      const url = new URL(window.location);
+      if (filter === "all") {
+        url.searchParams.delete("type");
+      } else {
+        url.searchParams.set("type", filter);
+      }
+      url.hash = "";
+      history.pushState({ type: filter }, "", url);
+    });
+  });
+
+  window.addEventListener("popstate", () => applyFilter(currentFilter()));
+  applyFilter(currentFilter());
 
   // Re-check on resize (in case layout/line-wrap changes)
   window.addEventListener('resize', () => {

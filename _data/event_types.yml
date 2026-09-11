@@ -1,0 +1,53 @@
+# Event types shown as filter buttons on /events.
+#
+# Each entry:
+#   slug:        used in the URL (?type=slug) and as the CSS class suffix
+#                (event-<slug>). Must match `tag | slugify` in events.yml.
+#   label:       button text
+#   description: optional Markdown blurb, shown above the list when the type
+#                is selected. Use for types that are really event series.
+#   logo:        optional image, shown with the description. Relative path
+#                (e.g. /files/images/series/foo.png) or absolute URL.
+#
+
+- slug: all
+  label: All
+
+- slug: entrepreneurship
+  label: Entrepreneurship
+
+- slug: seminar
+  label: Seminar
+  description: >
+    The DAPLab Lunch seminar series brings together internal and external researchers and
+    practitioners. Speakers share cutting-edge agents-related research, pose challenging
+    problems that cannot be solved today, or describe processes and constraints in their
+    organizations that today's technologies fail to meet.
+
+- slug: course
+  label: Course
+
+- slug: workshop
+  label: Workshop
+
+- slug: ai-in-the-public-interest
+  label: AI in the Public Interest
+  logo: /files/images/series/ai-in-the-public-interest.png
+  description: |
+    The AI in the Public Interest group brings together researchers from across Columbia
+    University working to advance AI and computational methods in service of the public
+    interest. Our members span a range of technical areas while sharing a common commitment
+    to rigorous methodological research with clear societal relevance.
+
+    The group provides a forum for researchers to exchange ideas across subfields, identify
+    common methodological challenges, and explore how advances in AI can contribute to
+    consequential real-world problems. Through seminars, collaborations, and regular
+    convenings, we aim to catalyze new research partnerships, connect methodological
+    innovation with substantive applications, and build a broader technical community focused
+    on ensuring that advances in AI generate benefits that are widely shared across society.
+
+    The series is led by Lily Xu and co-organized with Columbia Data Science Institute's
+    Center for Data, Media, and Society.
+
+- slug: other
+  label: Other
