@@ -431,8 +431,8 @@
     - Nikos Pagonas
 
 - name: Wenyu Wang
-  homepage: https://www.linkedin.com/in/wenyu-wang-505aa5281/ 
-  image: /files/images/avatar/Wenyu_Wang.jpg
+  homepage: https://www.linkedin.com/in/wenyu-wang-505aa5281/
+  image: /files/images/avatar/wenyu_wang.jpg
   category: Student
   advisor:
     - Eugene Wu
@@ -445,3 +445,11 @@
   advisor:
     - Eugene Wu
     - Charlie Summers
+
+- name: Tiancheng Ge
+  homepage: https://www.linkedin.com/in/tiancheng-ge-168690290/
+  image: /files/images/avatar/tiancheng_ge.jpg
+  category: Student
+  advisor:
+    - Eugene Wu
+    - Jiakai Xu
