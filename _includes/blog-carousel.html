@@ -1,0 +1,75 @@
+{% comment %}
+
+Include: blog-carousel.html
+
+A Bootstrap 5 carousel of blog images (the default layout already loads
+the Bootstrap JS bundle, so no extra scripts are needed).
+
+Usage:
+  {% include blog-carousel.html
+       id="scale-progression"
+       files="fig1.png,fig2.png,fig3.png"
+       captions="Caption one|Caption two|Caption three"
+       alts="Alt one|Alt two|Alt three" %}
+
+  id        Unique id per carousel on the page (required if more than one).
+  files     Comma-separated file names under files/images/blog/{slug}/.
+  captions  Pipe-separated captions, one per file (optional).
+  alts      Pipe-separated alt texts, one per file (optional; falls back to caption).
+  slug      Overrides page.slug for the image folder (optional).
+  interval  Autoplay interval in ms; omit or set "false" to advance only on click.
+
+{% endcomment %}
+
+{% assign car_id = include.id | default: "blog-carousel" %}
+{% assign car_slug = include.slug | default: page.slug %}
+{% assign car_files = include.files | split: "," %}
+{% assign car_caps = include.captions | default: "" | split: "|" %}
+{% assign car_alts = include.alts | default: "" | split: "|" %}
+{% assign car_base = site.baseurl | append: "/files/images/blog/" | append: car_slug | append: "/" %}
+{% assign car_interval = include.interval | default: "false" %}
+
+<div id="{{ car_id }}" class="carousel carousel-dark slide blog-carousel" data-bs-ride="false" data-bs-interval="{{ car_interval }}">
+  <div class="carousel-indicators">
+    {% for f in car_files %}
+      <button type="button" data-bs-target="#{{ car_id }}" data-bs-slide-to="{{ forloop.index0 }}"
+              {% if forloop.first %}class="active" aria-current="true"{% endif %}
+              aria-label="Slide {{ forloop.index }}"></button>
+    {% endfor %}
+  </div>
+  <div class="carousel-inner">
+    {% for f in car_files %}
+      {% assign fname = f | strip %}
+      {% assign cap = car_caps[forloop.index0] | default: "" | strip %}
+      {% assign alt = car_alts[forloop.index0] | default: cap | strip %}
+      <div class="carousel-item{% if forloop.first %} active{% endif %}">
+        <img src="{{ car_base }}{{ fname }}" alt="{{ alt }}" loading="lazy">
+        {% if cap != "" %}
+          <div class="blog-carousel-caption">{{ cap }}</div>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+  <button class="carousel-control-prev" type="button" data-bs-target="#{{ car_id }}" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#{{ car_id }}" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
+</div>
+
+<style>
+  .blog-carousel { margin: 1.5em auto; max-width: 100%; }
+  .blog-carousel .carousel-inner { padding: 0 3.5rem 2.25rem; }
+  .blog-carousel .carousel-item img {
+    max-width: 100%; height: auto; display: block; margin: 0 auto;
+  }
+  .blog-carousel-caption {
+    text-align: center; color: #555; font-size: 0.9em; margin-top: 0.6em;
+  }
+  .blog-carousel .carousel-indicators { margin-bottom: 0; }
+  .blog-carousel .carousel-control-prev,
+  .blog-carousel .carousel-control-next { width: 3.5rem; opacity: 0.7; }
+</style>
