@@ -351,6 +351,11 @@
   image: /files/images/avatar/millie_wu.jpg
   category: PhD
 
+- name: Egor Petrov
+  homepage: https://moderntalker.github.io/
+  image: /files/images/avatar/egor_petrov.jpg
+  category: PhD
+
 # MS/Undergraduate Students
 
 - name: Tianle Zhou
