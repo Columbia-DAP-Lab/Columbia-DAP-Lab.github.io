@@ -16,28 +16,65 @@
 - title: 'TBA'
   tag: AI in the Public Interest
   date: '2026-12-03'
+  who: Anthony Vanky
+  wholink: https://datascience.columbia.edu/people/anthony-vanky/
   where: CSB 453
   time: 3PM-4PM
+  bio: >
+    Anthony Vanky is an assistant professor at Columbia's Graduate School of Architecture,
+    Planning, and Preservation, with affiliations at the Data Science Institute and the
+    NSF Center for Smart Streetscapes. He studies how digital data and pervasive technologies
+    can help people understand and improve cities, with attention to residents' lived
+    experiences. His background spans architecture, urban design, and planning. Before
+    Columbia, he held appointments at the University of Michigan and MIT, where he also
+    served as a research lead at the Senseable City Lab.
 
 - title: 'TBA'
   tag: AI in the Public Interest
   date: '2026-11-19'
   who: Wajeeha Ahmad
+  wholink: https://www.wajeehaahmad.com/
   where: CSB 453
   time: 3PM-4PM
+  bio: >
+    Wajeeha Ahmad is an assistant professor of management at Columbia Business School and
+    a Digital Fellow with Stanford's Digital Economy Lab. She studies how AI and digital
+    technologies affect business and society, including how organizations can adopt and
+    govern these technologies to support both competitiveness and societal benefits.
+    She earned her doctorate at Stanford in Management Science and Engineering. At MIT,
+    she completed a master's in Technology and Policy and an undergraduate degree in
+    Mathematics with Computer Science.
 
-- title: 'TBA'
+- title: 'Ghost Gun Workshop'
   tag: AI in the Public Interest
   date: '2026-11-05'
   who: Silvia Sellán
+  wholink: https://www.silviasellan.com/
   where: CSB 453
   time: 3PM-4PM
+  bio: >
+    Silvia Sellán leads the Geometry and the City laboratory at Columbia University,
+    where she is an assistant professor of computer science. Her work in computer
+    graphics and geometry processing investigates ways to represent shapes implicitly
+    and reconstruct surfaces. She completed her doctorate at the University of Toronto
+    and held a postdoctoral research position at MIT before joining Columbia.
 
 - title: 'TBA'
   tag: AI in the Public Interest
   date: '2026-10-22'
+  who: Hannah Li
+  wholink: https://hannahql.github.io/
   where: CSB 453
   time: 3PM-4PM
+  bio: >
+    Hannah Li is an assistant professor at Columbia Business School in the Decision,
+    Risk, and Operations division and a Data Science Institute member. She studies how
+    to implement and assess algorithmic interventions in settings such as online
+    platforms, education, and healthcare, where limited capacity and interactions among
+    users complicate conventional methods. Her work draws on operations research,
+    statistics, and causal inference. She earned her doctorate in operations research
+    at Stanford, held a postdoctoral appointment at MIT, and studied mathematics at
+    Pomona College.
 
 - title: 'What would it cost to end extreme poverty?'
   tag: AI in the Public Interest
@@ -68,8 +105,19 @@
 - title: 'TBA'
   tag: AI in the Public Interest
   date: '2026-09-24'
+  who: Lily Xu
+  wholink: https://lily-x.github.io/
   where: CSB 453
   time: 3PM-4PM
+  bio: >
+    Lily Xu holds the Sun-Wu Assistant Professorship in Columbia's Industrial Engineering
+    and Operations Research department and is affiliated with Computer Science. She
+    develops AI tools for environmental and planetary health problems, especially
+    biodiversity conservation, drawing on machine learning, optimization, and causal
+    inference. She co-directs the EAAMO research initiative and works with conservation
+    organizations as the SMART Partnership's AI Lead and an INVERSA scientific advisor.
+    She earned her computer science doctorate at Harvard and subsequently held a
+    postdoctoral position at Oxford's Leverhulme Centre for Nature Recovery.
 
 - title: 'Columbia AI Night'
   tag: Other
