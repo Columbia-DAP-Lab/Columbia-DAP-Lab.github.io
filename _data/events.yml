@@ -29,6 +29,28 @@
     Columbia, he held appointments at the University of Michigan and MIT, where he also
     served as a research lead at the Senseable City Lab.
 
+- title: 'Agent Evaluation Science Fall 2026'
+  tag: Workshop
+  date: '2026-11-20'
+  where: Jane Street, New York City
+  time: 9AM-6PM ET (tentative)
+  link: https://evalscience.org/2026fall-nyc/
+  description: |
+    A one-day symposium bringing researchers and practitioners together to strengthen
+    the scientific foundations of AI agent evaluation. Topics include how to design
+    meaningful measures and benchmarks, build reproducible evaluation systems, and
+    assess reliability, safety, and performance in realistic settings.
+
+    The program combines invited talks, contributed papers, posters, practical case
+    studies, and discussion. It explores gaps in current evaluations, methods for
+    establishing validity and reliability, infrastructure for running evaluations,
+    and lessons from deployed agents and their failures.
+
+    Attendance is free, and registration does not require a paper submission.
+    Short papers and two-page extended abstracts are welcome, with abstract registration
+    due October 20 and full submissions due October 25. Visit the symposium website
+    for registration, submission details, and the latest program.
+
 - title: 'TBA'
   tag: AI in the Public Interest
   date: '2026-11-19'
