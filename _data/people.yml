@@ -356,6 +356,11 @@
   image: /files/images/avatar/egor_petrov.jpg
   category: PhD
 
+- name: Noah Bergam
+  homepage: https://njbergam.github.io/
+  image: /files/images/avatar/noah_bergam.jpg
+  category: PhD
+
 # MS/Undergraduate Students
 
 - name: Tianle Zhou
