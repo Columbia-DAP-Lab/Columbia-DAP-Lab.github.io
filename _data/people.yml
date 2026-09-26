@@ -186,6 +186,11 @@
 
 # Postdoc
 
+- name: Qian Xie
+  homepage: https://qianjanexie.github.io/
+  image: /files/images/avatar/qian_xie.jpg
+  category: Postdoc
+
 - name: Yusen Zhang
   homepage: https://yuszh.com
   image: /files/images/avatar/yusen_zhang.png
