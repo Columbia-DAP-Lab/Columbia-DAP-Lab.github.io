@@ -157,13 +157,20 @@ export default defineSchema({
     pubDate: v.string(), // YYYY-MM-DD
     /** Denormalized from pubDate for cheap year filtering and grouping. */
     year: v.number(),
+    /**
+     * Where to read the paper: the PDF, or the page that leads to it — an arXiv
+     * abstract or a publisher's landing page. This is the link the title carries on
+     * /publications, and it is the paper's identity as far as the site is
+     * concerned, which is why there is no separate arXiv id: an id would be a
+     * second spelling of the same fact, and it is the URL the page actually uses.
+     *
+     * Optional only because two of the current papers have no link yet.
+     */
     url: v.optional(v.string()),
     slidesUrl: v.optional(v.string()),
     codeUrl: v.optional(v.string()),
     websiteUrl: v.optional(v.string()),
     doi: v.optional(v.string()),
-    /** Bare id, e.g. "2401.12345" — the dedupe key when importing from arXiv. */
-    arxivId: v.optional(v.string()),
     bibtexKey: v.optional(v.string()),
     /** Canonical slugs into `topics`. */
     topics: v.array(v.string()),
@@ -190,7 +197,7 @@ export default defineSchema({
   })
     .index("by_status_and_pubDate", ["status", "pubDate"])
     .index("by_year", ["year"])
-    .index("by_arxivId", ["arxivId"])
+    .index("by_url", ["url"])
     .index("by_doi", ["doi"])
     .index("by_bibtexKey", ["bibtexKey"])
     .searchIndex("search_title", { searchField: "title" }),
