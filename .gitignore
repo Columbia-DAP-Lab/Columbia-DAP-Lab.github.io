@@ -103,3 +103,9 @@ Gemfile.lock
 ### Node / Convex ###
 node_modules/
 .env.local
+
+### Agent tooling (installed by `npx convex ai-files install`, regenerated locally) ###
+.agents/
+.claude/skills/
+skills-lock.json
+convex/_generated/ai/

@@ -4,6 +4,7 @@ import { internal } from "./_generated/api";
 import type { Doc, Id } from "./_generated/dataModel";
 import type { MutationCtx } from "./_generated/server";
 import { TOPICS, FIELDS, slugify } from "./vocabulary";
+import { matchKey, peopleByMatchKey, upsertAuthor } from "./authors";
 
 /**
  * One-time import of _data/*.yml into the content tables.
@@ -19,14 +20,6 @@ import { TOPICS, FIELDS, slugify } from "./vocabulary";
 
 const IMPORT_ACTOR = "migration";
 
-/** A person's display name, reduced for matching author and speaker strings. */
-const matchKey = (name: string) =>
-  name
-    .normalize("NFKD")
-    .replace(/[̀-ͯ]/g, "") // drop accents: "Sellán" matches "Sellan"
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, " ")
-    .trim();
 
 const CONTENT_TABLES = [
   "news",
@@ -225,55 +218,8 @@ const normalizeCategory = (raw: string): Doc<"people">["category"] => {
   }
 };
 
-/** Look up every person once, for linking authors and speakers by name. */
-const peopleByName = async (ctx: MutationCtx) => {
-  const rows = await ctx.db.query("people").take(2000);
-  return new Map(rows.map((p) => [matchKey(p.name), p._id]));
-};
 
 /** How many non-ASCII characters a spelling carries, used to pick between variants. */
-const diacritics = (name: string) => name.replace(/[\x00-\x7F]/g, "").length;
-
-/**
- * Find or create the author row for a printed name, and count the authorship.
- *
- * Publications arrive in batches, so the lookup goes through the index rather than
- * a map built once — an author seen in an earlier batch must be found, not
- * duplicated.
- *
- * Where two papers spell the same person differently, the accented spelling wins:
- * the data has both "Franjo Ivancic" and "Franjo Ivančić", and first-seen-wins would
- * pick by publication order rather than by which is right.
- */
-const upsertAuthor = async (
-  ctx: MutationCtx,
-  name: string,
-  people: Map<string, Id<"people">>,
-): Promise<Id<"authors">> => {
-  const printed = name.trim();
-  const key = matchKey(printed);
-  const existing = await ctx.db
-    .query("authors")
-    .withIndex("by_matchKey", (q) => q.eq("matchKey", key))
-    .unique();
-
-  if (existing) {
-    await ctx.db.patch("authors", existing._id, {
-      publicationCount: existing.publicationCount + 1,
-      // A profile added after this author was first seen still gets linked.
-      personId: existing.personId ?? people.get(key),
-      name: diacritics(printed) > diacritics(existing.name) ? printed : existing.name,
-    });
-    return existing._id;
-  }
-
-  return await ctx.db.insert("authors", {
-    name: printed,
-    matchKey: key,
-    personId: people.get(key),
-    publicationCount: 1,
-  });
-};
 
 /** Import publications and their ordered authors. Called in batches. */
 export const importPublications = internalMutation({
@@ -303,7 +249,7 @@ export const importPublications = internalMutation({
   },
   handler: async (ctx, args) => {
     const now = Date.now();
-    const people = await peopleByName(ctx);
+    const people = await peopleByMatchKey(ctx);
     let authorRows = 0;
     let authorsLinked = 0;
 
@@ -383,7 +329,7 @@ export const importEvents = internalMutation({
   },
   handler: async (ctx, args) => {
     const now = Date.now();
-    const people = await peopleByName(ctx);
+    const people = await peopleByMatchKey(ctx);
     let speakerRows = 0;
     let speakersLinked = 0;
 

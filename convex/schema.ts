@@ -382,6 +382,17 @@ export default defineSchema({
   }).index("by_email", ["email"]),
 
   /**
+   * The last time a content change asked for a site rebuild.
+   *
+   * One row. It exists so a scheduled send can tell whether another publish
+   * happened while it waited, which is what debounces a burst of publishing into a
+   * single build. See convex/deployHook.ts.
+   */
+  rebuildRequests: defineTable({
+    requestedAt: v.number(),
+  }),
+
+  /**
    * Append-only audit log.
    *
    * Content used to live in git, where `git log` answered "who changed this, and
