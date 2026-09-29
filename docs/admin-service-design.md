@@ -6,29 +6,73 @@ Adapts three features from [CAIL's site](https://cail.columbia.edu) to daplabsit
 Columbia/Google login, a Slack bot that files events from channel messages, and a
 web GUI for adding events and publications.
 
-## 1. The constraint that shapes everything
+## 1. The site stays on GitHub Pages
 
-CAIL is a Flask app that renders YAML on every request, running on a DigitalOcean
-droplet it controls. Its admin panel and Slack bot write YAML files on that box; a
-cron job commits them to GitHub every 5 minutes.
+Nothing here moves the public site. `daplab.cs.columbia.edu` keeps building from
+`.github/workflows/deploy.yml` and serving from Pages, exactly as today. This adds a
+side door for editing content; the front door is unchanged.
 
-daplabsite is Jekyll on GitHub Pages. There is no server and no runtime — Pages
-builds the site on push and serves static files. Every one of these three features
-needs code running somewhere with a public HTTPS URL.
+The one thing Pages cannot do is hold a secret, and that single fact decides the
+architecture. So, precisely, what Google auth can and cannot do on a static page:
 
-The host chosen is **Convex**. Convex is TypeScript-only, so none of CAIL's Python
-ports over; `admin.py` and `slack_bot.py` become design references, not source. What
-does carry over is CAIL's *model*: capability-based roles in a YAML file, a
-link-your-Slack-account flow, drafts that wait for a human click, and git as the
-audit log.
+- **Can: sign a person in.** Google Identity Services runs entirely in the browser,
+  returns a signed ID token proving who they are, and costs nothing. A page served
+  from Pages can show a Columbia-only sign-in button today, with no backend at all.
+- **Cannot: authorize a write.** Committing to the repo needs a GitHub credential,
+  and any credential shipped to the browser is public — in a public repo that hands
+  write access to everyone who views source. Client-side gating ("hide the form
+  unless signed in") is cosmetic: anyone can call the write endpoint directly.
 
-Two things Convex does **not** do, which the design has to route around:
+So the Google ID token has to be **verified somewhere that holds the GitHub
+credential**. That verifier is the only piece not on Pages: one function, a few
+hundred lines, called a few times a week.
 
-- It does not host web pages. Convex serves functions and an HTTP endpoint, not a
-  frontend. The admin UI has to live somewhere else — see §6.
-- It has no filesystem and no git. Writes go to the repo through the GitHub API.
+By contrast, CAIL solves this by being a Flask app on a DigitalOcean droplet it
+controls, with a cron job committing to GitHub every 5 minutes. That is a whole
+server for the public site as well as the editing — far more than is needed here,
+since Pages already serves the site well.
 
-## 2. Architecture
+## 2. Choosing the verifier
+
+Requirements: public HTTPS URL, holds two or three secrets, runs a few hundred
+requests a month, verifies a Google ID token, calls the GitHub API. For the Slack
+bot it additionally needs to answer within 3 seconds and do the slow work after
+(§8).
+
+| Option | Cost | Fits Slack? | Notes |
+|---|---|---|---|
+| **Cloudflare Worker** | $0 | Yes (`waitUntil`) | Smallest thing that works — one file, `wrangler deploy`, no platform to learn. Needs KV for Slack drafts. |
+| **Convex** | $0 | Yes (scheduler) | More platform than a pure endpoint needs, but the built-in DB is exactly what the Slack draft/dedupe/link tables want, and scheduled functions handle the 3-second ack cleanly. |
+| **Google Apps Script** | $0 | Poorly | Tempting — Google-hosted, native Google identity, no OAuth client to register. But background work after a fast response is awkward, and the dev experience is rough. Fine for forms-only, bad for the bot. |
+| **Vercel / Cloud Run / Fly** | $0–7 | Yes | Conventional; more setup than a Worker for no gain at this size. |
+
+**Recommendation: a Cloudflare Worker if the admin forms are all you build, Convex
+if the Slack bot is definitely coming.** The Slack bot needs a place to keep drafts,
+seen-event ids, and Slack→email links; with a Worker that means adding KV and
+hand-rolling expiry, which is most of what Convex gives for free.
+
+The rest of this document is written against Convex. Under a Worker, §4's tables
+become KV namespaces with TTLs, §8's `ctx.scheduler.runAfter` becomes
+`ctx.waitUntil`, and nothing else changes — the auth, the write path, the YAML
+handling, and the UI are identical.
+
+One thing neither option does: host the admin page. Convex serves functions and an
+HTTP endpoint, not a frontend; a Worker could serve HTML but there is no reason to
+when Pages already does. The UI stays on Pages — see §7.
+
+### Prior art in this repo, and why not to build on it
+
+`scripts/sync_events.py` and `.github/workflows/sync.yml` pull events from a Google
+Sheet on a daily cron and commit the result. It is a genuinely zero-backend design —
+a Google Form gives Columbia-only sign-in for free, and an Action holds the
+credential — but **it is defunct**, and its failure mode is instructive: a scheduled
+job against a service-account credential and a hand-maintained sheet has several
+quiet ways to stop working, and nobody notices until someone checks the site. A
+synchronous write that reports success or failure to the person making it does not
+have that failure mode. Treat the sheet path as a dead end rather than a foundation;
+whether to delete the script and workflow is a separate cleanup.
+
+## 3. Architecture
 
 ```
                       ┌──────────────────────────────┐
@@ -57,7 +101,7 @@ Two things Convex does **not** do, which the design has to route around:
 The public site is untouched. Every write is a git commit, so `git log` and `git
 revert` are the audit trail and the undo button, exactly as with a hand edit.
 
-## 3. Repo is the source of truth
+## 4. Repo is the source of truth
 
 CAIL treats its server's `data/` as authoritative and pushes to GitHub. This design
 inverts that: **the repo is authoritative and Convex holds no content**, only
@@ -75,7 +119,7 @@ git" race, but every read of current events costs a GitHub API call (cached), an
 Convex going down means no admin UI and no Slack bot — it does not mean the site
 goes down.
 
-## 4. Auth
+## 5. Auth
 
 **Not Convex Auth.** It is still beta, and the admin UI is a static page with no
 server to hold a session. Use Google's OIDC ID tokens directly:
@@ -115,7 +159,7 @@ Checked into git, so a grant is a reviewable commit and takes effect on the next
 cache refresh (5 min, or bust the cache on write). Capabilities are recomputed per
 request — removing an email revokes access immediately.
 
-## 5. Writing to the repo
+## 6. Writing to the repo
 
 ### Credentials
 
@@ -165,10 +209,10 @@ between, the write 409s. Handle it by re-reading, re-applying the edit to the ne
 content, and retrying — up to 3 times, then surface the conflict. Two editors
 saving different events seconds apart is the common case and resolves silently.
 
-## 6. Admin UI
+## 7. Admin UI
 
-The UI is a static page; only Convex functions touch secrets. Where the page is
-built is the one open question in this design:
+The UI is a static page served from Pages alongside the rest of the site; only the
+verifier touches secrets. Where the page is *built* is the one open question:
 
 **Option A — no build step (recommended to start).** A hand-written
 `admin/index.html` in the Jekyll site, using `convex/browser`'s `ConvexClient` and
@@ -176,10 +220,11 @@ Google Identity Services loaded as ES modules from a CDN, with plain DOM code or
 Preact + `htm`. Matches the repo's current no-build-tooling character; costs some
 ergonomics on forms.
 
-**Option B — Vite + React.** Switch Pages from "deploy from branch" to a GitHub
-Actions workflow that runs both `jekyll build` and `vite build`, publishing the
-admin bundle under `/admin/`. Better DX for multi-field forms and the Convex React
-hooks; adds a build pipeline and changes how the whole site deploys.
+**Option B — Vite + React.** Cheaper than it first appears: the site already
+deploys through a GitHub Actions workflow (`.github/workflows/deploy.yml` runs
+`bundle exec jekyll build` and uploads the artifact), so this is one extra step in
+an existing workflow, not a change to how the site deploys. Better ergonomics for
+multi-field forms; adds npm and a lockfile to a repo that currently has neither.
 
 Either way the page must be excluded from the site nav and from `sitemap.xml`.
 Obscurity is not the control — every mutation authorizes server-side — but an admin
@@ -200,7 +245,7 @@ Forms needed:
   Upload writes the binary through the same GitHub API commit. Resize to a sane
   width first, as CAIL's `admin._save_photo` does.
 
-## 7. Slack bot
+## 8. Slack bot
 
 ### Endpoints
 
@@ -283,7 +328,7 @@ Scope deliberately left out of v1: the "ask it anything" Q&A mode. It is the par
 CAIL's bot that needs the whole people directory in context, and it earns its keep
 only once the event path is trusted.
 
-## 8. Secrets
+## 9. Secrets
 
 All in Convex environment variables (512 max, 8 KiB each — ample):
 
@@ -297,7 +342,7 @@ All in Convex environment variables (512 max, 8 KiB each — ample):
 
 No secret reaches the browser. The Google client id is public by design.
 
-## 9. Cost
+## 10. Cost
 
 Convex's free plan covers 1M function calls and 20 GB-hours of action compute per
 month; this workload is a few hundred calls a month. Anthropic usage is cents.
@@ -309,9 +354,9 @@ monitoring, and a sync cron. The tradeoff is a platform dependency — if Convex
 ever abandoned, the Slack endpoints and admin UI move, but the content is all in
 git and the public site never depended on any of it.
 
-## 10. Build order
+## 11. Build order
 
-1. **Convex project + GitHub write path.** One mutation that appends a test event to
+1. **Verifier project + GitHub write path.** One function that appends a test event to
    `_data/events.yml` on a branch, with comment preservation and conflict retry
    proven. This is the load-bearing piece; everything else is UI on top.
 2. **Auth + roles.** `auth.config.ts`, `_data/roles.yml`, capability checks.
@@ -323,9 +368,10 @@ git and the public site never depended on any of it.
 Steps 1–4 are testable end to end locally against a scratch branch. Step 5 needs the
 Slack app and a real workspace; nothing before it does.
 
-## 11. Open questions
+## 12. Open questions
 
-- **UI build step** — Option A or B in §6.
+- **Verifier: Worker or Convex** (§2) — decided by whether the Slack bot is coming.
+- **UI build step** — Option A or B in §7.
 - **Who administers the Google Cloud project** for the OAuth client. CAIL's lives in
   a personal project; a lab-owned one survives people leaving.
 - **Which Slack workspace**, and whether it permits app installs without an admin
