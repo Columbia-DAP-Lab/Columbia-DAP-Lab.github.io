@@ -1,275 +1,279 @@
 # DAPLab admin service — design
 
-Status: proposal, not built. Written 2026-09-29.
+Status: proposal, not built. Written 2026-09-29, revised for Convex-hosted content.
 
-Adapts three features from [CAIL's site](https://cail.columbia.edu) to daplabsite:
-Columbia/Google login, a Slack bot that files events from channel messages, and a
-web GUI for adding events and publications.
+Three features, adapted from [CAIL's site](https://cail.columbia.edu): Columbia/Google
+login, a Slack bot that files events from channel announcements, and a submission
+GUI for events and publications.
+
+The organizing decision: **events and publications move out of `_data/*.yml` and
+into Convex tables.** Adding a talk or a paper stops being a commit and becomes a
+form submission. The repo keeps the site — layouts, styles, people, posts, projects
+— and stops carrying the content that changes weekly.
 
 ## 1. The site stays on GitHub Pages
 
-Nothing here moves the public site. `daplab.cs.columbia.edu` keeps building from
-`.github/workflows/deploy.yml` and serving from Pages, exactly as today. This adds a
-side door for editing content; the front door is unchanged.
+`daplab.cs.columbia.edu` keeps building from `.github/workflows/deploy.yml` and
+serving from Pages. Nothing here puts a server in front of the public site.
 
-The one thing Pages cannot do is hold a secret, and that single fact decides the
-architecture. So, precisely, what Google auth can and cannot do on a static page:
+Pages cannot hold a secret, and that decides the rest. Precisely, on a static page:
 
-- **Can: sign a person in.** Google Identity Services runs entirely in the browser,
-  returns a signed ID token proving who they are, and costs nothing. A page served
-  from Pages can show a Columbia-only sign-in button today, with no backend at all.
-- **Cannot: authorize a write.** Committing to the repo needs a GitHub credential,
-  and any credential shipped to the browser is public — in a public repo that hands
-  write access to everyone who views source. Client-side gating ("hide the form
-  unless signed in") is cosmetic: anyone can call the write endpoint directly.
+- **Google sign-in works with no backend.** Google Identity Services runs in the
+  browser and returns a signed ID token proving who someone is. Free, today.
+- **Saving does not.** A write needs a credential, and anything shipped to the
+  browser is public — in a public repo, that is write access for anyone who views
+  source. Gating the form client-side is cosmetic; the endpoint can be called
+  directly.
 
-So the Google ID token has to be **verified somewhere that holds the GitHub
-credential**. That verifier is the only piece not on Pages: one function, a few
-hundred lines, called a few times a week.
+So the ID token is verified server-side, where the write actually happens. With
+content in Convex, that server is Convex itself — there is no separate "verifier"
+tier, and no GitHub credential to protect in the common path.
 
-By contrast, CAIL solves this by being a Flask app on a DigitalOcean droplet it
-controls, with a cron job committing to GitHub every 5 minutes. That is a whole
-server for the public site as well as the editing — far more than is needed here,
-since Pages already serves the site well.
+## 2. Where content lives, and how it reaches the page
 
-## 2. Choosing the verifier
+Convex is the source of truth for events and publications. Pages still serves static
+HTML. The join between them is the question.
 
-Requirements: public HTTPS URL, holds two or three secrets, runs a few hundred
-requests a month, verifies a Google ID token, calls the GitHub API. For the Slack
-bot it additionally needs to answer within 3 seconds and do the slow work after
-(§8).
+### Option A — build-time fetch (recommended)
 
-| Option | Cost | Fits Slack? | Notes |
-|---|---|---|---|
-| **Cloudflare Worker** | $0 | Yes (`waitUntil`) | Smallest thing that works — one file, `wrangler deploy`, no platform to learn. Needs KV for Slack drafts. |
-| **Convex** | $0 | Yes (scheduler) | More platform than a pure endpoint needs, but the built-in DB is exactly what the Slack draft/dedupe/link tables want, and scheduled functions handle the 3-second ack cleanly. |
-| **Google Apps Script** | $0 | Poorly | Tempting — Google-hosted, native Google identity, no OAuth client to register. But background work after a fast response is awkward, and the dev experience is rough. Fine for forms-only, bad for the bot. |
-| **Vercel / Cloud Run / Fly** | $0–7 | Yes | Conventional; more setup than a Worker for no gain at this size. |
+`deploy.yml` gains a step before `jekyll build` that fetches JSON from Convex and
+writes `_data/events.yml` and `_data/pubs.yml` **into the runner's checkout only**.
+Never committed. Convex pings `repository_dispatch` after a publish, so a submission
+is live in a minute or two.
 
-**Recommendation: a Cloudflare Worker if the admin forms are all you build, Convex
-if the Slack bot is definitely coming.** The Slack bot needs a place to keep drafts,
-seen-event ids, and Slack→email links; with a Worker that means adding KV and
-hand-rolling expiry, which is most of what Convex gives for free.
+Why this one:
 
-The rest of this document is written against Convex. Under a Worker, §4's tables
-become KV namespaces with TTLs, §8's `ctx.scheduler.runAfter` becomes
-`ctx.waitUntil`, and nothing else changes — the auth, the write path, the YAML
-handling, and the UI are identical.
+- Every existing Liquid template keeps working untouched — `events.html`'s
+  upcoming/past split and filters, `_includes/pubs.html`'s tag filtering and its
+  cross-reference against `site.data.people` to bold lab authors. Client-side
+  rendering means rewriting all of that in JavaScript.
+- The served page is still pre-rendered HTML: no flash of empty content, no JS
+  requirement, and search engines see the real thing. A lab site that wants its
+  papers indexed should not hide them behind a fetch.
+- **If Convex is down, the site is unaffected.** It is static HTML on a CDN. Only
+  the next rebuild would notice, and §8 gives that a fallback.
 
-One thing neither option does: host the admin page. Convex serves functions and an
-HTTP endpoint, not a frontend; a Worker could serve HTML but there is no reason to
-when Pages already does. The UI stays on Pages — see §7.
+The cost is latency — a minute or two from submit to live, not instant — and a build
+that now depends on an external service (§8 handles that).
 
-### Prior art in this repo, and why not to build on it
+### Option B — client-side fetch
 
-`scripts/sync_events.py` and `.github/workflows/sync.yml` pull events from a Google
-Sheet on a daily cron and commit the result. It is a genuinely zero-backend design —
-a Google Form gives Columbia-only sign-in for free, and an Action holds the
-credential — but **it is defunct**, and its failure mode is instructive: a scheduled
-job against a service-account credential and a hand-maintained sheet has several
-quiet ways to stop working, and nobody notices until someone checks the site. A
-synchronous write that reports success or failure to the person making it does not
-have that failure mode. Treat the sheet path as a dead end rather than a foundation;
-whether to delete the script and workflow is a separate cleanup.
+`/events` and `/publications` ship as shells that query Convex from the browser.
+Instant updates, no rebuild. But it means reimplementing the Liquid in JS, losing
+pre-rendered HTML for the two pages most worth indexing, and a spinner on every
+visit. Reasonable for a logged-in dashboard; wrong for the public pages.
+
+### Recommendation
+
+Option A for the public pages. Option B is worth adding later *only* for a preview
+view inside `/admin/`, so a submitter can see their entry rendered before the site
+rebuilds.
 
 ## 3. Architecture
 
 ```
-                      ┌──────────────────────────────┐
-  Slack workspace ───▶│ Convex deployment            │
-   @daplab mention    │                              │
-                      │  http.ts   /slack/events     │──┐
-  Browser ───────────▶│            /slack/actions    │  │
-   /admin/ on the     │  auth      Google OIDC       │  │ Anthropic API
-   Pages site         │  db        drafts, roles,    │  │ (field extraction)
-   (Convex client)    │            slack links,      │◀─┘
-                      │            dedupe            │
-                      │  actions   github.ts         │
-                      └──────────────┬───────────────┘
-                                     │ GitHub REST API
-                                     ▼
-                      ┌──────────────────────────────┐
-                      │ Columbia-DAP-Lab.github.io   │
-                      │  _data/events.yml  (commit)  │
-                      │  _data/pubs.yml    (PR)      │
-                      └──────────────┬───────────────┘
-                                     │ push triggers Pages build
-                                     ▼
-                            daplab.cs.columbia.edu
+  Submitter ──────▶┌───────────────────────────┐
+   /admin/ form    │ Convex                    │
+   (Pages, static) │                           │
+                   │  events        (table)    │
+  Slack ──────────▶│  publications  (table)    │
+   @daplab mention │  people_cache, roles,     │
+                   │  drafts, slackLinks       │
+                   │                           │
+                   │  http: /content/events    │
+                   │        /content/pubs      │
+                   │        /slack/*           │
+                   └────────┬──────────┬───────┘
+                            │          │ repository_dispatch
+                   fetch at │          ▼
+                   build    │   ┌──────────────────────┐
+                            └──▶│ deploy.yml (Actions) │
+                                │  fetch → jekyll      │
+                                │  build → Pages       │
+                                └──────────┬───────────┘
+                                           ▼
+                                 daplab.cs.columbia.edu
 ```
 
-The public site is untouched. Every write is a git commit, so `git log` and `git
-revert` are the audit trail and the undo button, exactly as with a hand edit.
+## 4. What lives where
 
-## 4. Repo is the source of truth
-
-CAIL treats its server's `data/` as authoritative and pushes to GitHub. This design
-inverts that: **the repo is authoritative and Convex holds no content**, only
-transient state:
-
-| Convex table | Holds | Lifetime |
+| Content | Home | Why |
 |---|---|---|
-| `drafts` | Proposed events awaiting a Slack click | 14 days |
-| `slackLinks` | Slack user id → login email | Until revoked |
-| `slackEvents` | Seen Slack `event_id`s, for retry dedupe | 24 hours |
-| `rolesCache` | `_data/roles.yml`, fetched from GitHub | 5 minutes |
+| Events | Convex | Changes weekly, submitted by many people |
+| Publications | Convex | Same |
+| People | Repo (`_data/people.yml`) | Changes rarely; `pubs.html` needs it at build time to bold lab authors |
+| Startups | Repo (`_data/startups.yml`) | Small, concatenated into the events page; migrate later if it earns it |
+| Blog posts | Repo (`_posts/`) | Markdown with front matter — a different problem |
+| Projects, benchmarks | Repo (collections) | Same |
+| Layouts, includes, CSS | Repo | It is the site |
 
-Consequences worth naming: there is no reconciliation problem and no "server vs.
-git" race, but every read of current events costs a GitHub API call (cached), and
-Convex going down means no admin UI and no Slack bot — it does not mean the site
-goes down.
-
-## 5. Auth
-
-**Not Convex Auth.** It is still beta, and the admin UI is a static page with no
-server to hold a session. Use Google's OIDC ID tokens directly:
-
-1. The `/admin/` page renders Google Identity Services' Sign In With Google button.
-2. Google returns an ID token (a JWT, `iss: https://accounts.google.com`).
-3. `convex/auth.config.ts` declares Google as an OIDC provider, so Convex validates
-   the token itself and exposes the claims via `ctx.auth.getUserIdentity()`.
-4. Every mutation checks `identity.email` against roles.
-
-No Convex Auth dependency, no session cookies, no secret in the browser.
-
-Because LionMail is Columbia's Google Workspace, `uni@columbia.edu` sign-in goes
-through Columbia's login page with Duo automatically. This is what CAIL means by
-"Columbia login" — it is not Shibboleth/CAS, which would need Columbia IT to
-register the service. If true CAS is a requirement later, it replaces this section
-and nothing else.
-
-Enforce the domain server-side: reject any identity whose email does not end in
-`@columbia.edu` unless it is explicitly listed in `roles.yml` (for outside
-collaborators). Checking `hd` in the browser proves nothing.
-
-### Roles
-
-New file, `_data/roles.yml`, mirroring CAIL's model:
-
-```yaml
-admins:            # events + publications + roles
-  - ew2493@columbia.edu
-event_editors:     # events only
-  - someone@columbia.edu
-pub_editors:       # publications only
-  - someone-else@columbia.edu
-```
-
-Checked into git, so a grant is a reviewable commit and takes effect on the next
-cache refresh (5 min, or bust the cache on write). Capabilities are recomputed per
-request — removing an email revokes access immediately.
-
-## 6. Writing to the repo
-
-### Credentials
-
-A **GitHub App** installed on the one repo, with `contents: write` and
-`pull_requests: write`. Convex stores the app id and private key as environment
-variables and mints a short-lived installation token per write. A fine-grained PAT
-on a machine account is the simpler alternative; it trades token rotation for
-setup time. Not a personal PAT on a human account — commits would be attributed to
-that person and the token would carry their whole account.
-
-Commits are authored as `DAPLab Bot <bot@daplab.cs.columbia.edu>` with the acting
-person's name and email in the commit message trailer:
-
-```
-Add seminar: Raphael Shu, Sept 29
-
-Added via /admin by ew2493@columbia.edu
-```
-
-### Two write paths, per the decision
-
-- **Events → commit directly to `main`.** Time-sensitive, low-risk, live in about a
-  minute once Pages rebuilds.
-- **Publications → open a PR.** Long-lived records; a human merges. The UI returns
-  the PR link and says the change is not live yet.
-
-### Preserving comments
-
-`_data/events.yml` and `_data/pubs.yml` open with hand-written field documentation,
-and `people.yml` has comments mid-file. `js-yaml` discards all of it on round-trip.
-Use the [`yaml`](https://www.npmjs.com/package/yaml) package's `parseDocument()`
-API, which preserves comments and formatting — the TypeScript equivalent of
-`ruamel.yaml` in round-trip mode.
-
-Keep the single-list files as they are. Do **not** split into `_data/events/*.yml`:
-a Jekyll data *directory* makes `site.data.events` a hash keyed by filename rather
-than a list, which breaks `events.html`'s sort and its `concat` with
-`site.data.startups`.
-
-Insertion follows the file's existing order — `events.yml` is newest-first by date,
-`pubs.yml` likewise — so a new record is spliced at the right index, not appended.
-
-### Concurrency
-
-The GitHub contents API takes the blob `sha` you read. If someone else committed in
-between, the write 409s. Handle it by re-reading, re-applying the edit to the new
-content, and retrying — up to 3 times, then surface the conflict. Two editors
-saving different events seconds apart is the common case and resolves silently.
-
-## 7. Admin UI
-
-The UI is a static page served from Pages alongside the rest of the site; only the
-verifier touches secrets. Where the page is *built* is the one open question:
-
-**Option A — no build step (recommended to start).** A hand-written
-`admin/index.html` in the Jekyll site, using `convex/browser`'s `ConvexClient` and
-Google Identity Services loaded as ES modules from a CDN, with plain DOM code or
-Preact + `htm`. Matches the repo's current no-build-tooling character; costs some
-ergonomics on forms.
-
-**Option B — Vite + React.** Cheaper than it first appears: the site already
-deploys through a GitHub Actions workflow (`.github/workflows/deploy.yml` runs
-`bundle exec jekyll build` and uploads the artifact), so this is one extra step in
-an existing workflow, not a change to how the site deploys. Better ergonomics for
-multi-field forms; adds npm and a lockfile to a repo that currently has neither.
-
-Either way the page must be excluded from the site nav and from `sitemap.xml`.
-Obscurity is not the control — every mutation authorizes server-side — but an admin
-form does not belong in search results.
-
-Forms needed:
-
-- **Event** — the fields in `_data/events.yml`'s header comment: `title`, `tag`
-  (select, from `event_types.yml`), `who`, `wholink`, `date`, `end_date`, `time`,
-  `where`, `link`, `description`, `bio`, `image`, `video`, `slides`. Tag comes from
-  a select so a typo cannot create a dead filter chip on `/events`.
-- **Publication** — `title`, `authors`, `conf`, `pub_date`, `url`, `tags` (multi-
-  select against the controlled vocabulary in `pubs.yml`'s header: `ai`, `sys`,
-  and the rest), plus optional `slides`, `code`, `comments`, `selected`, `short`,
-  `key`, `citations`, `rate`. Worth adding: paste a DOI or arXiv ID and prefill.
-  (arXiv's API throttles parallel requests — fetch serially.)
-- **Image upload** — events take an `image` path under `files/images/events/`.
-  Upload writes the binary through the same GitHub API commit. Resize to a sane
-  width first, as CAIL's `admin._save_photo` does.
-
-## 8. Slack bot
-
-### Endpoints
-
-Convex HTTP actions are served at `https://<deployment>.convex.site`, which Slack
-can point at directly — **no DNS record needed**, and nothing to ask Columbia IT
-for.
-
-- `POST /slack/events` — `app_mention` and `message.im`
-- `POST /slack/actions` — interactive button clicks
-
-### Signature verification
-
-Slack signs the **raw** body: `v0=HMAC-SHA256(signing_secret, "v0:" + timestamp +
-":" + rawBody)`. Read it with `await request.text()` before any JSON parsing, verify
-with Web Crypto, and reject timestamps older than 5 minutes. Compare in constant
-time.
-
-### The 3-second problem
-
-Slack requires a 200 within 3 seconds and retries otherwise; a Claude call will not
-finish that fast. So: verify, enqueue, ack.
+### Tables
 
 ```ts
-// convex/http.ts (sketch)
+events: defineTable({
+  title: v.string(),
+  tag: v.string(),              // must match _data/event_types.yml slugs
+  date: v.string(),             // YYYY-MM-DD
+  endDate: v.optional(v.string()),
+  time: v.optional(v.string()),
+  where: v.optional(v.string()),
+  who: v.optional(v.string()),
+  wholink: v.optional(v.string()),
+  link: v.optional(v.string()),
+  description: v.optional(v.string()),
+  bio: v.optional(v.string()),
+  image: v.optional(v.string()),   // storage id or repo path
+  video: v.optional(v.string()),
+  slides: v.optional(v.string()),
+  status: v.union(v.literal("pending"), v.literal("published"), v.literal("rejected")),
+  submittedBy: v.string(),         // email
+  submittedAt: v.number(),
+  publishedBy: v.optional(v.string()),
+}).index("by_status_date", ["status", "date"]),
+
+publications: defineTable({
+  title: v.string(),
+  authors: v.string(),          // comma-separated, as pubs.html expects
+  conf: v.string(),
+  pubDate: v.string(),
+  url: v.optional(v.string()),
+  tags: v.array(v.string()),    // controlled vocabulary: ai, sys, ...
+  slides: v.optional(v.string()),
+  code: v.optional(v.string()),
+  comments: v.optional(v.string()),
+  selected: v.optional(v.boolean()),
+  short: v.optional(v.boolean()),
+  key: v.optional(v.string()),
+  citations: v.optional(v.number()),
+  rate: v.optional(v.string()),
+  hide: v.optional(v.boolean()),
+  status: ...,  submittedBy: ...,  submittedAt: ...,
+}).index("by_status_date", ["status", "pubDate"]),
+```
+
+Field names and shapes follow the YAML the templates already read, so the export in
+§5 is a rename, not a transformation. `authors` stays a single comma-separated
+string because `pubs.html` splits it itself.
+
+## 5. Publishing endpoints
+
+Two public HTTP actions serve the build:
+
+- `GET /content/events.yml`
+- `GET /content/pubs.yml`
+
+Each returns **YAML**, already in the shape the templates expect, sorted as the
+current files are (events newest-first; pubs by date), with `status: "published"`
+rows only and the bookkeeping fields (`status`, `submittedBy`, …) stripped. Emitting
+YAML rather than JSON keeps the build step to a `curl -o`, and keeps the artifact
+readable when someone inspects a failed build.
+
+These are public and unauthenticated — they serve exactly what the public site
+shows.
+
+## 6. Submission and review
+
+"Easy to submit" is the point, so the bar to *propose* is low and the bar to
+*publish* is a role:
+
+- **Anyone with a `@columbia.edu` Google account** can submit an event or a
+  publication. It lands as `status: "pending"`.
+- **Editors** (`events` or `pubs` capability) publish, edit, or reject. Publishing
+  sets `status: "published"` and fires a rebuild.
+- **Admins** additionally manage roles.
+
+This replaces the earlier plan of opening a GitHub PR for publications. The review
+gate moves from "a human merges a PR" to "an editor clicks Publish" — same property,
+and it no longer requires reviewers to have GitHub accounts.
+
+Editors get an email or Slack ping on a pending submission; without one, pending
+items rot. A weekly digest of anything pending more than 3 days is the cheap version.
+
+### Auth
+
+Google OIDC, validated by Convex directly — not Convex Auth, which is still beta:
+
+1. `/admin/` renders Google Identity Services' sign-in button.
+2. Google returns an ID token (`iss: https://accounts.google.com`).
+3. `convex/auth.config.ts` declares Google as an OIDC provider; Convex validates the
+   token and exposes claims via `ctx.auth.getUserIdentity()`.
+4. Every mutation checks `identity.email` against the `roles` table.
+
+Because LionMail is Columbia's Google Workspace, `uni@columbia.edu` sign-in goes
+through Columbia's login page with Duo automatically. This is what "Columbia login"
+means here — not Shibboleth/CAS, which would need Columbia IT to register the
+service. Enforce the domain **server-side**; checking `hd` in the browser proves
+nothing.
+
+Roles move from a YAML file into a Convex table, since the repo is no longer where
+content lives. That trades git history for consistency; the nightly export (§8)
+includes the roles table, so grants remain auditable after the fact.
+
+### The forms
+
+At `/admin/`, static pages on Pages talking to Convex:
+
+- **Event** — title, tag (select, from `event_types.yml`, so a typo cannot create a
+  dead filter chip), date, end date, time, where, who, speaker link, description,
+  bio, links, image.
+- **Publication** — title, authors, venue, date, url, tags (multi-select against the
+  controlled vocabulary), plus slides/code/comments/selected/short/key/citations/rate.
+  Paste a DOI or arXiv id to prefill. (arXiv throttles parallel requests — fetch
+  serially.)
+- **Image upload** — Convex file storage, served from its CDN. Simpler than
+  committing binaries to the repo, and it drops the resize-before-commit step.
+- **Queue** — pending submissions with Publish / Edit / Reject.
+
+Build question, unchanged: plain ES modules + the Convex browser client (no build
+step, matches this repo) versus Vite + React (better for multi-field forms; one
+extra step in `deploy.yml`, which already runs Actions, plus npm and a lockfile in a
+repo that has neither).
+
+## 7. Triggering the rebuild
+
+A Convex action calls `POST /repos/Columbia-DAP-Lab/Columbia-DAP-Lab.github.io/dispatches`
+with `event_type: "content-updated"`; `deploy.yml` adds `repository_dispatch` to its
+triggers. The token is a GitHub App installation token or a fine-grained PAT with
+`contents: write`, stored in Convex env vars — the only GitHub credential in the
+system, and it can no longer write file contents if scoped to dispatch alone.
+
+Debounce: publishing five items in a row should not queue five builds. Schedule the
+dispatch 60 seconds out and cancel any pending one. `deploy.yml`'s existing
+`concurrency` block with `cancel-in-progress` already collapses overlapping runs.
+
+## 8. When the fetch fails
+
+A build that cannot reach Convex must not publish an events page with no events.
+
+1. The fetch step retries a few times, then **fails the build**. Pages keeps serving
+   the previous deploy — stale, not broken.
+2. A nightly Action exports every table to `_data/snapshots/*.yml` and commits it.
+   The build prefers live Convex and falls back to the snapshot if the fetch fails,
+   so a Convex outage degrades to "yesterday's content" rather than a failed deploy.
+
+The snapshot earns its keep twice over: it is the disaster-recovery copy, and it
+restores a readable git history of content changes — `git log -p _data/snapshots/`
+answers "when did this talk get added, and by whom", which the move to Convex
+otherwise costs. It is **generated**; a header comment must say DO NOT EDIT, because
+the next publish overwrites it.
+
+## 9. Slack bot
+
+Convex HTTP actions are served at `https://<deployment>.convex.site`, which Slack
+points at directly — no DNS record, nothing to ask Columbia IT for.
+
+- `POST /slack/events` — `app_mention`, `message.im`
+- `POST /slack/actions` — button clicks
+
+**Signature verification.** Slack signs the raw body:
+`v0=HMAC-SHA256(secret, "v0:" + timestamp + ":" + rawBody)`. Read it with
+`await request.text()` before parsing, verify with Web Crypto, reject timestamps
+older than 5 minutes, compare in constant time.
+
+**The 3-second problem.** Slack wants a 200 within 3 seconds and retries otherwise;
+a Claude call will not finish that fast. Verify, enqueue, ack:
+
+```ts
 http.route({ path: "/slack/events", method: "POST", handler: httpAction(
   async (ctx, request) => {
     const raw = await request.text();
@@ -277,108 +281,109 @@ http.route({ path: "/slack/events", method: "POST", handler: httpAction(
       return new Response("bad signature", { status: 401 });
     }
     const body = JSON.parse(raw);
-    if (body.type === "url_verification") {
-      return new Response(body.challenge);   // Slack's setup handshake
-    }
+    if (body.type === "url_verification") return new Response(body.challenge);
     if (await ctx.runMutation(internal.slack.alreadySeen, { id: body.event_id })) {
-      return new Response(null, { status: 200 });   // a retry; ignore
+      return new Response(null, { status: 200 });     // a retry
     }
     await ctx.scheduler.runAfter(0, internal.slack.handleMention, { event: body.event });
     return new Response(null, { status: 200 });
   })});
 ```
 
-Dedupe on `event_id` matters: Slack retries a slow endpoint up to 3 times, and
-without it one announcement becomes three drafts.
+Dedupe on `event_id` matters: Slack retries a slow endpoint up to three times, and
+without it one announcement becomes three submissions.
 
-Action time limits are generous — 30 minutes in the Convex runtime, 10 in Node —
-so the background handler has room.
-
-### Extraction
-
-CAIL uses Gemini. Use Claude instead: `@anthropic-ai/sdk` in a Node-runtime action
-(`"use node"`), model `claude-opus-5-5`, with structured outputs
+**Extraction.** CAIL uses Gemini; use Claude — `@anthropic-ai/sdk` in a Node-runtime
+action (`"use node"`), model `claude-opus-5-5`, structured outputs
 (`output_config: { format: ... }`) against a JSON schema matching the event fields.
-One call decides whether the thread describes an event and, if so, returns the
-fields; if the thread is missing a required field (title, date, time, location) the
-bot names what is missing in its reply.
+One call decides whether the thread describes an event and returns the fields; if a
+required field is missing (title, date, time, location) the bot says which.
 
-Cost is negligible at this volume — Opus 5.5 is $4/$20 per million tokens, and a
-thread plus schema is a few thousand tokens. Rough order: a cent or two per
-announcement.
-
-### Flow
-
-1. Someone posts an announcement and tags `@daplab`.
-2. Bot adds :brain:, extracts fields, writes a `drafts` row, replies in-thread with
-   a preview and **Add event** / **Cancel**, removes :brain:.
-3. A click hits `/slack/actions`. The bot maps the Slack user to a login email via
-   `slackLinks`, checks `roles.yml`, and on success commits to `main` and replaces
-   the preview with a confirmation and a link to the event.
-4. Anyone may tag the bot; only editors may confirm. An unlinked editor gets an
-   ephemeral link to `/admin/slack-link`, where a Google sign-in records the pairing
-   — CAIL's flow, and worth keeping, because Slack emails are routinely department
-   addresses rather than UNI logins.
+**Flow.** Tag `@daplab` → bot reacts :brain:, extracts, inserts a `pending` event,
+replies in-thread with a preview and **Publish** / **Discard**. An editor's click
+publishes; a non-editor's submission stays pending for the queue. Slack emails are
+often department addresses rather than UNI logins, so keep CAIL's one-time linking
+flow: the bot DMs an hour-long link to `/admin/slack-link`, a Google sign-in there
+records the pairing.
 
 Worth copying from CAIL: matching an update against upcoming events and those from
 the last 60 days, so "room change for Silvia's talk" edits the right record and
-proposes only the changed rows.
+proposes only the changed rows. Deliberately out of v1: the general Q&A mode.
 
-Scope deliberately left out of v1: the "ask it anything" Q&A mode. It is the part of
-CAIL's bot that needs the whole people directory in context, and it earns its keep
-only once the event path is trusted.
+## 10. Migration
 
-## 9. Secrets
+One script, run once: read `_data/events.yml` and `_data/pubs.yml`, insert each row
+as `status: "published"` with `submittedBy: "migration"`, verify the export endpoint
+reproduces the files byte-for-byte modulo key order, then delete the originals and
+add the fetch step. Keeping the round-trip honest before deleting anything is the
+whole safety margin.
 
-All in Convex environment variables (512 max, 8 KiB each — ample):
+`scripts/sync_events.py` and `.github/workflows/sync.yml` — the defunct Google Sheet
+sync — get deleted in the same change. Worth noting its failure mode as a warning:
+a cron job against a service-account credential fails quietly and nobody notices
+until someone looks at the site. Hence §8's hard failure and fallback.
+
+## 11. What this trades away
+
+Being explicit, because the gains are obvious and the losses are not:
+
+- **Content leaves code review.** No PR, no diff, no `git revert` on a bad edit. The
+  nightly snapshot restores history but not the gate; `status: "pending"` is the
+  gate now.
+- **Editing by hand stops working.** Today anyone with repo access can fix a typo in
+  `_data/events.yml`. After this, that edit is silently overwritten by the next
+  build. The admin UI must be good enough to be the only path, and everyone needs to
+  know that.
+- **The build depends on a third party.** Mitigated by §8, not eliminated.
+- **A platform dependency.** If Convex is ever abandoned, the tables export to YAML
+  and the repo goes back to being the source of truth — a day of work, not a
+  rewrite. Keeping the field names identical to the YAML is what keeps that cheap.
+
+## 12. Secrets
 
 | Name | Purpose |
 |---|---|
-| `GITHUB_APP_ID`, `GITHUB_APP_PRIVATE_KEY`, `GITHUB_INSTALLATION_ID` | Repo writes |
+| `GITHUB_DISPATCH_TOKEN` | Triggering rebuilds |
 | `SLACK_SIGNING_SECRET` | Request verification |
 | `SLACK_BOT_TOKEN` | Posting replies |
 | `ANTHROPIC_API_KEY` | Field extraction |
-| `GOOGLE_CLIENT_ID` | Public; also in the page, and in `auth.config.ts` |
+| `GOOGLE_CLIENT_ID` | Public by design; also in the page and `auth.config.ts` |
 
-No secret reaches the browser. The Google client id is public by design.
+All in Convex environment variables. Nothing secret reaches the browser.
 
-## 10. Cost
+## 13. Cost
 
-Convex's free plan covers 1M function calls and 20 GB-hours of action compute per
-month; this workload is a few hundred calls a month. Anthropic usage is cents.
-Expected steady state: **$0**, with the Convex Pro plan ($25/mo) only if a custom
-domain on the OAuth consent screen is wanted.
+Convex's free plan covers 1M function calls, 20 GB-hours of action compute, 0.5 GB
+of database and 1 GB of file storage per month. This workload is a few hundred calls
+a month and a few megabytes of event photos. Anthropic usage is cents per
+announcement. Expected steady state: **$0**.
 
-Compare: CAIL's droplet is roughly $6–12/month plus patching, TLS renewal, uptime
-monitoring, and a sync cron. The tradeoff is a platform dependency — if Convex is
-ever abandoned, the Slack endpoints and admin UI move, but the content is all in
-git and the public site never depended on any of it.
+## 14. Build order
 
-## 11. Build order
+1. **Schema + export endpoints.** Tables, seeded by the migration script, serving
+   YAML that reproduces today's files exactly. Verifiable before anything else
+   exists.
+2. **Build-time fetch.** `deploy.yml` fetches instead of reading committed YAML;
+   snapshot fallback; delete the old files. At this point the site is Convex-backed
+   with no UI — content edits happen in the Convex dashboard.
+3. **Auth + roles.** Google OIDC, roles table, capability checks.
+4. **Submission forms and the review queue** at `/admin/`.
+5. **`repository_dispatch`** on publish, with debounce.
+6. **Slack bot.**
 
-1. **Verifier project + GitHub write path.** One function that appends a test event to
-   `_data/events.yml` on a branch, with comment preservation and conflict retry
-   proven. This is the load-bearing piece; everything else is UI on top.
-2. **Auth + roles.** `auth.config.ts`, `_data/roles.yml`, capability checks.
-3. **Event form** at `/admin/`, writing to `main`.
-4. **Publication form**, opening PRs. DOI/arXiv prefill after the basic form works.
-5. **Slack bot.** Manifest, endpoints, signature verification, dedupe, extraction,
-   buttons, account linking.
+Steps 1–2 are the risky part and come first; if the round-trip does not reproduce
+the current pages, nothing after it matters. Step 6 needs a Slack app and workspace;
+nothing before it does.
 
-Steps 1–4 are testable end to end locally against a scratch branch. Step 5 needs the
-Slack app and a real workspace; nothing before it does.
+## 15. Open questions
 
-## 12. Open questions
-
-- **Verifier: Worker or Convex** (§2) — decided by whether the Slack bot is coming.
-- **UI build step** — Option A or B in §7.
-- **Who administers the Google Cloud project** for the OAuth client. CAIL's lives in
-  a personal project; a lab-owned one survives people leaving.
+- **Admin UI build step** — plain ES modules or Vite (§6).
+- **Notifications** — how editors learn a submission is pending: email, Slack
+  channel, or a weekly digest.
+- **Who owns the Google Cloud project** for the OAuth client. A lab-owned project
+  survives people leaving; CAIL's lives in a personal one.
 - **Which Slack workspace**, and whether it permits app installs without an admin
   request.
-- **People and blog posts** — out of scope here. `_data/people.yml` has the same
-  shape as events and could get a form later; `_posts/` is Markdown with front
-  matter and is a different problem.
-- **`_data/roles.yml` is public** in a public repo. It lists lab members' emails,
-  which are already on the site, but it also advertises who can write. If that is
-  unwanted, the roles list moves into Convex and loses its git history.
+- **Startups** — leave in `_data/startups.yml` or migrate into `events` with a tag.
+- **People** — stays in the repo for now, but it is the same shape and the same
+  argument applies; a later phase could move it.
