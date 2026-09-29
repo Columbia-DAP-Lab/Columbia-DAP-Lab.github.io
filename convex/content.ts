@@ -1,7 +1,7 @@
 import { v } from "convex/values";
 import { query } from "./_generated/server";
 import type { QueryCtx } from "./_generated/server";
-import type { Doc } from "./_generated/dataModel";
+import type { Doc, Id } from "./_generated/dataModel";
 import schema from "./schema";
 
 /**
@@ -95,6 +95,19 @@ const seriesShape = v.object({
 
 const omitUndefined = <T extends Record<string, unknown>>(row: T): Partial<T> =>
   Object.fromEntries(Object.entries(row).filter(([, value]) => value !== undefined)) as Partial<T>;
+
+/**
+ * An author as printed on one paper: the canonical name, plus the asterisk when
+ * they contributed equally. The marker belongs to the authorship, not the name.
+ */
+const printedName = (
+  authorship: Doc<"publicationAuthors">,
+  names: Map<Id<"authors">, string>,
+): string | undefined => {
+  const name = names.get(authorship.authorId);
+  if (name === undefined) return undefined;
+  return authorship.equalContribution ? `${name}*` : name;
+};
 
 /**
  * Either a path to a file still in the repo, or a URL for one uploaded here.
@@ -201,9 +214,13 @@ export const publications = query({
         .take(LIMIT)
     ).sort((a, b) => b.pubDate.localeCompare(a.pubDate) || a._id.localeCompare(b._id));
 
+    // Author names live in `authors` now, so read them once for the whole export
+    // rather than re-reading the same row for every paper a person appears on.
+    const names = new Map((await ctx.db.query("authors").take(5000)).map((a) => [a._id, a.name]));
+
     const out = [];
     for (const pub of rows) {
-      const authors = await ctx.db
+      const authorships = await ctx.db
         .query("publicationAuthors")
         .withIndex("by_publicationId_and_position", (q) => q.eq("publicationId", pub._id))
         .take(200);
@@ -211,7 +228,10 @@ export const publications = query({
       out.push(
         omitUndefined({
           title: pub.title,
-          authors: authors.map((a) => a.name).join(", "),
+          authors: authorships
+            .map((a) => printedName(a, names))
+            .filter((name): name is string => name !== undefined)
+            .join(", "),
           conf: pub.venue,
           pub_date: pub.pubDate,
           url: pub.url,
@@ -269,6 +289,84 @@ export const people = query({
       );
     }
     return out;
+  },
+});
+
+/**
+ * One person's publications, newest first — what a profile page is for.
+ *
+ * Reads backwards through `publicationAuthors.by_authorId`, which is why authorship
+ * is a row per person rather than a name repeated on every paper. `position` and
+ * the paper's `authorCount` come back too, so a page can tell a first-author paper
+ * from one with ninety names on it.
+ *
+ * A person with no `authors` row has simply never been an author here; that is an
+ * empty list, not an error.
+ */
+export const publicationsByPerson = query({
+  args: { slug: v.string() },
+  returns: v.array(
+    v.object({
+      publication: publicationShape,
+      position: v.number(),
+      authorCount: v.number(),
+    }),
+  ),
+  handler: async (ctx, args) => {
+    const person = await ctx.db
+      .query("people")
+      .withIndex("by_slug", (q) => q.eq("slug", args.slug))
+      .unique();
+    if (!person) return [];
+
+    const authors = await ctx.db
+      .query("authors")
+      .withIndex("by_personId", (q) => q.eq("personId", person._id))
+      .take(10);
+
+    const names = new Map((await ctx.db.query("authors").take(5000)).map((a) => [a._id, a.name]));
+    const out = [];
+
+    for (const author of authors) {
+      const authorships = await ctx.db
+        .query("publicationAuthors")
+        .withIndex("by_authorId", (q) => q.eq("authorId", author._id))
+        .take(500);
+
+      for (const authorship of authorships) {
+        const pub = await ctx.db.get("publications", authorship.publicationId);
+        if (!pub || pub.status !== "published" || pub.hidden) continue;
+
+        const coauthors = await ctx.db
+          .query("publicationAuthors")
+          .withIndex("by_publicationId_and_position", (q) => q.eq("publicationId", pub._id))
+          .take(200);
+
+        out.push({
+          publication: omitUndefined({
+            title: pub.title,
+            authors: coauthors
+              .map((a) => printedName(a, names))
+              .filter((name): name is string => name !== undefined)
+              .join(", "),
+            conf: pub.venue,
+            pub_date: pub.pubDate,
+            url: pub.url,
+            tags: pub.topics,
+            awards: pub.awards.length > 0 ? pub.awards.join("; ") : undefined,
+            selected: pub.selected || undefined,
+          }),
+          position: authorship.position,
+          authorCount: pub.authorCount,
+        });
+      }
+    }
+
+    return out.sort(
+      (a, b) =>
+        (b.publication.pub_date ?? "").localeCompare(a.publication.pub_date ?? "") ||
+        (a.publication.title ?? "").localeCompare(b.publication.title ?? ""),
+    );
   },
 });
 

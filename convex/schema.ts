@@ -196,23 +196,62 @@ export default defineSchema({
     .searchIndex("search_title", { searchField: "title" }),
 
   /**
-   * Ordered authorship. One row per author per paper.
+   * Every person who has authored something, once. 419 rows for 645 authorships.
    *
-   * `position` is 0-based in printed order, so first/last authorship — the signal
-   * that separates a lab paper from a paper a lab member's name appears on — is a
-   * comparison against `publications.authorCount`, not a string search.
+   * Most authors are not lab members — coauthors elsewhere, students who have since
+   * left — so they cannot all live in `people`, which is the site's directory and
+   * carries photos, advisors and research areas. An author who *is* in the directory
+   * sets `personId`, and that link is what lets a profile page list their papers.
    *
-   * `personId` is set only for authors with a profile; everyone else is a name.
+   * Identity is `matchKey`: the name lowercased with accents and punctuation
+   * stripped. That merges "Silvia Sellán" with "Silvia Sellan" and little else —
+   * initials ("E. Wu") stay separate, and two different people who share a name
+   * would merge. Neither case occurs in the current data; both are worth knowing.
+   */
+  authors: defineTable({
+    /** Name as first seen in print; what the site renders. */
+    name: v.string(),
+    /** Normalized identity, unique across the table. */
+    matchKey: v.string(),
+    /** Set when this author is also in the directory. */
+    personId: v.optional(v.id("people")),
+    /**
+     * Denormalized count of `publicationAuthors` rows, so a listing can show or
+     * rank by paper count without reading every join row. Maintained in the same
+     * mutation as any authorship write.
+     */
+    publicationCount: v.number(),
+  })
+    .index("by_matchKey", ["matchKey"])
+    .index("by_personId", ["personId"])
+    .searchIndex("search_name", { searchField: "name" }),
+
+  /**
+   * Ordered authorship: which authors a paper has, and in what order.
+   *
+   * One row per author per paper, holding the two ids and the position — the name
+   * lives once, in `authors`. `position` is 0-based in printed order, so first or
+   * last authorship — the signal separating a lab paper from a paper a lab member's
+   * name appears on — is a comparison against `publications.authorCount`.
+   *
+   * Read forwards (`by_publicationId_and_position`) for a paper's author list, and
+   * backwards (`by_authorId`) for everything one person has written.
    */
   publicationAuthors: defineTable({
     publicationId: v.id("publications"),
+    authorId: v.id("authors"),
     position: v.number(),
-    /** Name as printed on the paper, which may differ from `people.name`. */
-    name: v.string(),
-    personId: v.optional(v.id("people")),
+    /**
+     * The asterisk in "Haonan Wang*" — equal contribution on this paper.
+     *
+     * It belongs here rather than in the name: it says something about one paper,
+     * not about the person, and keeping it in the name would make "Haonan Wang*"
+     * and "Haonan Wang" two different authors.
+     */
+    equalContribution: v.optional(v.boolean()),
   })
     .index("by_publicationId_and_position", ["publicationId", "position"])
-    .index("by_personId_and_publicationId", ["personId", "publicationId"]),
+    .index("by_authorId", ["authorId"]),
 
   /**
    * Event series: the filter buttons and series blurbs on /events.

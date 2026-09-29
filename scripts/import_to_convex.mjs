@@ -170,7 +170,11 @@ const seriesRows = yaml("_data/event_types.yml")
 const slugifyTag = (tag) =>
   String(tag).trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 
-const eventRows = [...yaml("_data/events.yml"), ...yaml("_data/startups.yml")].map((e) => ({
+// _data/startups.yml is gone: its talks are events tagged Entrepreneurship, and
+// _data/events.yml now holds them. Re-running this against the generated export is
+// expected — the import and the export are inverses, which is what makes re-running
+// safe after a schema change.
+const eventRows = yaml("_data/events.yml").map((e) => ({
   title: String(e.title).trim(),
   series: slugifyTag(e.tag),
   startDate: String(e.date).trim(),

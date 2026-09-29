@@ -42,7 +42,7 @@
   - automation
   title: 'OpenForgeRL: Train Harness-native Agents in Any Environment'
   url: https://arxiv.org/abs/2607.21557
-- authors: Alex Mathai, Shobini Iyer, Aleksandr Nogikh, Petros Maniatis, Franjo Ivancic,
+- authors: Alex Mathai, Shobini Iyer, Aleksandr Nogikh, Petros Maniatis, Franjo Ivančić,
     Junfeng Yang, Baishakhi Ray
   conf: arXiv 2026
   pub_date: '2026-07-20'
@@ -80,26 +80,6 @@
   - ai
   title: 'From Poisoned to Aware: Fostering Backdoor Self-Awareness in LLMs'
   url: https://arxiv.org/abs/2510.05169
-- authors: Chenxi Huang, Alex Mathai, Feiyang Yu, Aleksandr Nogikh, Petros Maniatis,
-    Franjo Ivancic, Eugene Wu, Kostis Kaffes, Junfeng Yang, Baishakhi Ray
-  conf: ICML 2026
-  pub_date: '2026-07-01'
-  tags:
-  - ai
-  - sys
-  - bench
-  - agent-debug
-  title: 'Outrunning LLM Cutoffs: A Live Kernel Crash Resolution Benchmark for All'
-  url: https://arxiv.org/abs/2602.02690
-- authors: Elaine Ang, Kostis Kaffes, Eugene Wu
-  conf: CAIS Workshop 2026
-  pub_date: '2026-07-01'
-  tags:
-  - ai
-  - sys
-  - bench
-  title: 'BranchBench: An Extensible Benchmark for Agentic Database Branching'
-  url: https://bauplanlabs.github.io/SAO-workshop/papers/37.pdf
 - authors: Haonan Wang*, Jiaxiang Liu*, Yurong Liu, Austin Senna Wijaya, Tianle Zhou,
     Eden Wu, Yijia Chen, Wanting You, Reya Vir, Daniela Pinto Veizaga, Grace Fan,
     Yusen Zhang, Juliana Freire, Eugene Wu
@@ -111,6 +91,17 @@
   - sys
   title: 'LAKEQA: An Exploratory QA Benchmark over a Million-Scale Data Lake'
   url: https://arxiv.org/abs/2606.10460
+- authors: Chenxi Huang, Alex Mathai, Feiyang Yu, Aleksandr Nogikh, Petros Maniatis,
+    Franjo Ivančić, Eugene Wu, Kostis Kaffes, Junfeng Yang, Baishakhi Ray
+  conf: ICML 2026
+  pub_date: '2026-07-01'
+  tags:
+  - ai
+  - sys
+  - bench
+  - agent-debug
+  title: 'Outrunning LLM Cutoffs: A Live Kernel Crash Resolution Benchmark for All'
+  url: https://arxiv.org/abs/2602.02690
 - authors: Maximillian Rossi, Prajwal Raghunath, Eugene Wu
   conf: AdaptFM Workshop at ICML 2026
   pub_date: '2026-07-01'
@@ -119,6 +110,15 @@
   - ai
   title: 'Latent Cache Flow: Model-to-Model Communication Without Text'
   url: https://arxiv.org/abs/2605.22863
+- authors: Elaine Ang, Kostis Kaffes, Eugene Wu
+  conf: CAIS Workshop 2026
+  pub_date: '2026-07-01'
+  tags:
+  - ai
+  - sys
+  - bench
+  title: 'BranchBench: An Extensible Benchmark for Agentic Database Branching'
+  url: https://bauplanlabs.github.io/SAO-workshop/papers/37.pdf
 - authors: Ved Sriraman, Peihan Liu, Daniel Hsu, Adam Block
   conf: 'ICML 2026 Workshop on Decision-Making from Offline Datasets to Online Adaptation:
     Black-Box Optimization to Reinforcement Learning'
@@ -229,15 +229,6 @@
   title: 'AutoRPA: Efficient GUI Automation through LLM-Driven Code Synthesis from
     Interactions'
   url: https://arxiv.org/abs/2605.21082
-- authors: Penghui Li, Hong Yau Chong, Yinzhi Cao, Junfeng Yang
-  conf: IEEE S&P 2026
-  pub_date: '2026-05-15'
-  tags:
-  - ai
-  - sys
-  title: Detecting Privilege Escalation in Polyglot Microservices via Agentic Program
-    Analysis
-  url: https://arxiv.org/abs/2605.15569
 - authors: Yunan Lu, Luigi Liu, Omar Yahia, Arpit Sharma, Zhou Yu
   conf: arXiv 2026
   pub_date: '2026-05-15'
@@ -247,6 +238,15 @@
   title: 'PQR: A Framework to Generate Diverse and Realistic User Queries that Elicit
     QA Agent Failures'
   url: https://arxiv.org/abs/2605.16551
+- authors: Penghui Li, Hong Yau Chong, Yinzhi Cao, Junfeng Yang
+  conf: IEEE S&P 2026
+  pub_date: '2026-05-15'
+  tags:
+  - ai
+  - sys
+  title: Detecting Privilege Escalation in Polyglot Microservices via Agentic Program
+    Analysis
+  url: https://arxiv.org/abs/2605.15569
 - authors: Baolin Peng, Wenlin Yao, Qianhui Wu, Hao Cheng, Xiao Yu, Rui Yang, Tao
     Ge, Alessandro Sordoni, Xingdi Yuan, Yelong Shen, Pengcheng He, Tong Zhang, Zhou
     Yu, Jianfeng Gao
@@ -285,6 +285,16 @@
   title: 'ScarfBench: A Benchmark for Cross-Framework Application Migration in Enterprise
     Java'
   url: https://arxiv.org/abs/2605.06754
+- authors: Sivaraman Balakrishnan, Nika Haghtalab, Daniel Hsu, Brian Lee, Eric Zhao
+  conf: AISTATS 2026
+  pub_date: '2026-05-02'
+  tags:
+  - ai
+  - omniprediction
+  - multi-group
+  - multiobjective
+  title: 'Panprediction: optimal predictions for any downstream task and loss'
+  url: https://arxiv.org/abs/2510.27638
 - authors: Avrim Blum, Daniel Hsu, Cyrus Rashtchian, Donya Saless
   conf: AISTATS 2026
   pub_date: '2026-05-02'
@@ -296,16 +306,6 @@
   title: 'Prior makes it possible: from sublinear graph algorithms to LLM test-time
     methods'
   url: https://arxiv.org/abs/2510.16609
-- authors: Sivaraman Balakrishnan, Nika Haghtalab, Daniel Hsu, Brian Lee, Eric Zhao
-  conf: AISTATS 2026
-  pub_date: '2026-05-02'
-  tags:
-  - ai
-  - omniprediction
-  - multi-group
-  - multiobjective
-  title: 'Panprediction: optimal predictions for any downstream task and loss'
-  url: https://arxiv.org/abs/2510.27638
 - authors: Simin Chen, Jinjun Peng, Yixin He, Junfeng Yang, Baishakhi Ray
   conf: IEEE S&P 2026
   pub_date: '2026-05-01'
@@ -334,16 +334,6 @@
   - bench
   title: 'BranchBench: Aligning Database Branching with Agentic Demands'
   url: https://arxiv.org/abs/2604.17180
-- authors: Yancheng Cao, Yishu Ji, Chris Yue Fu, Sahiti Dharmavaram, Meghan Turchioe,
-    Natalie C Benda, Lena Mamykina, Yuling Sun, Xuhai Orson Xu
-  conf: CHI 2026
-  pub_date: '2026-04-13'
-  tags:
-  - ai
-  - hac
-  title: 'More than Decision Support: Exploring Patients'' Longitudinal Usage of Large
-    Language Models in Real-World Healthcare-Seeking Journeys'
-  url: https://arxiv.org/abs/2602.14733
 - authors: Ruishi Zou, Shiyu Xu, Margaret E Morris, Jihan Ryu, Timothy D. Becker,
     Nicholas Allen, Anne Marie Albano, Randy Auerbach, Dan Adler, Varun Mishra, Lace
     Padilla, Dakuo Wang, Ryan Sultan, Xuhai Orson Xu
@@ -357,6 +347,16 @@
   title: 'MIND: Empowering Mental Health Clinicians with Multimodal Data Insights
     through a Narrative Dashboard'
   url: https://arxiv.org/abs/2601.14641
+- authors: Yancheng Cao, Yishu Ji, Chris Yue Fu, Sahiti Dharmavaram, Meghan Turchioe,
+    Natalie C Benda, Lena Mamykina, Yuling Sun, Xuhai Orson Xu
+  conf: CHI 2026
+  pub_date: '2026-04-13'
+  tags:
+  - ai
+  - hac
+  title: 'More than Decision Support: Exploring Patients'' Longitudinal Usage of Large
+    Language Models in Real-World Healthcare-Seeking Journeys'
+  url: https://arxiv.org/abs/2602.14733
 - authors: Nikos Pagonas, Matthew Lou, Tianyi Peng, Dan Rubenstein, Kostis Kaffes
   conf: arXiv 2026
   pub_date: '2026-04-09'
@@ -453,6 +453,14 @@
   - agent-debug
   title: 'Please Don''t Kill My Vibe: Empowering Agents with Data Flow Control'
   url: https://www.dropbox.com/scl/fi/iz50niican9apygkpx5en/dfc-cidr26-submitted.pdf?rlkey=24fc47k659xixlevtkkrp4nx0&dl=0
+- authors: Tzu-Ching Yen, Andrew Wei Tung Siah, Haozhe Chen, C. Daniel Guetta, Tianyi
+    Peng, Hongseok Namkoong
+  conf: NeurIPS 2025
+  pub_date: '2025-12-07'
+  tags:
+  - ai
+  title: 'Data Mixture Optimization: A Multi-Fidelity Multi-Scale Bayesian Framework'
+  url: https://arxiv.org/abs/2503.21023
 - authors: Wenxin Zhang, Yueying Li, Ciamac C. Moallemi, Tianyi Peng
   conf: NeurIPS 2025
   pub_date: '2025-12-07'
@@ -461,15 +469,22 @@
   - sys
   title: Tail-Optimized Caching for LLM Inference
   url: https://arxiv.org/abs/2510.15152
-- authors: Georgios Liargkovas, Vahab Jabrayilov, Hubertus Franke, Kostis Kaffes
-  conf: NeurIPS 2025
+- authors: Naimeng Ye, Xiao Yu, Ruize Xu, Tianyi Peng, Zhou Yu
+  conf: LAw Workshop at NeurIPS 2025
   pub_date: '2025-12-07'
   tags:
   - ai
-  - sys
-  - os
-  title: LLM Agents for Always-On Operating System Tuning
-  url: https://liargkovas.com/assets/pdf/Liargkovas_ML4Sys_NeurIPS25.pdf
+  title: 'Agents for Web Testing: A Case Study in the Wild'
+  url: https://arxiv.org/abs/2509.05197
+- authors: Sahar Omidi Shayegan, Joshua Meyer, Victor Shih, Sebastian Sosa, Tianyi
+    Peng, Kostis Kaffes, Eugene Wu, Andi Partovi, Mehdi Jamei
+  conf: NeurIPS 2025 (SEA Workshop)
+  pub_date: '2025-12-07'
+  tags:
+  - ai
+  - simulation
+  title: 'RAISE: Reliable Agent Improvement via Simulated Experience'
+  url: https://openreview.net/forum?id=53oRwdZe6k
 - authors: Priyank Agrawal, Shipra Agrawal, Azmat Azati
   conf: NeurIPS 2025
   pub_date: '2025-12-07'
@@ -490,31 +505,6 @@
   - theory
   title: Multi-Agent Markov Entanglement
   url: https://arxiv.org/abs/2506.02385
-- authors: Sahar Omidi Shayegan, Joshua Meyer, Victor Shih, Sebastian Sosa, Tianyi
-    Peng, Kostis Kaffes, Eugene Wu, Andi Partovi, Mehdi Jamei
-  conf: NeurIPS 2025 (SEA Workshop)
-  pub_date: '2025-12-07'
-  tags:
-  - ai
-  - simulation
-  title: 'RAISE: Reliable Agent Improvement via Simulated Experience'
-  url: https://openreview.net/forum?id=53oRwdZe6k
-- authors: Tzu-Ching Yen, Andrew Wei Tung Siah, Haozhe Chen, C. Daniel Guetta, Tianyi
-    Peng, Hongseok Namkoong
-  conf: NeurIPS 2025
-  pub_date: '2025-12-07'
-  tags:
-  - ai
-  title: 'Data Mixture Optimization: A Multi-Fidelity Multi-Scale Bayesian Framework'
-  url: https://arxiv.org/abs/2503.21023
-- authors: Ang Li, Haozhe Chen, Hongseok Namkoong, Tianyi Peng
-  conf: NeurIPS 2025 Position Paper
-  pub_date: '2025-12-07'
-  tags:
-  - ai
-  - digi-twin
-  title: LLM Generated Persona is a Promise with a Catch
-  url: https://arxiv.org/abs/2503.16527
 - authors: Xinyue Zhu*, Binghao Huang*, Yunzhu Li
   conf: NeurIPS 2025
   pub_date: '2025-12-07'
@@ -525,13 +515,23 @@
   title: 'Touch in the Wild: Learning Fine-Grained Manipulation with a Portable Visuo-Tactile
     Gripper'
   url: https://arxiv.org/abs/2507.15062
-- authors: Naimeng Ye, Xiao Yu, Ruize Xu, Tianyi Peng, Zhou Yu
-  conf: LAw Workshop at NeurIPS 2025
+- authors: Ang Li, Haozhe Chen, Hongseok Namkoong, Tianyi Peng
+  conf: NeurIPS 2025 Position Paper
   pub_date: '2025-12-07'
   tags:
   - ai
-  title: 'Agents for Web Testing: A Case Study in the Wild'
-  url: https://arxiv.org/abs/2509.05197
+  - digi-twin
+  title: LLM Generated Persona is a Promise with a Catch
+  url: https://arxiv.org/abs/2503.16527
+- authors: Georgios Liargkovas, Vahab Jabrayilov, Hubertus Franke, Kostis Kaffes
+  conf: NeurIPS 2025
+  pub_date: '2025-12-07'
+  tags:
+  - ai
+  - sys
+  - os
+  title: LLM Agents for Always-On Operating System Tuning
+  url: https://liargkovas.com/assets/pdf/Liargkovas_ML4Sys_NeurIPS25.pdf
 - authors: Jingwen Liu, Hantao Yu, Clayton Sanford, Alexandr Andoni, Daniel Hsu
   conf: NeurIPS 2025
   pub_date: '2025-12-02'
@@ -551,6 +551,30 @@
   - hac
   title: A Decade of Systems for Human Data Interaction
   url: https://arxiv.org/abs/2511.15585
+- authors: Jiakai Xu, Tianle Zhou, Eugene Wu, Kostis Kaffes
+  conf: SAA Workshop at SOSP 2025
+  pub_date: '2025-10-13'
+  tags:
+  - ai
+  - sys
+  title: Toward Systems Foundations for Agentic Exploration
+  url: https://arxiv.org/abs/2510.05556
+- authors: Georgios Liargkovas, Prabhpreet Singh Sodhi, Kostis Kaffes
+  conf: PACMI Workshop at SOSP 2025
+  pub_date: '2025-10-13'
+  tags:
+  - ai
+  - sys
+  title: 'Set It and Forget It: Zero-Mod ML Magic for Linux Tuning'
+  url: https://dl.acm.org/doi/10.1145/3766882.3767175
+- authors: Nikos Pagonas, Yeounoh Chung, Kostis Kaffes, Arvind Krishnamurthy
+  conf: SAA Workshop at SOSP 2025
+  pub_date: '2025-10-13'
+  tags:
+  - ai
+  - sys
+  title: 'Cortex: Workflow-Aware Resource Pooling and Scheduling for Agentic Serving'
+  url: https://saa2025.github.io/papers/Cortex%20-%20Workflow-Aware%20Resource%20Pooling%20and%20Scheduling%20for%20Agentic%20Serving.pdf
 - authors: Ryan Shea, Yunan Lu, Liang Qiu, Zhou Yu
   conf: EACL 2026
   pub_date: '2025-10-13'
@@ -560,30 +584,6 @@
   title: 'SAGE: A Top-Down Bottom-Up Knowledge-Grounded User Simulator for Multi-turn
     AGent Evaluation'
   url: https://arxiv.org/abs/2510.11997
-- authors: Jiakai Xu, Tianle Zhou, Eugene Wu, Kostis Kaffes
-  conf: SAA Workshop at SOSP 2025
-  pub_date: '2025-10-13'
-  tags:
-  - ai
-  - sys
-  title: Toward Systems Foundations for Agentic Exploration
-  url: https://arxiv.org/abs/2510.05556
-- authors: Nikos Pagonas, Yeounoh Chung, Kostis Kaffes, Arvind Krishnamurthy
-  conf: SAA Workshop at SOSP 2025
-  pub_date: '2025-10-13'
-  tags:
-  - ai
-  - sys
-  title: 'Cortex: Workflow-Aware Resource Pooling and Scheduling for Agentic Serving'
-  url: https://saa2025.github.io/papers/Cortex%20-%20Workflow-Aware%20Resource%20Pooling%20and%20Scheduling%20for%20Agentic%20Serving.pdf
-- authors: Georgios Liargkovas, Prabhpreet Singh Sodhi, Kostis Kaffes
-  conf: PACMI Workshop at SOSP 2025
-  pub_date: '2025-10-13'
-  tags:
-  - ai
-  - sys
-  title: 'Set It and Forget It: Zero-Mod ML Magic for Linux Tuning'
-  url: https://dl.acm.org/doi/10.1145/3766882.3767175
 - authors: Xiao Yu, Baolin Peng, Michel Galley, Hao Cheng, Qianhui Wu, Janardhan Kulkarni,
     Suman Nath, Zhou Yu, Jianfeng Gao
   conf: ICLR 2026
@@ -593,17 +593,6 @@
   - hac
   title: 'Dyna-Mind: Learning to Simulate from Experience for Better AI Agents'
   url: https://proceedings.iclr.cc/paper_files/paper/2026/file/372bd0e47f2d5bceca7e300e1446849c-Paper-Conference.pdf
-- authors: Andreas Kellas, Neophytos Christou, Wenxin Jiang, Penghui Li, Laurent Simon,
-    Yaniv David, Vasileios P. Kemerlis, James C. Davis, Junfeng Yang
-  comment: Distinguished Artifact Award
-  conf: CCS 2025
-  pub_date: '2025-10-01'
-  tags:
-  - ai
-  - safety
-  - security
-  title: 'PickleBall: Secure Deserialization of Pickle-based Machine Learning Models'
-  url: https://arxiv.org/abs/2508.15987
 - authors: Wei Hao, Van Tran, Vincent Rideout, Zixi Wang, AnMei Dasbach-Prisk, M.
     H. Afifi, Junfeng Yang, Ethan Katz-Bassett, Grant Ho, Asaf Cidon
   conf: IMC 2025
@@ -615,6 +604,17 @@
   title: Do Spammers Dream of Electric Sheep? Characterizing the Prevalence of LLM-Generated
     Malicious Emails
   url: https://www.cs.columbia.edu/~junfeng/papers/ai-email-imc25.pdf
+- authors: Andreas Kellas, Neophytos Christou, Wenxin Jiang, Penghui Li, Laurent Simon,
+    Yaniv David, Vasileios P. Kemerlis, James C. Davis, Junfeng Yang
+  comment: Distinguished Artifact Award
+  conf: CCS 2025
+  pub_date: '2025-10-01'
+  tags:
+  - ai
+  - safety
+  - security
+  title: 'PickleBall: Secure Deserialization of Pickle-based Machine Learning Models'
+  url: https://arxiv.org/abs/2508.15987
 - authors: A. Ali Heydari, Ken Gu, Vidya Srinivas, Hong Yu, Zhihan Zhang, Yuwei Zhang,
     Akshay Paruchuri, Qian He, Hamid Palangi, Nova Hammerquist, Ahmed A. Metwally,
     Brent Winslow, Yubin Kim, Kumar Ayush, Yuzhe Yang, Girish Narayanswamy, Maxwell
@@ -642,6 +642,14 @@
   title: 'Suna: Scalable Causal Confounder Discovery over Relational Data'
   url: https://github.com/cudbg/Suna/blob/main/Suna_tech_report.pdf
   website: https://github.com/cudbg/Suna
+- authors: Ran Li, Wei Hao, Weiliang Zhao, Junfeng Yang, Chengzhi Mao
+  conf: ACL 2025
+  pub_date: '2025-07-01'
+  tags:
+  - ai
+  - safety
+  title: 'Learning to Rewrite: Generalized LLM-Generated Text Detection'
+  url: https://arxiv.org/abs/2408.04237
 - authors: Weichen Li, Albert Jan, Baishakhi Ray, Chengzhi Mao, Junfeng Yang, Kexin
     Pei
   conf: ICML 2025
@@ -652,14 +660,6 @@
   - automation
   title: 'EditLord: Learning Code Transformation Rules for Code Editing'
   url: https://arxiv.org/abs/2504.15284
-- authors: Ran Li, Wei Hao, Weiliang Zhao, Junfeng Yang, Chengzhi Mao
-  conf: ACL 2025
-  pub_date: '2025-07-01'
-  tags:
-  - ai
-  - safety
-  title: 'Learning to Rewrite: Generalized LLM-Generated Text Detection'
-  url: https://arxiv.org/abs/2408.04237
 - authors: Akshit Kumar, Tianyi Peng, Yuhang Wu, Assaf Zeevi
   conf: Winter Simulation Conference 2025
   pub_date: '2025-06-30'
@@ -668,16 +668,6 @@
   title: 'Performance of LLMs on Stochastic Modeling Operations Research Problems:
     From Theory to Practice.'
   url: https://arxiv.org/abs/2506.23924
-- authors: Lampros Flokas, Jeffrey Cao, Yujian Xu, Eugene Wu, Xu Chu, Cong Yu
-  comment: Best Paper Award!
-  conf: DEEM Workshop at SIGMOD 2025
-  pub_date: '2025-06-22'
-  tags:
-  - sys
-  - ai
-  - automation
-  title: Towards a Framework for Optimizing Hierarchical Text Segmentation using LLMs
-  url: https://www.dropbox.com/scl/fi/cb9y2a95ihjh9kap36w93/celonis-deem25-hierseg-submitted.pdf?rlkey=k9op1ydiizm0bxsrfbbr3f5h4&dl=0
 - authors: Jeffery Cao, Lampros Flokas, Yujian Xu, Eugene Wu, Xu Chu, Cong Yu
   comment: Best Industry Demo Award!
   conf: SIGMOD Demo 2025
@@ -690,6 +680,16 @@
   title: 'Prompt Editor: A Taxonomy-driven System for Guided LLM Prompt Development
     in Enterprise Settings'
   url: https://www.dropbox.com/scl/fi/klg9p01u0sq3xgtxo4nrc/celonis-sigmoddemo25-prompteditor-submitted.pdf?rlkey=n699156fi3t1tcqmatvfy28s3&dl=0
+- authors: Lampros Flokas, Jeffrey Cao, Yujian Xu, Eugene Wu, Xu Chu, Cong Yu
+  comment: Best Paper Award!
+  conf: DEEM Workshop at SIGMOD 2025
+  pub_date: '2025-06-22'
+  tags:
+  - sys
+  - ai
+  - automation
+  title: Towards a Framework for Optimizing Hierarchical Text Segmentation using LLMs
+  url: https://www.dropbox.com/scl/fi/cb9y2a95ihjh9kap36w93/celonis-deem25-hierseg-submitted.pdf?rlkey=k9op1ydiizm0bxsrfbbr3f5h4&dl=0
 - authors: Nikos Pagonas, Haonan Wang, Jiaxiang Liu, Tianle Zhou, Deepak Dastrala,
     Raman Jatkar, Anirudh Sivaraman, Zhou Yu, Kostis Kaffes, Eugene Wu
   conf: arXiv 2025

@@ -31,6 +31,7 @@ const matchKey = (name: string) =>
 const CONTENT_TABLES = [
   "news",
   "publicationAuthors",
+  "authors",
   "publications",
   "eventSpeakers",
   "events",
@@ -230,6 +231,50 @@ const peopleByName = async (ctx: MutationCtx) => {
   return new Map(rows.map((p) => [matchKey(p.name), p._id]));
 };
 
+/** How many non-ASCII characters a spelling carries, used to pick between variants. */
+const diacritics = (name: string) => name.replace(/[\x00-\x7F]/g, "").length;
+
+/**
+ * Find or create the author row for a printed name, and count the authorship.
+ *
+ * Publications arrive in batches, so the lookup goes through the index rather than
+ * a map built once — an author seen in an earlier batch must be found, not
+ * duplicated.
+ *
+ * Where two papers spell the same person differently, the accented spelling wins:
+ * the data has both "Franjo Ivancic" and "Franjo Ivančić", and first-seen-wins would
+ * pick by publication order rather than by which is right.
+ */
+const upsertAuthor = async (
+  ctx: MutationCtx,
+  name: string,
+  people: Map<string, Id<"people">>,
+): Promise<Id<"authors">> => {
+  const printed = name.trim();
+  const key = matchKey(printed);
+  const existing = await ctx.db
+    .query("authors")
+    .withIndex("by_matchKey", (q) => q.eq("matchKey", key))
+    .unique();
+
+  if (existing) {
+    await ctx.db.patch("authors", existing._id, {
+      publicationCount: existing.publicationCount + 1,
+      // A profile added after this author was first seen still gets linked.
+      personId: existing.personId ?? people.get(key),
+      name: diacritics(printed) > diacritics(existing.name) ? printed : existing.name,
+    });
+    return existing._id;
+  }
+
+  return await ctx.db.insert("authors", {
+    name: printed,
+    matchKey: key,
+    personId: people.get(key),
+    publicationCount: 1,
+  });
+};
+
 /** Import publications and their ordered authors. Called in batches. */
 export const importPublications = internalMutation({
   args: {
@@ -286,11 +331,21 @@ export const importPublications = internalMutation({
         ...submitted(now),
       });
 
-      for (const [position, name] of pub.authors.entries()) {
-        const personId = people.get(matchKey(name));
-        await ctx.db.insert("publicationAuthors", { publicationId, position, name, personId });
+      for (const [position, printed] of pub.authors.entries()) {
+        // A trailing asterisk marks equal contribution on this paper, not a
+        // different person, so it moves to the authorship row.
+        const equalContribution = printed.trim().endsWith("*");
+        const name = printed.replace(/\*+\s*$/, "").trim();
+
+        const authorId = await upsertAuthor(ctx, name, people);
+        await ctx.db.insert("publicationAuthors", {
+          publicationId,
+          authorId,
+          position,
+          equalContribution: equalContribution ? true : undefined,
+        });
         authorRows++;
-        if (personId) authorsLinked++;
+        if (people.has(matchKey(name))) authorsLinked++;
       }
     }
 

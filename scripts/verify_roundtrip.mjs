@@ -96,12 +96,8 @@ const compare = (name, originals, exports_, key, ignore = []) => {
   failures += missing.length + added.length + changed.length;
 };
 
-compare(
-  "events",
-  [...yaml("_data/events.yml"), ...yaml("_data/startups.yml")],
-  exported.events,
-  (e) => `${e.date}|${e.title}`,
-);
+// _data/startups.yml is gone; those talks are events tagged Entrepreneurship.
+compare("events", yaml("_data/events.yml"), exported.events, (e) => `${e.date}|${e.title}`);
 compare("publications", yaml("_data/pubs.yml"), exported.pubs, (p) => p.title, ["tags"]);
 compare("people", yaml("_data/people.yml"), exported.people, (p) => p.name);
 compare("news", yaml("_data/news.yml"), exported.news, (n) => n.title.trim());
