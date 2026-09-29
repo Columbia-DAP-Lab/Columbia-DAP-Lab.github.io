@@ -294,6 +294,28 @@ export default defineSchema({
     .index("by_personId", ["personId"]),
 
   /**
+   * Homepage and /news items.
+   *
+   * `sortOrder` preserves file order, which is not date order: index.html filters
+   * `where: featured, true` and renders the list as written, so the homepage
+   * ordering is a hand-made editorial choice. /news sorts by date itself.
+   */
+  news: defineTable({
+    /** Markdown, rendered inline — often a single link. */
+    title: v.string(),
+    /** Markdown summary, shown on the homepage and as the /news fallback. */
+    content: v.string(),
+    /** Longer Markdown shown on /news in place of `content`. */
+    details: v.optional(v.string()),
+    featured: v.boolean(),
+    date: v.optional(v.string()), // YYYY-MM-DD
+    sortOrder: v.number(),
+    ...submission,
+  })
+    .index("by_status_and_sortOrder", ["status", "sortOrder"])
+    .index("by_status_and_date", ["status", "date"]),
+
+  /**
    * Who may publish. Capability-based, so an event editor need not be an admin and
    * an outside collaborator can hold one grant without a profile.
    *
@@ -328,6 +350,7 @@ export default defineSchema({
       v.literal("publications"),
       v.literal("people"),
       v.literal("eventSeries"),
+      v.literal("news"),
       v.literal("topics"),
       v.literal("fields"),
       v.literal("roles"),

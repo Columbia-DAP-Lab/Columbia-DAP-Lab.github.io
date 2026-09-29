@@ -185,6 +185,21 @@ const eventRows = [...yaml("_data/events.yml"), ...yaml("_data/startups.yml")].m
   speakers: parseSpeakers(e.who, { url: clean(e.wholink), role: clean(e.role), bio: clean(e.bio) }),
 }));
 
+// ----------------------------------------------------------------- news
+
+/**
+ * Small and hand-ordered, so this passes the rows through unchanged. It exists
+ * only because `reset` clears the news table too — without it, re-running this
+ * script would quietly drop the news.
+ */
+const newsRows = yaml("_data/news.yml").map((n) => ({
+  title: String(n.title).trim(),
+  content: String(n.content ?? "").trim(),
+  details: clean(n.details),
+  featured: bool(n.featured),
+  date: n.date ? String(n.date) : undefined,
+}));
+
 // ----------------------------------------------------------------- run
 
 const unknownSeries = [...new Set(eventRows.map((e) => e.series))].filter(
@@ -195,6 +210,7 @@ console.log(`people        ${peopleRows.length}`);
 console.log(`publications  ${pubRows.length}  (${pubRows.reduce((n, p) => n + p.authors.length, 0)} author rows)`);
 console.log(`events        ${eventRows.length}  (${eventRows.reduce((n, e) => n + e.speakers.length, 0)} speaker rows)`);
 console.log(`series        ${seriesRows.length}`);
+console.log(`news          ${newsRows.length}`);
 if (unknownSeries.length > 0) {
   console.error(`\nevents reference series not in event_types.yml: ${unknownSeries.join(", ")}`);
   process.exit(1);
@@ -223,4 +239,5 @@ for (const batch of chunk(pubRows, 20)) {
 for (const batch of chunk(eventRows, 20)) {
   console.log("importing events…", run("migrate:importEvents", { events: batch }));
 }
+console.log("importing news…", run("migrate:importNews", { news: newsRows }));
 console.log("\ncounts:", run("migrate:counts", {}));

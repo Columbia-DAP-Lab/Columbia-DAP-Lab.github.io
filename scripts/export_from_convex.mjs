@@ -53,6 +53,7 @@ for (const [file, fn, table] of [
   ["events.yml", "content:events", "events"],
   ["pubs.yml", "content:publications", "publications"],
   ["people.yml", "content:people", "people"],
+  ["news.yml", "content:news", "news"],
 ]) {
   const rows = query(fn);
   writeFileSync(join(outDir, file), toYaml(rows, GENERATED(table)));

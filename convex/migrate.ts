@@ -29,6 +29,7 @@ const matchKey = (name: string) =>
     .trim();
 
 const CONTENT_TABLES = [
+  "news",
   "publicationAuthors",
   "publications",
   "eventSpeakers",
@@ -365,6 +366,31 @@ export const importEvents = internalMutation({
     }
 
     return { events: args.events.length, speakerRows, speakersLinked };
+  },
+});
+
+/**
+ * Import news items. Small and hand-ordered, so the rows are passed in verbatim
+ * and `sortOrder` is their position in _data/news.yml.
+ */
+export const importNews = internalMutation({
+  args: {
+    news: v.array(
+      v.object({
+        title: v.string(),
+        content: v.string(),
+        details: v.optional(v.string()),
+        featured: v.boolean(),
+        date: v.optional(v.string()),
+      }),
+    ),
+  },
+  handler: async (ctx, args) => {
+    const now = Date.now();
+    for (const [sortOrder, item] of args.news.entries()) {
+      await ctx.db.insert("news", { ...item, sortOrder, ...submitted(now) });
+    }
+    return { news: args.news.length };
   },
 });
 

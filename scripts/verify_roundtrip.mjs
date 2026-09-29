@@ -24,6 +24,7 @@ const exported =
         events: run("content:events"),
         pubs: run("content:publications"),
         people: run("content:people"),
+        news: run("content:news"),
       };
 
 function run(fn) {
@@ -103,6 +104,7 @@ compare(
 );
 compare("publications", yaml("_data/pubs.yml"), exported.pubs, (p) => p.title, ["tags"]);
 compare("people", yaml("_data/people.yml"), exported.people, (p) => p.name);
+compare("news", yaml("_data/news.yml"), exported.news, (n) => n.title.trim());
 
 console.log(
   `\npublication tags are excluded from the comparison — canonicalizing them is the point;\n` +

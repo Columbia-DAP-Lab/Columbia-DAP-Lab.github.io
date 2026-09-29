@@ -176,6 +176,25 @@ export const people = query({
   },
 });
 
+export const news = query({
+  args: {},
+  handler: async (ctx) => {
+    const rows = await ctx.db
+      .query("news")
+      .withIndex("by_status_and_sortOrder", (q) => q.eq("status", "published"))
+      .take(LIMIT);
+    return rows.map((item) =>
+      omitUndefined({
+        title: item.title,
+        content: item.content,
+        details: item.details,
+        featured: item.featured,
+        date: item.date,
+      }),
+    );
+  },
+});
+
 /** The filter buttons and series blurbs on /events. */
 export const eventSeries = query({
   args: {},
