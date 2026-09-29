@@ -101,59 +101,34 @@ rebuilds.
 |---|---|---|
 | Events | Convex | Changes weekly, submitted by many people |
 | Publications | Convex | Same |
-| People | Repo (`_data/people.yml`) | Changes rarely; `pubs.html` needs it at build time to bold lab authors |
-| Startups | Repo (`_data/startups.yml`) | Small, concatenated into the events page; migrate later if it earns it |
+| People | Convex | Papers and talks reference person records, so the directory belongs in the same place; `pubs.html` still gets it at build time through the export |
+| Startups | Convex (`events`) | Same shape as an event under the Entrepreneurship series |
 | Blog posts | Repo (`_posts/`) | Markdown with front matter — a different problem |
 | Projects, benchmarks | Repo (collections) | Same |
 | Layouts, includes, CSS | Repo | It is the site |
 
 ### Tables
 
-```ts
-events: defineTable({
-  title: v.string(),
-  tag: v.string(),              // must match _data/event_types.yml slugs
-  date: v.string(),             // YYYY-MM-DD
-  endDate: v.optional(v.string()),
-  time: v.optional(v.string()),
-  where: v.optional(v.string()),
-  who: v.optional(v.string()),
-  wholink: v.optional(v.string()),
-  link: v.optional(v.string()),
-  description: v.optional(v.string()),
-  bio: v.optional(v.string()),
-  image: v.optional(v.string()),   // storage id or repo path
-  video: v.optional(v.string()),
-  slides: v.optional(v.string()),
-  status: v.union(v.literal("pending"), v.literal("published"), v.literal("rejected")),
-  submittedBy: v.string(),         // email
-  submittedAt: v.number(),
-  publishedBy: v.optional(v.string()),
-}).index("by_status_date", ["status", "date"]),
+The schema lives in [`convex/schema.ts`](../convex/schema.ts) (added in #100). Rather
+than mirroring the YAML files field for field, it normalizes three things the YAML
+cannot express:
 
-publications: defineTable({
-  title: v.string(),
-  authors: v.string(),          // comma-separated, as pubs.html expects
-  conf: v.string(),
-  pubDate: v.string(),
-  url: v.optional(v.string()),
-  tags: v.array(v.string()),    // controlled vocabulary: ai, sys, ...
-  slides: v.optional(v.string()),
-  code: v.optional(v.string()),
-  comments: v.optional(v.string()),
-  selected: v.optional(v.boolean()),
-  short: v.optional(v.boolean()),
-  key: v.optional(v.string()),
-  citations: v.optional(v.number()),
-  rate: v.optional(v.string()),
-  hide: v.optional(v.boolean()),
-  status: ...,  submittedBy: ...,  submittedAt: ...,
-}).index("by_status_date", ["status", "pubDate"]),
-```
+- **Authors and speakers are rows** (`publicationAuthors`, `eventSpeakers`), not
+  comma-separated strings, so a person links to their papers and talks. Author
+  `position` plus a denormalized `publications.authorCount` distinguishes a lab
+  paper from one a lab member's name appears on.
+- **Tags are a vocabulary table** with `aliasOf`, so the drift in `pubs.yml`
+  (`sys`/`system`/`systems`, `sec`/`security`, `agent`/`agents`) collapses to
+  canonical slugs, and `field_colors.yml`'s badge classes fold in.
+- **Speaker bios live on the speaker**, where today the same bio is repeated on
+  every event that person appears at.
 
-Field names and shapes follow the YAML the templates already read, so the export in
-§5 is a rename, not a transformation. `authors` stays a single comma-separated
-string because `pubs.html` splits it itself.
+`_data/startups.yml` folds into `events` under the Entrepreneurship series,
+`_data/event_types.yml` becomes `eventSeries`, and a `revisions` table records who
+changed what — the `git log` answer this move otherwise costs.
+
+Field names track the YAML the templates read wherever there is no reason to
+diverge, so the export in §5 stays a rename rather than a transformation.
 
 ## 5. Publishing endpoints
 
