@@ -40,4 +40,4 @@ ug_ms_application_url: "https://forms.gle/6FkeeJv43arrbN1n9"
 #   google_client_id the deployment's GOOGLE_CLIENT_ID (npx convex env get)
 admin:
   convex_url: "https://agreeable-stork-479.convex.cloud"
-  google_client_id: "851564657364-j2jgceoiq06g67pbtci3p55cod07s869.apps.googleusercontent.com"
+  google_client_id: "814853589863-qarb0aar2q4l04nogei9hvam6e2f3rdb.apps.googleusercontent.com"
