@@ -9,12 +9,20 @@ title: Events
 
 {%- comment -%}
 An event counts as upcoming until its end_date (for multi-week things like
-courses), falling back to its date when no end_date is given.
+workshops), falling back to its date when no end_date is given. Courses are the
+exception: they run a whole semester, so honoring their end_date would pin them
+to the top of Upcoming Events all term. A course counts as upcoming only until
+it starts.
 {%- endcomment -%}
 {% assign upcoming = false %}
 {% assign past = false %}
 {% for event in events %}
-  {% assign until = event.end_date | default: event.date %}
+  {% assign tag_slug = event.tag | slugify %}
+  {% if tag_slug == 'course' %}
+    {% assign until = event.date %}
+  {% else %}
+    {% assign until = event.end_date | default: event.date %}
+  {% endif %}
   {% if until >= today %}
     {% assign upcoming = true %}
   {% else %}
@@ -60,7 +68,12 @@ courses), falling back to its date when no end_date is given.
     <div class="event-section mb-5">
       <h2 style="color:gray">Upcoming Events</h2>
       {% for event in oevents %}
-        {% assign until = event.end_date | default: event.date %}
+        {% assign tag_slug = event.tag | slugify %}
+        {% if tag_slug == 'course' %}
+          {% assign until = event.date %}
+        {% else %}
+          {% assign until = event.end_date | default: event.date %}
+        {% endif %}
         {% if until >= today and event.who != "🤔" %}
           {% include event-entry.html event=event is_past=false page_url=page.url %}
         {% endif %}
@@ -72,7 +85,12 @@ courses), falling back to its date when no end_date is given.
     <div class="event-section">
       <h2 style="color:gray">Past Events</h2>
       {% for event in events %}
-        {% assign until = event.end_date | default: event.date %}
+        {% assign tag_slug = event.tag | slugify %}
+        {% if tag_slug == 'course' %}
+          {% assign until = event.date %}
+        {% else %}
+          {% assign until = event.end_date | default: event.date %}
+        {% endif %}
         {% if until < today and event.who != "🤔" %}
           {% include event-entry.html event=event is_past=true page_url=page.url %}
         {% endif %}
