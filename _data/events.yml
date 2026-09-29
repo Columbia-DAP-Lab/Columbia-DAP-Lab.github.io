@@ -13,31 +13,115 @@
 # 
 #
 
+- title: 'OpenAgents: The Next-Gen Collaboration OS for Teams of Humans and Agents'
+  tag: Seminar
+  date: '2026-09-29'
+  who: Raphael Shu
+  where: CSB 453
+  time: 12PM
+  image: /files/images/events/20260929_seminar_shu.jpeg
+  description: |
+    AI agents are becoming capable of doing substantial work, but turning individual capability
+    into effective teamwork remains an open problem. The next challenge is not simply how one
+    person uses one agent, but how teams of humans and agents work together. How should they
+    share context, divide responsibilities, reuse expertise, make decisions, and remain
+    accountable for the result?
+
+    This talk presents the vision behind OpenAgents: a collaboration OS that gives human teams
+    and agent teams a shared environment for getting work done. People can bring their own
+    agents and private context, choose what to share, and collaborate through persistent
+    threads, tasks, and artifacts. Agents can work over long periods, call specialists, hand off
+    responsibilities, and escalate decisions to the right person. Humans set direction,
+    contribute judgment, review results, and remain responsible for the outcome.
+
+    We will examine concrete scenarios, including a software change moving through agent review,
+    human approval, deployment, and testing, and a specialist agent whose expertise becomes
+    reusable by colleagues and their agents. These examples reveal the infrastructure mixed
+    teams need: shared context, clear ownership, reliable handoffs, permissions, and continuity
+    across people, agents, and runtimes. The talk then considers how open collaboration
+    interfaces could extend this model beyond a single application and support a broader
+    ecosystem of human-agent teamwork.
+  bio: >
+    Raphael Shu is the founder of OpenAgents, where he is building open infrastructure for
+    collaboration among people and AI agents. His research spans language-model agents,
+    multi-agent systems, and collective intelligence. He is the chair of WMAC 2025 and 2026 at
+    AAAI. Previously, he served as a senior science tech lead at Amazon Bedrock Agents, a
+    founding member of Bedrock, where he architected and led the launch of Bedrock Multi-Agent
+    Collaboration for enterprises. He completed his doctorate at the University of Tokyo in 2020
+    and received a Dean's Award. He was also a visiting researcher at NYU, working with
+    Kyunghyun Cho.
+
 - title: 'TBA'
   tag: AI in the Public Interest
   date: '2026-12-03'
+  who: Anthony Vanky
+  wholink: https://www.arch.columbia.edu/faculty/2245-anthony-vanky
   where: CSB 453
   time: 3PM-4PM
+  bio: >
+    Anthony Vanky is an assistant professor of urban planning at Columbia University's Graduate
+    School of Architecture, Planning and Preservation, and co-director for workforce engagement
+    of the NSF Center for Smart Streetscapes. His research focuses on emerging practices that
+    use digital data and pervasive technologies to understand and shape better cities, while
+    centering residents' individual and lived experiences. Trained as an architect (Tulane
+    University), urban designer (MIT, S.M.), and urban planner (MIT, Ph.D.), he has previously
+    held appointments in urban planning and technology at the University of Michigan and in
+    urban design at MIT, where he was a research lead at the Senseable City Lab and the first
+    academic program manager of MIT designX. His work has been exhibited at the Venice
+    Biennale, Dutch Design Week, Detroit Month of Design, New Orleans DesCours, and the Gwangju
+    Design Biennial, among others.
 
 - title: 'TBA'
   tag: AI in the Public Interest
   date: '2026-11-19'
   who: Wajeeha Ahmad
+  wholink: https://www.wajeehaahmad.com/
   where: CSB 453
   time: 3PM-4PM
+  bio: >
+    Wajeeha Ahmad is an assistant professor in the Management division at Columbia Business
+    School and a Digital Fellow at the Stanford Digital Economy Lab. Her research is broadly
+    focused on the impact of AI and digital technologies on businesses and society, examining
+    how firms, platforms, and organizations can adopt and govern digital technologies to remain
+    competitive while improving societal outcomes. Her work has received the Best Proposal Award
+    for Creativity in Research from the SMS Competitive Strategy Interest Group and the IEEE
+    Computer Society Best Paper Award, and her dissertation was runner-up for the INFORMS
+    Organization Science Dissertation Proposal Competition (2025). She received her PhD in
+    Management Science and Engineering from Stanford University and her S.M. in Technology and
+    Policy and B.S. in Mathematics with Computer Science from MIT.
 
-- title: 'TBA'
+- title: 'Ghost Gun Workshop'
   tag: AI in the Public Interest
   date: '2026-11-05'
   who: Silvia Sellán
+  wholink: https://www.cs.columbia.edu/~silviasellan/
   where: CSB 453
   time: 3PM-4PM
+  bio: >
+    Silvia Sellán is an assistant professor in the Computer Science Department at Columbia
+    University, where she directs the Geometry and the City laboratory. She specializes in
+    computer graphics and geometry processing; in particular, her research focuses on implicit
+    shape representations and surface reconstruction. She received her PhD from the University
+    of Toronto and worked as a postdoctoral researcher at MIT.
 
 - title: 'TBA'
   tag: AI in the Public Interest
   date: '2026-10-22'
+  who: Hannah Li
+  wholink: https://hannahql.github.io/
   where: CSB 453
   time: 3PM-4PM
+  bio: >
+    Hannah Li is an assistant professor in the Decision, Risk, and Operations division at
+    Columbia Business School. Her research develops data science methods for social systems —
+    marketplaces, education systems, and online platforms — combining techniques from operations
+    research, statistics, and economics to develop theoretical insights for practically
+    motivated problems, informed by her experience working with large online platforms. Her work
+    has received a Best Student Paper award at the ACM Conference on Equity and Access in
+    Algorithms, Mechanisms, and Optimization (EAAMO) and second place in the INFORMS Revenue
+    Management and Pricing Student Paper Award. She received her PhD in operations research from
+    the Management Science and Engineering department at Stanford University and was a
+    postdoctoral associate at MIT.
 
 - title: 'What would it cost to end extreme poverty?'
   tag: AI in the Public Interest
@@ -68,8 +152,23 @@
 - title: 'TBA'
   tag: AI in the Public Interest
   date: '2026-09-24'
+  who: Lily Xu
+  wholink: https://lily-x.github.io/
   where: CSB 453
   time: 3PM-4PM
+  bio: >
+    Lily Xu is the Sun-Wu Assistant Professor at Columbia University in the Department of
+    Industrial Engineering and Operations Research, with an affiliation in Computer Science,
+    where she runs the caPP Lab on computation and algorithms for people and the planet. Her
+    research develops AI methods across machine learning, optimization, and causal inference for
+    planetary health challenges, with a focus on biodiversity conservation, enabling
+    practitioners to make decisions that are robust to uncertainty, effective at scale, and
+    future-looking. She partners closely with NGOs and interdisciplinary researchers, serving as
+    AI Lead for the SMART Partnership for wildlife conservation and scientific advisor to INVERSA
+    for invasive species management. Her research has been recognized with a best paper runner-up
+    at AAAI, the INFORMS Doing Good with Good OR award, a Google PhD Fellowship, and a Siebel
+    Scholarship. She holds a PhD in computer science from Harvard University and a B.A. from
+    Dartmouth College, and was previously a postdoc at the University of Oxford.
 
 - title: 'Columbia AI Night'
   tag: Other
