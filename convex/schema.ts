@@ -382,6 +382,92 @@ export default defineSchema({
   }).index("by_email", ["email"]),
 
   /**
+   * Projects, benchmarks and software — the _projects/ collection.
+   *
+   * Unlike everything else here, these are not _data rows: each is a Markdown
+   * document with front matter that Jekyll renders into its own page at
+   * /projects/<slug>/. So `body` carries the Markdown, and the build writes the
+   * file back out rather than a YAML list.
+   *
+   * The images stay in the repo at _projects/<slug>/, because `avatar` is a
+   * filename relative to that directory and the collection copies it verbatim.
+   */
+  projects: defineTable({
+    /** Directory name and permalink, e.g. "aconic". Never reuse one. */
+    slug: v.string(),
+    title: v.string(),
+    subtitle: v.string(),
+    date: v.string(), // YYYY-MM-DD
+    /** Everything after the front matter, as written. */
+    body: v.string(),
+    /**
+     * Three booleans in the front matter — is_project, is_benchmark,
+     * is_software — which are not exclusive: the same work is often a benchmark
+     * and software. A list says that plainly and leaves room for a fourth.
+     */
+    kinds: v.array(
+      v.union(v.literal("project"), v.literal("benchmark"), v.literal("software")),
+    ),
+    /** Free-form display chips ("Workflow", "LLM Safety"), not a controlled vocabulary. */
+    tags: v.array(v.string()),
+    /**
+     * Two different things in the front matter, and the templates render them
+     * differently: `avatar` is a filename beside the Markdown, served from
+     * /_projects/<slug>/; `avatarUrl` is a site-absolute path run through
+     * relative_url. Collapsing them produces /_projects/<slug>//files/....
+     */
+    avatar: v.optional(v.string()),
+    avatarUrl: v.optional(v.string()),
+    /**
+     * The `links:` map, ordered and typed. Kinds in use: github, blog, website,
+     * paper, demo, pypi, leaderboard — a string rather than a union so a new kind
+     * does not need a schema change.
+     */
+    links: v.array(v.object({ kind: v.string(), url: v.string() })),
+    ...submission,
+  })
+    .index("by_slug", ["slug"])
+    .index("by_status_and_date", ["status", "date"])
+    .searchIndex("search_title", { searchField: "title" }),
+
+  /**
+   * Who is credited on a project, in order.
+   *
+   * Shares the `authors` table with publications, so a name resolves to the same
+   * author row either way, and `url` overrides that author's link for this project.
+   */
+  projectAuthors: defineTable({
+    projectId: v.id("projects"),
+    authorId: v.id("authors"),
+    position: v.number(),
+    url: v.optional(v.string()),
+    /** The asterisk in "Weiliang Zhao*", as on publicationAuthors. */
+    equalContribution: v.optional(v.boolean()),
+  })
+    .index("by_projectId_and_position", ["projectId", "position"])
+    .index("by_authorId", ["authorId"]),
+
+  /**
+   * Papers listed on a project page.
+   *
+   * The front matter repeats title, venue, url and year even for papers that are
+   * also in `publications`, so those fields are kept and `publicationId` links the
+   * record when one matches. The link is what makes "which projects cite this
+   * paper" answerable; the literal fields are what the page renders.
+   */
+  projectPublications: defineTable({
+    projectId: v.id("projects"),
+    position: v.number(),
+    title: v.string(),
+    venue: v.string(),
+    url: v.optional(v.string()),
+    year: v.optional(v.number()),
+    publicationId: v.optional(v.id("publications")),
+  })
+    .index("by_projectId_and_position", ["projectId", "position"])
+    .index("by_publicationId", ["publicationId"]),
+
+  /**
    * The last time a content change asked for a site rebuild.
    *
    * One row. It exists so a scheduled send can tell whether another publish
@@ -407,6 +493,7 @@ export default defineSchema({
       v.literal("people"),
       v.literal("eventSeries"),
       v.literal("news"),
+      v.literal("projects"),
       v.literal("topics"),
       v.literal("fields"),
       v.literal("roles"),

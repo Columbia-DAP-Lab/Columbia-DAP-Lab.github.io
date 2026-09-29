@@ -22,6 +22,9 @@ const IMPORT_ACTOR = "migration";
 
 
 const CONTENT_TABLES = [
+  "projectPublications",
+  "projectAuthors",
+  "projects",
   "news",
   "publicationAuthors",
   "authors",
@@ -392,6 +395,88 @@ export const importNews = internalMutation({
       await ctx.db.insert("news", { ...item, sortOrder, ...submitted(now) });
     }
     return { news: args.news.length };
+  },
+});
+
+/**
+ * Import the _projects/ collection.
+ *
+ * Authors go through the same `authors` table as publications, without counting
+ * the authorship: publicationCount means papers, and a project is not one.
+ *
+ * A listed paper is linked to `publications` when its title matches one, so the
+ * link is a fact rather than a guess; unmatched entries keep their literal fields,
+ * which is all the page renders anyway.
+ */
+export const importProjects = internalMutation({
+  args: {
+    projects: v.array(
+      v.object({
+        slug: v.string(),
+        title: v.string(),
+        subtitle: v.string(),
+        date: v.string(),
+        body: v.string(),
+        kinds: v.array(
+          v.union(v.literal("project"), v.literal("benchmark"), v.literal("software")),
+        ),
+        tags: v.array(v.string()),
+        avatar: v.optional(v.string()),
+        avatarUrl: v.optional(v.string()),
+        links: v.array(v.object({ kind: v.string(), url: v.string() })),
+        authors: v.array(
+          v.object({
+            name: v.string(),
+            url: v.optional(v.string()),
+            equalContribution: v.optional(v.boolean()),
+          }),
+        ),
+        publications: v.array(
+          v.object({
+            title: v.string(),
+            venue: v.string(),
+            url: v.optional(v.string()),
+            year: v.optional(v.number()),
+          }),
+        ),
+      }),
+    ),
+  },
+  handler: async (ctx, args) => {
+    const now = Date.now();
+    const people = await peopleByMatchKey(ctx);
+    const published = await ctx.db.query("publications").take(2000);
+    const byTitle = new Map(published.map((p) => [p.title.trim().toLowerCase(), p._id]));
+
+    let authorRows = 0;
+    let paperRows = 0;
+    let papersLinked = 0;
+
+    for (const project of args.projects) {
+      const { authors, publications, ...fields } = project;
+      const projectId = await ctx.db.insert("projects", { ...fields, ...submitted(now) });
+
+      for (const [position, author] of authors.entries()) {
+        const authorId = await upsertAuthor(ctx, author.name, people, { countAuthorship: false });
+        await ctx.db.insert("projectAuthors", {
+          projectId,
+          authorId,
+          position,
+          url: author.url,
+          equalContribution: author.equalContribution,
+        });
+        authorRows++;
+      }
+
+      for (const [position, paper] of publications.entries()) {
+        const publicationId = byTitle.get(paper.title.trim().toLowerCase());
+        await ctx.db.insert("projectPublications", { projectId, position, ...paper, publicationId });
+        paperRows++;
+        if (publicationId) papersLinked++;
+      }
+    }
+
+    return { projects: args.projects.length, authorRows, paperRows, papersLinked };
   },
 });
 

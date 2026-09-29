@@ -391,6 +391,88 @@ export const news = query({
 });
 
 /**
+ * The _projects/ collection, one record per Markdown file the build writes.
+ *
+ * `kinds` goes back out as the three booleans the templates read, and `links`
+ * back to a map, because that is the shape the front matter has always had.
+ */
+export const projects = query({
+  args: {},
+  returns: v.array(
+    v.object({
+      slug: v.string(),
+      body: v.string(),
+      frontMatter: v.any(),
+    }),
+  ),
+  handler: async (ctx) => {
+    const rows = (
+      await ctx.db
+        .query("projects")
+        .withIndex("by_status_and_date", (q) => q.eq("status", "published"))
+        .order("desc")
+        .take(LIMIT)
+    ).sort((a, b) => b.date.localeCompare(a.date) || a._id.localeCompare(b._id));
+
+    const out = [];
+    for (const project of rows) {
+      const authorRows = await ctx.db
+        .query("projectAuthors")
+        .withIndex("by_projectId_and_position", (q) => q.eq("projectId", project._id))
+        .take(100);
+      const authorNames = new Map<string, string>();
+      for (const row of authorRows) {
+        const author = await ctx.db.get("authors", row.authorId);
+        if (author === null) continue;
+        // The asterisk goes back on at render time; the author row keeps the clean
+        // name, so "Weiliang Zhao*" and "Weiliang Zhao" stay one person.
+        authorNames.set(row._id, row.equalContribution ? `${author.name}*` : author.name);
+      }
+      const papers = await ctx.db
+        .query("projectPublications")
+        .withIndex("by_projectId_and_position", (q) => q.eq("projectId", project._id))
+        .take(100);
+
+      const links: Record<string, string> = {};
+      for (const link of project.links) links[link.kind] = link.url;
+
+      out.push({
+        slug: project.slug,
+        body: project.body,
+        frontMatter: omitUndefined({
+          title: project.title,
+          subtitle: project.subtitle,
+          date: project.date,
+          authors:
+            authorRows.length > 0
+              ? authorRows.map((row) =>
+                  omitUndefined({ name: authorNames.get(row._id) ?? "", url: row.url }),
+                )
+              : undefined,
+          avatar: project.avatar,
+          avatar_url: project.avatarUrl,
+          tags: project.tags.length > 0 ? project.tags : undefined,
+          links: project.links.length > 0 ? links : undefined,
+          publications:
+            papers.length > 0
+              ? papers.map((p) =>
+                  omitUndefined({ title: p.title, venue: p.venue, url: p.url, year: p.year }),
+                )
+              : undefined,
+          // Only emitted when true. An absent is_project is not the same as false:
+          // projects/index.html reads absent-plus-is_software as "not a project",
+          // so writing the flag out unconditionally would move things between tabs.
+          is_project: project.kinds.includes("project") || undefined,
+          is_benchmark: project.kinds.includes("benchmark") || undefined,
+          is_software: project.kinds.includes("software") || undefined,
+        }),
+      });
+    }
+    return out;
+  },
+});
+
+/**
  * The filter buttons and series blurbs on /events, in _data/event_types.yml order.
  *
  * "all" is prepended rather than stored: it is not a series, it is the filter bar's
