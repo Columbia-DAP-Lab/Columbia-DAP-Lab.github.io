@@ -49,8 +49,9 @@ every permission is checked there, not here. See docs/admin-service-design.md.
     <ul class="nav nav-tabs mb-3" role="tablist">
       <li class="nav-item"><button class="nav-link active" data-tab="event" type="button">Submit an event</button></li>
       <li class="nav-item"><button class="nav-link" data-tab="publication" type="button">Submit a publication</button></li>
+      <li class="nav-item"><button class="nav-link" data-tab="person" type="button">Submit a person</button></li>
       <li class="nav-item"><button class="nav-link" data-tab="mine" type="button">My submissions</button></li>
-      <li class="nav-item" hidden data-needs="events publications"><button class="nav-link" data-tab="review" type="button">Review <span class="badge text-bg-secondary" data-pending-count></span></button></li>
+      <li class="nav-item" hidden data-needs="events publications people"><button class="nav-link" data-tab="review" type="button">Review <span class="badge text-bg-secondary" data-pending-count></span></button></li>
       <li class="nav-item" hidden data-needs="admin"><button class="nav-link" data-tab="roles" type="button">Roles</button></li>
     </ul>
 
@@ -168,6 +169,66 @@ every permission is checked there, not here. See docs/admin-service-design.md.
       </form>
     </div>
 
+    <!-- ----------------------------------------------------------- person -->
+    <div data-panel="person" hidden>
+      <form id="person-form" novalidate>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label" for="person-name">Name</label>
+            <input class="form-control" id="person-name" name="name" required>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label" for="person-category">Group</label>
+            <select class="form-select" id="person-category" name="category" required>
+              <option value="">Choose…</option>
+              <option value="faculty">Faculty</option>
+              <option value="postdoc">Postdoc</option>
+              <option value="phd">PhD</option>
+              <option value="student">M.S./Undergraduate</option>
+              <option value="staff">Staff</option>
+              <option value="alum">Alum</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label" for="person-title">Title <span class="text-muted">(optional)</span></label>
+            <input class="form-control" id="person-title" name="title" placeholder="PhD Student">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label" for="person-homepage">Homepage</label>
+            <input class="form-control" type="url" id="person-homepage" name="homepage" placeholder="https://">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label" for="person-email">Email <span class="text-muted">(not shown on the site)</span></label>
+            <input class="form-control" type="email" id="person-email" name="email">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label" for="person-affiliation">Affiliation <span class="text-muted">(if not Columbia CS)</span></label>
+            <input class="form-control" id="person-affiliation" name="affiliation">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label" for="person-advisors">Advisors <span class="text-muted">(one per line)</span></label>
+            <textarea class="form-control" id="person-advisors" name="advisors" rows="2"></textarea>
+          </div>
+          <div class="col-12">
+            <label class="form-label" for="person-bio">Bio <span class="text-muted">(shown for faculty)</span></label>
+            <textarea class="form-control" id="person-bio" name="bio" rows="3"></textarea>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label" for="person-image">Photo <span class="text-muted">(square works best, under 5 MB)</span></label>
+            <input class="form-control" type="file" id="person-image" name="image" accept="image/*">
+          </div>
+          <div class="col-12">
+            <span class="form-label d-block">Badges</span>
+            <div class="topics" id="fields"></div>
+          </div>
+        </div>
+        <div class="mt-4">
+          <button type="submit" class="btn btn-primary">Submit for review</button>
+          <span class="ms-2" data-result></span>
+        </div>
+      </form>
+    </div>
+
     <!-- ------------------------------------------------------------- mine -->
     <div data-panel="mine" hidden>
       <div id="mine"></div>
@@ -179,6 +240,8 @@ every permission is checked there, not here. See docs/admin-service-design.md.
       <div id="review-events" data-needs="events"></div>
       <h4 class="mt-4" data-needs="publications">Publications</h4>
       <div id="review-publications" data-needs="publications"></div>
+      <h4 class="mt-4" data-needs="people">People</h4>
+      <div id="review-people" data-needs="people"></div>
     </div>
 
     <!-- ------------------------------------------------------------ roles -->

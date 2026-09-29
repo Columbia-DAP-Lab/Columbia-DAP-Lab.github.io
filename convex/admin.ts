@@ -5,7 +5,8 @@ import type { MutationCtx, QueryCtx } from "./_generated/server";
 import type { Doc, Id } from "./_generated/dataModel";
 import schema from "./schema";
 import { capabilityValidator, currentEmail, requireCapability, requireSubmitter } from "./authz";
-import { adjustAuthorCounts, peopleByMatchKey, upsertAuthor } from "./authors";
+import { adjustAuthorCounts, matchKey, peopleByMatchKey, upsertAuthor } from "./authors";
+import { slugify } from "./vocabulary";
 
 /**
  * The admin surface: submit content, review it, publish it.
@@ -225,6 +226,93 @@ export const submitPublication = mutation({
   },
 });
 
+/**
+ * Propose a profile for the People page.
+ *
+ * Advisors arrive as printed names and are resolved here the way authors are: a
+ * name that matches someone in the directory links to their profile, anything else
+ * is kept as an external advisor rather than fabricating a profile for them.
+ */
+export const submitPerson = mutation({
+  args: {
+    name: v.string(),
+    category: schema.tables.people.validator.fields.category,
+    title: v.optional(v.string()),
+    affiliation: v.optional(v.string()),
+    homepage: v.optional(v.string()),
+    email: v.optional(v.string()),
+    bio: v.optional(v.string()),
+    /** Slugs into `fields`. */
+    fields: v.array(v.string()),
+    advisors: v.array(v.string()),
+    /** From generateUploadUrl. */
+    image: v.optional(v.id("_storage")),
+  },
+  returns: v.id("people"),
+  handler: async (ctx, args) => {
+    const submitter = await requireSubmitter(ctx);
+    const name = args.name.trim();
+    if (!name) throw new ConvexError("A profile needs a name.");
+
+    // The slug is the profile's identity; a second row for the same name would
+    // split the person the way a misspelled author splits an author.
+    const slug = slugify(name);
+    const existing = await ctx.db
+      .query("people")
+      .withIndex("by_slug", (q) => q.eq("slug", slug))
+      .first();
+    if (existing !== null) {
+      throw new ConvexError(
+        existing.status === "pending"
+          ? `${name} already has a profile waiting for review.`
+          : `${name} already has a profile. Ask an editor to update it.`,
+      );
+    }
+
+    for (const field of args.fields) {
+      const row = await ctx.db
+        .query("fields")
+        .withIndex("by_slug", (q) => q.eq("slug", field))
+        .unique();
+      if (row === null) throw new ConvexError(`Unknown research area: ${field}`);
+    }
+    if (args.image !== undefined) await checkImage(ctx, args.image);
+
+    const people = await peopleByMatchKey(ctx);
+    const advisorIds: Id<"people">[] = [];
+    const externalAdvisors: string[] = [];
+    for (const printed of args.advisors) {
+      const advisor = printed.trim();
+      if (!advisor) continue;
+      const id = people.get(matchKey(advisor));
+      if (id !== undefined) advisorIds.push(id);
+      else externalAdvisors.push(advisor);
+    }
+
+    const { advisors, image, email, ...person } = args;
+    const personId = await ctx.db.insert("people", {
+      ...person,
+      name,
+      slug,
+      email: email?.trim().toLowerCase() || undefined,
+      image: image === undefined ? undefined : { kind: "storage", storageId: image },
+      advisorIds,
+      externalAdvisors,
+      hidden: false,
+      ...submissionFields(submitter),
+    });
+
+    await record(ctx, {
+      table: "people",
+      documentId: personId,
+      action: "create",
+      actor: submitter,
+      affectsSite: false,
+    });
+    return personId;
+  },
+});
+
 // ----------------------------------------------------------------- reviewing
 
 /**
@@ -256,6 +344,22 @@ const withAuthors = async (ctx: QueryCtx, publication: Doc<"publications">) => {
   return { ...publication, authors };
 };
 
+const withAdvisors = async (ctx: QueryCtx, person: Doc<"people">) => {
+  const advisors = [];
+  for (const id of person.advisorIds) {
+    const advisor = await ctx.db.get("people", id);
+    if (advisor !== null) advisors.push(advisor.name);
+  }
+  return {
+    ...person,
+    advisors: [...advisors, ...person.externalAdvisors],
+    imageUrl:
+      person.image?.kind === "storage"
+        ? await ctx.storage.getUrl(person.image.storageId)
+        : person.image?.path ?? null,
+  };
+};
+
 /** Everything awaiting review, for the queue in the admin UI. */
 export const pending = query({
   args: { table: contentTableValidator },
@@ -277,11 +381,13 @@ export const pending = query({
           .take(200);
         return await Promise.all(rows.map((row) => withAuthors(ctx, row)));
       }
-      case "people":
-        return await ctx.db
+      case "people": {
+        const rows = await ctx.db
           .query("people")
           .withIndex("by_status_and_category", (q) => q.eq("status", "pending"))
           .take(200);
+        return await Promise.all(rows.map((row) => withAdvisors(ctx, row)));
+      }
       case "news":
         return await ctx.db
           .query("news")
@@ -297,11 +403,15 @@ export const pending = query({
  */
 export const mySubmissions = query({
   args: {},
-  returns: v.object({ events: v.array(v.any()), publications: v.array(v.any()) }),
+  returns: v.object({
+    events: v.array(v.any()),
+    publications: v.array(v.any()),
+    people: v.array(v.any()),
+  }),
   handler: async (ctx) => {
     const email = await currentEmail(ctx);
-    if (email === null) return { events: [], publications: [] };
-    const [events, publications] = await Promise.all([
+    if (email === null) return { events: [], publications: [], people: [] };
+    const [events, publications, people] = await Promise.all([
       ctx.db
         .query("events")
         .withIndex("by_submittedBy_and_submittedAt", (q) => q.eq("submittedBy", email))
@@ -312,15 +422,25 @@ export const mySubmissions = query({
         .withIndex("by_submittedBy_and_submittedAt", (q) => q.eq("submittedBy", email))
         .order("desc")
         .take(25),
+      ctx.db
+        .query("people")
+        .withIndex("by_submittedBy_and_submittedAt", (q) => q.eq("submittedBy", email))
+        .order("desc")
+        .take(25),
     ]);
-    const summary = (row: Doc<"events"> | Doc<"publications">) => ({
+    // A person's `title` is their role ("PhD Student"); what the list shows is the name.
+    const summary = (title: string, row: Doc<"events"> | Doc<"publications"> | Doc<"people">) => ({
       _id: row._id,
-      title: row.title,
+      title,
       status: row.status,
       submittedAt: row.submittedAt,
       reviewNote: row.reviewNote,
     });
-    return { events: events.map(summary), publications: publications.map(summary) };
+    return {
+      events: events.map((row) => summary(row.title, row)),
+      publications: publications.map((row) => summary(row.title, row)),
+      people: people.map((row) => summary(row.name, row)),
+    };
   },
 });
 
