@@ -30,6 +30,7 @@ import type { DataModel } from "./dataModel.js";
 type Env = {
   readonly CONVEX_CLOUD_URL: string;
   readonly CONVEX_SITE_URL: string;
+  readonly ANTHROPIC_API_KEY: string | undefined;
   readonly GITHUB_DISPATCH_TOKEN: string | undefined;
   readonly GITHUB_REPOSITORY: string | undefined;
 };

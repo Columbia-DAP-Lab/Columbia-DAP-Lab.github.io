@@ -72,6 +72,8 @@ const handleSubmit = (form, handler) =>
     setResult(form, "Submitting…", true);
     try {
       setResult(form, await handler(), true);
+      // Paste-to-fill listens for this to move on to the next draft.
+      form.dispatchEvent(new CustomEvent("submitted"));
     } catch (error) {
       setResult(form, message(error), false);
     } finally {
@@ -149,12 +151,13 @@ client.onUpdate(api.content.fields, {}, (fields) =>
 
 // --------------------------------------------------------------- event form
 
-const addSpeaker = () => {
+const addSpeaker = (speaker = {}) => {
   const node = $("#speaker-template").content.firstElementChild.cloneNode(true);
+  for (const input of $$("[data-field]", node)) input.value = speaker[input.dataset.field] ?? "";
   $("[data-remove-speaker]", node).addEventListener("click", () => node.remove());
   $("#speakers").append(node);
 };
-$("[data-add-speaker]").addEventListener("click", addSpeaker);
+$("[data-add-speaker]").addEventListener("click", () => addSpeaker());
 addSpeaker();
 
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024; // matches convex/admin.ts
@@ -259,6 +262,142 @@ handleSubmit(personForm, async () => {
   personForm.reset();
   return "Submitted. An editor will review it; track it under My submissions.";
 });
+
+// ----------------------------------------------------------- paste to fill
+//
+// Paste an announcement, email, paper list or bio, and the model's reading of it
+// fills the form (convex/extract.ts). Nothing is submitted: the person checks the
+// fields and submits as usual. One paste can hold several items — three papers,
+// two talks — so each becomes a draft, and submitting one loads the next.
+
+/** Put a draft's values into a form's named fields; anything absent is cleared. */
+const setFields = (form, draft, names) => {
+  for (const name of names) form.elements[name].value = draft[name] ?? "";
+};
+const setChecks = (container, slugs = []) => {
+  for (const box of $$("input[type=checkbox]", container)) box.checked = slugs.includes(box.value);
+};
+
+const FILL = {
+  event: (form, draft) => {
+    setFields(form, draft, ["title", "series", "startDate", "endDate", "timeLabel", "location", "link", "description"]);
+    $("#speakers").replaceChildren();
+    for (const speaker of draft.speakers ?? []) addSpeaker(speaker);
+    if ((draft.speakers ?? []).length === 0) addSpeaker();
+  },
+  publication: (form, draft) => {
+    setFields(form, draft, ["title", "venue", "pubDate", "url", "slidesUrl", "codeUrl", "comment"]);
+    form.elements.authors.value = (draft.authors ?? []).join("\n");
+    setChecks($("#topics"), draft.topics);
+  },
+  person: (form, draft) => {
+    setFields(form, draft, ["name", "category", "title", "homepage", "email", "affiliation", "bio"]);
+    form.elements.advisors.value = (draft.advisors ?? []).join("\n");
+    setChecks($("#fields"), draft.fields);
+  },
+};
+
+const draftTitle = (draft) => draft.title ?? draft.name ?? "Untitled";
+
+const pasteToFill = (kind, form) => {
+  const textarea = el("textarea", {
+    class: "form-control mb-2",
+    rows: 6,
+    placeholder: "Paste an announcement, an email, a web page, a CV or a list. Nothing is submitted until you press Submit below.",
+  });
+  const button = el("button", { type: "button", class: "btn btn-outline-primary" }, "Fill the form");
+  const status = el("span", { class: "ms-2" });
+  const draftList = el("div", { class: "list-group mt-3" });
+  const warnings = el("div", { class: "alert alert-warning mt-3 mb-0", hidden: true });
+
+  let items = [];
+  let current = -1;
+  const done = new Set();
+
+  const show = (index) => {
+    current = index;
+    const { draft, warnings: notes } = items[index];
+    FILL[kind](form, draft);
+    setResult(form, "", true);
+    warnings.hidden = notes.length === 0;
+    warnings.replaceChildren(
+      el("strong", {}, "Check before submitting:"),
+      el("ul", { class: "mb-0" }, notes.map((note) => el("li", {}, note))),
+    );
+    renderList();
+  };
+
+  const renderList = () => {
+    // A single draft needs no chooser; the form itself is the draft.
+    draftList.hidden = items.length < 2;
+    draftList.replaceChildren(
+      ...items.map((item, index) =>
+        el(
+          "button",
+          {
+            type: "button",
+            class: `list-group-item list-group-item-action${index === current ? " active" : ""}`,
+            disabled: done.has(index),
+            onclick: () => show(index),
+          },
+          `${index + 1}. ${draftTitle(item.draft)}`,
+          done.has(index) && el("span", { class: "badge text-bg-success ms-2" }, "submitted"),
+        ),
+      ),
+    );
+  };
+
+  button.addEventListener("click", async () => {
+    button.disabled = true;
+    status.className = "ms-2 text-muted";
+    status.textContent = "Reading… this can take up to a minute.";
+    try {
+      ({ items } = await client.action(api.extract.fromText, { kind, text: textarea.value }));
+      done.clear();
+      if (items.length === 0) {
+        status.className = "ms-2 text-danger";
+        status.textContent = `Couldn't find a ${kind} in that text.`;
+        renderList();
+        warnings.hidden = true;
+        return;
+      }
+      status.className = "ms-2 text-success";
+      status.textContent =
+        items.length === 1 ? "Filled in below. Check it, then submit." : `Found ${items.length}. The first is filled in below.`;
+      show(0);
+    } catch (error) {
+      status.className = "ms-2 text-danger";
+      status.textContent = message(error);
+    } finally {
+      button.disabled = false;
+    }
+  });
+
+  form.addEventListener("submitted", () => {
+    if (current < 0) return;
+    done.add(current);
+    const next = items.findIndex((_, index) => !done.has(index));
+    if (next >= 0) show(next);
+    else {
+      current = -1;
+      warnings.hidden = true;
+      renderList();
+    }
+  });
+
+  form.before(
+    el(
+      "details",
+      { class: "card card-body mb-4" },
+      el("summary", { class: "fw-semibold" }, "Paste text to fill this form"),
+      el("div", { class: "mt-3" }, textarea, button, status, draftList, warnings),
+    ),
+  );
+};
+
+pasteToFill("event", eventForm);
+pasteToFill("publication", publicationForm);
+pasteToFill("person", personForm);
 
 // ---------------------------------------------------------- my submissions
 
