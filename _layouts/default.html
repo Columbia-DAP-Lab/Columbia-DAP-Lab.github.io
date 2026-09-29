@@ -40,6 +40,7 @@
   <meta name="twitter:description" content="{{ meta_description }}">
   <meta name="twitter:image" content="{{ abs_image }}">
   <link rel="canonical" href="{{ base_url }}{{ page.url }}">
+  {% if page.noindex %}<meta name="robots" content="noindex">{% endif %}
   {% if page.url == "/" %}
     <script type="application/ld+json">
     {

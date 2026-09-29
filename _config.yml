@@ -31,3 +31,13 @@ defaults:
     values:
       layout: "benchmark"
 ug_ms_application_url: "https://forms.gle/6FkeeJv43arrbN1n9"
+
+# The admin UI at /admin/ talks to Convex straight from the browser. Both values are
+# public by design — the client id is not a secret, and every call is authorized
+# server-side. Keep them in step with the deployment the build fetches from:
+#   convex_url       same deployment as the CONVEX_SITE_URL repository variable,
+#                    but .convex.cloud rather than .convex.site
+#   google_client_id the deployment's GOOGLE_CLIENT_ID (npx convex env get)
+admin:
+  convex_url: "https://agreeable-stork-479.convex.cloud"
+  google_client_id: "851564657364-j2jgceoiq06g67pbtci3p55cod07s869.apps.googleusercontent.com"
