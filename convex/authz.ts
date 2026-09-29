@@ -1,4 +1,4 @@
-import { v } from "convex/values";
+import { ConvexError, v } from "convex/values";
 import { query } from "./_generated/server";
 import type { MutationCtx, QueryCtx } from "./_generated/server";
 import type { Doc } from "./_generated/dataModel";
@@ -17,6 +17,10 @@ import type { Doc } from "./_generated/dataModel";
  *
  * Identity always comes from ctx.auth, never from an argument: a caller-supplied
  * email would let anyone claim to be anyone.
+ *
+ * Refusals here and in admin.ts are ConvexErrors, not Errors: a production
+ * deployment redacts a plain Error's message to "Server Error", and these messages
+ * are meant for the person filling in the form.
  */
 
 export type Capability = Doc<"roles">["capabilities"][number];
@@ -49,10 +53,10 @@ export const isColumbia = (email: string) => email.endsWith("@columbia.edu");
 
 export const requireSubmitter = async (ctx: QueryCtx | MutationCtx): Promise<string> => {
   const email = await currentEmail(ctx);
-  if (email === null) throw new Error("Sign in with your Columbia Google account to submit.");
+  if (email === null) throw new ConvexError("Sign in with your Columbia Google account to submit.");
   // An outside collaborator with a grant can submit too, even without a UNI.
   if (!isColumbia(email) && (await capabilitiesFor(ctx, email)).length === 0) {
-    throw new Error("Submissions are open to Columbia accounts.");
+    throw new ConvexError("Submissions are open to Columbia accounts.");
   }
   return email;
 };
@@ -78,10 +82,10 @@ export const requireCapability = async (
   capability: Capability,
 ): Promise<string> => {
   const email = await currentEmail(ctx);
-  if (email === null) throw new Error("Sign in to continue.");
+  if (email === null) throw new ConvexError("Sign in to continue.");
   const capabilities = await capabilitiesFor(ctx, email);
   if (!capabilities.includes(capability) && !capabilities.includes("admin")) {
-    throw new Error(`You do not have permission to manage ${capability}.`);
+    throw new ConvexError(`You do not have permission to manage ${capability}.`);
   }
   return email;
 };
