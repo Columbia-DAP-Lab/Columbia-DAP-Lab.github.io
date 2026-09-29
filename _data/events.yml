@@ -55,21 +55,39 @@
   tag: AI in the Public Interest
   date: '2026-12-03'
   who: Anthony Vanky
-  wholink: https://www.arch.columbia.edu/faculty/2245-anthony-vanky
+  wholink: https://datascience.columbia.edu/people/anthony-vanky/
   where: CSB 453
   time: 3PM-4PM
   bio: >
-    Anthony Vanky is an assistant professor of urban planning at Columbia University's Graduate
-    School of Architecture, Planning and Preservation, and co-director for workforce engagement
-    of the NSF Center for Smart Streetscapes. His research focuses on emerging practices that
-    use digital data and pervasive technologies to understand and shape better cities, while
-    centering residents' individual and lived experiences. Trained as an architect (Tulane
-    University), urban designer (MIT, S.M.), and urban planner (MIT, Ph.D.), he has previously
-    held appointments in urban planning and technology at the University of Michigan and in
-    urban design at MIT, where he was a research lead at the Senseable City Lab and the first
-    academic program manager of MIT designX. His work has been exhibited at the Venice
-    Biennale, Dutch Design Week, Detroit Month of Design, New Orleans DesCours, and the Gwangju
-    Design Biennial, among others.
+    Anthony Vanky is an assistant professor at Columbia's Graduate School of Architecture,
+    Planning, and Preservation, with affiliations at the Data Science Institute and the
+    NSF Center for Smart Streetscapes. He studies how digital data and pervasive technologies
+    can help people understand and improve cities, with attention to residents' lived
+    experiences. His background spans architecture, urban design, and planning. Before
+    Columbia, he held appointments at the University of Michigan and MIT, where he also
+    served as a research lead at the Senseable City Lab.
+
+- title: 'Agent Evaluation Science Fall 2026'
+  tag: Workshop
+  date: '2026-11-20'
+  where: Jane Street, New York City
+  time: 9AM-6PM ET (tentative)
+  link: https://evalscience.org/2026fall-nyc/
+  description: |
+    A one-day symposium bringing researchers and practitioners together to strengthen
+    the scientific foundations of AI agent evaluation. Topics include how to design
+    meaningful measures and benchmarks, build reproducible evaluation systems, and
+    assess reliability, safety, and performance in realistic settings.
+
+    The program combines invited talks, contributed papers, posters, practical case
+    studies, and discussion. It explores gaps in current evaluations, methods for
+    establishing validity and reliability, infrastructure for running evaluations,
+    and lessons from deployed agents and their failures.
+
+    Attendance is free, and registration does not require a paper submission.
+    Short papers and two-page extended abstracts are welcome, with abstract registration
+    due October 20 and full submissions due October 25. Visit the symposium website
+    for registration, submission details, and the latest program.
 
 - title: 'TBA'
   tag: AI in the Public Interest
@@ -79,30 +97,27 @@
   where: CSB 453
   time: 3PM-4PM
   bio: >
-    Wajeeha Ahmad is an assistant professor in the Management division at Columbia Business
-    School and a Digital Fellow at the Stanford Digital Economy Lab. Her research is broadly
-    focused on the impact of AI and digital technologies on businesses and society, examining
-    how firms, platforms, and organizations can adopt and govern digital technologies to remain
-    competitive while improving societal outcomes. Her work has received the Best Proposal Award
-    for Creativity in Research from the SMS Competitive Strategy Interest Group and the IEEE
-    Computer Society Best Paper Award, and her dissertation was runner-up for the INFORMS
-    Organization Science Dissertation Proposal Competition (2025). She received her PhD in
-    Management Science and Engineering from Stanford University and her S.M. in Technology and
-    Policy and B.S. in Mathematics with Computer Science from MIT.
+    Wajeeha Ahmad is an assistant professor of management at Columbia Business School and
+    a Digital Fellow with Stanford's Digital Economy Lab. She studies how AI and digital
+    technologies affect business and society, including how organizations can adopt and
+    govern these technologies to support both competitiveness and societal benefits.
+    She earned her doctorate at Stanford in Management Science and Engineering. At MIT,
+    she completed a master's in Technology and Policy and an undergraduate degree in
+    Mathematics with Computer Science.
 
 - title: 'Ghost Gun Workshop'
   tag: AI in the Public Interest
   date: '2026-11-05'
   who: Silvia Sellán
-  wholink: https://www.cs.columbia.edu/~silviasellan/
-  where: CSB 453
+  wholink: https://www.silviasellan.com/
+  where: Davis Auditorium
   time: 3PM-4PM
   bio: >
-    Silvia Sellán is an assistant professor in the Computer Science Department at Columbia
-    University, where she directs the Geometry and the City laboratory. She specializes in
-    computer graphics and geometry processing; in particular, her research focuses on implicit
-    shape representations and surface reconstruction. She received her PhD from the University
-    of Toronto and worked as a postdoctoral researcher at MIT.
+    Silvia Sellán leads the Geometry and the City laboratory at Columbia University,
+    where she is an assistant professor of computer science. Her work in computer
+    graphics and geometry processing investigates ways to represent shapes implicitly
+    and reconstruct surfaces. She completed her doctorate at the University of Toronto
+    and held a postdoctoral research position at MIT before joining Columbia.
 
 - title: 'TBA'
   tag: AI in the Public Interest
@@ -112,16 +127,14 @@
   where: CSB 453
   time: 3PM-4PM
   bio: >
-    Hannah Li is an assistant professor in the Decision, Risk, and Operations division at
-    Columbia Business School. Her research develops data science methods for social systems —
-    marketplaces, education systems, and online platforms — combining techniques from operations
-    research, statistics, and economics to develop theoretical insights for practically
-    motivated problems, informed by her experience working with large online platforms. Her work
-    has received a Best Student Paper award at the ACM Conference on Equity and Access in
-    Algorithms, Mechanisms, and Optimization (EAAMO) and second place in the INFORMS Revenue
-    Management and Pricing Student Paper Award. She received her PhD in operations research from
-    the Management Science and Engineering department at Stanford University and was a
-    postdoctoral associate at MIT.
+    Hannah Li is an assistant professor at Columbia Business School in the Decision,
+    Risk, and Operations division and a Data Science Institute member. She studies how
+    to implement and assess algorithmic interventions in settings such as online
+    platforms, education, and healthcare, where limited capacity and interactions among
+    users complicate conventional methods. Her work draws on operations research,
+    statistics, and causal inference. She earned her doctorate in operations research
+    at Stanford, held a postdoctoral appointment at MIT, and studied mathematics at
+    Pomona College.
 
 - title: 'What would it cost to end extreme poverty?'
   tag: AI in the Public Interest
@@ -169,18 +182,14 @@
     inference, and incentive design can help focus limited resources on the information most
     consequential for downstream decisions.
   bio: >
-    Lily Xu is the Sun-Wu Assistant Professor at Columbia University in the Department of
-    Industrial Engineering and Operations Research, with an affiliation in Computer Science,
-    where she runs the caPP Lab on computation and algorithms for people and the planet. Her
-    research develops AI methods across machine learning, optimization, and causal inference for
-    planetary health challenges, with a focus on biodiversity conservation, enabling
-    practitioners to make decisions that are robust to uncertainty, effective at scale, and
-    future-looking. She partners closely with NGOs and interdisciplinary researchers, serving as
-    AI Lead for the SMART Partnership for wildlife conservation and scientific advisor to INVERSA
-    for invasive species management. Her research has been recognized with a best paper runner-up
-    at AAAI, the INFORMS Doing Good with Good OR award, a Google PhD Fellowship, and a Siebel
-    Scholarship. She holds a PhD in computer science from Harvard University and a B.A. from
-    Dartmouth College, and was previously a postdoc at the University of Oxford.
+    Lily Xu holds the Sun-Wu Assistant Professorship in Columbia's Industrial Engineering
+    and Operations Research department and is affiliated with Computer Science. She
+    develops AI tools for environmental and planetary health problems, especially
+    biodiversity conservation, drawing on machine learning, optimization, and causal
+    inference. She co-directs the EAAMO research initiative and works with conservation
+    organizations as the SMART Partnership's AI Lead and an INVERSA scientific advisor.
+    She earned her computer science doctorate at Harvard and subsequently held a
+    postdoctoral position at Oxford's Leverhulme Centre for Nature Recovery.
 
 - title: 'Columbia AI Night'
   tag: Other
