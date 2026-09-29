@@ -11,14 +11,20 @@
  * this is the seed and the migration map, not a runtime lookup.
  */
 
-export type TagKind = "research" | "department" | "role" | "topic";
+export type FieldKind = "research" | "department" | "role";
 
-export type TagSeed = {
+export type TopicSeed = {
   slug: string;
   label: string;
-  kind: TagKind;
-  color?: string;
   description?: string;
+  sortOrder?: number;
+};
+
+export type FieldSeed = {
+  slug: string;
+  label: string;
+  kind: FieldKind;
+  color?: string;
   sortOrder?: number;
 };
 
@@ -30,41 +36,41 @@ export type TagSeed = {
  * project-specific tags that pubs.yml's header explicitly allows, given real
  * labels.
  */
-export const TOPIC_TAGS: TagSeed[] = [
-  { slug: "ai", label: "Agent Intelligence", kind: "topic", sortOrder: 1 },
-  { slug: "sys", label: "Agent-ready Systems", kind: "topic", sortOrder: 2 },
-  { slug: "hac", label: "Human-agent Collaboration", kind: "topic", sortOrder: 3 },
-  { slug: "automation", label: "Automation", kind: "topic", sortOrder: 4 },
-  { slug: "whitepaper", label: "White & Position Papers", kind: "topic", sortOrder: 5 },
+export const TOPICS: TopicSeed[] = [
+  { slug: "ai", label: "Agent Intelligence", sortOrder: 1 },
+  { slug: "sys", label: "Agent-ready Systems", sortOrder: 2 },
+  { slug: "hac", label: "Human-agent Collaboration", sortOrder: 3 },
+  { slug: "automation", label: "Automation", sortOrder: 4 },
+  { slug: "whitepaper", label: "White & Position Papers", sortOrder: 5 },
 
-  { slug: "bench", label: "Benchmarks", kind: "topic" },
-  { slug: "digi-twin", label: "Digital Twins", kind: "topic" },
-  { slug: "agent-debug", label: "Agent Debugging", kind: "topic" },
-  { slug: "safety", label: "Safety", kind: "topic" },
-  { slug: "security", label: "Security", kind: "topic" },
-  { slug: "hci", label: "Human-Computer Interaction", kind: "topic" },
-  { slug: "llm", label: "Language Models", kind: "topic" },
-  { slug: "db", label: "Databases", kind: "topic" },
-  { slug: "rag", label: "Retrieval-Augmented Generation", kind: "topic" },
-  { slug: "datasearch", label: "Dataset Search", kind: "topic" },
-  { slug: "nearest-neighbor", label: "Nearest Neighbor Search", kind: "topic" },
-  { slug: "rl", label: "Reinforcement Learning", kind: "topic" },
-  { slug: "theory", label: "Theory", kind: "topic" },
-  { slug: "multimodal", label: "Multimodal", kind: "topic" },
-  { slug: "multi-group", label: "Multi-group Learning", kind: "topic" },
-  { slug: "multiobjective", label: "Multi-objective Learning", kind: "topic" },
-  { slug: "omniprediction", label: "Omniprediction", kind: "topic" },
-  { slug: "sample-complexity", label: "Sample Complexity", kind: "topic" },
-  { slug: "empirical-risk-minimization", label: "Empirical Risk Minimization", kind: "topic" },
-  { slug: "sublinear-graph-algorithms", label: "Sublinear Graph Algorithms", kind: "topic" },
-  { slug: "massively-parallel", label: "Massively Parallel Computation", kind: "topic" },
-  { slug: "test-time-augmentation", label: "Test-time Augmentation", kind: "topic" },
-  { slug: "attention", label: "Attention", kind: "topic" },
-  { slug: "os", label: "Operating Systems", kind: "topic" },
-  { slug: "networking", label: "Networking", kind: "topic" },
-  { slug: "robotics", label: "Robotics", kind: "topic" },
-  { slug: "simulation", label: "Simulation", kind: "topic" },
-  { slug: "vis", label: "Visualization", kind: "topic" },
+  { slug: "bench", label: "Benchmarks" },
+  { slug: "digi-twin", label: "Digital Twins" },
+  { slug: "agent-debug", label: "Agent Debugging" },
+  { slug: "safety", label: "Safety" },
+  { slug: "security", label: "Security" },
+  { slug: "hci", label: "Human-Computer Interaction" },
+  { slug: "llm", label: "Language Models" },
+  { slug: "db", label: "Databases" },
+  { slug: "rag", label: "Retrieval-Augmented Generation" },
+  { slug: "datasearch", label: "Dataset Search" },
+  { slug: "nearest-neighbor", label: "Nearest Neighbor Search" },
+  { slug: "rl", label: "Reinforcement Learning" },
+  { slug: "theory", label: "Theory" },
+  { slug: "multimodal", label: "Multimodal" },
+  { slug: "multi-group", label: "Multi-group Learning" },
+  { slug: "multiobjective", label: "Multi-objective Learning" },
+  { slug: "omniprediction", label: "Omniprediction" },
+  { slug: "sample-complexity", label: "Sample Complexity" },
+  { slug: "empirical-risk-minimization", label: "Empirical Risk Minimization" },
+  { slug: "sublinear-graph-algorithms", label: "Sublinear Graph Algorithms" },
+  { slug: "massively-parallel", label: "Massively Parallel Computation" },
+  { slug: "test-time-augmentation", label: "Test-time Augmentation" },
+  { slug: "attention", label: "Attention" },
+  { slug: "os", label: "Operating Systems" },
+  { slug: "networking", label: "Networking" },
+  { slug: "robotics", label: "Robotics" },
+  { slug: "simulation", label: "Simulation" },
+  { slug: "vis", label: "Visualization" },
 ];
 
 /**
@@ -100,20 +106,26 @@ export const TOPIC_ALIASES: Record<string, string> = {
 };
 
 /**
- * People badges, from _data/field_colors.yml, which already grouped these in
+ * People badges, from _data/field_colors.yml.
+ *
+ * `label` is the exact string _data/people.yml uses today, because
+ * _includes/people-grid.html looks its badge color up as `field_colors[label]` and
+ * prints the same string. Canonicalizing the slug is free; changing the label would
+ * change what the page shows and silently drop the color.
+ *, which already grouped these in
  * comments: research areas, "Academic groups", and "Administrative and advisory".
  *
  * Note that file lists `HCI` twice with different colors (badge-magenta, then
  * badge-fuchsia); YAML keeps the last, so badge-fuchsia is what the site actually
  * renders today, and that is what is carried over here.
  */
-export const PEOPLE_TAGS: TagSeed[] = [
+export const FIELDS: FieldSeed[] = [
   { slug: "systems", label: "Systems", kind: "research", color: "badge-dark-blue" },
   { slug: "software", label: "Software", kind: "research", color: "badge-light-blue" },
   { slug: "security", label: "Security", kind: "research", color: "badge-indigo" },
   { slug: "data", label: "Data", kind: "research", color: "badge-sky-blue" },
   { slug: "robotics", label: "Robotics", kind: "research", color: "badge-steel-blue" },
-  { slug: "ml", label: "Machine learning", kind: "research", color: "badge-green" },
+  { slug: "ml", label: "ML", kind: "research", color: "badge-green" },
   { slug: "causal-inference", label: "Causal inference", kind: "research", color: "badge-teal" },
   { slug: "rl", label: "Reinforcement learning", kind: "research", color: "badge-lime" },
   { slug: "ai", label: "AI", kind: "research", color: "badge-lime" },
@@ -135,7 +147,7 @@ export const PEOPLE_TAGS: TagSeed[] = [
   { slug: "uchicago", label: "UChicago", kind: "department" },
 
   { slug: "advisory-board", label: "Advisory Board", kind: "role", color: "badge-advisory" },
-  { slug: "co-director", label: "Co-Director", kind: "role", color: "badge-director" },
+  { slug: "co-director", label: "co-director", kind: "role", color: "badge-director" },
 ];
 
 /**
@@ -144,7 +156,7 @@ export const PEOPLE_TAGS: TagSeed[] = [
  * The YAML uses display labels; these become slugs. "Human-Centered AI" shares a
  * color with HCI in field_colors.yml and is folded into it.
  */
-export const PEOPLE_TAG_ALIASES: Record<string, string> = {
+export const FIELD_ALIASES: Record<string, string> = {
   "CS": "cs",
   "IEOR": "ieor",
   "DBMI": "dbmi",
@@ -209,12 +221,11 @@ const canonical = (
   return { slug, known: known.has(slug) };
 };
 
-const TOPIC_SLUGS = new Set(TOPIC_TAGS.map((t) => t.slug));
-const PEOPLE_SLUGS = new Set(PEOPLE_TAGS.map((t) => t.slug));
+const TOPIC_SLUGS = new Set(TOPICS.map((t) => t.slug));
+const FIELD_SLUGS = new Set(FIELDS.map((t) => t.slug));
 
 /** Canonicalize one `tags:` entry from _data/pubs.yml. */
 export const canonicalTopic = (raw: string) => canonical(raw, TOPIC_ALIASES, TOPIC_SLUGS);
 
 /** Canonicalize one `field:` entry from _data/people.yml. */
-export const canonicalPeopleTag = (raw: string) =>
-  canonical(raw, PEOPLE_TAG_ALIASES, PEOPLE_SLUGS);
+export const canonicalField = (raw: string) => canonical(raw, FIELD_ALIASES, FIELD_SLUGS);

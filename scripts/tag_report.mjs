@@ -9,7 +9,7 @@
  *   node scripts/tag_report.mjs        (from the repo root; needs ruby for YAML)
  */
 import { execFileSync } from "node:child_process";
-import { canonicalTopic, canonicalPeopleTag, TOPIC_TAGS, PEOPLE_TAGS } from "../convex/vocabulary.ts";
+import { canonicalTopic, canonicalField, TOPICS, FIELDS } from "../convex/vocabulary.ts";
 
 const loadYaml = (path) =>
   JSON.parse(
@@ -45,9 +45,9 @@ const report = (name, rows, field, canonicalize) => {
 
 const unresolved =
   report("publication topics", loadYaml("_data/pubs.yml"), "tags", canonicalTopic) +
-  report("people fields", loadYaml("_data/people.yml"), "field", canonicalPeopleTag);
+  report("people fields", loadYaml("_data/people.yml"), "field", canonicalField);
 
-console.log(`vocabulary: ${TOPIC_TAGS.length} topics, ${PEOPLE_TAGS.length} people tags`);
+console.log(`vocabulary: ${TOPICS.length} topics, ${FIELDS.length} people tags`);
 if (unresolved > 0) {
   console.error(`\n${unresolved} value(s) do not resolve — add them to convex/vocabulary.ts`);
   process.exit(1);

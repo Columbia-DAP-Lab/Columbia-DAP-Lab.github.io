@@ -51,30 +51,46 @@ const image = v.union(
 
 export default defineSchema({
   /**
-   * Controlled vocabulary for the badges on people and the filters on publications.
+   * Publication topics: the `tags:` lists in _data/pubs.yml and the filter buttons
+   * on /publications. Slugs are unique.
    *
-   * Replaces the implicit vocabularies in _data/field_colors.yml and the free-form
-   * `tags:` lists in _data/pubs.yml, which had drifted into near-duplicates
-   * (sys/system/systems, sec/security, benchmark/bench). Those are collapsed once,
-   * during the import — see convex/vocabulary.ts — so every slug stored here is
-   * canonical and nothing has to resolve an alias at read time.
+   * Kept separate from `fields` because the same slug means different things on
+   * either side — `ai` is "Agent Intelligence" on a paper and "AI" as somebody's
+   * research area, and `security`, `rl`, `hci` and `robotics` collide the same way.
+   * One table would have to pick a winner.
    *
-   * `kind` records what a tag actually is. _data/field_colors.yml already grouped
-   * them this way in comments: research areas, "Academic groups" (CS, IEOR), and
-   * "Administrative and advisory" (Advisory Board, co-director).
+   * Every slug stored anywhere is canonical: the drifted spellings in the current
+   * data (system/systems, sec, benchmark, and the tags containing spaces) are
+   * collapsed once during the import — see convex/vocabulary.ts — so nothing has to
+   * resolve an alias at read time.
    */
-  tags: defineTable({
+  topics: defineTable({
+    slug: v.string(),
+    label: v.string(),
+    description: v.optional(v.string()),
+    /** Set for the handful that appear as filter buttons; absent otherwise. */
+    sortOrder: v.optional(v.number()),
+  }).index("by_slug", ["slug"]),
+
+  /**
+   * The badges on the people grid: the `field:` lists in _data/people.yml, with the
+   * colors from _data/field_colors.yml. Slugs are unique.
+   *
+   * `kind` records what a badge actually is. field_colors.yml already grouped them
+   * this way in comments — research areas, "Academic groups" (CS, IEOR), and
+   * "Administrative and advisory" (Advisory Board, co-director) — but the site
+   * renders all three in one row, so they stay one vocabulary.
+   */
+  fields: defineTable({
     slug: v.string(),
     label: v.string(),
     kind: v.union(
-      v.literal("research"), // a research area, e.g. "Systems", "Causal inference"
-      v.literal("department"), // an academic home, e.g. CS, IEOR, DBMI
+      v.literal("research"), // e.g. Systems, Causal inference
+      v.literal("department"), // e.g. CS, IEOR, DBMI
       v.literal("role"), // e.g. Advisory Board, Co-Director
-      v.literal("topic"), // publications.topics — the filters on /publications
     ),
     /** Badge class from _data/field_colors.yml, e.g. "badge-dark-blue". */
     color: v.optional(v.string()),
-    description: v.optional(v.string()),
     sortOrder: v.optional(v.number()),
   })
     .index("by_slug", ["slug"])
@@ -108,12 +124,12 @@ export default defineSchema({
     image: v.optional(image),
     bio: v.optional(v.string()),
     /**
-     * Ordered canonical slugs into `tags`, rendered as the badge row on the people
-     * grid. Mixed kinds, because today's row mixes them: a person shows research
-     * areas alongside their department and any advisory role. Bounded and small,
-     * so an array rather than a join table.
+     * Ordered canonical slugs into `fields`, rendered as the badge row on the
+     * people grid. Mixed kinds, because today's row mixes them: a person shows
+     * research areas alongside their department and any advisory role. Bounded and
+     * small, so an array rather than a join table.
      */
-    tags: v.array(v.string()),
+    fields: v.array(v.string()),
     /** Advisors who have their own profile. */
     advisorIds: v.array(v.id("people")),
     /** Advisors who do not — kept as plain names rather than fabricating profiles. */
@@ -149,7 +165,7 @@ export default defineSchema({
     /** Bare id, e.g. "2401.12345" — the dedupe key when importing from arXiv. */
     arxivId: v.optional(v.string()),
     bibtexKey: v.optional(v.string()),
-    /** Canonical slugs into `tags` (kind: "topic"). */
+    /** Canonical slugs into `topics`. */
     topics: v.array(v.string()),
     /** e.g. "Best Paper", "Distinguished Artifact". */
     awards: v.array(v.string()),
@@ -312,7 +328,8 @@ export default defineSchema({
       v.literal("publications"),
       v.literal("people"),
       v.literal("eventSeries"),
-      v.literal("tags"),
+      v.literal("topics"),
+      v.literal("fields"),
       v.literal("roles"),
     ),
     documentId: v.string(),
