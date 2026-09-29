@@ -40,7 +40,11 @@ title: AI Entrepreneurship Series
   <div class="col-md-1"></div>
   <div class="col-md-10">
 
-{% assign events = site.data.startups | sort: "date" %}
+{%- comment -%}
+These talks used to live in _data/startups.yml; they are events tagged
+Entrepreneurship now, in the same table as everything else.
+{%- endcomment -%}
+{% assign events = site.data.events | where: "tag", "Entrepreneurship" | sort: "date" %}
 {% assign today = 'now' | date: "%Y-%m-%d" %}
 <h2>Upcoming Events</h2>
 <div class="mb-5">

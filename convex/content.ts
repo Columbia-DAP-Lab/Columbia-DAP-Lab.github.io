@@ -2,6 +2,7 @@ import { v } from "convex/values";
 import { query } from "./_generated/server";
 import type { QueryCtx } from "./_generated/server";
 import type { Doc } from "./_generated/dataModel";
+import schema from "./schema";
 
 /**
  * Published content, shaped the way the Jekyll templates read it.
@@ -20,11 +21,96 @@ import type { Doc } from "./_generated/dataModel";
 /** Generous ceilings: the real data is ~100 papers, ~70 people, ~60 events. */
 const LIMIT = 2000;
 
+/**
+ * Return validators, one per exported file.
+ *
+ * Every field is optional because `omitUndefined` drops empties — the YAML has
+ * never carried `who:` on an event with no speaker, and writing one out as null
+ * would change what the templates see. These are the contract the site build reads,
+ * so a field renamed here fails at the boundary instead of silently blanking a page.
+ */
+const eventShape = v.object({
+  title: v.optional(v.string()),
+  tag: v.optional(v.string()),
+  date: v.optional(v.string()),
+  end_date: v.optional(v.string()),
+  time: v.optional(v.string()),
+  where: v.optional(v.string()),
+  who: v.optional(v.string()),
+  wholink: v.optional(v.string()),
+  role: v.optional(v.string()),
+  link: v.optional(v.string()),
+  description: v.optional(v.string()),
+  bio: v.optional(v.string()),
+  image: v.optional(v.string()),
+  video: v.optional(v.string()),
+  slides: v.optional(v.string()),
+});
+
+const publicationShape = v.object({
+  title: v.optional(v.string()),
+  authors: v.optional(v.string()),
+  conf: v.optional(v.string()),
+  pub_date: v.optional(v.string()),
+  url: v.optional(v.string()),
+  tags: v.optional(v.array(v.string())),
+  slides: v.optional(v.string()),
+  code: v.optional(v.string()),
+  website: v.optional(v.string()),
+  key: v.optional(v.string()),
+  rate: v.optional(v.string()),
+  citations: v.optional(v.number()),
+  awards: v.optional(v.string()),
+  comment: v.optional(v.string()),
+  selected: v.optional(v.boolean()),
+  short: v.optional(v.boolean()),
+  future: v.optional(v.boolean()),
+  hide: v.optional(v.boolean()),
+});
+
+const personShape = v.object({
+  name: v.optional(v.string()),
+  homepage: v.optional(v.string()),
+  image: v.optional(v.string()),
+  bio: v.optional(v.string()),
+  category: v.optional(v.string()),
+  field: v.optional(v.array(v.string())),
+  advisor: v.optional(v.array(v.string())),
+});
+
+const newsShape = v.object({
+  title: v.optional(v.string()),
+  content: v.optional(v.string()),
+  details: v.optional(v.string()),
+  featured: v.optional(v.boolean()),
+  date: v.optional(v.string()),
+});
+
+const seriesShape = v.object({
+  slug: v.optional(v.string()),
+  label: v.optional(v.string()),
+  description: v.optional(v.string()),
+  logo: v.optional(v.string()),
+});
+
 const omitUndefined = <T extends Record<string, unknown>>(row: T): Partial<T> =>
   Object.fromEntries(Object.entries(row).filter(([, value]) => value !== undefined)) as Partial<T>;
 
-const imagePath = (image: Doc<"events">["image"], ctx: QueryCtx) =>
-  image === undefined ? undefined : image.kind === "path" ? image.path : ctx.storage.getUrl(image.storageId);
+/**
+ * Either a path to a file still in the repo, or a URL for one uploaded here.
+ *
+ * `getUrl` returns null when the stored file is gone; that becomes undefined so
+ * `omitUndefined` drops the key, rather than writing `image:` with a null value
+ * that the templates would read as present.
+ */
+const imagePath = async (
+  image: Doc<"events">["image"],
+  ctx: QueryCtx,
+): Promise<string | undefined> => {
+  if (image === undefined) return undefined;
+  if (image.kind === "path") return image.path;
+  return (await ctx.storage.getUrl(image.storageId)) ?? undefined;
+};
 
 /** Series slug -> the label _includes/event-entry.html prints and slugifies. */
 const seriesLabels = async (ctx: QueryCtx) => {
@@ -50,13 +136,18 @@ const CATEGORY_LABELS: Record<Doc<"people">["category"], string> = {
 
 export const events = query({
   args: {},
+  returns: v.array(eventShape),
   handler: async (ctx) => {
     const labels = await seriesLabels(ctx);
-    const rows = await ctx.db
-      .query("events")
-      .withIndex("by_status_and_startDate", (q) => q.eq("status", "published"))
-      .order("desc")
-      .take(LIMIT);
+    // Newest first, ties broken by id: a total order that depends only on the data,
+    // so the same rows always export in the same sequence.
+    const rows = (
+      await ctx.db
+        .query("events")
+        .withIndex("by_status_and_startDate", (q) => q.eq("status", "published"))
+        .order("desc")
+        .take(LIMIT)
+    ).sort((a, b) => b.startDate.localeCompare(a.startDate) || a._id.localeCompare(b._id));
 
     const out = [];
     for (const event of rows) {
@@ -99,12 +190,16 @@ export const events = query({
 
 export const publications = query({
   args: {},
+  returns: v.array(publicationShape),
   handler: async (ctx) => {
-    const rows = await ctx.db
-      .query("publications")
-      .withIndex("by_status_and_pubDate", (q) => q.eq("status", "published"))
-      .order("desc")
-      .take(LIMIT);
+    // As with events: newest first, ties by id.
+    const rows = (
+      await ctx.db
+        .query("publications")
+        .withIndex("by_status_and_pubDate", (q) => q.eq("status", "published"))
+        .order("desc")
+        .take(LIMIT)
+    ).sort((a, b) => b.pubDate.localeCompare(a.pubDate) || a._id.localeCompare(b._id));
 
     const out = [];
     for (const pub of rows) {
@@ -142,6 +237,7 @@ export const publications = query({
 
 export const people = query({
   args: {},
+  returns: v.array(personShape),
   handler: async (ctx) => {
     const labels = await fieldLabels(ctx);
     const rows = await ctx.db
@@ -178,6 +274,7 @@ export const people = query({
 
 export const news = query({
   args: {},
+  returns: v.array(newsShape),
   handler: async (ctx) => {
     const rows = await ctx.db
       .query("news")
@@ -195,12 +292,18 @@ export const news = query({
   },
 });
 
-/** The filter buttons and series blurbs on /events. */
+/**
+ * The filter buttons and series blurbs on /events, in _data/event_types.yml order.
+ *
+ * "all" is prepended rather than stored: it is not a series, it is the filter bar's
+ * reset button, and an admin form offering "All" as a series would be a bug.
+ */
 export const eventSeries = query({
   args: {},
+  returns: v.array(seriesShape),
   handler: async (ctx) => {
     const rows = await ctx.db.query("eventSeries").take(100);
-    return rows
+    const series = rows
       .filter((s) => s.active)
       .sort((a, b) => a.sortOrder - b.sortOrder)
       .map((s) =>
@@ -211,12 +314,32 @@ export const eventSeries = query({
           logo: s.logo?.kind === "path" ? s.logo.path : undefined,
         }),
       );
+    return [{ slug: "all", label: "All" }, ...series];
+  },
+});
+
+/**
+ * Badge label -> CSS class, the shape _includes/people-grid.html looks up as
+ * `field_colors[tag]`, with the fallback it reaches for when a badge has no color.
+ */
+export const fieldColors = query({
+  args: {},
+  returns: v.record(v.string(), v.string()),
+  handler: async (ctx) => {
+    const rows = await ctx.db.query("fields").take(500);
+    const colors: Record<string, string> = {};
+    for (const field of rows) {
+      if (field.color) colors[field.label] = field.color;
+    }
+    colors.Default = "badge-default";
+    return colors;
   },
 });
 
 /** The publication filter vocabulary, for the admin form's tag picker. */
 export const topics = query({
   args: {},
+  returns: v.array(schema.doc("topics")),
   handler: async (ctx) => {
     const rows = await ctx.db.query("topics").take(500);
     return rows.sort((a, b) => (a.sortOrder ?? 99) - (b.sortOrder ?? 99) || a.slug.localeCompare(b.slug));
@@ -226,6 +349,7 @@ export const topics = query({
 /** The people badge vocabulary, with its colors. */
 export const fields = query({
   args: { kind: v.optional(v.union(v.literal("research"), v.literal("department"), v.literal("role"))) },
+  returns: v.array(schema.doc("fields")),
   handler: async (ctx, args) => {
     const rows = await ctx.db.query("fields").take(500);
     return rows

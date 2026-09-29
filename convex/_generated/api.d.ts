@@ -9,6 +9,7 @@
  */
 
 import type * as content from "../content.js";
+import type * as http from "../http.js";
 import type * as migrate from "../migrate.js";
 import type * as vocabulary from "../vocabulary.js";
 
@@ -20,6 +21,7 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   content: typeof content;
+  http: typeof http;
   migrate: typeof migrate;
   vocabulary: typeof vocabulary;
 }>;
