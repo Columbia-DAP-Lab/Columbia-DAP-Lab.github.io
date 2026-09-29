@@ -51,26 +51,30 @@ const image = v.union(
 
 export default defineSchema({
   /**
-   * Controlled vocabulary for research areas and publication topics.
+   * Controlled vocabulary for the badges on people and the filters on publications.
    *
    * Replaces the implicit vocabularies in _data/field_colors.yml and the free-form
-   * `tags:` lists in _data/pubs.yml, which have drifted into near-duplicates
-   * (sys/system/systems, sec/security, agent/agents, bench/benchmark). An alias row
-   * sets `aliasOf` and carries no display metadata of its own; resolve through it
-   * before rendering or filtering.
+   * `tags:` lists in _data/pubs.yml, which had drifted into near-duplicates
+   * (sys/system/systems, sec/security, benchmark/bench). Those are collapsed once,
+   * during the import — see convex/vocabulary.ts — so every slug stored here is
+   * canonical and nothing has to resolve an alias at read time.
+   *
+   * `kind` records what a tag actually is. _data/field_colors.yml already grouped
+   * them this way in comments: research areas, "Academic groups" (CS, IEOR), and
+   * "Administrative and advisory" (Advisory Board, co-director).
    */
   tags: defineTable({
     slug: v.string(),
     label: v.string(),
     kind: v.union(
-      v.literal("research"), // people.researchAreas — the badges on the people grid
+      v.literal("research"), // a research area, e.g. "Systems", "Causal inference"
+      v.literal("department"), // an academic home, e.g. CS, IEOR, DBMI
+      v.literal("role"), // e.g. Advisory Board, Co-Director
       v.literal("topic"), // publications.topics — the filters on /publications
     ),
     /** Badge class from _data/field_colors.yml, e.g. "badge-dark-blue". */
     color: v.optional(v.string()),
     description: v.optional(v.string()),
-    /** Set on an alias row; points at the canonical tag. Aliases are never shown. */
-    aliasOf: v.optional(v.id("tags")),
     sortOrder: v.optional(v.number()),
   })
     .index("by_slug", ["slug"])
@@ -104,10 +108,12 @@ export default defineSchema({
     image: v.optional(image),
     bio: v.optional(v.string()),
     /**
-     * Slugs into `tags` (kind: "research"). Bounded and small, so an array rather
-     * than a join table; write the canonical slug, never an alias.
+     * Ordered canonical slugs into `tags`, rendered as the badge row on the people
+     * grid. Mixed kinds, because today's row mixes them: a person shows research
+     * areas alongside their department and any advisory role. Bounded and small,
+     * so an array rather than a join table.
      */
-    researchAreas: v.array(v.string()),
+    tags: v.array(v.string()),
     /** Advisors who have their own profile. */
     advisorIds: v.array(v.id("people")),
     /** Advisors who do not — kept as plain names rather than fabricating profiles. */
