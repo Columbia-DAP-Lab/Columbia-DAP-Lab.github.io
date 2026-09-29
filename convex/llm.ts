@@ -1,4 +1,4 @@
-import Anthropic from "@anthropic-ai/sdk";
+import { ApiError, FinishReason, GoogleGenAI } from "@google/genai/web";
 import { ConvexError } from "convex/values";
 import { env } from "./_generated/server";
 
@@ -9,13 +9,22 @@ import { env } from "./_generated/server";
  * parsed JSON that matches the schema. Nothing else in the app imports a provider
  * SDK, so changing provider is a change to this file alone.
  *
- * Today this calls Anthropic directly with ANTHROPIC_API_KEY. To move to the Convex
- * AI Gateway once the Convex plan includes it (no key to manage; needs
- * `ai` and `@convex-dev/ai-sdk-provider`, and the Node runtime):
+ * Today this is Gemini on Google Cloud (Vertex AI, now "Gemini Enterprise Agent
+ * Platform"), billed to the lab's Google Cloud project. It authenticates with a
+ * Google Cloud API key rather than a service-account JSON key: the key is bound to
+ * a service account with only the Vertex AI User role and restricted to the Vertex
+ * AI API, and it needs nothing but fetch — so this runs in the default Convex
+ * runtime, and the SDK's web build is imported to keep google-auth-library out.
+ *
+ *   npx convex env set GEMINI_API_KEY <Google Cloud API key>
+ *   npx convex env set GEMINI_MODEL gemini-3.1-pro     # optional; see MODEL
+ *
+ * To move to the Convex AI Gateway instead (no key to manage; needs `ai` and
+ * `@convex-dev/ai-sdk-provider`, and the Node runtime):
  *
  *   1. Replace the body of `generateStructured` with
- *        const { object, usage } = await generateObject({
- *          model: convexGateway("anthropic/<model>"),
+ *        const { object } = await generateObject({
+ *          model: convexGateway("<provider>/<model>"),
  *          schema: jsonSchema(request.schema),
  *          system: request.system,
  *          prompt: request.text,
@@ -23,10 +32,16 @@ import { env } from "./_generated/server";
  *      keeping the refusal and truncation checks as errors for the caller.
  *   2. Add "use node"; to the top of convex/extract.ts, which exports only an
  *      action for exactly this reason.
- *   3. Remove ANTHROPIC_API_KEY from convex/convex.config.ts and the deployment.
+ *   3. Remove GEMINI_API_KEY and GEMINI_MODEL from convex/convex.config.ts and the
+ *      deployment.
  */
 
-const MODEL = "claude-opus-5-5";
+/**
+ * Flash rather than Pro: filling a form from an announcement is reading, not
+ * reasoning, and the person is waiting on it. GEMINI_MODEL overrides it without a
+ * deploy if drafts come back poor.
+ */
+const MODEL = "gemini-3.8-flash";
 
 export type StructuredRequest = {
   system: string;
@@ -43,66 +58,80 @@ export type StructuredResult = {
   outputTokens: number;
 };
 
-export const isConfigured = () => Boolean(env.ANTHROPIC_API_KEY);
+export const isConfigured = () => Boolean(env.GEMINI_API_KEY);
+
+/** Finish reasons that mean the model would not answer, as opposed to ran out of room. */
+const DECLINED = new Set<string>([
+  FinishReason.SAFETY,
+  FinishReason.RECITATION,
+  FinishReason.BLOCKLIST,
+  FinishReason.PROHIBITED_CONTENT,
+  FinishReason.SPII,
+]);
 
 export const generateStructured = async (request: StructuredRequest): Promise<StructuredResult> => {
-  if (!env.ANTHROPIC_API_KEY) {
+  if (!env.GEMINI_API_KEY) {
     throw new ConvexError("Paste-to-fill is not set up on this deployment yet.");
   }
-  const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY });
+  // Vertex AI with an API key and no project: the SDK calls the global
+  // aiplatform.googleapis.com endpoint with the key in x-goog-api-key.
+  // `vertexai`, not the newer `enterprise`: the web build ignores `enterprise` and
+  // silently sends the request to the AI Studio API instead.
+  const ai = new GoogleGenAI({ vertexai: true, apiKey: env.GEMINI_API_KEY });
+  const model = env.GEMINI_MODEL || MODEL;
 
   let response;
   try {
-    response = await client.beta.messages.create({
-      model: MODEL,
-      max_tokens: request.maxTokens,
-      // If a safety classifier declines, retry server-side on the model Anthropic
-      // recommends for that category rather than failing the paste outright.
-      betas: ["server-side-fallback-2026-07-01"],
-      fallbacks: "default",
-      output_config: {
-        effort: "medium",
-        format: { type: "json_schema", schema: request.schema },
+    response = await ai.models.generateContent({
+      model,
+      contents: `<pasted>\n${request.text}\n</pasted>`,
+      config: {
+        systemInstruction: request.system,
+        responseMimeType: "application/json",
+        responseJsonSchema: request.schema,
+        maxOutputTokens: request.maxTokens,
       },
-      system: request.system,
-      messages: [{ role: "user", content: `<pasted>\n${request.text}\n</pasted>` }],
     });
   } catch (error) {
-    if (error instanceof Anthropic.RateLimitError || error instanceof Anthropic.InternalServerError) {
-      throw new ConvexError("The model is busy. Try again in a minute.");
-    }
-    if (error instanceof Anthropic.AuthenticationError || error instanceof Anthropic.PermissionDeniedError) {
-      console.error("Anthropic rejected ANTHROPIC_API_KEY", error.status);
-      throw new ConvexError("Paste-to-fill is misconfigured; ask an admin to check the API key.");
-    }
-    if (error instanceof Anthropic.APIError) {
-      console.error("Anthropic API error", error.status, error.message);
+    if (error instanceof ApiError) {
+      if (error.status === 429 || error.status >= 500) {
+        throw new ConvexError("The model is busy. Try again in a minute.");
+      }
+      if (error.status === 401 || error.status === 403) {
+        console.error("Google Cloud rejected GEMINI_API_KEY", error.status, error.message);
+        throw new ConvexError("Paste-to-fill is misconfigured; ask an admin to check the API key.");
+      }
+      // A 400 here is most likely the schema or the model name; the log says which.
+      console.error("Gemini API error", error.status, error.message);
       throw new ConvexError("Could not read the text. Try again, or fill the form by hand.");
     }
     throw error;
   }
 
+  const usage = response.usageMetadata;
+  const candidate = response.candidates?.[0];
   console.log("extraction", {
-    model: response.model,
-    stop: response.stop_reason,
-    input: response.usage.input_tokens,
-    output: response.usage.output_tokens,
+    model,
+    finish: candidate?.finishReason,
+    blocked: response.promptFeedback?.blockReason,
+    input: usage?.promptTokenCount,
+    output: usage?.candidatesTokenCount,
+    thinking: usage?.thoughtsTokenCount,
   });
 
-  if (response.stop_reason === "refusal") {
+  if (response.promptFeedback?.blockReason || (candidate?.finishReason && DECLINED.has(candidate.finishReason))) {
     throw new ConvexError("The model declined to read this text. Fill the form by hand.");
   }
-  if (response.stop_reason === "max_tokens") {
+  if (candidate?.finishReason === FinishReason.MAX_TOKENS) {
     throw new ConvexError("That is more than can be read at once. Paste fewer items.");
   }
-  const text = response.content.find((block) => block.type === "text");
-  if (text === undefined || text.type !== "text") {
-    throw new ConvexError("The model returned nothing usable. Try again.");
-  }
+  const text = response.text;
+  if (!text) throw new ConvexError("The model returned nothing usable. Try again.");
+
   return {
-    data: JSON.parse(text.text),
-    model: response.model,
-    inputTokens: response.usage.input_tokens,
-    outputTokens: response.usage.output_tokens,
+    data: JSON.parse(text),
+    model,
+    inputTokens: usage?.promptTokenCount ?? 0,
+    outputTokens: usage?.candidatesTokenCount ?? 0,
   };
 };
