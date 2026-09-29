@@ -59,8 +59,13 @@ export async function initAuth({ client, googleClientId, button, onChange }) {
       setTimeout(() => resolve(null), REFRESH_TIMEOUT_MS);
     });
 
-  const fetchToken = async ({ forceRefreshToken }) => {
-    if (!forceRefreshToken && fresh(token)) return token;
+  // `forceRefreshToken` is ignored while the token is still good: an ID token cannot
+  // be refreshed early, and asking Google for another on page load usually gets
+  // nothing, which used to sign people out on every reload. If Convex rejects a
+  // good-looking token it gives up after two tries and reports signed-out, and the
+  // onChange below clears it.
+  const fetchToken = async () => {
+    if (fresh(token)) return token;
     store(null);
     return await refresh();
   };
@@ -73,6 +78,8 @@ export async function initAuth({ client, googleClientId, button, onChange }) {
     connected = true;
     client.setAuth(fetchToken, (signedIn) => {
       connected = signedIn;
+      // A token Convex refused would otherwise be retried on every reload.
+      if (!signedIn) store(null);
       onChange(signedIn);
     });
   };

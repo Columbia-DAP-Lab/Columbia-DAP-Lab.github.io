@@ -12,7 +12,9 @@ import { initAuth } from "./auth.js";
 const { ConvexClient, anyApi: api } = window.convex;
 
 const root = document.getElementById("admin");
-const client = new ConvexClient(root.dataset.convexUrl);
+// initialAuthTokenReuse: keep the token restored from sessionStorage once Convex
+// accepts it, rather than immediately asking for a fresh one (admin/auth.js).
+const client = new ConvexClient(root.dataset.convexUrl, { initialAuthTokenReuse: true });
 
 // ------------------------------------------------------------------ helpers
 
