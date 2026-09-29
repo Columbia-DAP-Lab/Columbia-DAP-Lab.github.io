@@ -149,13 +149,25 @@
     in Computer Science at Stanford University in 2026. She also received Bachelor of Science
     degrees in Computer Science and Mathematics at MIT in 2020.
 
-- title: 'TBA'
+- title: 'Selective interventions for information acquisition: Incentives and audits for biodiversity'
   tag: AI in the Public Interest
   date: '2026-09-24'
   who: Lily Xu
   wholink: https://lily-x.github.io/
   where: CSB 453
   time: 3PM-4PM
+  description: >
+    The biodiversity crisis threatens one million species with extinction and jeopardizes the
+    ecosystems on which over half of global GDP depends. Increasingly, efforts to conserve and
+    restore biodiversity are made through distributed efforts, from contractor programs to
+    remove invasive species to smallholder landowners restoring habitats. Because these
+    activities are geographically dispersed and difficult to observe directly, obtaining
+    reliable information about what is happening on the ground can be costly. This raises a
+    central question: where, when, and how should we intervene to obtain the information that
+    matters most? With examples from managing invasive Burmese pythons in Florida and
+    monitoring for biodiversity credits in Kenya, we'll discuss how active learning, sequential
+    inference, and incentive design can help focus limited resources on the information most
+    consequential for downstream decisions.
   bio: >
     Lily Xu is the Sun-Wu Assistant Professor at Columbia University in the Department of
     Industrial Engineering and Operations Research, with an affiliation in Computer Science,
