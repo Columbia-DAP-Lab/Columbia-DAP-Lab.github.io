@@ -13,6 +13,44 @@
 # 
 #
 
+- title: 'OpenAgents: The Next-Gen Collaboration OS for Teams of Humans and Agents'
+  tag: Seminar
+  date: '2026-09-29'
+  who: Raphael Shu
+  where: CSB 453
+  time: 12PM
+  image: /files/images/events/20260929_seminar_shu.jpeg
+  description: |
+    AI agents are becoming capable of doing substantial work, but turning individual capability
+    into effective teamwork remains an open problem. The next challenge is not simply how one
+    person uses one agent, but how teams of humans and agents work together. How should they
+    share context, divide responsibilities, reuse expertise, make decisions, and remain
+    accountable for the result?
+
+    This talk presents the vision behind OpenAgents: a collaboration OS that gives human teams
+    and agent teams a shared environment for getting work done. People can bring their own
+    agents and private context, choose what to share, and collaborate through persistent
+    threads, tasks, and artifacts. Agents can work over long periods, call specialists, hand off
+    responsibilities, and escalate decisions to the right person. Humans set direction,
+    contribute judgment, review results, and remain responsible for the outcome.
+
+    We will examine concrete scenarios, including a software change moving through agent review,
+    human approval, deployment, and testing, and a specialist agent whose expertise becomes
+    reusable by colleagues and their agents. These examples reveal the infrastructure mixed
+    teams need: shared context, clear ownership, reliable handoffs, permissions, and continuity
+    across people, agents, and runtimes. The talk then considers how open collaboration
+    interfaces could extend this model beyond a single application and support a broader
+    ecosystem of human-agent teamwork.
+  bio: >
+    Raphael Shu is the founder of OpenAgents, where he is building open infrastructure for
+    collaboration among people and AI agents. His research spans language-model agents,
+    multi-agent systems, and collective intelligence. He is the chair of WMAC 2025 and 2026 at
+    AAAI. Previously, he served as a senior science tech lead at Amazon Bedrock Agents, a
+    founding member of Bedrock, where he architected and led the launch of Bedrock Multi-Agent
+    Collaboration for enterprises. He completed his doctorate at the University of Tokyo in 2020
+    and received a Dean's Award. He was also a visiting researcher at NYU, working with
+    Kyunghyun Cho.
+
 - title: 'TBA'
   tag: AI in the Public Interest
   date: '2026-12-03'
@@ -124,13 +162,25 @@
     in Computer Science at Stanford University in 2026. She also received Bachelor of Science
     degrees in Computer Science and Mathematics at MIT in 2020.
 
-- title: 'TBA'
+- title: 'Selective interventions for information acquisition: Incentives and audits for biodiversity'
   tag: AI in the Public Interest
   date: '2026-09-24'
   who: Lily Xu
   wholink: https://lily-x.github.io/
   where: CSB 453
   time: 3PM-4PM
+  description: >
+    The biodiversity crisis threatens one million species with extinction and jeopardizes the
+    ecosystems on which over half of global GDP depends. Increasingly, efforts to conserve and
+    restore biodiversity are made through distributed efforts, from contractor programs to
+    remove invasive species to smallholder landowners restoring habitats. Because these
+    activities are geographically dispersed and difficult to observe directly, obtaining
+    reliable information about what is happening on the ground can be costly. This raises a
+    central question: where, when, and how should we intervene to obtain the information that
+    matters most? With examples from managing invasive Burmese pythons in Florida and
+    monitoring for biodiversity credits in Kenya, we'll discuss how active learning, sequential
+    inference, and incentive design can help focus limited resources on the information most
+    consequential for downstream decisions.
   bio: >
     Lily Xu holds the Sun-Wu Assistant Professorship in Columbia's Industrial Engineering
     and Operations Research department and is affiliated with Computer Science. She
