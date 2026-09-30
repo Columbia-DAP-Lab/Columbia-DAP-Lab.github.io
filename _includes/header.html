@@ -6,6 +6,8 @@ marked active.
 {%- assign here = page.url | default: "/" -%}
 {%- comment -%} Blog posts live under /<category>/<date>/ and project pages under /projects/<name>/. {%- endcomment -%}
 {%- assign in_blog = false -%}{%- if here contains "/blog" or page.layout == "post" -%}{%- assign in_blog = true -%}{%- endif -%}
+{%- comment -%} There is no blog index; the Blog link goes straight to the newest post. {%- endcomment -%}
+{%- assign newest_post = site.posts | where: "layout", "post" | first -%}
 {%- assign in_projects = false -%}{%- if here contains "/projects" -%}{%- assign in_projects = true -%}{%- endif -%}
 <header class="site-header sticky-top">
   <nav class="navbar navbar-expand-lg" aria-label="Main">
@@ -26,7 +28,7 @@ marked active.
           {%- assign active = false -%}{%- if in_projects -%}{%- assign active = true -%}{%- endif %}
           <a class="nav-link{% if active %} active{% endif %}" href="{{ '/projects/' | relative_url }}"{% if active %} aria-current="page"{% endif %}>Projects</a>
           {%- assign active = false -%}{%- if in_blog -%}{%- assign active = true -%}{%- endif %}
-          <a class="nav-link{% if active %} active{% endif %}" href="{{ '/blog' | relative_url }}"{% if active %} aria-current="page"{% endif %}>Blog</a>
+          <a class="nav-link{% if active %} active{% endif %}" href="{% if newest_post %}{{ newest_post.url | relative_url }}{% else %}{{ '/blog' | relative_url }}{% endif %}"{% if active %} aria-current="page"{% endif %}>Blog</a>
           {%- assign active = false -%}{%- if here contains "/publications" -%}{%- assign active = true -%}{%- endif %}
           <a class="nav-link{% if active %} active{% endif %}" href="{{ '/publications' | relative_url }}"{% if active %} aria-current="page"{% endif %}>Publications</a>
           {%- assign active = false -%}{%- if here contains "/events" -%}{%- assign active = true -%}{%- endif %}

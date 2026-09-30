@@ -3,15 +3,21 @@ layout: default
 ---
 
 {%- comment -%}
-A blog post: the list of posts in a fixed left column and the article in a
-centered reading column beside it. On wide screens the list is always there, so
-nothing moves; on narrow ones it is a button that opens the same list in a
-drawer over the page.
+A blog post: the same page header as every other page, then the list of posts
+in a fixed left column and the article in a centered reading column beside it.
+On wide screens the list is always there, so nothing moves; on narrow ones it is
+a button that opens the same list in a drawer over the page. There is no
+separate index; /blog forwards to the newest post.
 {%- endcomment -%}
+
+<header class="page-header">
+  {%- comment -%} Not an h1: the post title below is the page's heading. {%- endcomment %}
+  <p class="page-title">Blog</p>
+  <p class="page-lede">Research notes, results, and news from the lab.</p>
+</header>
 
 <div class="post-layout">
   <aside class="post-nav" aria-label="All posts">
-    <p class="eyebrow">Blog</p>
     {% include blog-sidebar.html %}
   </aside>
 
