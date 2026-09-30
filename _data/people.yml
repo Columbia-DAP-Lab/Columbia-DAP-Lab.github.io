@@ -107,14 +107,12 @@
   homepage: https://www.cs.columbia.edu/~kkaffes/
   image: "/files/images/avatar/kostis.jpg"
   name: Kostis Kaffes
-- bio: Developed the only database system that can track row-level data-flows at near-zero
-    cost,  and forms the basis of compliance-first data systems. Winner of the NSF
-    CAREER, VLDB 2018  Test-of-time, Google, Adobe, Amazon awards.
+- bio: Winner of the NSF CAREER, VLDB 2018  Test-of-time, Google, Adobe, Amazon awards.
   category: Faculty
   field:
-  - co-director
-  - CS
   - Data
+  - CS
+  - co-director
   homepage: https://www.eugenewu.net/
   image: "/files/images/avatar/eugene.png"
   name: Eugene Wu
