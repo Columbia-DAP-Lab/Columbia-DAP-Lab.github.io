@@ -93,7 +93,7 @@ docs/admin-service-design.md.
           <legend>Image</legend>
           <label class="form-label" for="ev-image">Event image</label>
           <input class="form-control" type="file" id="ev-image" name="image" accept="image/*">
-          <div class="form-text">Optional. Under 5 MB.</div>
+          <div class="form-text">Optional. Large images are resized automatically.</div>
         </fieldset>
 
         <div class="dap-actions">
@@ -268,7 +268,7 @@ docs/admin-service-design.md.
           <div class="mb-3">
             <label class="form-label" for="person-image">Photo</label>
             <input class="form-control" type="file" id="person-image" name="image" accept="image/*">
-            <div class="form-text">Square works best. Under 5 MB.</div>
+            <div class="form-text">Square works best. Large photos are resized automatically.</div>
           </div>
           <div>
             <span class="form-label d-block">Badges</span>
@@ -392,7 +392,7 @@ docs/admin-service-design.md.
             <div class="flex-grow-1">
               <label class="form-label" for="proj-image">Upload an image</label>
               <input class="form-control" type="file" id="proj-image" name="image" accept="image/*">
-              <div class="form-text">Shown on the Projects page and at the top of the project's page. Under 5 MB.</div>
+              <div class="form-text">Shown on the Projects page and at the top of the project's page. Large images are resized automatically.</div>
               <label class="form-check-label mt-2" data-remove-image-wrap hidden>
                 <input class="form-check-input me-1" type="checkbox" name="removeImage">Remove the uploaded image
               </label>
@@ -407,7 +407,7 @@ docs/admin-service-design.md.
             <label class="btn btn-sm dap-btn-quiet mb-0">
               Insert image<input type="file" accept="image/*" hidden data-body-image>
             </label>
-            <span class="form-text m-0" data-body-image-status>Markdown. The image is uploaded and inserted where the cursor is.</span>
+            <span class="form-text m-0" data-body-image-status>Markdown. The image is uploaded and a reference to it inserted where the cursor is.</span>
           </div>
         </fieldset>
 
@@ -517,7 +517,7 @@ docs/admin-service-design.md.
             <div class="flex-grow-1">
               <label class="form-label" for="profile-image">Replace photo</label>
               <input class="form-control" type="file" id="profile-image" name="image" accept="image/*">
-              <div class="form-text">Square works best. Under 5 MB.</div>
+              <div class="form-text">Square works best. Large photos are resized automatically.</div>
             </div>
           </div>
         </fieldset>

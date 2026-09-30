@@ -48,21 +48,6 @@ const previewUrl = async (ctx: QueryCtx, project: Doc<"projects">): Promise<stri
   return null;
 };
 
-/**
- * The public URL of an image just uploaded for a project's description, so the
- * Insert image button can write it into the Markdown.
- */
-export const imageUrl = query({
-  args: { storageId: v.id("_storage") },
-  returns: v.string(),
-  handler: async (ctx, args) => {
-    await requireCapability(ctx, "admin");
-    const url = await ctx.storage.getUrl(args.storageId);
-    if (url === null) throw new ConvexError("The upload is missing; try again.");
-    return url;
-  },
-});
-
 /** Every project, drafts included, for the Projects tab's list. */
 export const list = query({
   args: {},

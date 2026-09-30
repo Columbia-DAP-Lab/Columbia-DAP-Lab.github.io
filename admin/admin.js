@@ -173,7 +173,36 @@ addSpeaker();
 
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024; // matches convex/admin.ts
 
-const uploadImage = async (file) => {
+/** Longest side for an uploaded image; people photos render small. */
+const PHOTO_SIDE = 480;
+const IMAGE_SIDE = 1600;
+
+/**
+ * Shrink a photo in the browser before it is uploaded: to `maxSide` pixels on its
+ * longest side, JPEGs and WebPs re-encoded as JPEG. PNGs stay PNG (they may be
+ * transparent); GIFs and SVGs are left alone, as is anything already small.
+ */
+const shrink = async (file, maxSide) => {
+  if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) return file;
+  let bitmap;
+  try {
+    bitmap = await createImageBitmap(file);
+  } catch {
+    return file; // a format this browser cannot decode: upload as is
+  }
+  const scale = Math.min(1, maxSide / Math.max(bitmap.width, bitmap.height));
+  if (scale === 1 && file.size < 500_000) return file;
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.round(bitmap.width * scale);
+  canvas.height = Math.round(bitmap.height * scale);
+  canvas.getContext("2d").drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+  const type = file.type === "image/png" ? "image/png" : "image/jpeg";
+  const blob = await new Promise((resolve) => canvas.toBlob(resolve, type, 0.85));
+  return blob && blob.size < file.size ? blob : file;
+};
+
+const uploadImage = async (original, maxSide = IMAGE_SIDE) => {
+  const file = await shrink(original, maxSide);
   if (file.size > MAX_IMAGE_BYTES) throw new Error("Images must be under 5 MB.");
   const url = await client.mutation(api.admin.generateUploadUrl, {});
   const response = await fetch(url, {
@@ -267,7 +296,7 @@ handleSubmit(personForm, async () => {
   const fields = checkedValues($("#fields"));
 
   const file = personForm.elements.image.files[0];
-  if (file) person.image = await uploadImage(file);
+  if (file) person.image = await uploadImage(file, PHOTO_SIDE);
 
   await client.mutation(api.admin.submitPerson, { ...person, advisors, fields });
   personForm.reset();
@@ -654,7 +683,7 @@ handleSubmit(profileForm, async () => {
     fields: checkedValues($("#profile-fields")),
   };
   const file = profileForm.elements.image.files[0];
-  if (file) edit.image = await uploadImage(file);
+  if (file) edit.image = await uploadImage(file, PHOTO_SIDE);
   const { applied } = await client.mutation(api.profiles.submitProfileEdit, edit);
   profileForm.elements.image.value = "";
   return applied ? "Saved. The People page updates in about a minute." : "Sent for review. An admin will look at it.";
@@ -767,10 +796,11 @@ $("[data-body-image]").addEventListener("change", async (event) => {
   status.textContent = "Uploading…";
   try {
     const storageId = await uploadImage(file);
-    const url = await client.query(api.projectAdmin.imageUrl, { storageId });
     const body = projectForm.elements.body;
     const at = body.selectionStart ?? body.value.length;
-    const markdown = `![${file.name.replace(/\.[^.]+$/, "")}](${url})`;
+    // A reference, not a URL: the export turns it into the file's address on
+    // whichever deployment serves the site (convex/content.ts).
+    const markdown = `![${file.name.replace(/\.[^.]+$/, "")}](convex-storage:${storageId})`;
     body.value = body.value.slice(0, at) + markdown + body.value.slice(body.selectionEnd ?? at);
     body.focus();
     body.selectionStart = body.selectionEnd = at + markdown.length;

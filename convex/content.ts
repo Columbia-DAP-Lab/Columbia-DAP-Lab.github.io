@@ -116,6 +116,24 @@ const printedName = (
  * `omitUndefined` drops the key, rather than writing `image:` with a null value
  * that the templates would read as present.
  */
+/**
+ * Images inside Markdown are written `convex-storage:<storageId>` rather than as a
+ * URL, because a file URL names one deployment and the text is copied between
+ * them. This turns each into the current deployment's file URL; the site build
+ * then copies the file into the site (_plugins/convex_content.rb).
+ */
+const STORAGE_REF = /convex-storage:([a-z0-9]+)/g;
+const resolveStorageRefs = async (text: string, ctx: QueryCtx): Promise<string> => {
+  const ids = [...new Set([...text.matchAll(STORAGE_REF)].map((m) => m[1]))];
+  let out = text;
+  for (const id of ids) {
+    const storageId = ctx.db.system.normalizeId("_storage", id);
+    const url = storageId === null ? null : await ctx.storage.getUrl(storageId);
+    if (url !== null) out = out.replaceAll(`convex-storage:${id}`, url);
+  }
+  return out;
+};
+
 const imagePath = async (
   image: Doc<"events">["image"],
   ctx: QueryCtx,
@@ -438,7 +456,7 @@ export const projects = query({
 
       out.push({
         slug: project.slug,
-        body: project.body,
+        body: await resolveStorageRefs(project.body, ctx),
         frontMatter: omitUndefined({
           title: project.title,
           subtitle: project.subtitle,
@@ -485,17 +503,17 @@ export const eventSeries = query({
   returns: v.array(seriesShape),
   handler: async (ctx) => {
     const rows = await ctx.db.query("eventSeries").take(100);
-    const series = rows
-      .filter((s) => s.active)
-      .sort((a, b) => a.sortOrder - b.sortOrder)
-      .map((s) =>
+    const series = [];
+    for (const s of rows.filter((r) => r.active).sort((a, b) => a.sortOrder - b.sortOrder)) {
+      series.push(
         omitUndefined({
           slug: s.slug,
           label: s.label,
           description: s.description,
-          logo: s.logo?.kind === "path" ? s.logo.path : undefined,
+          logo: await imagePath(s.logo, ctx),
         }),
       );
+    }
     return [{ slug: "all", label: "All" }, ...series];
   },
 });

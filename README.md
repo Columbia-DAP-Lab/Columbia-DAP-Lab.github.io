@@ -23,6 +23,13 @@ build (`.github/workflows/deploy.yml`), so a change is live in about a minute.
 If Convex cannot be reached, the build fails and GitHub Pages keeps serving the last
 good version.
 
+Images are stored in Convex too: people photos, event images, series logos and
+project images, including anything uploaded on the admin page. Visitors do not
+load them from Convex, though. The build downloads each stored image once, keeps
+it in a cache between builds (`.convex-media/`), and publishes it with the site
+under `/media/`, so Convex's bandwidth goes to builds rather than page views. The
+admin page shrinks large photos before uploading them.
+
 Every night `.github/workflows/snapshot.yml` commits the public content feed to
 `_backup/content.json`. The site never reads it; it is there so
 `git log -p _backup/` shows what content changed and when, and as an off-Convex
@@ -81,8 +88,8 @@ is a draft until you publish it. Its short name becomes the address,
 `/projects/<short-name>/`, and is fixed once the project is published. Upload a
 card image in the form. **Insert image** puts a picture into the description.
 
-Older projects keep their images in the repo, in `_projects/<slug>/`. Those images
-are still served from there; only the `.md` beside them is generated.
+Images in a description are written `convex-storage:<id>`; **Insert image**
+writes that for you.
 
 ### News
 
@@ -321,3 +328,7 @@ npx convex export --prod --include-file-storage --path backup.zip
 
 The one-time scripts that imported the old `_data/*.yml` into Convex, and checked
 that import, have been removed. They are in the git history if you need them.
+
+`scripts/migrate_images_to_convex.mjs` moves images that still live in the repo into
+Convex, resized (a dry run by default; `--write` to do it, `--prod` for
+production). It needs macOS and a checkout that still has the image files.

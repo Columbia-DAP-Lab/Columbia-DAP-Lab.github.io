@@ -37,6 +37,16 @@ jobs:
       - name: Install dependencies
         run: bundle install
 
+      # Images stored in Convex are downloaded during the build and published with
+      # the site. A stored file never changes under its id, so keep them between
+      # builds and download only new ones.
+      - name: Cache images from Convex
+        uses: actions/cache@v4
+        with:
+          path: .convex-media
+          key: convex-media-${{ github.run_id }}
+          restore-keys: convex-media-
+
       # Events, publications, people, news and projects live only in Convex; the
       # build loads them itself (_plugins/convex_content.rb) from `convex.site_url`
       # in _config.yml. If Convex cannot be reached the build fails, and Pages keeps

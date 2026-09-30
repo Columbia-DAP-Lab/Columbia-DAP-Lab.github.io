@@ -12,7 +12,16 @@
 # If Convex cannot be reached, or returns something that looks broken, the build
 # stops. On GitHub Pages that leaves the last good deploy serving: stale, never
 # half-empty.
+#
+# Images are stored in Convex too (people photos, event images, series logos,
+# project images, and anything uploaded on the admin page), but visitors do not
+# load them from Convex: every Convex file URL in the content is downloaded into
+# .convex-media/ and published with the site as /media/<file id>.<ext>. A stored
+# file never changes under its id, so each is downloaded once and then cached
+# (deploy.yml keeps .convex-media/ between builds), and Convex's bandwidth is spent
+# on builds, not page views.
 
+require "fileutils"
 require "json"
 require "net/http"
 require "uri"
@@ -33,6 +42,14 @@ module ConvexContent
   REQUIRED = %w[events publications people eventSeries fieldColors projects].freeze
 
   ATTEMPTS = 3
+
+  # A Convex file URL: https://<deployment>.convex.cloud/api/storage/<uuid>
+  STORAGE_URL = %r{https://[a-z0-9-]+\.convex\.cloud/api/storage/([0-9a-f-]{36})}
+  MEDIA_DIR = ".convex-media"
+  EXTENSIONS = {
+    "image/jpeg" => ".jpg", "image/png" => ".png", "image/gif" => ".gif", "image/webp" => ".webp",
+    "image/avif" => ".avif", "image/svg+xml" => ".svg",
+  }.freeze
 
   # A project page whose front matter and body come from Convex rather than a file.
   #
@@ -90,7 +107,7 @@ module ConvexContent
         empty = REQUIRED.select { |key| payload.fetch(key).empty? }
         raise "no #{empty.join(', ')} in it" unless empty.empty?
 
-        return payload
+        return response.body
       rescue StandardError => e
         last_error = e
         Jekyll.logger.warn "Convex:", "attempt #{attempt + 1}/#{ATTEMPTS} failed: #{e.message}"
@@ -99,11 +116,59 @@ module ConvexContent
     raise Jekyll::Errors::FatalException, "Could not load content from #{url}: #{last_error&.message}"
   end
 
+  # Download a stored file into the cache unless it is already there; returns the
+  # file name, or nil for something that is not an image.
+  def cache_file(url, uuid, dir)
+    cached = Dir.glob(File.join(dir, "#{uuid}.*")).first
+    return File.basename(cached) if cached
+
+    uri = URI(url)
+    3.times do
+      response = Net::HTTP.get_response(uri)
+      if response.is_a?(Net::HTTPRedirection)
+        uri = URI(response["location"])
+        next
+      end
+      raise "HTTP #{response.code}" unless response.is_a?(Net::HTTPSuccess)
+
+      ext = EXTENSIONS[response.content_type]
+      return nil if ext.nil?
+
+      name = "#{uuid}#{ext}"
+      File.binwrite(File.join(dir, name), response.body)
+      return name
+    end
+    raise "too many redirects"
+  rescue StandardError => e
+    raise Jekyll::Errors::FatalException, "Could not download #{url}: #{e.message}"
+  end
+
+  # Replace every Convex file URL in the raw content with the site's own copy,
+  # registering each copy as a static file so it is published at /media/.
+  def localize_media(site, text)
+    root = site.in_source_dir(MEDIA_DIR)
+    dir = File.join(root, "media")
+    FileUtils.mkdir_p(dir)
+    count = 0
+    localized = text.gsub(STORAGE_URL) do |url|
+      name = cache_file(url, Regexp.last_match(1), dir)
+      next url if name.nil?
+
+      unless site.static_files.any? { |f| f.path == File.join(dir, name) }
+        site.static_files << Jekyll::StaticFile.new(site, root, "media", name)
+        count += 1
+      end
+      "/media/#{name}"
+    end
+    Jekyll.logger.info "Convex:", "#{count} images published under /media/" if count.positive?
+    localized
+  end
+
   def load(site)
     url = site_url(site)
     raise Jekyll::Errors::FatalException, "No Convex deployment: set convex.site_url in _config.yml" if url.empty?
 
-    payload = fetch(url)
+    payload = JSON.parse(localize_media(site, fetch(url)))
     DATA.each { |key, name| site.data[name] = payload.fetch(key) }
 
     projects = site.collections.fetch("projects")

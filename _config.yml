@@ -19,6 +19,10 @@ collections:
     permalink: /benchmarks/:name/
 include:
   - _projects  # Include images from _projects in the build
+# Images downloaded from Convex during the build (_plugins/convex_content.rb); the
+# plugin publishes them itself, and the watcher must not rebuild when they appear.
+exclude:
+  - .convex-media
 defaults:
   - scope:
       path: ""
