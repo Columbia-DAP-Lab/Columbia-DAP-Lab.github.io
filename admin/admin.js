@@ -517,13 +517,18 @@ const renderEvent = (row) =>
         field("Date", row.endDate ? `${row.startDate} – ${row.endDate}` : row.startDate),
         field("Time", row.timeLabel),
         field("Where", row.location),
+        field("Map", link(row.locationUrl)),
         field("Link", link(row.link)),
-        row.speakers.map((s) =>
+        field("Zoom", link(row.zoomUrl)),
+        field("Video", link(row.videoUrl)),
+        field("Slides", link(row.slidesUrl)),
+        row.speakers.flatMap((s) => [
           field(
             "Speaker",
             el("span", {}, [s.name, s.affiliation, s.role].filter(Boolean).join(", "), " ", link(s.url)),
           ),
-        ),
+          s.bio && el("pre", { class: "body mt-1" }, s.bio),
+        ]),
         row.description && el("pre", { class: "body mt-2" }, row.description),
         el("div", { class: "small text-muted mt-2" }, `Submitted by ${row.submittedBy}, ${when(row.submittedAt)}`),
       ),
@@ -540,6 +545,7 @@ const renderPublication = (row) =>
     field("Venue", row.venue),
     field("Date", row.pubDate),
     field("URL", link(row.url)),
+    field("Website", link(row.websiteUrl)),
     field("Slides", link(row.slidesUrl)),
     field("Code", link(row.codeUrl)),
     field("Topics", row.topics.join(", ")),
@@ -644,7 +650,8 @@ const renderQueue = (table, rows, render) => {
   const total = Object.values(pendingCounts).reduce((a, b) => a + b, 0);
   $("[data-pending-count]").textContent = total || "";
   $(`#review-${table}`).replaceChildren(
-    rows.length === 0 ? el("p", { class: "text-muted" }, "Nothing waiting.") : rows.map(render),
+    // Spread: replaceChildren stringifies an array ("[object HTMLDivElement]").
+    ...(rows.length === 0 ? [el("p", { class: "text-muted" }, "Nothing waiting.")] : rows.map(render)),
   );
 };
 
