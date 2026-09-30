@@ -110,7 +110,8 @@ node_modules/
 skills-lock.json
 convex/_generated/ai/
 
-### Content generated from Convex by scripts/fetch_content.rb (never commit) ###
+### Content now loads from Convex at build time (_plugins/convex_content.rb). ###
+### These are leftovers of the old generated files; never commit them.       ###
 _data/events.yml
 _data/pubs.yml
 _data/people.yml

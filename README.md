@@ -13,14 +13,15 @@ in two places:
   They are added and edited through the [admin page](https://daplab.cs.columbia.edu/admin/).
 - **In this repo**: blog posts, pages, layouts and styles.
 
-On every build, `.github/workflows/deploy.yml` runs `scripts/fetch_content.rb`, which
-fetches the published content from Convex and writes it into `_data/*.yml` and
-`_projects/*/*.md` before Jekyll runs. Publishing something on the admin page
-triggers that build, so a change is live in about a minute.
+The build loads that content from the production Convex deployment itself:
+`_plugins/convex_content.rb` fetches it while Jekyll runs and hands it to the
+templates as `site.data.events`, `site.data.pubs` and so on, plus the project pages.
+Nothing is read from or written to `_data/` or `_projects/*.md`, and there are no
+content files in the repo. Publishing something on the admin page triggers a
+build (`.github/workflows/deploy.yml`), so a change is live in about a minute.
 
-Those files are **generated and not in the repo** (they are gitignored): Convex is
-the only copy the site reads. If Convex cannot be reached, the build fails and
-GitHub Pages keeps serving the last good version.
+If Convex cannot be reached, the build fails and GitHub Pages keeps serving the last
+good version.
 
 Every night `.github/workflows/snapshot.yml` commits the public content feed to
 `_backup/content.json`. The site never reads it; it is there so
@@ -180,26 +181,20 @@ bundle exec jekyll serve --host localhost --drafts --future --trace
 Then open http://localhost:4000. Use `localhost`, not `127.0.0.1`: Google sign-in on
 the admin page accepts only the origins registered for it.
 
-The content comes from Convex, so fetch it first, and again whenever you want
-newer content. Without it, pages build but show no events, papers or people:
+The content loads from production Convex as part of the build, so this needs a
+network connection, and each regeneration picks up the latest content.
+
+The admin page at http://localhost:4000/admin/ also talks to **production** (both
+read `convex:` in `_config.yml`), so anything you publish from a local copy is live.
+To work against the dev sandbox instead, layer `_config.dev.yml` on top; it points
+both the admin page and the content at dev:
 
 ```bash
-ruby scripts/fetch_content.rb
-```
-
-The fetched files are gitignored, so they never show up in `git status`. The Docker
-setup below fetches on start. To build from the dev deployment instead, set
-`CONVEX_SITE_URL=https://agreeable-stork-479.convex.site` for the fetch.
-
-The admin page at http://localhost:4000/admin/ talks to the **production**
-deployment (it reads `convex.url` in `_config.yml`), so anything you publish there
-from a local copy is live. To try things out against the dev sandbox instead, layer
-`_config.dev.yml` on top and fetch from dev:
-
-```bash
-CONVEX_SITE_URL=https://agreeable-stork-479.convex.site ruby scripts/fetch_content.rb
 bundle exec jekyll serve --config _config.yml,_config.dev.yml --host localhost --drafts --future
 ```
+
+`CONVEX_SITE_URL=https://<deployment>.convex.site` overrides only where the content
+comes from, for a one-off build.
 
 ### With Docker
 

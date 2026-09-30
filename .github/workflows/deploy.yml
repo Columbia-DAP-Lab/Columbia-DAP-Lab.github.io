@@ -37,13 +37,10 @@ jobs:
       - name: Install dependencies
         run: bundle install
 
-      # Events, publications, people, news and projects live only in Convex. This
-      # writes them into _data/ and _projects/ for Jekyll; nothing is committed. If
-      # Convex cannot be reached the step fails, and Pages keeps the last deploy.
-      # The deployment is `convex.site_url` in _config.yml.
-      - name: Fetch content from Convex
-        run: ruby scripts/fetch_content.rb
-
+      # Events, publications, people, news and projects live only in Convex; the
+      # build loads them itself (_plugins/convex_content.rb) from `convex.site_url`
+      # in _config.yml. If Convex cannot be reached the build fails, and Pages keeps
+      # the last deploy.
       - name: Build site
         run: bundle exec jekyll build  # Modify if using a different static site generator
 
