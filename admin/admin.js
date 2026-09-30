@@ -110,25 +110,42 @@ client.onUpdate(api.content.eventSeries, {}, (series) => {
   select.value = current;
 });
 
-client.onUpdate(api.content.topics, {}, (topics) => {
-  const checked = new Set($$("#topics input:checked").map((i) => i.value));
-  $("#topics").replaceChildren(
-    ...topics.map((t) =>
+/**
+ * A checkbox per vocabulary entry, keeping whatever was ticked across a refresh.
+ * The vocabulary is closed, so a typo cannot create a filter or badge nothing matches.
+ */
+const renderChecks = (container, entries, prefix, describe = (e) => e.description) => {
+  const checked = new Set($$("input:checked", container).map((i) => i.value));
+  container.replaceChildren(
+    ...entries.map((entry) =>
       el(
         "div",
         { class: "form-check" },
         el("input", {
           class: "form-check-input",
           type: "checkbox",
-          id: `topic-${t.slug}`,
-          value: t.slug,
-          checked: checked.has(t.slug),
+          id: `${prefix}-${entry.slug}`,
+          value: entry.slug,
+          checked: checked.has(entry.slug),
         }),
-        el("label", { class: "form-check-label", for: `topic-${t.slug}`, title: t.description }, t.label),
+        el("label", { class: "form-check-label", for: `${prefix}-${entry.slug}`, title: describe(entry) }, entry.label),
       ),
     ),
   );
-});
+};
+const checkedValues = (container) => $$("input:checked", container).map((input) => input.value);
+
+client.onUpdate(api.content.topics, {}, (topics) => renderChecks($("#topics"), topics, "topic"));
+// Research areas first, then department and role badges, as the people grid mixes them.
+const FIELD_KIND_ORDER = { research: 0, department: 1, role: 2 };
+client.onUpdate(api.content.fields, {}, (fields) =>
+  renderChecks(
+    $("#fields"),
+    [...fields].sort((a, b) => FIELD_KIND_ORDER[a.kind] - FIELD_KIND_ORDER[b.kind]),
+    "field",
+    (f) => f.kind,
+  ),
+);
 
 // --------------------------------------------------------------- event form
 
@@ -205,16 +222,47 @@ handleSubmit(publicationForm, async () => {
     .split("\n")
     .map((name) => name.trim())
     .filter(Boolean);
-  const topics = $$("#topics input:checked").map((input) => input.value);
+  const topics = checkedValues($("#topics"));
 
   await client.mutation(api.admin.submitPublication, { ...publication, authors, topics });
   publicationForm.reset();
   return "Submitted. An editor will review it; track it under My submissions.";
 });
 
+// -------------------------------------------------------------- person form
+
+/** Non-empty trimmed lines of a textarea. */
+const lines = (textarea) =>
+  textarea.value
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+const personForm = $("#person-form");
+handleSubmit(personForm, async () => {
+  const person = values(personForm, [
+    "name",
+    "category",
+    "title",
+    "homepage",
+    "email",
+    "affiliation",
+    "bio",
+  ]);
+  const advisors = lines(personForm.elements.advisors);
+  const fields = checkedValues($("#fields"));
+
+  const file = personForm.elements.image.files[0];
+  if (file) person.image = await uploadImage(file);
+
+  await client.mutation(api.admin.submitPerson, { ...person, advisors, fields });
+  personForm.reset();
+  return "Submitted. An editor will review it; track it under My submissions.";
+});
+
 // ---------------------------------------------------------- my submissions
 
-const renderMine = ({ events, publications }) => {
+const renderMine = ({ events, publications, people }) => {
   const list = (heading, rows) => [
     el("h5", { class: "mt-3" }, heading),
     rows.length === 0
@@ -235,7 +283,11 @@ const renderMine = ({ events, publications }) => {
           ),
         ),
   ];
-  $("#mine").replaceChildren(...list("Events", events), ...list("Publications", publications));
+  $("#mine").replaceChildren(
+    ...list("Events", events),
+    ...list("Publications", publications),
+    ...list("People", people),
+  );
 };
 
 // ------------------------------------------------------------------ review
@@ -315,10 +367,45 @@ const renderPublication = (row) =>
     reviewActions("publications", row),
   );
 
-const pendingCounts = { events: 0, publications: 0 };
+const CATEGORY_LABELS = {
+  faculty: "Faculty",
+  postdoc: "Postdoc",
+  phd: "PhD",
+  student: "M.S./Undergraduate",
+  staff: "Staff",
+  alum: "Alum",
+};
+
+const renderPerson = (row) =>
+  el(
+    "div",
+    { class: "card card-body mb-3 queue-item" },
+    el(
+      "div",
+      { class: "d-flex gap-3" },
+      row.imageUrl && el("img", { src: row.imageUrl, alt: "" }),
+      el(
+        "div",
+        { class: "flex-grow-1" },
+        el("h5", {}, row.name),
+        field("Group", CATEGORY_LABELS[row.category] ?? row.category),
+        field("Title", row.title),
+        field("Affiliation", row.affiliation),
+        field("Homepage", link(row.homepage)),
+        field("Email", row.email),
+        field("Advisors", row.advisors.join(", ")),
+        field("Badges", row.fields.join(", ")),
+        row.bio && el("pre", { class: "body mt-2" }, row.bio),
+        el("div", { class: "small text-muted mt-2" }, `Submitted by ${row.submittedBy}, ${when(row.submittedAt)}`),
+      ),
+    ),
+    reviewActions("people", row),
+  );
+
+const pendingCounts = { events: 0, publications: 0, people: 0 };
 const renderQueue = (table, rows, render) => {
   pendingCounts[table] = rows.length;
-  const total = pendingCounts.events + pendingCounts.publications;
+  const total = pendingCounts.events + pendingCounts.publications + pendingCounts.people;
   $("[data-pending-count]").textContent = total || "";
   $(`#review-${table}`).replaceChildren(
     rows.length === 0 ? el("p", { class: "text-muted" }, "Nothing waiting.") : rows.map(render),
@@ -404,6 +491,9 @@ const renderMe = (me) => {
   subscribe(api.admin.mySubmissions, {}, renderMine);
   if (can(me.capabilities, "events")) {
     subscribe(api.admin.pending, { table: "events" }, (rows) => renderQueue("events", rows, renderEvent));
+  }
+  if (can(me.capabilities, "people")) {
+    subscribe(api.admin.pending, { table: "people" }, (rows) => renderQueue("people", rows, renderPerson));
   }
   if (can(me.capabilities, "publications")) {
     subscribe(api.admin.pending, { table: "publications" }, (rows) =>

@@ -143,6 +143,7 @@ export default defineSchema({
     .index("by_slug", ["slug"])
     .index("by_category_and_sortOrder", ["category", "sortOrder"])
     .index("by_status_and_category", ["status", "category"])
+    .index("by_submittedBy_and_submittedAt", ["submittedBy", "submittedAt"])
     .index("by_email", ["email"])
     .searchIndex("search_name", { searchField: "name" }),
 
