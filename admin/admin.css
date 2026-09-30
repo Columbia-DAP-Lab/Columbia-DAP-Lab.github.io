@@ -83,12 +83,6 @@
 }
 .dap-count:empty { display: none; }
 
-.dap-note {
-  font-size: 0.875rem;
-  color: var(--dap-muted);
-  margin-bottom: 0.5rem;
-}
-
 .dap-title {
   font-size: 2.6rem;
   font-weight: 800;
