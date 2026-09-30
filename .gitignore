@@ -109,3 +109,12 @@ node_modules/
 .claude/skills/
 skills-lock.json
 convex/_generated/ai/
+
+### Content generated from Convex by scripts/fetch_content.rb (never commit) ###
+_data/events.yml
+_data/pubs.yml
+_data/people.yml
+_data/news.yml
+_data/event_types.yml
+_data/field_colors.yml
+_projects/*/*.md

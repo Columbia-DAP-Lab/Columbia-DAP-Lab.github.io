@@ -37,10 +37,9 @@ jobs:
       - name: Install dependencies
         run: bundle install
 
-      # Events, publications, people and news live in Convex. This overwrites the
-      # committed _data/*.yml in the runner only — nothing is pushed back. If Convex
-      # is unreachable the committed snapshot is used and the step warns; set
-      # CONVEX_FETCH_STRICT=1 to fail the build instead.
+      # Events, publications, people, news and projects live only in Convex. This
+      # writes them into _data/ and _projects/ for Jekyll; nothing is committed. If
+      # Convex cannot be reached the step fails, and Pages keeps the last deploy.
       # The deployment is `convex.site_url` in _config.yml.
       - name: Fetch content from Convex
         run: ruby scripts/fetch_content.rb

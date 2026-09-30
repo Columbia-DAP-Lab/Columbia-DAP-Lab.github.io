@@ -1,24 +1,26 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-# Fetch published content from Convex and write it into _data/ for the Jekyll build.
+# Fetch the site's content from Convex and write it where Jekyll reads it.
 #
-# Run by .github/workflows/deploy.yml before `jekyll build`. The files it writes are
-# build output: they are overwritten every run and never committed by this script.
+# Convex is the only source of events, publications, people, news and projects;
+# nothing in the repo stands in for it. This writes _data/*.yml and
+# _projects/<slug>/<slug>.md, which are build output: gitignored, overwritten
+# every run, and never committed. Run it before any Jekyll build:
 #
 #   ruby scripts/fetch_content.rb
 #
-# The deployment comes from `convex.site_url` in _config.yml, the same place the
-# admin page reads its URL from. CONVEX_SITE_URL overrides it, e.g. to build a
-# local copy from the dev deployment:
+# .github/workflows/deploy.yml does so on every build. The deployment comes from
+# `convex.site_url` in _config.yml, the same place the admin page reads its URL
+# from. CONVEX_SITE_URL overrides it, e.g. to build a local copy from dev:
 #
 #   CONVEX_SITE_URL=https://<deployment>.convex.site ruby scripts/fetch_content.rb
 #
-# If Convex cannot be reached after several tries, the committed _data/*.yml are
-# left in place and the build continues against them. They are a full, valid
-# snapshot — refreshed nightly by .github/workflows/snapshot.yml — so the failure
-# mode is content up to a day old rather than a page with no events on it.
+# If Convex cannot be reached, or returns something that looks broken, this exits
+# non-zero and the build stops. GitHub Pages then keeps serving the last good
+# deploy: stale, never half-empty.
 
+require "fileutils"
 require "json"
 require "net/http"
 require "uri"
@@ -27,7 +29,6 @@ require "yaml"
 SITE_URL = (ENV["CONVEX_SITE_URL"].to_s.strip.then { |url| url.empty? ? nil : url } ||
             YAML.load_file(File.expand_path("../_config.yml", __dir__)).dig("convex", "site_url").to_s.strip)
 ATTEMPTS = Integer(ENV.fetch("CONVEX_FETCH_ATTEMPTS", "3"))
-STRICT = ENV["CONVEX_FETCH_STRICT"] == "1"
 
 # collection in the payload => the _data file it is written to
 FILES = {
@@ -39,9 +40,13 @@ FILES = {
   "fieldColors" => "_data/field_colors.yml",
 }.freeze
 
-def warn_loudly(message)
-  warn "::warning::#{message}" if ENV["GITHUB_ACTIONS"]
-  warn message
+# Collections that are never legitimately empty: an empty one means a broken or
+# wrong deployment, and publishing it would blank a page. News may be empty.
+REQUIRED = %w[events publications people eventSeries fieldColors projects].freeze
+
+def fail_build(message)
+  warn "::error::#{message}" if ENV["GITHUB_ACTIONS"]
+  abort "fetch_content: #{message}"
 end
 
 def fetch_payload(url)
@@ -53,7 +58,7 @@ def fetch_payload(url)
       raise "HTTP #{response.code}" unless response.is_a?(Net::HTTPSuccess)
 
       payload = JSON.parse(response.body)
-      missing = FILES.keys.reject { |key| payload[key].is_a?(Array) || payload[key].is_a?(Hash) }
+      missing = (FILES.keys + ["projects"]).reject { |key| payload[key].is_a?(Array) || payload[key].is_a?(Hash) }
       raise "payload missing #{missing.join(', ')}" unless missing.empty?
 
       return payload
@@ -65,67 +70,49 @@ def fetch_payload(url)
   raise last_error || "unreachable"
 end
 
-def give_up(message)
-  raise message if STRICT
-
-  warn_loudly("#{message} — building from the committed _data/*.yml snapshot instead")
-  exit 0
-end
-
-give_up("no Convex deployment: set convex.site_url in _config.yml") if SITE_URL.empty?
+fail_build("no Convex deployment: set convex.site_url in _config.yml") if SITE_URL.empty?
 
 payload =
   begin
     fetch_payload(SITE_URL)
   rescue StandardError => e
-    give_up("could not fetch content from Convex (#{e.message})")
+    fail_build("could not fetch content from #{SITE_URL} (#{e.message})")
   end
 
-# Projects are a Jekyll collection, not a data file: each is a Markdown document
-# with front matter that renders into its own page. Write them back as files.
-#
-# Only the .md is written. The images beside it stay in the repo, because `avatar`
-# names a file in that directory and the collection copies it verbatim. A project
-# removed from Convex has its Markdown deleted so the page goes away; nothing else
-# in the directory is touched.
-projects = payload["projects"]
-if projects.is_a?(Array) && !projects.empty?
-  written = []
-  projects.each do |project|
-    slug = project.fetch("slug")
-    dir = File.join("_projects", slug)
-    Dir.mkdir(dir) unless Dir.exist?(dir)
-    path = File.join(dir, "#{slug}.md")
-    front = project.fetch("frontMatter").to_yaml.sub(/\A---\n/, "")
-    File.write(path, "---\n#{front}---\n\n#{project.fetch('body')}\n")
-    written << path
-  end
-  (Dir.glob("_projects/*/*.md") - written).each do |stale|
-    warn_loudly("removing #{stale}: no longer in Convex")
-    File.delete(stale)
-  end
-  puts "_projects: #{projects.size} documents"
-else
-  warn_loudly("Convex returned no projects; keeping the committed _projects/")
-end
+empty = REQUIRED.select { |key| payload.fetch(key).empty? }
+fail_build("Convex returned no #{empty.join(', ')} from #{SITE_URL}") unless empty.empty?
 
+FileUtils.mkdir_p("_data")
 FILES.each do |key, path|
   rows = payload.fetch(key)
-  # An empty collection is more likely a broken deployment than real news, and it
-  # would silently blank a page. Keep what is committed.
-  if rows.empty?
-    warn_loudly("Convex returned no #{key}; keeping the committed #{path}")
-    next
-  end
-
   header = <<~HEADER
-    # Fetched from Convex at build time by scripts/fetch_content.rb — DO NOT EDIT.
-    # Edits here are overwritten on the next build. The #{key} table is the source
-    # of truth; a committed copy is refreshed nightly as a fallback snapshot.
+    # Generated from Convex by scripts/fetch_content.rb; not committed. Edit content
+    # at /admin/ instead: this file is rewritten on every build.
   HEADER
-
   File.write(path, header + rows.to_yaml.sub(/\A---\n/, ""))
   puts "#{path}: #{rows.size} records"
 end
 
-puts "content generated at #{payload['generatedAt']}"
+# Projects are a Jekyll collection, not a data file: each is a Markdown document
+# with front matter that renders into its own page.
+#
+# Only the .md is written. Images committed beside it (named by `avatar`) stay in
+# the repo, and the collection copies them verbatim. A project no longer in
+# Convex has its Markdown removed so the page goes away; nothing else in the
+# directory is touched.
+written = payload.fetch("projects").map do |project|
+  slug = project.fetch("slug")
+  dir = File.join("_projects", slug)
+  FileUtils.mkdir_p(dir)
+  path = File.join(dir, "#{slug}.md")
+  front = project.fetch("frontMatter").to_yaml.sub(/\A---\n/, "")
+  File.write(path, "---\n#{front}---\n\n#{project.fetch('body')}\n")
+  path
+end
+(Dir.glob("_projects/*/*.md") - written).each do |stale|
+  puts "removing #{stale}: no longer in Convex"
+  File.delete(stale)
+end
+puts "_projects: #{written.size} documents"
+
+puts "content generated at #{payload['generatedAt']} from #{SITE_URL}"

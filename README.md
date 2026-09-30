@@ -18,12 +18,14 @@ fetches the published content from Convex and writes it into `_data/*.yml` and
 `_projects/*/*.md` before Jekyll runs. Publishing something on the admin page
 triggers that build, so a change is live in about a minute.
 
-> **Do not edit `_data/events.yml`, `_data/pubs.yml`, `_data/people.yml`,
-> `_data/news.yml` or `_projects/*/*.md` by hand.** They are generated: the next build
-> overwrites them, and deletes any project Markdown that is not in Convex. The
-> committed copies are a snapshot that `.github/workflows/snapshot.yml` refreshes
-> nightly; they are what the build falls back to if Convex cannot be reached, and
-> their git history is the record of content changes.
+Those files are **generated and not in the repo** (they are gitignored): Convex is
+the only copy the site reads. If Convex cannot be reached, the build fails and
+GitHub Pages keeps serving the last good version.
+
+Every night `.github/workflows/snapshot.yml` commits the public content feed to
+`_backup/content.json`. The site never reads it; it is there so
+`git log -p _backup/` shows what content changed and when, and as an off-Convex
+copy of what the site publishes.
 
 The design, and why it is built this way, is in
 [`docs/admin-service-design.md`](docs/admin-service-design.md). That was written
@@ -39,8 +41,8 @@ before the build, so some details there have since changed.
 | Your own People-page profile | Admin page → your email (top right) → **Edit profile** |
 | A new person | Admin page → **People** (admins) |
 | Blog posts | This repo: [Blog Posts](#blog-posts) below |
-| Projects and software | Convex, with no form yet: ask an admin (see below) |
-| News | Convex, with no form yet: ask an admin |
+| Projects and software | Admin page → **Projects** (admins) |
+| News | Convex, with no form yet: ask an admin (see below) |
 | Pages, layouts, styles | This repo, by pull request |
 
 For changes to the repo, test locally ([Developing locally](#developing-locally)),
@@ -71,13 +73,21 @@ your Columbia Google account (`uni@columbia.edu`). Other Google accounts are ref
 Photos go in the upload field on the form. Square images under 5 MB work best.
 
 
-### Projects and news
+### Projects
 
-These are stored in Convex like the rest, but the admin page has no form for them
-yet. Until it does, an admin adds or edits them in the
-[Convex dashboard](https://dashboard.convex.dev) (production deployment → **Data** →
-`projects` or `news`). A project's images still live in the repo, in
-`_projects/<slug>/`, and are referenced from the project's `avatar` field.
+Admins create and edit projects under **Projects** on the admin page. A new project
+is a draft until you publish it. Its short name becomes the address,
+`/projects/<short-name>/`, and is fixed once the project is published. Upload a
+card image in the form. **Insert image** puts a picture into the description.
+
+Older projects keep their images in the repo, in `_projects/<slug>/`. Those images
+are still served from there; only the `.md` beside them is generated.
+
+### News
+
+News is stored in Convex, but the admin page has no form for it yet. Until it
+does, an admin edits it in the [Convex dashboard](https://dashboard.convex.dev)
+(production deployment → **Data** → `news`).
 
 
 ## Blog Posts
@@ -170,14 +180,16 @@ bundle exec jekyll serve --host localhost --drafts --future --trace
 Then open http://localhost:4000. Use `localhost`, not `127.0.0.1`: Google sign-in on
 the admin page accepts only the origins registered for it.
 
-Locally the site builds from the committed `_data/` snapshot. To build from the
-current Convex content instead, fetch it first, then undo the fetch, because it
-rewrites tracked files:
+The content comes from Convex, so fetch it first, and again whenever you want
+newer content. Without it, pages build but show no events, papers or people:
 
 ```bash
 ruby scripts/fetch_content.rb
-git checkout -- _data _projects
 ```
+
+The fetched files are gitignored, so they never show up in `git status`. The Docker
+setup below fetches on start. To build from the dev deployment instead, set
+`CONVEX_SITE_URL=https://agreeable-stork-479.convex.site` for the fetch.
 
 The admin page at http://localhost:4000/admin/ talks to the **production**
 deployment (it reads `convex.url` in `_config.yml`), so anything you publish there
@@ -300,13 +312,11 @@ set with `npx convex env set [--prod] NAME value`:
 | `GITHUB_REPOSITORY`, `GITHUB_DISPATCH_TOKEN` | Rebuilding the site after a publish. The token is a fine-grained token with Contents: read and write on this repo. |
 | `LLM_API_KEY`, `LLM_BASE_URL`, `LLM_MODEL` | Quick add. Any OpenAI-compatible endpoint; see `convex/llm.ts`. |
 
-Maintenance scripts, run from the repo root:
+To copy the whole deployment, including users, drafts and uploaded files:
 
 ```bash
-node scripts/export_from_convex.mjs --out /tmp/export   # Convex content as the YAML the site uses
-node scripts/verify_roundtrip.mjs                       # compare that export with the committed YAML
-node scripts/tag_report.mjs                             # how tags are canonicalized
+npx convex export --prod --include-file-storage --path backup.zip
 ```
 
-`scripts/import_to_convex.mjs` was the one-time import from YAML. With `--write` it
-**clears** the content tables first, so do not run it against production.
+The one-time scripts that imported the old `_data/*.yml` into Convex, and checked
+that import, have been removed. They are in the git history if you need them.
