@@ -3,18 +3,22 @@ layout: default
 title: Positions
 ---
 
+<header class="page-header">
+  <h1 class="page-title">Positions</h1>
+  <p class="page-lede">Openings for students and postdocs who want to work on trustworthy agent automation.</p>
+</header>
 
-# Positions at the DAPLab
+<div class="prose" markdown="1">
 
-## Undergrad and MS Positions
+## Undergraduate and M.S. students
 
 
 We regularly recruit strong Undergraduate and MS students interested in working with the DAPLab on agentic systems.  To match applicants to current projects and to evaluate your background, we have put together a list of projects and small tasks for you to complete.   Applicants should expect to commit _at least_ 10-15 hours a week and be self-motivated.  
 
 If you are interested, 
-<a class="btn btn-sm btn-outline-primary" href="{{ site.ug_ms_application_url }}" target="_blank" rel="noopener noreferrer">Apply here</a> 
+<a class="btn btn-sm btn-dap" href="{{ site.ug_ms_application_url }}" target="_blank" rel="noopener noreferrer">Apply here</a> 
 
-## Postdoc Research Position
+## Postdoctoral researcher
 
 **DAPlab – Columbia University**  
 **Location:** New York, NY  
@@ -24,7 +28,7 @@ The **Data, Agents, and Processes Lab (DAPLab)** at Columbia University is seeki
 
 This position offers an exciting opportunity to work at the intersection of **machine learning** and **systems research**, under the broad supervision of DAPLab faculty. Our goal is to develop intelligent, user-aligned agents by bridging large-scale data processing, systems development, interaction design, and learning-based adaptation.
 
-##### Research Focus
+### Research Focus
 
 We are particularly interested in candidates who can contribute to projects across:
 
@@ -40,7 +44,7 @@ We are particularly interested in candidates who can contribute to projects acro
 This role is ideal for researchers excited about combining ML algorithms, systems design, and human-centered AI to develop **generalizable and trustworthy agents**.
 
 
-##### Qualifications
+### Qualifications
 
 - PhD in Computer Science, Machine Learning, HCI, ML or data Systems, NLP, or a related field  
 - Strong publication record in top-tier venues (e.g., VLDB, SIGMOD, MLSys, SOSP, OSDI, NeurIPS, ICML, UIST, ICLR, ACL)  
@@ -48,7 +52,7 @@ This role is ideal for researchers excited about combining ML algorithms, system
 - Familiarity with large language models (LLMs), reinforcement learning, or data-centric systems  
 
 
-##### What We Offer
+### What We Offer
 
 - A collaborative, high-impact research environment at Columbia’s Engineering School  
 - Mentorship from faculty with deep expertise in ML, HCI, NLP, and Systems  
@@ -56,7 +60,7 @@ This role is ideal for researchers excited about combining ML algorithms, system
 - Competitive salary, benefits, and potential industry collaborations  
 
 
-##### How to Apply
+### How to Apply
 
 Please send the following materials to **both** contacts below:
 
@@ -68,3 +72,5 @@ Please send the following materials to **both** contacts below:
 📧 Prof. Eugene Wu – [ew2493@columbia.edu](mailto:ew2493@columbia.edu)  
 
 _Applications will be reviewed on a rolling basis. Early submissions encouraged._
+
+</div>

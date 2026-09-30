@@ -3,169 +3,68 @@ layout: default
 title: AI Entrepreneurship Series
 ---
 
+<header class="page-header">
+  <p class="eyebrow">Columbia Engineering</p>
+  <h1 class="page-title">AI Entrepreneurship Series</h1>
+</header>
 
-<div class="container my-5">
-<div class="row">
-  <div class="col-md-1"></div>
-  <div class="col-md-10">
-    <h1>  Columbia Engineering AI Entrepreneurship Series</h1>
-  </div>
-  <div class="col-md-1"></div>
+<div class="series-intro">
+  <p class="series-summary">A bi-weekly speaker series that brings Columbia students and faculty together with
+    founders, VCs, technologists, and business leaders, to learn how lessons from research and the classroom become
+    products and value.</p>
+  <dl class="panel series-facts">
+    <dt>When</dt><dd>Bi-weekly Thursdays around noon (see each talk)</dd>
+    <dt>Where</dt><dd>Davis Auditorium</dd>
+    <dt>Hosts</dt><dd><a href="https://tianyipeng.github.io">Tianyi Peng</a>, <a href="https://eugenewu.net">Eugene Wu</a></dd>
+    <dt>Contact</dt><dd><a href="https://yuszh.com/">Yusen Zhang</a></dd>
+  </dl>
 </div>
-
-<div class="row" style="margin-top: 2em">
-  <div class="col-md-1"></div>
-  <div class="col-md-5">
-    <p>
-    The Columbia Engineering AI Entrepreneurship Series is a bi-weekly speaker series that brings students and faculty at Columbia  together with founders, VCs, technologiests, and business leaders to 
-    learn about the process of transitioning lessons from research and the classroom into products and value.  
-    </p>
-
-  </div>
-  <div class="col-md-5">
-
-    <p> <span style="font-weight: bold;">When:</span> Bi-weekly Thursdays around noon (check event details)</p>
-
-    <p> <span style="font-weight: bold;">Where:</span> David Auditorium </p>
-
-    <p> <span style="font-weight: bold;">Hosts:</span> <a href="https://tianyipeng.github.io">Tianyi Peng</a>, <a href="https://eugenewu.net">Eugene Wu</a> </p>
-
-    <p> <span style="font-weight: bold;">Contact:</span> <a href="https://yuszh.com/">Yusen Zhang</a></p>
-  </div>
-  </div>
-
-
-
-<div class="row" style="margin-top: 2em">
-  <div class="col-md-1"></div>
-  <div class="col-md-10">
 
 {%- comment -%}
 These talks used to live in _data/startups.yml; they are events tagged
-Entrepreneurship now, in the same table as everything else.
+Entrepreneurship now, in the same table as everything else, and they render with
+the same entry as /events.
 {%- endcomment -%}
 {% assign events = site.data.events | where: "tag", "Entrepreneurship" %}
 {%- comment -%} sort raises on nil, e.g. before content has been fetched. {%- endcomment -%}
 {% if events %}{% assign events = events | sort: "date" %}{% endif %}
 {% assign today = 'now' | date: "%Y-%m-%d" %}
-<h2>Upcoming Events</h2>
-<div class="mb-5">
-  {% for event in events %}
-    {% if event.date >= today %}
-      <div class="mb-4">
-        <h4>
-        {% if event.link %}
-          <a href="{{ event.link }}">{{ event.title }}</a>
-        {% else %}
-          {{ event.title }}
-        {% endif %}
-      </h4>
-        {% if event.who %} 
-          {% if event.wholink %}
-            <span class="who"><a href="{{ event.wholink }}">{{ event.who }}</a></span>
-          {% else %}
-            <span class="who">{{ event.who }}</span>
-          {% endif %}
-          {% if event.role %}
-            <span class="role">{{ event.role }}</span>
-          {% endif %}
-        {% endif %}        
-        <p class="text-muted">
-          <span>{{ event.time }}  {{ event.date | date: "%B %d, %Y" }}</span>
-          <span style="margin-left: 2em">{{ event.where }}</span>
-        </p>
-        {% if event.description and event.description != "" %}
-          <p class="markdown-content">
-            {{ event.description | markdownify }}
-          </p>
-        {% endif %}
-        {% if event.bio %} <p>{{ event.bio | markdownify }}</p> {% endif %}
-      </div>
-    {% endif %}
-  {% endfor %}
-</div>
+{% assign upcoming = events | where_exp: "e", "e.date >= today" %}
+{% assign past = events | where_exp: "e", "e.date < today" | reverse %}
 
-<h2>Past Events</h2>
-<div>
-  {% for event in events %}
-    {% if event.date < today %}
-      <div class="mb-4">
-        <h4>
-        {% if event.link %}
-          <a href="{{ event.link }}">{{ event.title }}</a>
-        {% else %}
-          {{ event.title }}
-        {% endif %}
-        </h4>
-        {% if event.who %} 
-          {% if event.wholink %}
-            <span class="who"><a href="{{ event.wholink }}">{{ event.who }}</a></span>
-          {% else %}
-            <span class="who">{{ event.who }}</span>
-          {% endif %}
-        {% endif %}       
-        <p class="text-muted">
-          <span>{{ event.time }}  {{ event.date | date: "%B %d, %Y" }}</span>
-          <span style="margin-left: 2em">{{ event.where }}</span>
-        </p>
-        <div class="markdown-content">
-          {{ event.description | markdownify }}
-        {% if event.bio %} <p>{{ event.bio | markdownify }}</p> {% endif %}
-        </div>
-      </div>
-    {% endif %}
-  {% endfor %}
-</div>
+<section class="section">
+  <h2 class="section-title">Upcoming</h2>
+  {%- for event in upcoming %}
+    {% include event-entry.html event=event is_past=false page_url=page.url %}
+  {%- else %}
+    <p class="muted">The next talks will be announced soon.</p>
+  {%- endfor %}
+</section>
 
+{%- if past.size > 0 %}
+<section class="section">
+  <h2 class="section-title">Past</h2>
+  {%- for event in past %}
+    {% include event-entry.html event=event is_past=false page_url=page.url %}
+  {%- endfor %}
+</section>
+{%- endif %}
 
-
-<h2 style="margin-top: 2em;">Sponsored and Organized By</h2>
-
-<div>
-  <img src="{{ '/files/images/daplab_logo_horiz.png' | relative_url }}" alt="DAPLab Logo" style="height: 3em"/>
-  <img src="{{ '/files/images/seas.jpg' | relative_url }}" alt="Columbia Engineering Logo" style="height: 3em"/>
-</div>
-
-
-
-
-
-
+<section class="section">
+  <h2 class="section-title">Sponsored and organized by</h2>
+  <div class="series-sponsors">
+    <img src="{{ '/files/images/daplab_logo_horiz.png' | relative_url }}" alt="DAPLab">
+    <img src="{{ '/files/images/seas.jpg' | relative_url }}" alt="Columbia Engineering">
   </div>
-  <div class="col-md-2"></div>
-</div>
-
-<div class="row">
-  <div class="col-md-2"></div>
-  </div>
-</div>
-
-
-
-
-
-
-</div>
-
-
+</section>
 
 <style>
-.who {
-  font-weight: normal;
-  font-size: 1.2em;
-  color: gray;
-}
-.markdown-content p {
-  margin-bottom: 0.5em;
-}
-.markdown-content strong {
-  font-weight: bold;
-}
-.markdown-content em {
-  font-style: italic;
-}
-.role {
-  font-size: 1.2em;
-  color: gray;
-}
+.series-intro { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 2rem; align-items: start; }
+.series-summary { font-size: 1.1rem; line-height: 1.7; margin: 0; }
+.series-facts { display: grid; grid-template-columns: auto 1fr; gap: 0.5rem 1rem; margin: 0; }
+.series-facts dt { font-weight: 600; }
+.series-facts dd { margin: 0; color: #2c3645; }
+.series-sponsors { display: flex; flex-wrap: wrap; align-items: center; gap: 2rem; }
+.series-sponsors img { height: 2.75rem; width: auto; }
+@media (max-width: 767.98px) { .series-intro { grid-template-columns: 1fr; } }
 </style>

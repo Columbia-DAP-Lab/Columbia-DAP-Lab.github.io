@@ -5,8 +5,6 @@ layout: default
 <style>
 .benchmark-detail {
   color: #334155;
-  margin: 0 auto 4rem;
-  max-width: 1040px;
 }
 
 .benchmark-breadcrumb {
@@ -16,12 +14,12 @@ layout: default
 }
 
 .benchmark-breadcrumb a {
-  color: #005aaf;
+  color: var(--dap-link);
   text-decoration: none;
 }
 
 .benchmark-detail-hero {
-  border-bottom: 1px solid #dfe7ef;
+  border-bottom: 1px solid var(--dap-rule);
   margin-bottom: 2rem;
   padding-bottom: 2rem;
 }
@@ -35,10 +33,9 @@ layout: default
 }
 
 .benchmark-detail h1 {
-  color: #003262;
-  font-size: clamp(2rem, 5vw, 3.25rem);
-  font-weight: 750;
-  letter-spacing: -0.025em;
+  color: var(--dap-ink);
+  font-size: 2.1rem;
+  font-weight: 700;
   margin: 0;
 }
 
@@ -92,13 +89,13 @@ layout: default
 
 .benchmark-stat {
   background: #f5f8fb;
-  border: 1px solid #dfe7ef;
+  border: 1px solid var(--dap-rule);
   border-radius: 7px;
   padding: 0.8rem 0.9rem;
 }
 
 .benchmark-stat-value {
-  color: #003262;
+  color: var(--dap-navy);
   display: block;
   font-size: 1.15rem;
   font-weight: 750;
@@ -124,7 +121,7 @@ layout: default
 }
 
 .benchmark-detail-content h2 {
-  color: #003262;
+  color: var(--dap-navy);
   font-size: 1.4rem;
   font-weight: 700;
   margin: 2.15rem 0 0.75rem;
@@ -152,7 +149,7 @@ layout: default
 
 .benchmark-detail-content blockquote {
   background: #f5f8fb;
-  border-left: 4px solid #005aaf;
+  border-left: 4px solid var(--dap-link);
   color: #44515e;
   margin: 1rem 0;
   padding: 0.9rem 1rem;
@@ -165,7 +162,7 @@ layout: default
 .benchmark-detail-sidebar {
   align-self: start;
   background: #f8fafc;
-  border: 1px solid #dfe7ef;
+  border: 1px solid var(--dap-rule);
   border-radius: 8px;
   padding: 1rem;
   position: sticky;
@@ -173,7 +170,7 @@ layout: default
 }
 
 .benchmark-detail-sidebar h2 {
-  color: #003262;
+  color: var(--dap-navy);
   font-size: 0.92rem;
   font-weight: 750;
   margin: 0 0 0.9rem;

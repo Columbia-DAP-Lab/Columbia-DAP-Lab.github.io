@@ -1,42 +1,15 @@
-<footer class="site-footer h-card" style="margin-top: 1em;">
-<!--  <data class="u-url" href="{{ "/" | relative_url }}"></data>
-
-  <div class="wrapper">
-
-    <div class="footer-col-wrapper">
-      <div class="footer-col">
-        <p class="feed-subscribe">
-          <a href="{{ 'feed.xml' | relative_url }}">
-            <svg class="svg-icon orange">
-              <use xlink:href="{{ 'assets/minima-social-icons.svg#rss' | relative_url }}"></use>
-            </svg><span>Subscribe</span>
-          </a>
-        </p>
-      {%- if site.author %}
-        <ul class="contact-list">
-          {% if site.author.name -%}
-            <li class="p-name">{{ site.author.name | escape }}</li>
-          {% endif -%}
-          {% if site.author.email -%}
-            <li><a class="u-email" href="mailto:{{ site.author.email }}">{{ site.author.email }}</a></li>
-          {%- endif %}
-        </ul>
-      {%- endif %}
-      </div>
-      <div class="footer-col">
-        <p>{{ site.description | escape }}</p>
-        <p>{{ site.attribution }}</p>
-        {% if site.last_updated %}
-        Last updated: {{ "now" | date: '%B %d, %Y' }}.
-        {% endif %}
-      </div>
+<footer class="site-footer">
+  <div class="site-frame">
+    <div>
+      <strong>DAPLab</strong> · Data, Agents, and Processes Lab, Columbia University<br>
+      500 West 120th Street, Room 450, New York, NY 10027 ·
+      <a href="mailto:ewu@cs.columbia.edu">ewu@cs.columbia.edu</a>
     </div>
-
-    <div class="social-links">
-      {%- include social.html -%}
-    </div>
-
+    <nav aria-label="Footer">
+      <a href="{{ '/news' | relative_url }}">News</a>
+      <a href="{{ '/entrepreneurship' | relative_url }}">Entrepreneurship</a>
+      <a href="{{ '/positions' | relative_url }}">Join us</a>
+      <a href="https://www.cs.columbia.edu">Columbia CS</a>
+    </nav>
   </div>
--->
-
 </footer>

@@ -1,65 +1,91 @@
+{%- comment -%}
+The publication list, grouped by year, newest first. Authors who are on the
+People page are shown in bold. Filtered by the chips on /publications
+(data-pub-filters); a year with no papers under the current filter is hidden.
+{%- endcomment -%}
+{% assign lab_authors = site.data.people | map: "name" %}
+{% assign sorted_pubs = site.data.pubs %}
+{% if sorted_pubs %}{% assign sorted_pubs = sorted_pubs | sort: "pub_date" | reverse %}{% endif %}
+
 <div class="pubs">
-  <ol connect="rows">
-    {% assign lab_authors = site.data.people | map: "name" %}
-    {% assign sorted_pubs = site.data.pubs %}
-    {% if sorted_pubs %}{% assign sorted_pubs = sorted_pubs | sort: "pub_date" | reverse %}{% endif %}
-    {% for p in sorted_pubs %}
-      {% if p.hide == true %}
-        {% continue %}
-      {% endif %}
-
-      {% assign found = false %}
-      {% for tag in p.tags %}
-        {% if page.tags == nil or page.tags contains {{tag | strip}} %}
-          {% assign found = true %}
-        {% endif %}
-      {% endfor %}
-      {% if found %}
-
-      <li class="paper selected-{{selected}} {% for tag in p.tags %} tag-{{tag}}{%endfor%}">
-          {% if p.url %} 
-          <a class="title" href="{{p.url}}">{{p.title}}</a>
-          {% else %} 
-          <div class="title">{{p.title}}</div>
-          {% endif %}
-            <div class="authors">
-              {% assign authors = p.authors | split: "," %}
-              {% for author in authors %}
-                {% assign author_name = author | strip %}
-                {% unless forloop.first %}, {% endunless %}
-                {% if lab_authors contains author_name %}
-                  <strong>{{author_name}}</strong>
-                {% else %}
-                  {{author_name}}
-                {% endif %}
-              {% endfor %}
+  {%- assign current_year = "" -%}
+  {%- for p in sorted_pubs -%}
+    {%- if p.hide == true -%}{%- continue -%}{%- endif -%}
+    {%- assign year = p.pub_date | date: "%Y" -%}
+    {%- comment -%} A handful of papers have no date yet; they sort last, under "Other". {%- endcomment -%}
+    {%- if year == "" -%}{%- assign year = "Other" -%}{%- endif -%}
+    {%- if year != current_year -%}
+      {%- unless current_year == "" %}</ul></section>{% endunless %}
+      <section class="pub-year" data-pub-year>
+        <h2 class="pub-year-title">{{ year }}</h2>
+        <ul class="pub-list">
+      {%- assign current_year = year -%}
+    {%- endif %}
+          <li class="paper{% for tag in p.tags %} tag-{{ tag }}{% endfor %}">
+            {%- if p.url %}
+            <a class="pub-title" href="{{ p.url }}">{{ p.title }}</a>
+            {%- else %}
+            <span class="pub-title">{{ p.title }}</span>
+            {%- endif %}
+            <div class="pub-authors">
+              {%- assign authors = p.authors | split: "," -%}
+              {%- for author in authors -%}
+                {%- assign author_name = author | strip -%}
+                {%- unless forloop.first %}, {% endunless -%}
+                {%- if lab_authors contains author_name -%}<strong>{{ author_name }}</strong>{%- else -%}{{ author_name }}{%- endif -%}
+              {%- endfor -%}
             </div>
-            <span class="conf">{{{p.conf}}</span>
-            {% if p.video %}<a href="{{p.video}}">Talk Video</a>{% endif %}
-            {% if p.blog %}<a href="{{p.blog}}">Blogpost</a>{% endif %}
-            {% if p.code %}<a href="{{p.code}}">Code</a>{% endif %}
-            {% if p.slides %}<a href="{{p.slides}}">Slides</a>{% endif %}
-            {% if p.comments %}<span><b>{{p.comments}}</b></span>{% endif %}
-
-        </li>
-
-      {% endif %}
-    {% endfor %}
-  </ol>
+            <div class="pub-meta">
+              <span class="pub-venue">{{ p.conf }}</span>
+              {%- if p.comments %}<span class="pub-note">{{ p.comments }}</span>{% endif -%}
+              {%- if p.video %}<a href="{{ p.video }}">Talk</a>{% endif -%}
+              {%- if p.blog %}<a href="{{ p.blog }}">Blog post</a>{% endif -%}
+              {%- if p.code %}<a href="{{ p.code }}">Code</a>{% endif -%}
+              {%- if p.slides %}<a href="{{ p.slides }}">Slides</a>{% endif -%}
+            </div>
+          </li>
+  {%- endfor -%}
+  {%- unless current_year == "" %}</ul></section>{% endunless %}
 </div>
 
 <style>
-.pubs {
-  font-size: 14pt;
+.pub-year + .pub-year { margin-top: 2.25rem; }
+.pub-year-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--dap-muted);
+  margin: 0 0 0.75rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--dap-rule);
 }
-.pubs li {
-  margin-bottom: .75em;
-}
-.pubs .title {
-  font-weight: bold;
-  text-decoration: none;
-}
-.pubs .authors {
-  color: grey;
-}
+.pub-list { list-style: none; margin: 0; padding: 0; }
+.pub-list .paper { padding: 0.7rem 0; }
+.pub-list .paper + .paper { border-top: 1px solid #f0f2f5; }
+.pub-title { display: block; font-weight: 600; font-size: 1.02rem; line-height: 1.4; color: var(--dap-ink); }
+a.pub-title { color: var(--dap-link); }
+.pub-authors { color: var(--dap-muted); font-size: 0.93rem; margin-top: 0.2rem; }
+.pub-authors strong { color: var(--dap-ink); font-weight: 600; }
+.pub-meta { font-size: 0.875rem; color: var(--dap-muted); margin-top: 0.15rem; display: flex; flex-wrap: wrap; gap: 0 0.9rem; }
+.pub-venue { font-style: italic; }
+.pub-note { color: #9a3412; font-weight: 600; }
 </style>
+
+<script>
+  // Filter by topic chip; hide a year with nothing left in it.
+  (function () {
+    const filters = document.querySelector("[data-pub-filters]");
+    if (!filters) return;
+    filters.addEventListener("click", (event) => {
+      const chip = event.target.closest("[data-tag]");
+      if (!chip) return;
+      for (const other of filters.querySelectorAll("[data-tag]")) other.setAttribute("aria-pressed", String(other === chip));
+      const tag = chip.dataset.tag;
+      for (const paper of document.querySelectorAll(".pubs .paper")) {
+        paper.hidden = tag !== "all" && !paper.classList.contains(`tag-${tag}`);
+      }
+      for (const year of document.querySelectorAll("[data-pub-year]")) {
+        year.hidden = !year.querySelector(".paper:not([hidden])");
+      }
+    });
+  })();
+</script>

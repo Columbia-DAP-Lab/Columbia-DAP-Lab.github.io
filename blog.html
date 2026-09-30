@@ -1,27 +1,38 @@
 ---
-layout: page
+layout: default
 title: Blog
-color: '#0c6a99'
-logo: Blog
-urlprefix: .
 ---
 
-<!-- Redirect to the latest blog post -->
-{% assign latest_post = nil %}
-{% for post in site.posts %}
-  {% if post.layout == "post" and post.published != false %}
-    {% assign latest_post = post %}
-    {% break %}
-  {% endif %}
-{% endfor %}
+<header class="page-header">
+  <h1 class="page-title">Blog</h1>
+  <p class="page-lede">Research notes, results, and news from the lab.</p>
+</header>
 
-{% if latest_post %}
-<script>
-  window.location.href = "{{ latest_post.url | relative_url }}";
-</script>
-<noscript>
-  <p>Please enable JavaScript or <a href="{{ latest_post.url | relative_url }}">click here</a> to view the latest blog post.</p>
-</noscript>
-{% else %}
-<p>No blog posts found.</p>
-{% endif %}
+<ul class="blog-index">
+  {%- for post in site.posts -%}
+    {%- if post.layout == "post" and post.published != false %}
+  <li class="blog-entry">
+    <p class="blog-entry-meta">
+      <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%B %-d, %Y" }}</time>
+      {%- if post.authors %} <span aria-hidden="true">·</span> {% for a in post.authors %}{{ a.name }}{% unless forloop.last %}, {% endunless %}{% endfor %}{% endif %}
+    </p>
+    <h2 class="blog-entry-title"><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
+    {%- if post.excerpt %}
+    <p class="blog-entry-excerpt">{{ post.excerpt | strip_html | truncatewords: 45 }}</p>
+    {%- endif %}
+  </li>
+    {%- endif -%}
+  {%- endfor %}
+</ul>
+
+<style>
+.blog-index { list-style: none; margin: 0 auto; padding: 0; max-width: var(--dap-prose); }
+.blog-entry { padding: 1.5rem 0; }
+.blog-entry + .blog-entry { border-top: 1px solid var(--dap-rule); }
+.blog-entry:first-child { padding-top: 0; }
+.blog-entry-meta { font-size: 0.85rem; color: var(--dap-muted); margin: 0 0 0.35rem; }
+.blog-entry-title { font-size: 1.3rem; margin: 0 0 0.5rem; }
+.blog-entry-title a { color: var(--dap-ink); }
+.blog-entry-title a:hover { color: var(--dap-navy); }
+.blog-entry-excerpt { color: var(--dap-muted); margin: 0; line-height: 1.65; }
+</style>
