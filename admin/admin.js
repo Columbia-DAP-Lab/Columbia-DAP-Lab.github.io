@@ -463,8 +463,8 @@ const reviewActions = (table, row) => {
     "div",
     { class: "mt-2" },
     note,
-    el("button", { type: "button", class: "btn btn-sm btn-success me-2", onclick: act("published") }, "Publish"),
-    el("button", { type: "button", class: "btn btn-sm btn-outline-danger", onclick: act("rejected") }, "Reject"),
+    el("button", { type: "button", class: "btn btn-sm dap-btn-primary me-2", onclick: act("published") }, "Publish"),
+    el("button", { type: "button", class: "btn btn-sm dap-remove", onclick: act("rejected") }, "Reject"),
   );
 };
 
@@ -603,8 +603,8 @@ const profileEditActions = (row) => {
     "div",
     { class: "mt-2" },
     note,
-    el("button", { type: "button", class: "btn btn-sm btn-success me-2", onclick: act("published") }, "Approve"),
-    el("button", { type: "button", class: "btn btn-sm btn-outline-danger", onclick: act("rejected") }, "Reject"),
+    el("button", { type: "button", class: "btn btn-sm dap-btn-primary me-2", onclick: act("published") }, "Approve"),
+    el("button", { type: "button", class: "btn btn-sm dap-remove", onclick: act("rejected") }, "Reject"),
   );
 };
 
@@ -705,7 +705,7 @@ const renderRoles = (roles) =>
               "button",
               {
                 type: "button",
-                class: "btn btn-link dap-remove",
+                class: "btn btn-sm dap-remove",
                 onclick: () => {
                   if (confirm(`Remove ${role.email}? They will no longer be able to sign in here, unless they are on the People page.`)) {
                     saveRole(role.email, null);

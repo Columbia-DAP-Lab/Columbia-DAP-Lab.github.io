@@ -201,32 +201,81 @@ fieldset.dap-card { padding-top: 1rem; }
 
 /* ----------------------------------------------------------------- buttons */
 
-.dap-btn-primary {
-  background: var(--dap-navy);
-  border: 1px solid var(--dap-navy);
-  color: #fff;
-  font-weight: 700;
-  padding: 0.7rem 1.4rem;
-  border-radius: 6px;
+/*
+ * Scoped under #admin, and set through Bootstrap's own button variables, on
+ * purpose: _includes/includes.html loads Bootstrap a second time at the end of
+ * the page, and its `.btn` rule (same specificity as a single class, loaded
+ * later) otherwise resets every button here to a transparent background, so
+ * they rendered as plain text.
+ */
+#admin .btn {
+  --bs-btn-font-weight: 700;
+  --bs-btn-border-radius: 6px;
+  --bs-btn-focus-box-shadow: 0 0 0 0.2rem var(--dap-focus);
 }
-.dap-btn-primary:hover,
-.dap-btn-primary:focus { background: var(--dap-navy-dark); border-color: var(--dap-navy-dark); color: #fff; }
-.dap-btn-primary:disabled { background: #7d8db0; border-color: #7d8db0; }
 
-.dap-btn-quiet {
-  background: var(--dap-panel);
-  border: 1px solid var(--dap-border);
-  color: var(--dap-navy);
-  font-weight: 700;
-  padding: 0.65rem 1.2rem;
-  border-radius: 6px;
+#admin .dap-btn-primary {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: var(--dap-navy);
+  --bs-btn-border-color: var(--dap-navy);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: var(--dap-navy-dark);
+  --bs-btn-hover-border-color: var(--dap-navy-dark);
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: var(--dap-navy-dark);
+  --bs-btn-active-border-color: var(--dap-navy-dark);
+  --bs-btn-disabled-color: #fff;
+  --bs-btn-disabled-bg: #7d8db0;
+  --bs-btn-disabled-border-color: #7d8db0;
+  --bs-btn-padding-x: 1.4rem;
+  --bs-btn-padding-y: 0.7rem;
 }
-.dap-card .dap-btn-quiet { background: #eef2f8; }
-.dap-btn-quiet:hover,
-.dap-btn-quiet:focus { background: var(--dap-navy-tint); border-color: #c5d0e3; color: var(--dap-navy); }
-.btn-sm.dap-btn-quiet { padding: 0.25rem 0.75rem; }
 
-.dap-remove { color: #a4262c; padding-left: 0; font-weight: 600; }
+/* Secondary actions: white with a navy outline and label, so they still read as buttons. */
+#admin .dap-btn-quiet {
+  --bs-btn-color: var(--dap-navy);
+  --bs-btn-bg: #fff;
+  --bs-btn-border-color: #b9c5da;
+  --bs-btn-hover-color: var(--dap-navy);
+  --bs-btn-hover-bg: var(--dap-navy-tint);
+  --bs-btn-hover-border-color: var(--dap-navy);
+  --bs-btn-active-color: var(--dap-navy);
+  --bs-btn-active-bg: #d9e2f1;
+  --bs-btn-active-border-color: var(--dap-navy);
+  --bs-btn-disabled-color: var(--dap-muted);
+  --bs-btn-disabled-bg: var(--dap-panel);
+  --bs-btn-disabled-border-color: var(--dap-border);
+  --bs-btn-padding-x: 1.2rem;
+  --bs-btn-padding-y: 0.6rem;
+  box-shadow: 0 1px 1px rgba(0, 32, 106, 0.08);
+}
+
+/* Destructive: small outlined red, rather than a bare link. */
+#admin .dap-remove {
+  --bs-btn-color: #a4262c;
+  --bs-btn-bg: #fff;
+  --bs-btn-border-color: #e3b5b8;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: #a4262c;
+  --bs-btn-hover-border-color: #a4262c;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: #8a1f24;
+  --bs-btn-active-border-color: #8a1f24;
+  --bs-btn-padding-x: 0.75rem;
+  --bs-btn-padding-y: 0.3rem;
+  --bs-btn-font-size: 0.875rem;
+  text-decoration: none;
+}
+#admin .speaker .dap-remove { margin: 0.75rem 0; }
+
+/* Small variants, for the review queue and tables; btn-sm alone loses to the above. */
+#admin .btn-sm.dap-btn-primary,
+#admin .btn-sm.dap-btn-quiet,
+#admin .btn-sm.dap-remove {
+  --bs-btn-padding-x: 0.8rem;
+  --bs-btn-padding-y: 0.3rem;
+  --bs-btn-font-size: 0.875rem;
+}
 
 .dap-actions {
   display: flex;
