@@ -87,7 +87,7 @@ layout: default
             <h4 class="mb-0">Events</h4>
           </div>
           <div class="card-body p-3">
-            {% assign all_events = site.data.events | concat: site.data.startups %}
+            {% assign all_events = site.data.events %}
             {% assign valid_events = "" | split: "" %}
 
             {% for e in all_events %}

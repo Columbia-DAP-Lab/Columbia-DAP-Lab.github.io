@@ -3,7 +3,11 @@ layout: default
 title: Events
 ---
 
-{% assign events = site.data.events | concat: site.data.startups | sort: "date" | reverse %}
+{%- comment -%}
+Entrepreneurship talks used to live in _data/startups.yml; they are events in the
+same table now, so there is nothing left to concatenate.
+{%- endcomment -%}
+{% assign events = site.data.events | sort: "date" | reverse %}
 {% assign oevents = events | sort: "date"  %}
 {% assign today = 'now' | date: "%Y-%m-%d" %}
 

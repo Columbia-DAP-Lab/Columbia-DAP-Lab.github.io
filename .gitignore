@@ -100,3 +100,6 @@ Gemfile.lock
 
 # Python virtual environments
 .venv
+### Node / Convex ###
+node_modules/
+.env.local

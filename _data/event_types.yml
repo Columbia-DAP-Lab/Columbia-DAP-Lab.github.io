@@ -1,39 +1,21 @@
-# Event types shown as filter buttons on /events.
-#
-# Each entry:
-#   slug:        used in the URL (?type=slug) and as the CSS class suffix
-#                (event-<slug>). Must match `tag | slugify` in events.yml.
-#   label:       button text
-#   description: optional Markdown blurb, shown above the list when the type
-#                is selected. Use for types that are really event series.
-#   logo:        optional image, shown with the description. Relative path
-#                (e.g. /files/images/series/foo.png) or absolute URL.
-#
-
-- slug: all
-  label: All
-
-- slug: entrepreneurship
-  label: Entrepreneurship
-
-- slug: seminar
+# Fetched from Convex at build time by scripts/fetch_content.rb — DO NOT EDIT.
+# Edits here are overwritten on the next build. The eventSeries table is the source
+# of truth; a committed copy is refreshed nightly as a fallback snapshot.
+- label: All
+  slug: all
+- label: Entrepreneurship
+  slug: entrepreneurship
+- description: The DAPLab Lunch seminar series brings together internal and external
+    researchers and practitioners. Speakers share cutting-edge agents-related research,
+    pose challenging problems that cannot be solved today, or describe processes and
+    constraints in their organizations that today's technologies fail to meet.
   label: Seminar
-  description: >
-    The DAPLab Lunch seminar series brings together internal and external researchers and
-    practitioners. Speakers share cutting-edge agents-related research, pose challenging
-    problems that cannot be solved today, or describe processes and constraints in their
-    organizations that today's technologies fail to meet.
-
-- slug: course
-  label: Course
-
-- slug: workshop
-  label: Workshop
-
-- slug: ai-in-the-public-interest
-  label: AI in the Public Interest
-  logo: /files/images/series/ai-in-the-public-interest.png
-  description: |
+  slug: seminar
+- label: Course
+  slug: course
+- label: Workshop
+  slug: workshop
+- description: |-
     The AI in the Public Interest group brings together researchers from across Columbia
     University working to advance AI and computational methods in service of the public
     interest. Our members span a range of technical areas while sharing a common commitment
@@ -51,6 +33,8 @@
 
     **The series meets every other Thursday, 3–4PM, in CSB 453 (the CS Conference Room,
     in the Mudd building).**
-
-- slug: other
-  label: Other
+  label: AI in the Public Interest
+  logo: "/files/images/series/ai-in-the-public-interest.png"
+  slug: ai-in-the-public-interest
+- label: Other
+  slug: other

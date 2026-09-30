@@ -1,37 +1,27 @@
-# This file contains the color tag name for different fields in the DAP Lab.
-Systems: badge-dark-blue
-Software: badge-light-blue
-Security: badge-indigo
-Data: badge-sky-blue
-Robotics: badge-steel-blue
-
-Machine learning: badge-green
-ML: badge-green  # alias to ML
-Causal inference: badge-teal
-Reinforcement learning: badge-lime
+# Fetched from Convex at build time by scripts/fetch_content.rb — DO NOT EDIT.
+# Edits here are overwritten on the next build. The fieldColors table is the source
+# of truth; a committed copy is refreshed nightly as a fallback snapshot.
 AI: badge-lime
-Machine learning theory: badge-forest-green
-Decision making: badge-olive
-Pricing and market design: badge-mint
-
-Human-Centered AI: badge-magenta
-HCI: badge-magenta
-NLP: badge-violet
-Vision: badge-light-purple
-Neurosymbolic learning: badge-orchid
-HCI: badge-fuchsia
 AI for Health: badge-dark-slate-blue
-
-# Academic groups
+Advisory Board: badge-advisory
 CS: badge-gold
-IEOR: badge-silver
+Causal inference: badge-teal
 Columbia Business: badge-orange
 DBMI: badge-aquamarine
-
-# Administrative and advisory
-Advisory Board: badge-advisory
-co-director: badge-director
-
-# Default fallback
+Data: badge-sky-blue
+Decision making: badge-olive
 Default: badge-default
-
+HCI: badge-fuchsia
+IEOR: badge-silver
+ML: badge-green
+Machine learning theory: badge-forest-green
+NLP: badge-violet
+Neurosymbolic learning: badge-orchid
+Pricing and market design: badge-mint
+Reinforcement learning: badge-lime
+Robotics: badge-steel-blue
+Security: badge-indigo
+Software: badge-light-blue
+Systems: badge-dark-blue
+Vision: badge-light-purple
+co-director: badge-director
