@@ -1,15 +1,20 @@
 <footer class="site-footer">
   <div class="site-frame">
-    <div>
-      <strong>DAPLab</strong> · Data, Agents, and Processes Lab, Columbia University<br>
-      500 West 120th Street, Room 450, New York, NY 10027 ·
-      <a href="mailto:ewu@cs.columbia.edu">ewu@cs.columbia.edu</a>
+    <div class="site-footer-info">
+      <p>
+        <strong>DAPLab</strong> · Data, Agents, and Processes Lab, Columbia University<br>
+        500 West 120th Street, Room 450, New York, NY 10027 ·
+        <a href="mailto:ewu@cs.columbia.edu">ewu@cs.columbia.edu</a>
+      </p>
+      <nav aria-label="Footer">
+        <a href="{{ '/news' | relative_url }}">News</a>
+        <a href="{{ '/entrepreneurship' | relative_url }}">Entrepreneurship</a>
+        <a href="{{ '/positions' | relative_url }}">Join us</a>
+        <a href="https://www.cs.columbia.edu">Columbia CS</a>
+      </nav>
     </div>
-    <nav aria-label="Footer">
-      <a href="{{ '/news' | relative_url }}">News</a>
-      <a href="{{ '/entrepreneurship' | relative_url }}">Entrepreneurship</a>
-      <a href="{{ '/positions' | relative_url }}">Join us</a>
-      <a href="https://www.cs.columbia.edu">Columbia CS</a>
-    </nav>
+    {%- unless page.admin_header %}
+    <a class="site-footer-admin" href="{{ '/admin/' | relative_url }}" rel="nofollow">Manage site</a>
+    {%- endunless %}
   </div>
 </footer>
