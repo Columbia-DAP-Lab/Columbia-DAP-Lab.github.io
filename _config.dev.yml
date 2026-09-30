@@ -1,0 +1,11 @@
+# Local development against the dev Convex deployment, layered over _config.yml:
+#
+#   bundle exec jekyll serve --config _config.yml,_config.dev.yml --host localhost
+#
+# The admin page then talks to dev, a sandbox, instead of production. Fetch the
+# content from dev to match:
+#
+#   CONVEX_SITE_URL=https://agreeable-stork-479.convex.site ruby scripts/fetch_content.rb
+convex:
+  url: "https://agreeable-stork-479.convex.cloud"
+  site_url: "https://agreeable-stork-479.convex.site"

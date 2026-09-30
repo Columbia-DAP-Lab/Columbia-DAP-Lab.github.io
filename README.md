@@ -193,7 +193,13 @@ setup below fetches on start. To build from the dev deployment instead, set
 
 The admin page at http://localhost:4000/admin/ talks to the **production**
 deployment (it reads `convex.url` in `_config.yml`), so anything you publish there
-from a local copy is live.
+from a local copy is live. To try things out against the dev sandbox instead, layer
+`_config.dev.yml` on top and fetch from dev:
+
+```bash
+CONVEX_SITE_URL=https://agreeable-stork-479.convex.site ruby scripts/fetch_content.rb
+bundle exec jekyll serve --config _config.yml,_config.dev.yml --host localhost --drafts --future
+```
 
 ### With Docker
 
