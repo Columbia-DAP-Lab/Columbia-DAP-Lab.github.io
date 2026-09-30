@@ -1,4 +1,4 @@
-import { ApiError, FinishReason, GoogleGenAI } from "@google/genai/web";
+import OpenAI from "openai";
 import { ConvexError } from "convex/values";
 import { env } from "./_generated/server";
 
@@ -9,15 +9,22 @@ import { env } from "./_generated/server";
  * parsed JSON that matches the schema. Nothing else in the app imports a provider
  * SDK, so changing provider is a change to this file alone.
  *
- * Today this is Gemini on Google Cloud (Vertex AI, now "Gemini Enterprise Agent
- * Platform"), billed to the lab's Google Cloud project. It authenticates with a
- * Google Cloud API key rather than a service-account JSON key: the key is bound to
- * a service account with only the Vertex AI User role and restricted to the Vertex
- * AI API, and it needs nothing but fetch — so this runs in the default Convex
- * runtime, and the SDK's web build is imported to keep google-auth-library out.
+ * Today this is OpenAI's GPT-6 Luna on Amazon Bedrock, called through Bedrock's
+ * OpenAI-compatible Chat Completions API with a long-term Bedrock API key as the
+ * bearer token. The OpenAI SDK needs only fetch, so this runs in the default
+ * Convex runtime.
  *
- *   npx convex env set GEMINI_API_KEY <Google Cloud API key>
- *   npx convex env set GEMINI_MODEL gemini-3.1-pro     # optional; see MODEL
+ * It uses the bedrock-runtime endpoint, not bedrock-mantle: the model card lists
+ * structured outputs for bedrock-runtime only, and the forms depend on them. On
+ * that endpoint the model is named by a cross-Region inference profile
+ * (`us.openai.gpt-6-luna`), not the bare model id.
+ *
+ *   npx convex env set BEDROCK_API_KEY <long-term Bedrock API key>
+ *   npx convex env set BEDROCK_MODEL us.openai.gpt-6-sol    # optional; see MODEL
+ *
+ * (Gemini on Vertex AI was tried first; Columbia's Google Cloud organization
+ * policy iam.managed.disableServiceAccountApiKeyCreation rules out the API key it
+ * needs.)
  *
  * To move to the Convex AI Gateway instead (no key to manage; needs `ai` and
  * `@convex-dev/ai-sdk-provider`, and the Node runtime):
@@ -32,16 +39,16 @@ import { env } from "./_generated/server";
  *      keeping the refusal and truncation checks as errors for the caller.
  *   2. Add "use node"; to the top of convex/extract.ts, which exports only an
  *      action for exactly this reason.
- *   3. Remove GEMINI_API_KEY and GEMINI_MODEL from convex/convex.config.ts and the
+ *   3. Remove the BEDROCK_* variables from convex/convex.config.ts and the
  *      deployment.
  */
 
 /**
- * Flash rather than Pro: filling a form from an announcement is reading, not
- * reasoning, and the person is waiting on it. GEMINI_MODEL overrides it without a
- * deploy if drafts come back poor.
+ * Luna is the family's model for extraction and other focused, high-volume work,
+ * and the person is waiting on it. BEDROCK_MODEL overrides it without a deploy.
  */
-const MODEL = "gemini-3.8-flash";
+const MODEL = "us.openai.gpt-6-luna";
+const BASE_URL = "https://bedrock-runtime.us-east-1.amazonaws.com/openai/v1";
 
 export type StructuredRequest = {
   system: string;
@@ -58,88 +65,66 @@ export type StructuredResult = {
   outputTokens: number;
 };
 
-export const isConfigured = () => Boolean(env.GEMINI_API_KEY);
-
-/** Finish reasons that mean the model would not answer, as opposed to ran out of room. */
-const DECLINED = new Set<string>([
-  FinishReason.SAFETY,
-  FinishReason.RECITATION,
-  FinishReason.BLOCKLIST,
-  FinishReason.PROHIBITED_CONTENT,
-  FinishReason.SPII,
-]);
+export const isConfigured = () => Boolean(env.BEDROCK_API_KEY);
 
 export const generateStructured = async (request: StructuredRequest): Promise<StructuredResult> => {
-  if (!env.GEMINI_API_KEY) {
+  if (!env.BEDROCK_API_KEY) {
     throw new ConvexError("Paste-to-fill is not set up on this deployment yet.");
   }
-  // Vertex AI with an API key and no project: the SDK calls the global
-  // aiplatform.googleapis.com endpoint with the key in x-goog-api-key.
-  // `vertexai`, not the newer `enterprise`: the web build ignores `enterprise` and
-  // silently sends the request to the AI Studio API instead.
-  const ai = new GoogleGenAI({ vertexai: true, apiKey: env.GEMINI_API_KEY });
-  const model = env.GEMINI_MODEL || MODEL;
+  const client = new OpenAI({ apiKey: env.BEDROCK_API_KEY, baseURL: BASE_URL });
+  const model = env.BEDROCK_MODEL || MODEL;
 
-  let response;
+  let completion;
   try {
-    response = await ai.models.generateContent({
+    completion = await client.chat.completions.create({
       model,
-      contents: `<pasted>\n${request.text}\n</pasted>`,
-      config: {
-        systemInstruction: request.system,
-        responseMimeType: "application/json",
-        responseJsonSchema: request.schema,
-        maxOutputTokens: request.maxTokens,
+      max_completion_tokens: request.maxTokens,
+      response_format: {
+        type: "json_schema",
+        json_schema: { name: "drafts", schema: request.schema, strict: true },
       },
+      messages: [
+        { role: "system", content: request.system },
+        { role: "user", content: `<pasted>\n${request.text}\n</pasted>` },
+      ],
     });
   } catch (error) {
-    if (error instanceof ApiError) {
-      if (error.status === 429 || error.status >= 500) {
-        throw new ConvexError("The model is busy. Try again in a minute.");
-      }
-      // The key is fine, but the Google Cloud project behind it is not ready: the
-      // API is not enabled, or no billing account is linked.
-      const setup = error.status === 403 && /SERVICE_DISABLED|BILLING_DISABLED/.exec(error.message)?.[0];
-      if (setup) {
-        console.error("Google Cloud project not set up for Vertex AI", setup, error.message);
-        const what = setup === "BILLING_DISABLED" ? "billing is not enabled" : "the Vertex AI API is disabled";
-        throw new ConvexError(`Paste-to-fill is not switched on in Google Cloud yet (${what}).`);
-      }
-      if (error.status === 401 || error.status === 403) {
-        console.error("Google Cloud rejected GEMINI_API_KEY", error.status, error.message);
-        throw new ConvexError("Paste-to-fill is misconfigured; ask an admin to check the API key.");
-      }
-      // A 400 here is most likely the schema or the model name; the log says which.
-      console.error("Gemini API error", error.status, error.message);
+    if (error instanceof OpenAI.RateLimitError || error instanceof OpenAI.InternalServerError) {
+      throw new ConvexError("The model is busy. Try again in a minute.");
+    }
+    if (error instanceof OpenAI.AuthenticationError || error instanceof OpenAI.PermissionDeniedError) {
+      console.error("Bedrock rejected BEDROCK_API_KEY", error.status, error.message);
+      throw new ConvexError("Paste-to-fill is misconfigured; ask an admin to check the API key.");
+    }
+    if (error instanceof OpenAI.APIError) {
+      // A 400 here is most likely the schema or the model id; the log says which.
+      console.error("Bedrock API error", error.status, error.message);
       throw new ConvexError("Could not read the text. Try again, or fill the form by hand.");
     }
     throw error;
   }
 
-  const usage = response.usageMetadata;
-  const candidate = response.candidates?.[0];
+  const choice = completion.choices[0];
   console.log("extraction", {
-    model,
-    finish: candidate?.finishReason,
-    blocked: response.promptFeedback?.blockReason,
-    input: usage?.promptTokenCount,
-    output: usage?.candidatesTokenCount,
-    thinking: usage?.thoughtsTokenCount,
+    model: completion.model,
+    finish: choice?.finish_reason,
+    input: completion.usage?.prompt_tokens,
+    output: completion.usage?.completion_tokens,
   });
 
-  if (response.promptFeedback?.blockReason || (candidate?.finishReason && DECLINED.has(candidate.finishReason))) {
+  if (choice?.message.refusal || choice?.finish_reason === "content_filter") {
     throw new ConvexError("The model declined to read this text. Fill the form by hand.");
   }
-  if (candidate?.finishReason === FinishReason.MAX_TOKENS) {
+  if (choice?.finish_reason === "length") {
     throw new ConvexError("That is more than can be read at once. Paste fewer items.");
   }
-  const text = response.text;
+  const text = choice?.message.content;
   if (!text) throw new ConvexError("The model returned nothing usable. Try again.");
 
   return {
     data: JSON.parse(text),
-    model,
-    inputTokens: usage?.promptTokenCount ?? 0,
-    outputTokens: usage?.candidatesTokenCount ?? 0,
+    model: completion.model,
+    inputTokens: completion.usage?.prompt_tokens ?? 0,
+    outputTokens: completion.usage?.completion_tokens ?? 0,
   };
 };
