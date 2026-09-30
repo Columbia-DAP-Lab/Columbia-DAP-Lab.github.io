@@ -656,7 +656,7 @@ handleSubmit(profileForm, async () => {
   if (file) edit.image = await uploadImage(file);
   const { applied } = await client.mutation(api.profiles.submitProfileEdit, edit);
   profileForm.elements.image.value = "";
-  return applied ? "Saved. The People page updates with the next site build." : "Sent for review. An admin will look at it.";
+  return applied ? "Saved. The People page updates in about a minute." : "Sent for review. An admin will look at it.";
 });
 
 // ------------------------------------------------------------------- users

@@ -23,7 +23,13 @@ import { internal } from "./_generated/api";
  * pick the content up.
  */
 
-const QUIET_MS = 60_000;
+/**
+ * Short: a build takes under a minute, and the person who just published is
+ * waiting to see it. Five seconds still folds a burst of clicks (approving a queue
+ * one item after another) into one build, and anything slower that overlaps is
+ * collapsed by the workflow's cancel-in-progress.
+ */
+const QUIET_MS = 5_000;
 
 /** Note that a rebuild is wanted, and schedule the send. */
 export const requestRebuild = internalMutation({
