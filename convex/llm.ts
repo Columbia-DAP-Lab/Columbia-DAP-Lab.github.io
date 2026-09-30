@@ -71,7 +71,8 @@ export const generateStructured = async (request: StructuredRequest): Promise<St
   if (!env.BEDROCK_API_KEY) {
     throw new ConvexError("Paste-to-fill is not set up on this deployment yet.");
   }
-  const client = new OpenAI({ apiKey: env.BEDROCK_API_KEY, baseURL: BASE_URL });
+  // Trimmed: a key pasted with a trailing newline fails Bedrock's prefix check.
+  const client = new OpenAI({ apiKey: env.BEDROCK_API_KEY.trim(), baseURL: BASE_URL });
   const model = env.BEDROCK_MODEL || MODEL;
 
   let completion;
