@@ -204,6 +204,66 @@ const newsRows = yaml("_data/news.yml").map((n) => ({
   date: n.date ? String(n.date) : undefined,
 }));
 
+// ------------------------------------------------------------- projects
+
+/**
+ * _projects/<slug>/<slug>.md — front matter plus a Markdown body.
+ *
+ * Ruby splits the file, since it is already the YAML parser here and Jekyll reads
+ * these with the same one.
+ */
+const projectRows = JSON.parse(
+  execFileSync(
+    "ruby",
+    [
+      "-ryaml",
+      "-rjson",
+      "-e",
+      `
+      out = Dir.glob("_projects/*/*.md").sort.map do |path|
+        text = File.read(path, encoding: "UTF-8")
+        _, front, body = text.split(/^---\s*$/, 3)
+        data = YAML.load(front) || {}
+        { "slug" => File.basename(File.dirname(path)), "front" => data, "body" => body.to_s.strip }
+      end
+      print JSON.dump(out)
+      `,
+    ],
+    { encoding: "utf8", maxBuffer: 64 * 1024 * 1024 },
+  ),
+).map(({ slug, front, body }) => ({
+  slug,
+  title: String(front.title ?? "").trim(),
+  subtitle: String(front.subtitle ?? "").trim(),
+  date: String(front.date ?? "").slice(0, 10),
+  body,
+  // Three overlapping booleans become a list. No default: an absent is_project
+  // means something (see the export), so an empty list has to survive the trip.
+  kinds: [
+    ...(front.is_project ? ["project"] : []),
+    ...(front.is_benchmark ? ["benchmark"] : []),
+    ...(front.is_software ? ["software"] : []),
+  ],
+  tags: (front.tags ?? []).map(String),
+  // Kept apart: avatar is a filename beside the Markdown, avatar_url a site path.
+  avatar: clean(front.avatar),
+  avatarUrl: clean(front.avatar_url),
+  links: Object.entries(front.links ?? {}).map(([kind, url]) => ({ kind, url: String(url) })),
+  authors: (front.authors ?? []).map((a) => {
+    // "Weiliang Zhao*" is equal contribution, not part of the name — keeping it in
+    // the name would make it a different author from "Weiliang Zhao".
+    const printed = String(a.name).trim();
+    const equalContribution = printed.endsWith("*") || undefined;
+    return { name: printed.replace(/\*+$/, "").trim(), url: clean(a.url), equalContribution };
+  }),
+  publications: (front.publications ?? []).map((p) => ({
+    title: String(p.title).trim(),
+    venue: String(p.venue ?? "").trim(),
+    url: clean(p.url),
+    year: typeof p.year === "number" ? p.year : undefined,
+  })),
+}));
+
 // ----------------------------------------------------------------- run
 
 const unknownSeries = [...new Set(eventRows.map((e) => e.series))].filter(
@@ -215,6 +275,7 @@ console.log(`publications  ${pubRows.length}  (${pubRows.reduce((n, p) => n + p.
 console.log(`events        ${eventRows.length}  (${eventRows.reduce((n, e) => n + e.speakers.length, 0)} speaker rows)`);
 console.log(`series        ${seriesRows.length}`);
 console.log(`news          ${newsRows.length}`);
+console.log(`projects      ${projectRows.length}  (${projectRows.reduce((n, p) => n + p.authors.length, 0)} author rows, ${projectRows.reduce((n, p) => n + p.publications.length, 0)} paper rows)`);
 if (unknownSeries.length > 0) {
   console.error(`\nevents reference series not in event_types.yml: ${unknownSeries.join(", ")}`);
   process.exit(1);
@@ -244,4 +305,7 @@ for (const batch of chunk(eventRows, 20)) {
   console.log("importing events…", run("migrate:importEvents", { events: batch }));
 }
 console.log("importing news…", run("migrate:importNews", { news: newsRows }));
+for (const batch of chunk(projectRows, 10)) {
+  console.log("importing projects…", run("migrate:importProjects", { projects: batch }));
+}
 console.log("\ncounts:", run("migrate:counts", {}));

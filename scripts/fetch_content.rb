@@ -74,6 +74,34 @@ payload =
     give_up("could not fetch content from Convex (#{e.message})")
   end
 
+# Projects are a Jekyll collection, not a data file: each is a Markdown document
+# with front matter that renders into its own page. Write them back as files.
+#
+# Only the .md is written. The images beside it stay in the repo, because `avatar`
+# names a file in that directory and the collection copies it verbatim. A project
+# removed from Convex has its Markdown deleted so the page goes away; nothing else
+# in the directory is touched.
+projects = payload["projects"]
+if projects.is_a?(Array) && !projects.empty?
+  written = []
+  projects.each do |project|
+    slug = project.fetch("slug")
+    dir = File.join("_projects", slug)
+    Dir.mkdir(dir) unless Dir.exist?(dir)
+    path = File.join(dir, "#{slug}.md")
+    front = project.fetch("frontMatter").to_yaml.sub(/\A---\n/, "")
+    File.write(path, "---\n#{front}---\n\n#{project.fetch('body')}\n")
+    written << path
+  end
+  (Dir.glob("_projects/*/*.md") - written).each do |stale|
+    warn_loudly("removing #{stale}: no longer in Convex")
+    File.delete(stale)
+  end
+  puts "_projects: #{projects.size} documents"
+else
+  warn_loudly("Convex returned no projects; keeping the committed _projects/")
+end
+
 FILES.each do |key, path|
   rows = payload.fetch(key)
   # An empty collection is more likely a broken deployment than real news, and it

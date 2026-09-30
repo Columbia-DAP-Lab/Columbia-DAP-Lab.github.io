@@ -19,12 +19,13 @@ http.route({
   path: "/content.json",
   method: "GET",
   handler: httpAction(async (ctx) => {
-    const [events, publications, people, news, eventSeries, fieldColors] = await Promise.all([
+    const [events, publications, people, news, eventSeries, projects, fieldColors] = await Promise.all([
       ctx.runQuery(api.content.events, {}),
       ctx.runQuery(api.content.publications, {}),
       ctx.runQuery(api.content.people, {}),
       ctx.runQuery(api.content.news, {}),
       ctx.runQuery(api.content.eventSeries, {}),
+      ctx.runQuery(api.content.projects, {}),
       ctx.runQuery(api.content.fieldColors, {}),
     ]);
 
@@ -36,6 +37,7 @@ http.route({
         people,
         news,
         eventSeries,
+        projects,
         fieldColors,
       }),
       {

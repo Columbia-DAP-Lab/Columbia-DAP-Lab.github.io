@@ -4,6 +4,7 @@ import { internal } from "./_generated/api";
 import type { Doc, Id } from "./_generated/dataModel";
 import type { MutationCtx } from "./_generated/server";
 import { TOPICS, FIELDS, slugify } from "./vocabulary";
+import { matchKey, peopleByMatchKey, upsertAuthor } from "./authors";
 
 /**
  * One-time import of _data/*.yml into the content tables.
@@ -19,16 +20,11 @@ import { TOPICS, FIELDS, slugify } from "./vocabulary";
 
 const IMPORT_ACTOR = "migration";
 
-/** A person's display name, reduced for matching author and speaker strings. */
-const matchKey = (name: string) =>
-  name
-    .normalize("NFKD")
-    .replace(/[̀-ͯ]/g, "") // drop accents: "Sellán" matches "Sellan"
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, " ")
-    .trim();
 
 const CONTENT_TABLES = [
+  "projectPublications",
+  "projectAuthors",
+  "projects",
   "news",
   "publicationAuthors",
   "authors",
@@ -225,55 +221,8 @@ const normalizeCategory = (raw: string): Doc<"people">["category"] => {
   }
 };
 
-/** Look up every person once, for linking authors and speakers by name. */
-const peopleByName = async (ctx: MutationCtx) => {
-  const rows = await ctx.db.query("people").take(2000);
-  return new Map(rows.map((p) => [matchKey(p.name), p._id]));
-};
 
 /** How many non-ASCII characters a spelling carries, used to pick between variants. */
-const diacritics = (name: string) => name.replace(/[\x00-\x7F]/g, "").length;
-
-/**
- * Find or create the author row for a printed name, and count the authorship.
- *
- * Publications arrive in batches, so the lookup goes through the index rather than
- * a map built once — an author seen in an earlier batch must be found, not
- * duplicated.
- *
- * Where two papers spell the same person differently, the accented spelling wins:
- * the data has both "Franjo Ivancic" and "Franjo Ivančić", and first-seen-wins would
- * pick by publication order rather than by which is right.
- */
-const upsertAuthor = async (
-  ctx: MutationCtx,
-  name: string,
-  people: Map<string, Id<"people">>,
-): Promise<Id<"authors">> => {
-  const printed = name.trim();
-  const key = matchKey(printed);
-  const existing = await ctx.db
-    .query("authors")
-    .withIndex("by_matchKey", (q) => q.eq("matchKey", key))
-    .unique();
-
-  if (existing) {
-    await ctx.db.patch("authors", existing._id, {
-      publicationCount: existing.publicationCount + 1,
-      // A profile added after this author was first seen still gets linked.
-      personId: existing.personId ?? people.get(key),
-      name: diacritics(printed) > diacritics(existing.name) ? printed : existing.name,
-    });
-    return existing._id;
-  }
-
-  return await ctx.db.insert("authors", {
-    name: printed,
-    matchKey: key,
-    personId: people.get(key),
-    publicationCount: 1,
-  });
-};
 
 /** Import publications and their ordered authors. Called in batches. */
 export const importPublications = internalMutation({
@@ -303,7 +252,7 @@ export const importPublications = internalMutation({
   },
   handler: async (ctx, args) => {
     const now = Date.now();
-    const people = await peopleByName(ctx);
+    const people = await peopleByMatchKey(ctx);
     let authorRows = 0;
     let authorsLinked = 0;
 
@@ -383,7 +332,7 @@ export const importEvents = internalMutation({
   },
   handler: async (ctx, args) => {
     const now = Date.now();
-    const people = await peopleByName(ctx);
+    const people = await peopleByMatchKey(ctx);
     let speakerRows = 0;
     let speakersLinked = 0;
 
@@ -446,6 +395,88 @@ export const importNews = internalMutation({
       await ctx.db.insert("news", { ...item, sortOrder, ...submitted(now) });
     }
     return { news: args.news.length };
+  },
+});
+
+/**
+ * Import the _projects/ collection.
+ *
+ * Authors go through the same `authors` table as publications, without counting
+ * the authorship: publicationCount means papers, and a project is not one.
+ *
+ * A listed paper is linked to `publications` when its title matches one, so the
+ * link is a fact rather than a guess; unmatched entries keep their literal fields,
+ * which is all the page renders anyway.
+ */
+export const importProjects = internalMutation({
+  args: {
+    projects: v.array(
+      v.object({
+        slug: v.string(),
+        title: v.string(),
+        subtitle: v.string(),
+        date: v.string(),
+        body: v.string(),
+        kinds: v.array(
+          v.union(v.literal("project"), v.literal("benchmark"), v.literal("software")),
+        ),
+        tags: v.array(v.string()),
+        avatar: v.optional(v.string()),
+        avatarUrl: v.optional(v.string()),
+        links: v.array(v.object({ kind: v.string(), url: v.string() })),
+        authors: v.array(
+          v.object({
+            name: v.string(),
+            url: v.optional(v.string()),
+            equalContribution: v.optional(v.boolean()),
+          }),
+        ),
+        publications: v.array(
+          v.object({
+            title: v.string(),
+            venue: v.string(),
+            url: v.optional(v.string()),
+            year: v.optional(v.number()),
+          }),
+        ),
+      }),
+    ),
+  },
+  handler: async (ctx, args) => {
+    const now = Date.now();
+    const people = await peopleByMatchKey(ctx);
+    const published = await ctx.db.query("publications").take(2000);
+    const byTitle = new Map(published.map((p) => [p.title.trim().toLowerCase(), p._id]));
+
+    let authorRows = 0;
+    let paperRows = 0;
+    let papersLinked = 0;
+
+    for (const project of args.projects) {
+      const { authors, publications, ...fields } = project;
+      const projectId = await ctx.db.insert("projects", { ...fields, ...submitted(now) });
+
+      for (const [position, author] of authors.entries()) {
+        const authorId = await upsertAuthor(ctx, author.name, people, { countAuthorship: false });
+        await ctx.db.insert("projectAuthors", {
+          projectId,
+          authorId,
+          position,
+          url: author.url,
+          equalContribution: author.equalContribution,
+        });
+        authorRows++;
+      }
+
+      for (const [position, paper] of publications.entries()) {
+        const publicationId = byTitle.get(paper.title.trim().toLowerCase());
+        await ctx.db.insert("projectPublications", { projectId, position, ...paper, publicationId });
+        paperRows++;
+        if (publicationId) papersLinked++;
+      }
+    }
+
+    return { projects: args.projects.length, authorRows, paperRows, papersLinked };
   },
 });
 

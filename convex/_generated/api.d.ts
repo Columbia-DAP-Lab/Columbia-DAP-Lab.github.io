@@ -8,7 +8,11 @@
  * @module
  */
 
+import type * as admin from "../admin.js";
+import type * as authors from "../authors.js";
+import type * as authz from "../authz.js";
 import type * as content from "../content.js";
+import type * as deployHook from "../deployHook.js";
 import type * as http from "../http.js";
 import type * as migrate from "../migrate.js";
 import type * as vocabulary from "../vocabulary.js";
@@ -20,7 +24,11 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  admin: typeof admin;
+  authors: typeof authors;
+  authz: typeof authz;
   content: typeof content;
+  deployHook: typeof deployHook;
   http: typeof http;
   migrate: typeof migrate;
   vocabulary: typeof vocabulary;
