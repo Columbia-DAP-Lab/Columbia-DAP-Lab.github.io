@@ -33,10 +33,16 @@
   box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
 }
 .dap-admin-header [hidden] { display: none !important; }
+/*
+ * The logo as it is, not recolored: it carries its own white background and blue
+ * border, so on the dark bar it reads as a badge in the lab's colors. (Inverting
+ * it to white turns daplab_logo_horiz.png, which has no transparency, into a
+ * blank white box.)
+ */
 .dap-admin-logo {
-  height: 1.5em;
+  height: 1.6em;
   margin-right: 0.6rem;
-  filter: brightness(0) invert(1); /* the logo is dark; make it white on blue */
+  border-radius: 2px;
 }
 .dap-admin-badge {
   font-size: 0.75rem;
