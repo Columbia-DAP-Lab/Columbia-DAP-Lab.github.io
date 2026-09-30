@@ -319,4 +319,31 @@ pre.body { white-space: pre-wrap; font-family: inherit; margin: 0.5rem 0 0; }
 .dap-table .form-select { padding-top: 0.35rem; padding-bottom: 0.35rem; }
 
 .dap-names { columns: 3 12rem; font-size: 0.9rem; }
+
+/* ---------------------------------------------------------------- projects */
+
+.dap-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.6rem;
+}
+.dap-row .form-control,
+.dap-row .form-select { flex: 1 1 12rem; min-width: 0; }
+.dap-row .dap-row-narrow { flex: 0 1 10rem; }
+.dap-row .dap-row-year { flex: 0 0 6rem; }
+@media (max-width: 640px) { .dap-row { flex-wrap: wrap; } }
+
+.dap-inline-checks { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+.dap-mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.9rem; }
+
+.dap-project-image {
+  width: 120px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 6px;
+  background: #fff;
+  border: 1px solid var(--dap-border);
+}
+.dap-project-image:not([src]) { visibility: hidden; }
 .dap-names div { break-inside: avoid; padding: 0.1rem 0; }

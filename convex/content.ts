@@ -449,8 +449,10 @@ export const projects = query({
                   omitUndefined({ name: authorNames.get(row._id) ?? "", url: row.url }),
                 )
               : undefined,
-          avatar: project.avatar,
-          avatar_url: project.avatarUrl,
+          // An uploaded image replaces whichever of the repo's two forms was set.
+          ...(project.image
+            ? { avatar_url: await imagePath(project.image, ctx) }
+            : { avatar: project.avatar, avatar_url: project.avatarUrl }),
           tags: project.tags.length > 0 ? project.tags : undefined,
           links: project.links.length > 0 ? links : undefined,
           publications:

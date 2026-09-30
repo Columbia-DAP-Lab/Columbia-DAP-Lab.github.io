@@ -42,7 +42,7 @@ const contentTableValidator = v.union(
 export const record = async (
   ctx: MutationCtx,
   args: {
-    table: ContentTable;
+    table: Doc<"revisions">["table"];
     documentId: string;
     action: Doc<"revisions">["action"];
     actor: string;

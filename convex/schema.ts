@@ -452,6 +452,12 @@ export default defineSchema({
     avatar: v.optional(v.string()),
     avatarUrl: v.optional(v.string()),
     /**
+     * A card image uploaded through the admin page. Takes precedence over
+     * `avatar`/`avatarUrl` and is exported as an absolute `avatar_url`, which
+     * relative_url leaves alone.
+     */
+    image: v.optional(image),
+    /**
      * The `links:` map, ordered and typed. Kinds in use: github, blog, website,
      * paper, demo, pypi, leaderboard — a string rather than a union so a new kind
      * does not need a schema change.
