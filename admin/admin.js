@@ -1022,7 +1022,16 @@ const renderMe = (me) => {
   if (!signedIn) return;
 
   $("[data-email]").textContent = me.email;
-  $("[data-role]").textContent = me.capabilities.includes("admin") ? "Admin" : "Member";
+  $("[data-role]").textContent = me.viewingAsMember
+    ? "Member (preview)"
+    : me.capabilities.includes("admin")
+      ? "Admin"
+      : "Member";
+  $("[data-role]").classList.toggle("dap-role-preview", me.viewingAsMember);
+  $("[data-preview-banner]").hidden = !me.viewingAsMember;
+  // Offered to anyone who holds more than member; the server checks the real grant.
+  $("li[data-view-as=on]").hidden = me.viewingAsMember || !me.capabilities.some((c) => c !== "member");
+  $("li[data-view-as=off]").hidden = !me.viewingAsMember;
   $("[data-role]").title =
     me.via === "people" ? `Signed in as a lab member, matched to ${me.person} on the People page.` : "";
 
@@ -1079,3 +1088,19 @@ auth = await initAuth({
 }).catch((error) => showStatus(message(error)));
 
 $("[data-sign-out]").addEventListener("click", () => auth?.signOut());
+
+// Preview as a member, or stop. authz:me updates on its own and renderMe redraws
+// the page, so there is nothing to do here but ask.
+for (const node of $$("[data-view-as]")) {
+  const button = node.matches("button") ? node : $("button", node);
+  button.addEventListener("click", async () => {
+    button.disabled = true;
+    try {
+      await client.mutation(api.authz.setViewingAsMember, { on: node.dataset.viewAs === "on" });
+    } catch (error) {
+      showStatus(message(error));
+    } finally {
+      button.disabled = false;
+    }
+  });
+}

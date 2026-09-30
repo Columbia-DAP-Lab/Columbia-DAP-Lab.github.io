@@ -412,6 +412,12 @@ export default defineSchema({
     ),
     grantedBy: v.string(),
     grantedAt: v.number(),
+    /**
+     * Set while someone with more than `member` is previewing the admin page as a
+     * member sees it. accessFor then grants only `member`, so the server behaves
+     * as it would for a member too; authz:setViewingAsMember turns it off.
+     */
+    viewingAsMember: v.optional(v.boolean()),
   }).index("by_email", ["email"]),
 
   /**
