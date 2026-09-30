@@ -59,7 +59,11 @@
 .dap-admin-header .nav-link:focus { color: #fff; background: rgba(255, 255, 255, 0.12); }
 .dap-admin-header .dap-tab { border-bottom: 3px solid transparent; }
 .dap-admin-header .dap-tab.active { border-bottom-color: #fff; }
-.dap-admin-email { opacity: 0.85; font-weight: 400; margin-right: 0.5rem; }
+.dap-admin-account { font-weight: 400; }
+.dap-admin-account .dap-role { margin-left: 0.35rem; }
+.dap-admin-header .dropdown-menu { border-color: var(--dap-border, #dce3ec); }
+.dap-admin-header .dropdown-item { font-weight: 600; }
+.dap-admin-header .dropdown-item:active { background: #1d4f91; }
 .dap-admin-header .dap-count { background: #fff; color: var(--dap-columbia-dark); }
 
 /* ------------------------------------------------------------------ chrome */
@@ -97,9 +101,16 @@
 }
 
 .dap-section {
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   font-weight: 700;
   margin: 2rem 0 1rem;
+}
+
+.dap-subsection {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #44546a;
+  margin: 1.5rem 0 0.75rem;
 }
 
 /* ------------------------------------------------------------------ panels */

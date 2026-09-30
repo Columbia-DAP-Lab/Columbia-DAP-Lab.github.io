@@ -96,7 +96,9 @@ const when = (ms) => new Date(ms).toLocaleString();
 // --------------------------------------------------------------------- tabs
 
 const showTab = (name) => {
-  for (const tab of $$("[data-tab]")) tab.classList.toggle("active", tab.dataset.tab === name);
+  // Only the header's section tabs show which one is open; the account menu's
+  // Edit profile item opens a panel without being underlined.
+  for (const tab of $$(".dap-tab[data-tab]")) tab.classList.toggle("active", tab.dataset.tab === name);
   for (const panel of $$("[data-panel]")) panel.hidden = panel.dataset.panel !== name;
 };
 for (const tab of $$("[data-tab]")) {
@@ -213,7 +215,7 @@ handleSubmit(eventForm, async () => {
   eventForm.reset();
   $("#speakers").replaceChildren();
   addSpeaker();
-  return "Submitted. An editor will review it; track it under My submissions.";
+  return "Submitted. An admin will review it; follow it under Submissions.";
 });
 
 // --------------------------------------------------------- publication form
@@ -237,7 +239,7 @@ handleSubmit(publicationForm, async () => {
 
   await client.mutation(api.admin.submitPublication, { ...publication, authors, topics });
   publicationForm.reset();
-  return "Submitted. An editor will review it; track it under My submissions.";
+  return "Submitted. An admin will review it; follow it under Submissions.";
 });
 
 // -------------------------------------------------------------- person form
@@ -268,7 +270,7 @@ handleSubmit(personForm, async () => {
 
   await client.mutation(api.admin.submitPerson, { ...person, advisors, fields });
   personForm.reset();
-  return "Submitted. An editor will review it; track it under My submissions.";
+  return "Submitted. An admin will review it; follow it under Submissions.";
 });
 
 // ----------------------------------------------------------- paste to fill
@@ -412,7 +414,7 @@ const renderMine = () => {
   const { events, publications, people } = mine.submissions;
   const edits = mine.edits.map((e) => ({ ...e, title: "Profile update" }));
   const list = (heading, rows) => [
-    el("h2", { class: "dap-section" }, heading),
+    el("h3", { class: "dap-subsection" }, heading),
     rows.length === 0
       ? el("p", { class: "text-muted" }, "None yet.")
       : el(
@@ -793,8 +795,9 @@ const renderMe = (me) => {
     node.hidden = node.dataset.needs === "profile" ? me.profile === null : !can(me.capabilities, node.dataset.needs);
   }
   // Leave a tab the user just lost access to.
-  const active = $("[data-tab].active");
-  if (active.closest("[data-needs]")?.hidden) showTab("event");
+  const open = $("[data-panel]:not([hidden])")?.dataset.panel;
+  const opener = $(`[data-tab="${open}"]`);
+  if (opener?.closest("[data-needs]")?.hidden) showTab("event");
 
   subscribe(api.admin.mySubmissions, {}, (rows) => {
     mine.submissions = rows;

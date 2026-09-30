@@ -18,21 +18,27 @@ hidden until someone on the lab's list signs in.
 
     <div class="collapse navbar-collapse" id="adminNav">
       <div class="navbar-nav me-auto" data-admin-tabs hidden>
-        <button class="nav-link dap-tab active" data-tab="event" type="button">Add event</button>
-        <button class="nav-link dap-tab" data-tab="publication" type="button">Add publication(s)</button>
-        <button class="nav-link dap-tab" data-tab="person" type="button" hidden data-needs="people">Add person</button>
-        <button class="nav-link dap-tab" data-tab="mine" type="button">My submissions</button>
-        <button class="nav-link dap-tab" data-tab="review" type="button" hidden data-needs="events publications people">
-          Review <span class="dap-count" data-pending-count></span>
+        <button class="nav-link dap-tab active" data-tab="event" type="button">Events</button>
+        <button class="nav-link dap-tab" data-tab="publication" type="button">Papers</button>
+        <button class="nav-link dap-tab" data-tab="people" type="button" hidden data-needs="people">People</button>
+        <button class="nav-link dap-tab" data-tab="submissions" type="button">
+          Submissions <span class="dap-count" data-pending-count></span>
         </button>
-        <button class="nav-link dap-tab" data-tab="users" type="button" hidden data-needs="admin">Users</button>
       </div>
 
-      <div class="navbar-nav ms-auto align-items-lg-center" data-admin-account hidden>
-        <span class="navbar-text dap-admin-email" data-email></span>
-        <span class="dap-role" data-role></span>
-        <button class="nav-link dap-tab" data-tab="profile" type="button" hidden data-needs="profile">Edit profile</button>
-        <button class="nav-link" type="button" data-sign-out>Sign out</button>
+      <div class="navbar-nav ms-auto" data-admin-account hidden>
+        <div class="nav-item dropdown">
+          <button class="nav-link dropdown-toggle dap-admin-account" type="button" data-bs-toggle="dropdown"
+                  aria-expanded="false">
+            <span data-email></span> <span class="dap-role" data-role></span>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li hidden data-needs="profile">
+              <button class="dropdown-item" data-tab="profile" type="button">Edit profile</button>
+            </li>
+            <li><button class="dropdown-item" type="button" data-sign-out>Sign out</button></li>
+          </ul>
+        </div>
       </div>
 
       <div class="navbar-nav ms-auto" data-admin-signed-out>
