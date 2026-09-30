@@ -39,7 +39,7 @@ const contentTableValidator = v.union(
  * The rebuild is debounced in deployHook, so publishing several items in a row
  * produces one build rather than one per item.
  */
-const record = async (
+export const record = async (
   ctx: MutationCtx,
   args: {
     table: ContentTable;
@@ -87,7 +87,7 @@ export const generateUploadUrl = mutation({
 });
 
 /** Check an uploaded file before an event points at it. */
-const checkImage = async (ctx: MutationCtx, storageId: Id<"_storage">) => {
+export const checkImage = async (ctx: MutationCtx, storageId: Id<"_storage">) => {
   const file = await ctx.db.system.get("_storage", storageId);
   if (file === null) throw new ConvexError("The uploaded image is missing; upload it again.");
   if (!file.contentType?.startsWith("image/")) throw new ConvexError("The upload is not an image.");

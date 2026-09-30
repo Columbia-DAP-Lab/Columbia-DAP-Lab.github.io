@@ -3,6 +3,7 @@ layout: default
 title: Admin
 noindex: true
 sitemap: false
+admin_header: true
 ---
 
 {%- comment -%}
@@ -18,15 +19,6 @@ docs/admin-service-design.md.
      data-convex-url="{{ site.admin.convex_url }}"
      data-google-client-id="{{ site.admin.google_client_id }}">
 
-  <div class="dap-topbar">
-    <span class="dap-eyebrow">DAPLab admin</span>
-    <div id="whoami" hidden>
-      <span class="dap-muted me-2" data-email></span>
-      <span class="dap-role" data-role></span>
-      <button type="button" class="btn btn-sm dap-btn-quiet ms-2" data-sign-out>Sign out</button>
-    </div>
-  </div>
-
   <div id="status" class="alert alert-danger" role="alert" hidden></div>
 
   <!-- --------------------------------------------------------- signed out -->
@@ -40,17 +32,6 @@ docs/admin-service-design.md.
 
   <!-- ---------------------------------------------------------- signed in -->
   <section id="signed-in" hidden>
-    <nav class="dap-nav" role="tablist">
-      <button class="dap-tab active" data-tab="event" type="button">Add event</button>
-      <button class="dap-tab" data-tab="publication" type="button">Add publication</button>
-      <button class="dap-tab" data-tab="person" type="button" hidden data-needs="people">Add person</button>
-      <button class="dap-tab" data-tab="mine" type="button">My submissions</button>
-      <button class="dap-tab" data-tab="review" type="button" hidden data-needs="events publications people">
-        Review <span class="dap-count" data-pending-count></span>
-      </button>
-      <button class="dap-tab" data-tab="users" type="button" hidden data-needs="admin">Users</button>
-    </nav>
-
     <!-- ------------------------------------------------------------ event -->
     <div data-panel="event">
       <h1 class="dap-title">Add event</h1>
@@ -152,7 +133,7 @@ docs/admin-service-design.md.
 
     <!-- ------------------------------------------------------ publication -->
     <div data-panel="publication" hidden>
-      <h1 class="dap-title">Add publication</h1>
+      <h1 class="dap-title">Add publication(s)</h1>
       {% include admin-quick-add.html kind="publication" placeholder="Paste a citation, an abstract page, or a list of papers, then extract them into the form below." %}
 
       <form id="publication-form" novalidate>
@@ -300,6 +281,52 @@ docs/admin-service-design.md.
       </form>
     </div>
 
+    <!-- ---------------------------------------------------------- profile -->
+    <div data-panel="profile" hidden>
+      <h1 class="dap-title">Edit profile</h1>
+      <p class="dap-muted" data-profile-intro></p>
+      <div class="dap-warnings mb-4" data-profile-pending hidden>
+        You have changes waiting for an admin to review. Submitting again replaces them.
+      </div>
+
+      <form id="profile-form" novalidate>
+        <fieldset class="dap-card">
+          <legend>Profile</legend>
+          <div class="mb-3">
+            <label class="form-label" for="profile-homepage">Homepage</label>
+            <input class="form-control" type="url" id="profile-homepage" name="homepage" placeholder="https://">
+          </div>
+          <div>
+            <label class="form-label" for="profile-bio">Bio</label>
+            <textarea class="form-control" id="profile-bio" name="bio" rows="3"></textarea>
+            <div class="form-text">Shown for faculty.</div>
+          </div>
+        </fieldset>
+
+        <fieldset class="dap-card">
+          <legend>Photo</legend>
+          <div class="d-flex gap-3 align-items-center">
+            <img class="dap-avatar" data-profile-photo alt="">
+            <div class="flex-grow-1">
+              <label class="form-label" for="profile-image">Replace photo</label>
+              <input class="form-control" type="file" id="profile-image" name="image" accept="image/*">
+              <div class="form-text">Square works best. Under 5 MB.</div>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset class="dap-card">
+          <legend>Badges</legend>
+          <div class="dap-checks" id="profile-fields"></div>
+        </fieldset>
+
+        <div class="dap-actions">
+          <button type="submit" class="btn dap-btn-primary">Save changes</button>
+          <span data-result></span>
+        </div>
+      </form>
+    </div>
+
     <!-- ------------------------------------------------------------- mine -->
     <div data-panel="mine" hidden>
       <h1 class="dap-title">My submissions</h1>
@@ -315,6 +342,8 @@ docs/admin-service-design.md.
       <div id="review-publications" data-needs="publications"></div>
       <h2 class="dap-section" data-needs="people">People</h2>
       <div id="review-people" data-needs="people"></div>
+      <h2 class="dap-section" data-needs="people">Profile updates</h2>
+      <div id="review-profiles" data-needs="people"></div>
     </div>
 
     <!-- ------------------------------------------------------------ users -->

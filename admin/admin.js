@@ -18,8 +18,10 @@ const client = new ConvexClient(root.dataset.convexUrl, { initialAuthTokenReuse:
 
 // ------------------------------------------------------------------ helpers
 
-const $ = (selector, scope = root) => scope.querySelector(selector);
-const $$ = (selector, scope = root) => [...scope.querySelectorAll(selector)];
+// Document-wide by default: the tabs and account controls are in the admin
+// header (_includes/admin-header.html), outside #admin.
+const $ = (selector, scope = document) => scope.querySelector(selector);
+const $$ = (selector, scope = document) => [...scope.querySelectorAll(selector)];
 
 /** Create an element; strings become text, never markup. */
 const el = (tag, attrs = {}, ...children) => {
@@ -97,7 +99,14 @@ const showTab = (name) => {
   for (const tab of $$("[data-tab]")) tab.classList.toggle("active", tab.dataset.tab === name);
   for (const panel of $$("[data-panel]")) panel.hidden = panel.dataset.panel !== name;
 };
-for (const tab of $$("[data-tab]")) tab.addEventListener("click", () => showTab(tab.dataset.tab));
+for (const tab of $$("[data-tab]")) {
+  tab.addEventListener("click", () => {
+    showTab(tab.dataset.tab);
+    // On a phone the header is a collapsed menu; close it once a section is picked.
+    const menu = $("#adminNav");
+    if (menu?.classList.contains("show")) window.bootstrap?.Collapse.getOrCreateInstance(menu).hide();
+  });
+}
 
 // --------------------------------------------------------- vocabulary lists
 
@@ -140,14 +149,13 @@ const checkedValues = (container) => $$("input:checked", container).map((input) 
 client.onUpdate(api.content.topics, {}, (topics) => renderChecks($("#topics"), topics, "topic"));
 // Research areas first, then department and role badges, as the people grid mixes them.
 const FIELD_KIND_ORDER = { research: 0, department: 1, role: 2 };
-client.onUpdate(api.content.fields, {}, (fields) =>
-  renderChecks(
-    $("#fields"),
-    [...fields].sort((a, b) => FIELD_KIND_ORDER[a.kind] - FIELD_KIND_ORDER[b.kind]),
-    "field",
-    (f) => f.kind,
-  ),
-);
+client.onUpdate(api.content.fields, {}, (fields) => {
+  const sorted = [...fields].sort((a, b) => FIELD_KIND_ORDER[a.kind] - FIELD_KIND_ORDER[b.kind]);
+  renderChecks($("#fields"), sorted, "field", (f) => f.kind);
+  renderChecks($("#profile-fields"), sorted, "profile-field", (f) => f.kind);
+  // The badge boxes are rebuilt empty; put the profile's own back.
+  if (profile) setChecks($("#profile-fields"), profile.fields);
+});
 
 // --------------------------------------------------------------- event form
 
@@ -398,7 +406,11 @@ pasteToFill("person", personForm);
 
 // ---------------------------------------------------------- my submissions
 
-const renderMine = ({ events, publications, people }) => {
+/** Latest of each subscription, so either one arriving re-renders the whole list. */
+const mine = { submissions: { events: [], publications: [], people: [] }, edits: [] };
+const renderMine = () => {
+  const { events, publications, people } = mine.submissions;
+  const edits = mine.edits.map((e) => ({ ...e, title: "Profile update" }));
   const list = (heading, rows) => [
     el("h2", { class: "dap-section" }, heading),
     rows.length === 0
@@ -423,6 +435,7 @@ const renderMine = ({ events, publications, people }) => {
     ...list("Events", events),
     ...list("Publications", publications),
     ...list("People", people),
+    ...(edits.length > 0 ? list("Your profile", edits) : []),
   );
 };
 
@@ -538,15 +551,111 @@ const renderPerson = (row) =>
     reviewActions("people", row),
   );
 
-const pendingCounts = { events: 0, publications: 0, people: 0 };
+const renderProfileEdit = (row) =>
+  el(
+    "div",
+    { class: "queue-item" },
+    el(
+      "div",
+      { class: "d-flex gap-3" },
+      row.imageUrl && el("img", { src: row.imageUrl, alt: "New photo" }),
+      el(
+        "div",
+        { class: "flex-grow-1" },
+        el("h3", {}, row.name),
+        el(
+          "table",
+          { class: "table table-sm mb-2" },
+          el("thead", {}, el("tr", {}, el("th", {}, "Field"), el("th", {}, "Now"), el("th", {}, "Proposed"))),
+          el(
+            "tbody",
+            {},
+            row.rows.map((r) =>
+              el("tr", {}, el("td", {}, r.field), el("td", { class: "dap-muted" }, r.before || "—"), el("td", {}, r.after || "(cleared)")),
+            ),
+            row.imageUrl && el("tr", {}, el("td", {}, "photo"), el("td", { class: "dap-muted" }, "current"), el("td", {}, "new (shown left)")),
+          ),
+        ),
+        el("div", { class: "small text-muted" }, `Proposed by ${row.submittedBy}, ${when(row.submittedAt)}`),
+      ),
+    ),
+    profileEditActions(row),
+  );
+
+const profileEditActions = (row) => {
+  const note = el("input", {
+    class: "form-control form-control-sm d-inline-block w-auto me-2",
+    placeholder: "Note to them (for rejections)",
+  });
+  const act = (decision) => async (event) => {
+    const buttons = $$("button", event.target.parentElement);
+    buttons.forEach((b) => (b.disabled = true));
+    try {
+      await client.mutation(api.profiles.reviewEdit, { id: row._id, decision, reviewNote: note.value.trim() || undefined });
+    } catch (error) {
+      showStatus(message(error));
+      buttons.forEach((b) => (b.disabled = false));
+    }
+  };
+  return el(
+    "div",
+    { class: "mt-2" },
+    note,
+    el("button", { type: "button", class: "btn btn-sm btn-success me-2", onclick: act("published") }, "Approve"),
+    el("button", { type: "button", class: "btn btn-sm btn-outline-danger", onclick: act("rejected") }, "Reject"),
+  );
+};
+
+const pendingCounts = { events: 0, publications: 0, people: 0, profiles: 0 };
 const renderQueue = (table, rows, render) => {
   pendingCounts[table] = rows.length;
-  const total = pendingCounts.events + pendingCounts.publications + pendingCounts.people;
+  const total = Object.values(pendingCounts).reduce((a, b) => a + b, 0);
   $("[data-pending-count]").textContent = total || "";
   $(`#review-${table}`).replaceChildren(
     rows.length === 0 ? el("p", { class: "text-muted" }, "Nothing waiting.") : rows.map(render),
   );
 };
+
+// ------------------------------------------------------------ edit profile
+
+/** The signed-in person's profile as last loaded; the badge list reads it too. */
+let profile = null;
+
+const profileForm = $("#profile-form");
+const renderProfile = (loaded) => {
+  profile = loaded;
+  if (loaded === null) return;
+  $("[data-profile-intro]").textContent = loaded.appliesImmediately
+    ? `Your People-page profile, ${loaded.name}. As an admin, your changes apply right away.`
+    : `Your People-page profile, ${loaded.name}. A lab admin reviews changes before they appear on the site.`;
+  $("[data-profile-pending]").hidden = loaded.pendingSince === null;
+  // Don't clobber what someone is typing when the subscription refreshes.
+  if (!profileForm.contains(document.activeElement)) {
+    profileForm.elements.homepage.value = loaded.homepage ?? "";
+    profileForm.elements.bio.value = loaded.bio ?? "";
+    setChecks($("#profile-fields"), loaded.fields);
+  }
+  const photo = $("[data-profile-photo]");
+  if (loaded.imageUrl) photo.src = loaded.imageUrl.includes("://") ? loaded.imageUrl : new URL(loaded.imageUrl, location.origin).href;
+  else photo.removeAttribute("src");
+};
+
+handleSubmit(profileForm, async () => {
+  const edit = {
+    // Title and affiliation are not shown on the People page, so they are not
+    // offered here; sending the current values keeps them as they are.
+    title: profile?.title ?? "",
+    affiliation: profile?.affiliation ?? "",
+    homepage: profileForm.elements.homepage.value,
+    bio: profileForm.elements.bio.value,
+    fields: checkedValues($("#profile-fields")),
+  };
+  const file = profileForm.elements.image.files[0];
+  if (file) edit.image = await uploadImage(file);
+  const { applied } = await client.mutation(api.profiles.submitProfileEdit, edit);
+  profileForm.elements.image.value = "";
+  return applied ? "Saved. The People page updates with the next site build." : "Sent for review. An admin will look at it.";
+});
 
 // ------------------------------------------------------------------- users
 //
@@ -668,7 +777,9 @@ const renderMe = (me) => {
   const signedIn = me.email !== null;
   $("#signed-out").hidden = signedIn;
   $("#signed-in").hidden = !signedIn;
-  $("#whoami").hidden = !signedIn;
+  $("[data-admin-tabs]").hidden = !signedIn;
+  $("[data-admin-account]").hidden = !signedIn;
+  $("[data-admin-signed-out]").hidden = signedIn;
   if (!signedIn) return;
 
   $("[data-email]").textContent = me.email;
@@ -676,17 +787,30 @@ const renderMe = (me) => {
   $("[data-role]").title =
     me.via === "people" ? `Signed in as a lab member, matched to ${me.person} on the People page.` : "";
 
-  for (const node of $$("[data-needs]")) node.hidden = !can(me.capabilities, node.dataset.needs);
+  for (const node of $$("[data-needs]")) {
+    // "profile" is about having one to edit, not a capability; admins without a
+    // People-page profile have nothing to edit.
+    node.hidden = node.dataset.needs === "profile" ? me.profile === null : !can(me.capabilities, node.dataset.needs);
+  }
   // Leave a tab the user just lost access to.
   const active = $("[data-tab].active");
   if (active.closest("[data-needs]")?.hidden) showTab("event");
 
-  subscribe(api.admin.mySubmissions, {}, renderMine);
+  subscribe(api.admin.mySubmissions, {}, (rows) => {
+    mine.submissions = rows;
+    renderMine();
+  });
+  subscribe(api.profiles.myEdits, {}, (rows) => {
+    mine.edits = rows;
+    renderMine();
+  });
+  if (me.profile !== null) subscribe(api.profiles.myProfile, {}, renderProfile);
   if (can(me.capabilities, "events")) {
     subscribe(api.admin.pending, { table: "events" }, (rows) => renderQueue("events", rows, renderEvent));
   }
   if (can(me.capabilities, "people")) {
     subscribe(api.admin.pending, { table: "people" }, (rows) => renderQueue("people", rows, renderPerson));
+    subscribe(api.profiles.pendingEdits, {}, (rows) => renderQueue("profiles", rows, renderProfileEdit));
   }
   if (can(me.capabilities, "publications")) {
     subscribe(api.admin.pending, { table: "publications" }, (rows) =>

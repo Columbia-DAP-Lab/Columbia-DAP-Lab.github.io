@@ -99,7 +99,7 @@ const nameKeys = (name: string): string[] => {
  * invitation list. Two people with the same name would both match — the most
  * either can do is submit something pending for an admin to review.
  */
-const labMemberFor = async (
+export const labMemberFor = async (
   ctx: QueryCtx | MutationCtx,
   email: string,
   name: string | undefined,
@@ -126,6 +126,17 @@ type Access = {
   via: "added" | "people" | null;
   /** The profile they were matched to, when `via` is "people". */
   person: string | null;
+};
+
+/**
+ * The People-page profile that belongs to the signed-in account, whoever let
+ * them in: an admin added by email has a profile too. Null if none matches.
+ */
+export const profileFor = async (ctx: QueryCtx | MutationCtx): Promise<Doc<"people"> | null> => {
+  const email = await currentEmail(ctx);
+  if (email === null) return null;
+  const identity = await ctx.auth.getUserIdentity();
+  return await labMemberFor(ctx, email, typeof identity?.name === "string" ? identity.name : undefined);
 };
 
 /**
@@ -202,6 +213,8 @@ export const me = query({
     capabilities: v.array(capabilityValidator),
     via: v.union(v.literal("added"), v.literal("people"), v.null()),
     person: v.union(v.string(), v.null()),
+    /** Name on the People-page profile this account may edit, if any. */
+    profile: v.union(v.string(), v.null()),
   }),
   handler: async (ctx) => {
     const access = await accessFor(ctx);
@@ -213,11 +226,21 @@ export const me = query({
         capabilities: [],
         via: null,
         person: null,
+        profile: null,
       };
     }
     if (access.capabilities.length === 0) {
-      return { email: null, refused: null, notOnList: access.email, capabilities: [], via: null, person: null };
+      return {
+        email: null,
+        refused: null,
+        notOnList: access.email,
+        capabilities: [],
+        via: null,
+        person: null,
+        profile: null,
+      };
     }
-    return { ...access, refused: null, notOnList: null };
+    const profile = await profileFor(ctx);
+    return { ...access, refused: null, notOnList: null, profile: profile?.name ?? null };
   },
 });
