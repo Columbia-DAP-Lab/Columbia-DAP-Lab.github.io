@@ -86,6 +86,9 @@ export async function initAuth({ client, googleClientId, button, onChange }) {
 
   gis.initialize({
     client_id: googleClientId,
+    // Offer only LionMail accounts in Google's chooser. A convenience: the server
+    // is what refuses anyone else (convex/authz.ts).
+    hd: "columbia.edu",
     auto_select: true,
     use_fedcm_for_prompt: true,
     callback: ({ credential }) => {
@@ -103,7 +106,9 @@ export async function initAuth({ client, googleClientId, button, onChange }) {
       gis.disableAutoSelect();
       store(null);
       connected = false;
-      client.clearAuth();
+      // ConvexClient has no clearAuth(); a fetcher that yields no token is how it
+      // is told to drop the identity. Not fetchToken, which would ask Google again.
+      client.setAuth(async () => null);
       onChange(false);
     },
   };

@@ -4,7 +4,7 @@ import { internal } from "./_generated/api";
 import type { MutationCtx, QueryCtx } from "./_generated/server";
 import type { Doc, Id } from "./_generated/dataModel";
 import schema from "./schema";
-import { capabilityValidator, currentEmail, requireCapability, requireSubmitter } from "./authz";
+import { capabilityValidator, currentEmail, isColumbiaAddress, requireCapability, requireSubmitter } from "./authz";
 import { adjustAuthorCounts, peopleByMatchKey, upsertAuthor } from "./authors";
 
 /**
@@ -392,6 +392,9 @@ export const setRole = mutation({
   handler: async (ctx, args) => {
     const actor = await requireCapability(ctx, "admin");
     const email = args.email.trim().toLowerCase();
+    if (!isColumbiaAddress(email)) {
+      throw new ConvexError("Only @columbia.edu accounts can sign in, so only they can hold a role.");
+    }
 
     const existing = await ctx.db
       .query("roles")
@@ -442,6 +445,7 @@ export const bootstrapAdmin = internalMutation({
   returns: v.null(),
   handler: async (ctx, args) => {
     const email = args.email.trim().toLowerCase();
+    if (!isColumbiaAddress(email)) throw new ConvexError("Only @columbia.edu accounts can sign in.");
     const existing = await ctx.db
       .query("roles")
       .withIndex("by_email", (q) => q.eq("email", email))

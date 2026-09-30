@@ -381,6 +381,13 @@ const renderMe = (me) => {
   for (const unsubscribe of subscriptions) unsubscribe();
   subscriptions = [];
 
+  // Google signed someone in, but not with a Columbia account; the server treats
+  // them as signed out, so say why and drop the token.
+  if (me.refused) {
+    showStatus(`${me.refused} is not a Columbia account. Sign in with your uni@columbia.edu account.`);
+    auth?.signOut();
+  }
+
   const signedIn = me.email !== null;
   $("#signed-out").hidden = signedIn;
   $("#signed-in").hidden = !signedIn;
@@ -388,9 +395,6 @@ const renderMe = (me) => {
   if (!signedIn) return;
 
   $("[data-email]").textContent = me.email;
-  if (!me.canSubmit) {
-    showStatus(`${me.email} is not a Columbia account. Sign out and sign in with uni@columbia.edu.`);
-  }
 
   for (const node of $$("[data-needs]")) node.hidden = !can(me.capabilities, node.dataset.needs);
   // Leave a tab the user just lost access to.
@@ -409,9 +413,12 @@ const renderMe = (me) => {
   if (me.capabilities.includes("admin")) subscribe(api.admin.listRoles, {}, renderRoles);
 };
 
+/** Set once Google sign-in has loaded; renderMe may run before that. */
+let auth;
+
 client.onUpdate(api.authz.me, {}, renderMe, (error) => showStatus(message(error)));
 
-const auth = await initAuth({
+auth = await initAuth({
   client,
   googleClientId: root.dataset.googleClientId,
   button: $("#google-button"),
