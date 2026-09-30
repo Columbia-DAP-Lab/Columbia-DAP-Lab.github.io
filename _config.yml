@@ -17,10 +17,22 @@ collections:
   benchmarks:
     output: true
     permalink: /benchmarks/:name/
-# Images downloaded from Convex during the build (_plugins/convex_content.rb); the
-# plugin publishes them itself, and the watcher must not rebuild when they appear.
 exclude:
+  # Images downloaded from Convex during the build (_plugins/convex_content.rb); the
+  # plugin publishes them itself, and the watcher must not rebuild when they appear.
   - .convex-media
+  # Repo files that aren't site content.
+  - AGENTS.md
+  - CLAUDE.md
+  - README.md
+  - Dockerfile
+  - docker-compose.yml
+  - package.json
+  - package-lock.json
+  - convex/
+  - docs/
+  - scripts/
+  - bin/
 defaults:
   - scope:
       path: ""
