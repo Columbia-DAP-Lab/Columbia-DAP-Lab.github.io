@@ -39,7 +39,7 @@ const contentTableValidator = v.union(
  * The rebuild is debounced in deployHook, so publishing several items in a row
  * produces one build rather than one per item.
  */
-const record = async (
+export const record = async (
   ctx: MutationCtx,
   args: {
     table: ContentTable;
@@ -87,7 +87,7 @@ export const generateUploadUrl = mutation({
 });
 
 /** Check an uploaded file before an event points at it. */
-const checkImage = async (ctx: MutationCtx, storageId: Id<"_storage">) => {
+export const checkImage = async (ctx: MutationCtx, storageId: Id<"_storage">) => {
   const file = await ctx.db.system.get("_storage", storageId);
   if (file === null) throw new ConvexError("The uploaded image is missing; upload it again.");
   if (!file.contentType?.startsWith("image/")) throw new ConvexError("The upload is not an image.");
@@ -250,7 +250,8 @@ export const submitPerson = mutation({
   },
   returns: v.id("people"),
   handler: async (ctx, args) => {
-    const submitter = await requireSubmitter(ctx);
+    // Profiles are the People page itself, so adding one is an admin's call.
+    const submitter = await requireCapability(ctx, "people");
     const name = args.name.trim();
     if (!name) throw new ConvexError("A profile needs a name.");
 
@@ -496,6 +497,26 @@ export const setStatus = mutation({
 
 // --------------------------------------------------------------------- roles
 
+/**
+ * Current lab members on the People page, who can sign in as members without
+ * being added (see accessFor in convex/authz.ts), for the Users tab.
+ */
+export const labMembers = query({
+  args: {},
+  returns: v.array(v.object({ name: v.string(), category: v.string() })),
+  handler: async (ctx) => {
+    await requireCapability(ctx, "admin");
+    const rows = await ctx.db
+      .query("people")
+      .withIndex("by_status_and_category", (q) => q.eq("status", "published"))
+      .take(2000);
+    return rows
+      .filter((p) => !p.hidden && p.category !== "alum")
+      .map((p) => ({ name: p.name, category: p.category }))
+      .sort((a, b) => a.name.localeCompare(b.name));
+  },
+});
+
 export const listRoles = query({
   args: {},
   returns: v.array(schema.doc("roles")),
@@ -521,6 +542,12 @@ export const setRole = mutation({
       .withIndex("by_email", (q) => q.eq("email", email))
       .unique();
 
+    // Guard against an admin removing or demoting themselves and locking everyone
+    // out; bootstrapAdmin is an internal escape hatch, not a UI.
+    if (email === actor && !args.capabilities.includes("admin")) {
+      throw new ConvexError("You cannot remove your own admin role. Ask another admin.");
+    }
+
     if (args.capabilities.length === 0) {
       if (existing !== null) await ctx.db.delete("roles", existing._id);
     } else if (existing === null) {
@@ -531,11 +558,6 @@ export const setRole = mutation({
         grantedAt: Date.now(),
       });
     } else {
-      // Guard against an admin removing their own last admin grant and locking
-      // everyone out; bootstrapAdmin is an internal escape hatch, not a UI.
-      if (email === actor && !args.capabilities.includes("admin")) {
-        throw new ConvexError("You cannot remove your own admin capability.");
-      }
       await ctx.db.patch("roles", existing._id, { capabilities: args.capabilities });
     }
 
@@ -548,6 +570,71 @@ export const setRole = mutation({
       snapshot: { email, capabilities: args.capabilities },
     });
     return null;
+  },
+});
+
+/** Longest list the Users tab accepts in one paste; a lab roster is well under this. */
+const MAX_USERS_PER_ADD = 500;
+
+/**
+ * Add a pasted list of people to the list, all with one role.
+ *
+ * Adding never takes anything away: someone already an admin stays an admin when
+ * the list is added as members. Addresses that cannot sign in (not columbia.edu)
+ * are reported rather than stored.
+ */
+export const addUsers = mutation({
+  args: {
+    emails: v.array(v.string()),
+    role: v.union(v.literal("member"), v.literal("admin")),
+  },
+  returns: v.object({
+    added: v.array(v.string()),
+    changed: v.array(v.string()),
+    unchanged: v.array(v.string()),
+    skipped: v.array(v.string()),
+  }),
+  handler: async (ctx, args) => {
+    const actor = await requireCapability(ctx, "admin");
+    if (args.emails.length > MAX_USERS_PER_ADD) {
+      throw new ConvexError(`Add at most ${MAX_USERS_PER_ADD} people at a time.`);
+    }
+
+    const result = { added: [] as string[], changed: [] as string[], unchanged: [] as string[], skipped: [] as string[] };
+    const seen = new Set<string>();
+    for (const raw of args.emails) {
+      const email = raw.trim().toLowerCase();
+      if (!email || seen.has(email)) continue;
+      seen.add(email);
+      if (!isColumbiaAddress(email)) {
+        result.skipped.push(email);
+        continue;
+      }
+
+      const existing = await ctx.db
+        .query("roles")
+        .withIndex("by_email", (q) => q.eq("email", email))
+        .unique();
+      if (existing === null) {
+        await ctx.db.insert("roles", { email, capabilities: [args.role], grantedBy: actor, grantedAt: Date.now() });
+        result.added.push(email);
+      } else if (existing.capabilities.includes("admin") || existing.capabilities.includes(args.role)) {
+        result.unchanged.push(email);
+        continue;
+      } else {
+        await ctx.db.patch("roles", existing._id, { capabilities: [args.role] });
+        result.changed.push(email);
+      }
+      await ctx.db.insert("revisions", {
+        table: "roles",
+        documentId: email,
+        action: existing === null ? "create" : "update",
+        actor,
+        at: Date.now(),
+        snapshot: { email, capabilities: [args.role] },
+      });
+    }
+    return result;
   },
 });
 

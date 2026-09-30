@@ -18,8 +18,10 @@ const client = new ConvexClient(root.dataset.convexUrl, { initialAuthTokenReuse:
 
 // ------------------------------------------------------------------ helpers
 
-const $ = (selector, scope = root) => scope.querySelector(selector);
-const $$ = (selector, scope = root) => [...scope.querySelectorAll(selector)];
+// Document-wide by default: the tabs and account controls are in the admin
+// header (_includes/admin-header.html), outside #admin.
+const $ = (selector, scope = document) => scope.querySelector(selector);
+const $$ = (selector, scope = document) => [...scope.querySelectorAll(selector)];
 
 /** Create an element; strings become text, never markup. */
 const el = (tag, attrs = {}, ...children) => {
@@ -94,10 +96,19 @@ const when = (ms) => new Date(ms).toLocaleString();
 // --------------------------------------------------------------------- tabs
 
 const showTab = (name) => {
-  for (const tab of $$("[data-tab]")) tab.classList.toggle("active", tab.dataset.tab === name);
+  // Only the header's section tabs show which one is open; the account menu's
+  // Edit profile item opens a panel without being underlined.
+  for (const tab of $$(".dap-tab[data-tab]")) tab.classList.toggle("active", tab.dataset.tab === name);
   for (const panel of $$("[data-panel]")) panel.hidden = panel.dataset.panel !== name;
 };
-for (const tab of $$("[data-tab]")) tab.addEventListener("click", () => showTab(tab.dataset.tab));
+for (const tab of $$("[data-tab]")) {
+  tab.addEventListener("click", () => {
+    showTab(tab.dataset.tab);
+    // On a phone the header is a collapsed menu; close it once a section is picked.
+    const menu = $("#adminNav");
+    if (menu?.classList.contains("show")) window.bootstrap?.Collapse.getOrCreateInstance(menu).hide();
+  });
+}
 
 // --------------------------------------------------------- vocabulary lists
 
@@ -140,14 +151,13 @@ const checkedValues = (container) => $$("input:checked", container).map((input) 
 client.onUpdate(api.content.topics, {}, (topics) => renderChecks($("#topics"), topics, "topic"));
 // Research areas first, then department and role badges, as the people grid mixes them.
 const FIELD_KIND_ORDER = { research: 0, department: 1, role: 2 };
-client.onUpdate(api.content.fields, {}, (fields) =>
-  renderChecks(
-    $("#fields"),
-    [...fields].sort((a, b) => FIELD_KIND_ORDER[a.kind] - FIELD_KIND_ORDER[b.kind]),
-    "field",
-    (f) => f.kind,
-  ),
-);
+client.onUpdate(api.content.fields, {}, (fields) => {
+  const sorted = [...fields].sort((a, b) => FIELD_KIND_ORDER[a.kind] - FIELD_KIND_ORDER[b.kind]);
+  renderChecks($("#fields"), sorted, "field", (f) => f.kind);
+  renderChecks($("#profile-fields"), sorted, "profile-field", (f) => f.kind);
+  // The badge boxes are rebuilt empty; put the profile's own back.
+  if (profile) setChecks($("#profile-fields"), profile.fields);
+});
 
 // --------------------------------------------------------------- event form
 
@@ -205,7 +215,7 @@ handleSubmit(eventForm, async () => {
   eventForm.reset();
   $("#speakers").replaceChildren();
   addSpeaker();
-  return "Submitted. An editor will review it; track it under My submissions.";
+  return "Submitted. An admin will review it; follow it under Submissions.";
 });
 
 // --------------------------------------------------------- publication form
@@ -229,7 +239,7 @@ handleSubmit(publicationForm, async () => {
 
   await client.mutation(api.admin.submitPublication, { ...publication, authors, topics });
   publicationForm.reset();
-  return "Submitted. An editor will review it; track it under My submissions.";
+  return "Submitted. An admin will review it; follow it under Submissions.";
 });
 
 // -------------------------------------------------------------- person form
@@ -260,7 +270,7 @@ handleSubmit(personForm, async () => {
 
   await client.mutation(api.admin.submitPerson, { ...person, advisors, fields });
   personForm.reset();
-  return "Submitted. An editor will review it; track it under My submissions.";
+  return "Submitted. An admin will review it; follow it under Submissions.";
 });
 
 // ----------------------------------------------------------- paste to fill
@@ -300,21 +310,28 @@ const FILL = {
 const draftTitle = (draft) => draft.title ?? draft.name ?? "Untitled";
 
 const pasteToFill = (kind, form) => {
-  const textarea = el("textarea", {
-    class: "form-control mb-2",
-    rows: 6,
-    placeholder: "Paste an announcement, an email, a web page, a CV or a list. Nothing is submitted until you press Submit below.",
-  });
-  const button = el("button", { type: "button", class: "btn btn-outline-primary" }, "Fill the form");
-  const status = el("span", { class: "ms-2" });
-  const draftList = el("div", { class: "list-group mt-3" });
-  const warnings = el("div", { class: "alert alert-warning mt-3 mb-0", hidden: true });
+  const card = $(`[data-quick-add="${kind}"]`);
+  const textarea = $("[data-quick-text]", card);
+  const button = $("[data-quick-extract]", card);
+  const status = $("[data-quick-status]", card);
+  const draftList = $("[data-quick-drafts]", card);
+  const warnings = $("[data-quick-warnings]", card);
 
   let items = [];
   let current = -1;
   const done = new Set();
 
-  const show = (index) => {
+  const setStatus = (text, tone = "muted") => {
+    status.textContent = text;
+    status.className = tone === "muted" ? "dap-muted" : `text-${tone}`;
+  };
+
+  /**
+   * Load a draft into the form. `scroll` brings the form into view after an
+   * extraction or a submit; picking from the list leaves the page where it is,
+   * so the list stays under the pointer.
+   */
+  const show = (index, { scroll = true } = {}) => {
     current = index;
     const { draft, warnings: notes } = items[index];
     FILL[kind](form, draft);
@@ -322,9 +339,10 @@ const pasteToFill = (kind, form) => {
     warnings.hidden = notes.length === 0;
     warnings.replaceChildren(
       el("strong", {}, "Check before submitting:"),
-      el("ul", { class: "mb-0" }, notes.map((note) => el("li", {}, note))),
+      el("ul", {}, notes.map((note) => el("li", {}, note))),
     );
     renderList();
+    if (scroll) form.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   const renderList = () => {
@@ -338,7 +356,7 @@ const pasteToFill = (kind, form) => {
             type: "button",
             class: `list-group-item list-group-item-action${index === current ? " active" : ""}`,
             disabled: done.has(index),
-            onclick: () => show(index),
+            onclick: () => show(index, { scroll: false }),
           },
           `${index + 1}. ${draftTitle(item.draft)}`,
           done.has(index) && el("span", { class: "badge text-bg-success ms-2" }, "submitted"),
@@ -349,25 +367,23 @@ const pasteToFill = (kind, form) => {
 
   button.addEventListener("click", async () => {
     button.disabled = true;
-    status.className = "ms-2 text-muted";
-    status.textContent = "Reading… this can take up to a minute.";
+    setStatus("Reading… this can take up to a minute.");
     try {
       ({ items } = await client.action(api.extract.fromText, { kind, text: textarea.value }));
       done.clear();
       if (items.length === 0) {
-        status.className = "ms-2 text-danger";
-        status.textContent = `Couldn't find a ${kind} in that text.`;
-        renderList();
+        setStatus(`Couldn't find a ${kind} in that text.`, "danger");
         warnings.hidden = true;
+        renderList();
         return;
       }
-      status.className = "ms-2 text-success";
-      status.textContent =
-        items.length === 1 ? "Filled in below. Check it, then submit." : `Found ${items.length}. The first is filled in below.`;
+      setStatus(
+        items.length === 1 ? "Filled in below. Check it, then submit." : `Found ${items.length}. The first is filled in below.`,
+        "success",
+      );
       show(0);
     } catch (error) {
-      status.className = "ms-2 text-danger";
-      status.textContent = message(error);
+      setStatus(message(error), "danger");
     } finally {
       button.disabled = false;
     }
@@ -384,15 +400,6 @@ const pasteToFill = (kind, form) => {
       renderList();
     }
   });
-
-  form.before(
-    el(
-      "details",
-      { class: "card card-body mb-4" },
-      el("summary", { class: "fw-semibold" }, "Paste text to fill this form"),
-      el("div", { class: "mt-3" }, textarea, button, status, draftList, warnings),
-    ),
-  );
 };
 
 pasteToFill("event", eventForm);
@@ -401,9 +408,13 @@ pasteToFill("person", personForm);
 
 // ---------------------------------------------------------- my submissions
 
-const renderMine = ({ events, publications, people }) => {
+/** Latest of each subscription, so either one arriving re-renders the whole list. */
+const mine = { submissions: { events: [], publications: [], people: [] }, edits: [] };
+const renderMine = () => {
+  const { events, publications, people } = mine.submissions;
+  const edits = mine.edits.map((e) => ({ ...e, title: "Profile update" }));
   const list = (heading, rows) => [
-    el("h5", { class: "mt-3" }, heading),
+    el("h3", { class: "dap-subsection" }, heading),
     rows.length === 0
       ? el("p", { class: "text-muted" }, "None yet.")
       : el(
@@ -426,6 +437,7 @@ const renderMine = ({ events, publications, people }) => {
     ...list("Events", events),
     ...list("Publications", publications),
     ...list("People", people),
+    ...(edits.length > 0 ? list("Your profile", edits) : []),
   );
 };
 
@@ -451,8 +463,8 @@ const reviewActions = (table, row) => {
     "div",
     { class: "mt-2" },
     note,
-    el("button", { type: "button", class: "btn btn-sm btn-success me-2", onclick: act("published") }, "Publish"),
-    el("button", { type: "button", class: "btn btn-sm btn-outline-danger", onclick: act("rejected") }, "Reject"),
+    el("button", { type: "button", class: "btn btn-sm dap-btn-primary me-2", onclick: act("published") }, "Publish"),
+    el("button", { type: "button", class: "btn btn-sm dap-remove", onclick: act("rejected") }, "Reject"),
   );
 };
 
@@ -462,7 +474,7 @@ const link = (href) => href && el("a", { href, target: "_blank", rel: "noopener 
 const renderEvent = (row) =>
   el(
     "div",
-    { class: "card card-body mb-3 queue-item" },
+    { class: "queue-item" },
     el(
       "div",
       { class: "d-flex gap-3" },
@@ -470,7 +482,7 @@ const renderEvent = (row) =>
       el(
         "div",
         { class: "flex-grow-1" },
-        el("h5", {}, row.title),
+        el("h3", {}, row.title),
         field("Series", row.series),
         field("Date", row.endDate ? `${row.startDate} – ${row.endDate}` : row.startDate),
         field("Time", row.timeLabel),
@@ -492,8 +504,8 @@ const renderEvent = (row) =>
 const renderPublication = (row) =>
   el(
     "div",
-    { class: "card card-body mb-3 queue-item" },
-    el("h5", {}, row.title),
+    { class: "queue-item" },
+    el("h3", {}, row.title),
     field("Authors", row.authors.join(", ")),
     field("Venue", row.venue),
     field("Date", row.pubDate),
@@ -518,7 +530,7 @@ const CATEGORY_LABELS = {
 const renderPerson = (row) =>
   el(
     "div",
-    { class: "card card-body mb-3 queue-item" },
+    { class: "queue-item" },
     el(
       "div",
       { class: "d-flex gap-3" },
@@ -526,7 +538,7 @@ const renderPerson = (row) =>
       el(
         "div",
         { class: "flex-grow-1" },
-        el("h5", {}, row.name),
+        el("h3", {}, row.name),
         field("Group", CATEGORY_LABELS[row.category] ?? row.category),
         field("Title", row.title),
         field("Affiliation", row.affiliation),
@@ -541,56 +553,199 @@ const renderPerson = (row) =>
     reviewActions("people", row),
   );
 
-const pendingCounts = { events: 0, publications: 0, people: 0 };
+const renderProfileEdit = (row) =>
+  el(
+    "div",
+    { class: "queue-item" },
+    el(
+      "div",
+      { class: "d-flex gap-3" },
+      row.imageUrl && el("img", { src: row.imageUrl, alt: "New photo" }),
+      el(
+        "div",
+        { class: "flex-grow-1" },
+        el("h3", {}, row.name),
+        el(
+          "table",
+          { class: "table table-sm mb-2" },
+          el("thead", {}, el("tr", {}, el("th", {}, "Field"), el("th", {}, "Now"), el("th", {}, "Proposed"))),
+          el(
+            "tbody",
+            {},
+            row.rows.map((r) =>
+              el("tr", {}, el("td", {}, r.field), el("td", { class: "dap-muted" }, r.before || "—"), el("td", {}, r.after || "(cleared)")),
+            ),
+            row.imageUrl && el("tr", {}, el("td", {}, "photo"), el("td", { class: "dap-muted" }, "current"), el("td", {}, "new (shown left)")),
+          ),
+        ),
+        el("div", { class: "small text-muted" }, `Proposed by ${row.submittedBy}, ${when(row.submittedAt)}`),
+      ),
+    ),
+    profileEditActions(row),
+  );
+
+const profileEditActions = (row) => {
+  const note = el("input", {
+    class: "form-control form-control-sm d-inline-block w-auto me-2",
+    placeholder: "Note to them (for rejections)",
+  });
+  const act = (decision) => async (event) => {
+    const buttons = $$("button", event.target.parentElement);
+    buttons.forEach((b) => (b.disabled = true));
+    try {
+      await client.mutation(api.profiles.reviewEdit, { id: row._id, decision, reviewNote: note.value.trim() || undefined });
+    } catch (error) {
+      showStatus(message(error));
+      buttons.forEach((b) => (b.disabled = false));
+    }
+  };
+  return el(
+    "div",
+    { class: "mt-2" },
+    note,
+    el("button", { type: "button", class: "btn btn-sm dap-btn-primary me-2", onclick: act("published") }, "Approve"),
+    el("button", { type: "button", class: "btn btn-sm dap-remove", onclick: act("rejected") }, "Reject"),
+  );
+};
+
+const pendingCounts = { events: 0, publications: 0, people: 0, profiles: 0 };
 const renderQueue = (table, rows, render) => {
   pendingCounts[table] = rows.length;
-  const total = pendingCounts.events + pendingCounts.publications + pendingCounts.people;
+  const total = Object.values(pendingCounts).reduce((a, b) => a + b, 0);
   $("[data-pending-count]").textContent = total || "";
   $(`#review-${table}`).replaceChildren(
     rows.length === 0 ? el("p", { class: "text-muted" }, "Nothing waiting.") : rows.map(render),
   );
 };
 
-// ------------------------------------------------------------------- roles
+// ------------------------------------------------------------ edit profile
 
-const roleForm = $("#role-form");
-const editRole = (role) => {
-  roleForm.elements.email.value = role.email;
-  for (const box of $$("#role-capabilities input")) box.checked = role.capabilities.includes(box.value);
-  roleForm.elements.email.focus();
+/** The signed-in person's profile as last loaded; the badge list reads it too. */
+let profile = null;
+
+const profileForm = $("#profile-form");
+const renderProfile = (loaded) => {
+  profile = loaded;
+  if (loaded === null) return;
+  $("[data-profile-intro]").textContent = loaded.appliesImmediately
+    ? `Your People-page profile, ${loaded.name}. As an admin, your changes apply right away.`
+    : `Your People-page profile, ${loaded.name}. A lab admin reviews changes before they appear on the site.`;
+  $("[data-profile-pending]").hidden = loaded.pendingSince === null;
+  // Don't clobber what someone is typing when the subscription refreshes.
+  if (!profileForm.contains(document.activeElement)) {
+    profileForm.elements.homepage.value = loaded.homepage ?? "";
+    profileForm.elements.bio.value = loaded.bio ?? "";
+    setChecks($("#profile-fields"), loaded.fields);
+  }
+  const photo = $("[data-profile-photo]");
+  if (loaded.imageUrl) photo.src = loaded.imageUrl.includes("://") ? loaded.imageUrl : new URL(loaded.imageUrl, location.origin).href;
+  else photo.removeAttribute("src");
+};
+
+handleSubmit(profileForm, async () => {
+  const edit = {
+    // Title and affiliation are not shown on the People page, so they are not
+    // offered here; sending the current values keeps them as they are.
+    title: profile?.title ?? "",
+    affiliation: profile?.affiliation ?? "",
+    homepage: profileForm.elements.homepage.value,
+    bio: profileForm.elements.bio.value,
+    fields: checkedValues($("#profile-fields")),
+  };
+  const file = profileForm.elements.image.files[0];
+  if (file) edit.image = await uploadImage(file);
+  const { applied } = await client.mutation(api.profiles.submitProfileEdit, edit);
+  profileForm.elements.image.value = "";
+  return applied ? "Saved. The People page updates with the next site build." : "Sent for review. An admin will look at it.";
+});
+
+// ------------------------------------------------------------------- users
+//
+// Two roles. Members add events and publications; admins also review, add
+// people, and manage this list. Current lab members on the People page are
+// members without being added (convex/authz.ts); the list below shows them.
+
+const ROLE_LABELS = { member: "Member", admin: "Admin" };
+
+/** A row's role, for the select; older fine-grained grants read as what they allow. */
+const roleOf = (capabilities) => (capabilities.includes("admin") ? "admin" : "member");
+
+const saveRole = async (email, role) => {
+  try {
+    await client.mutation(api.admin.setRole, { email, capabilities: role ? [role] : [] });
+    showStatus(null);
+  } catch (error) {
+    showStatus(message(error));
+  }
 };
 
 const renderRoles = (roles) =>
   $("#roles").replaceChildren(
     ...roles
       .sort((a, b) => a.email.localeCompare(b.email))
-      .map((role) =>
-        el(
+      .map((role) => {
+        const select = el(
+          "select",
+          { class: "form-select form-select-sm", "aria-label": `Role for ${role.email}` },
+          ...Object.entries(ROLE_LABELS).map(([value, label]) =>
+            el("option", { value, selected: roleOf(role.capabilities) === value }, label),
+          ),
+        );
+        select.addEventListener("change", () => saveRole(role.email, select.value));
+        return el(
           "tr",
           {},
           el("td", {}, role.email),
-          el("td", {}, role.capabilities.join(", ")),
-          el("td", { class: "text-muted" }, role.grantedBy),
+          el("td", {}, select),
+          el("td", { class: "dap-muted" }, role.grantedBy),
           el(
             "td",
-            {},
-            el("button", { type: "button", class: "btn btn-sm btn-link", onclick: () => editRole(role) }, "Edit"),
+            { class: "text-end" },
+            el(
+              "button",
+              {
+                type: "button",
+                class: "btn btn-sm dap-remove",
+                onclick: () => {
+                  if (confirm(`Remove ${role.email}? They will no longer be able to sign in here, unless they are on the People page.`)) {
+                    saveRole(role.email, null);
+                  }
+                },
+              },
+              "Remove",
+            ),
           ),
-        ),
-      ),
+        );
+      }),
   );
 
-roleForm.addEventListener("submit", async (event) => {
-  event.preventDefault();
-  if (!roleForm.reportValidity()) return;
-  const capabilities = $$("#role-capabilities input:checked").map((box) => box.value);
-  try {
-    await client.mutation(api.admin.setRole, { email: roleForm.elements.email.value, capabilities });
-    roleForm.reset();
-    showStatus(null);
-  } catch (error) {
-    showStatus(message(error));
-  }
+const CATEGORY_SHORT = { faculty: "Faculty", postdoc: "Postdoc", phd: "PhD", student: "Student", staff: "Staff" };
+const renderLabMembers = (people) => {
+  $("[data-lab-count]").textContent = people.length || "";
+  $("#lab-members").replaceChildren(
+    ...people.map((p) => el("div", {}, p.name, el("span", { class: "dap-muted" }, ` · ${CATEGORY_SHORT[p.category] ?? p.category}`))),
+  );
+};
+
+/** Every address in pasted text, whatever separates them ("Jane <jd1@columbia.edu>, …"). */
+const emailsIn = (text) => [...new Set((text.match(/[^\s<>,;:"'()[\]]+@[^\s<>,;:"'()[\]]+/g) ?? []).map((e) => e.toLowerCase()))];
+
+const plural = (n, word, many = `${word}s`) => `${n} ${n === 1 ? word : many}`;
+
+const roleForm = $("#role-form");
+handleSubmit(roleForm, async () => {
+  const emails = emailsIn(roleForm.elements.emails.value);
+  if (emails.length === 0) throw new Error("No email addresses found in that text.");
+  const role = roleForm.elements.role.value;
+  const { added, changed, unchanged, skipped } = await client.mutation(api.admin.addUsers, { emails, role });
+  roleForm.elements.emails.value = skipped.join("\n");
+  const parts = [
+    added.length && `Added ${plural(added.length, "user")} as ${ROLE_LABELS[role].toLowerCase()}s.`,
+    changed.length && `Changed ${plural(changed.length, "user")} to ${ROLE_LABELS[role].toLowerCase()}.`,
+    unchanged.length && `${plural(unchanged.length, "user")} already had that role or higher.`,
+    skipped.length && `Skipped ${plural(skipped.length, "address", "addresses")} that ${skipped.length === 1 ? "is" : "are"} not @columbia.edu (left in the box above).`,
+  ].filter(Boolean);
+  return parts.join(" ");
 });
 
 // ------------------------------------------------------ who is signed in
@@ -614,32 +769,61 @@ const renderMe = (me) => {
     auth?.signOut();
   }
 
+  // A Columbia account that is not on the list: say who to ask, and sign it out
+  // so the next person at this browser starts clean.
+  if (me.notOnList) {
+    showStatus(`${me.notOnList} is not on the DAPLab list yet. Ask a lab admin to add you.`);
+    auth?.signOut();
+  }
+
   const signedIn = me.email !== null;
   $("#signed-out").hidden = signedIn;
   $("#signed-in").hidden = !signedIn;
-  $("#whoami").hidden = !signedIn;
+  $("[data-admin-tabs]").hidden = !signedIn;
+  $("[data-admin-account]").hidden = !signedIn;
+  $("[data-admin-signed-out]").hidden = signedIn;
   if (!signedIn) return;
 
   $("[data-email]").textContent = me.email;
+  $("[data-role]").textContent = me.capabilities.includes("admin") ? "Admin" : "Member";
+  $("[data-role]").title =
+    me.via === "people" ? `Signed in as a lab member, matched to ${me.person} on the People page.` : "";
 
-  for (const node of $$("[data-needs]")) node.hidden = !can(me.capabilities, node.dataset.needs);
+  for (const node of $$("[data-needs]")) {
+    // "profile" is about having one to edit, not a capability; admins without a
+    // People-page profile have nothing to edit.
+    node.hidden = node.dataset.needs === "profile" ? me.profile === null : !can(me.capabilities, node.dataset.needs);
+  }
   // Leave a tab the user just lost access to.
-  const active = $("[data-tab].active");
-  if (active.closest("[data-needs]")?.hidden) showTab("event");
+  const open = $("[data-panel]:not([hidden])")?.dataset.panel;
+  const opener = $(`[data-tab="${open}"]`);
+  if (opener?.closest("[data-needs]")?.hidden) showTab("event");
 
-  subscribe(api.admin.mySubmissions, {}, renderMine);
+  subscribe(api.admin.mySubmissions, {}, (rows) => {
+    mine.submissions = rows;
+    renderMine();
+  });
+  subscribe(api.profiles.myEdits, {}, (rows) => {
+    mine.edits = rows;
+    renderMine();
+  });
+  if (me.profile !== null) subscribe(api.profiles.myProfile, {}, renderProfile);
   if (can(me.capabilities, "events")) {
     subscribe(api.admin.pending, { table: "events" }, (rows) => renderQueue("events", rows, renderEvent));
   }
   if (can(me.capabilities, "people")) {
     subscribe(api.admin.pending, { table: "people" }, (rows) => renderQueue("people", rows, renderPerson));
+    subscribe(api.profiles.pendingEdits, {}, (rows) => renderQueue("profiles", rows, renderProfileEdit));
   }
   if (can(me.capabilities, "publications")) {
     subscribe(api.admin.pending, { table: "publications" }, (rows) =>
       renderQueue("publications", rows, renderPublication),
     );
   }
-  if (me.capabilities.includes("admin")) subscribe(api.admin.listRoles, {}, renderRoles);
+  if (me.capabilities.includes("admin")) {
+    subscribe(api.admin.listRoles, {}, renderRoles);
+    subscribe(api.admin.labMembers, {}, renderLabMembers);
+  }
 };
 
 /** Set once Google sign-in has loaded; renderMe may run before that. */

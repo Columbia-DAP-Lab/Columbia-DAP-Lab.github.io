@@ -1,0 +1,322 @@
+/*
+ * The admin page. Laid out like CAIL's submission form — light panels, small
+ * uppercase section labels, generous inputs — in DAPLab's navy, the color the
+ * rest of the site uses for its callouts (files/css/style.css).
+ */
+
+#admin {
+  --dap-navy: #00206a;
+  --dap-navy-dark: #001750;
+  --dap-navy-tint: #e8edf7;
+  --dap-ink: #16202e;
+  --dap-muted: #5b6b80;
+  --dap-panel: #f3f6fa;
+  --dap-border: #dce3ec;
+  --dap-focus: rgba(0, 32, 106, 0.18);
+  color: var(--dap-ink);
+  max-width: 880px;
+  margin: 0 auto 4rem;
+}
+
+#admin [hidden] { display: none !important; }
+
+/* ------------------------------------------------------------------ header */
+
+/*
+ * Columbia's dark blue (PMS 7686C, #1D4F91) rather than the site's light bar, so
+ * it is obvious at a glance that these are the admin tools. Outside #admin, since
+ * the header comes from the layout (_includes/admin-header.html).
+ */
+.dap-admin-header {
+  --dap-columbia-dark: #1d4f91;
+  background: var(--dap-columbia-dark);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
+}
+.dap-admin-header [hidden] { display: none !important; }
+/*
+ * The logo as it is, not recolored: it carries its own white background and blue
+ * border, so on the dark bar it reads as a badge in the lab's colors. (Inverting
+ * it to white turns daplab_logo_horiz.png, which has no transparency, into a
+ * blank white box.)
+ */
+.dap-admin-logo {
+  height: 1.6em;
+  margin-right: 0.6rem;
+  border-radius: 2px;
+}
+.dap-admin-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 4px;
+  padding: 0.1rem 0.45rem;
+}
+.dap-admin-header .nav-link,
+.dap-admin-header .navbar-text {
+  color: #fff;
+  background: none;
+  border: none;
+  font-weight: 600;
+}
+.dap-admin-header .nav-link:hover,
+.dap-admin-header .nav-link:focus { color: #fff; background: rgba(255, 255, 255, 0.12); }
+.dap-admin-header .dap-tab { border-bottom: 3px solid transparent; }
+.dap-admin-header .dap-tab.active { border-bottom-color: #fff; }
+.dap-admin-account { font-weight: 400; }
+.dap-admin-account .dap-role { margin-left: 0.35rem; }
+.dap-admin-header .dropdown-menu { border-color: var(--dap-border, #dce3ec); }
+.dap-admin-header .dropdown-item { font-weight: 600; }
+.dap-admin-header .dropdown-item:active { background: #1d4f91; }
+.dap-admin-header .dap-count { background: #fff; color: var(--dap-columbia-dark); }
+
+/* ------------------------------------------------------------------ chrome */
+
+.dap-muted { color: var(--dap-muted); }
+
+.dap-role {
+  display: inline-block;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.dap-count {
+  display: inline-block;
+  vertical-align: 0.1em;
+  min-width: 1.4em;
+  padding: 0 0.4em;
+  border-radius: 999px;
+  background: var(--dap-navy);
+  color: #fff;
+  font-size: 0.75rem;
+  text-align: center;
+}
+.dap-count:empty { display: none; }
+
+.dap-title {
+  font-size: 2.6rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0.75rem 0 1.25rem;
+}
+
+.dap-section {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 2rem 0 1rem;
+}
+
+.dap-subsection {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #44546a;
+  margin: 1.5rem 0 0.75rem;
+}
+
+/* ------------------------------------------------------------------ panels */
+
+.dap-card {
+  background: var(--dap-panel);
+  border: 1px solid var(--dap-border);
+  border-radius: 8px;
+  padding: 1.5rem 2rem 1.75rem;
+  margin: 0 0 2rem;
+  min-width: 0; /* fieldsets otherwise refuse to shrink */
+}
+
+/* Section labels: on the border for form sections, as a heading elsewhere. */
+.dap-card > legend,
+.dap-card-title {
+  float: none;
+  width: auto;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #44546a;
+  margin: 0 0 1rem;
+}
+.dap-card > legend {
+  padding: 0 0.6rem;
+  margin: 0 0 0.75rem -0.6rem;
+}
+fieldset.dap-card { padding-top: 1rem; }
+
+.dap-subcard {
+  background: #fff;
+  border: 1px solid var(--dap-border);
+  border-radius: 8px;
+  padding: 1.25rem 1.25rem 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.dap-signin p { max-width: 38rem; }
+
+.dap-avatar {
+  width: 96px;
+  height: 96px;
+  object-fit: cover;
+  border-radius: 50%;
+  background: #fff;
+  border: 1px solid var(--dap-border);
+}
+.dap-avatar:not([src]) { visibility: hidden; }
+
+/* ------------------------------------------------------------------ fields */
+
+#admin .form-label {
+  font-weight: 700;
+  color: var(--dap-ink);
+  margin-bottom: 0.4rem;
+}
+
+#admin .form-control,
+#admin .form-select {
+  border: 1px solid var(--dap-border);
+  border-radius: 6px;
+  padding: 0.7rem 0.85rem;
+  font-size: 1rem;
+  background-color: #fff;
+}
+#admin .form-select { padding-right: 2.5rem; }
+#admin .form-control:focus,
+#admin .form-select:focus {
+  border-color: var(--dap-navy);
+  box-shadow: 0 0 0 0.2rem var(--dap-focus);
+}
+#admin .form-control::placeholder { color: #8a97a8; }
+#admin .form-text { color: var(--dap-muted); }
+
+.dap-req { color: var(--dap-navy); }
+
+.dap-checks {
+  columns: 3 12rem;
+  background: #fff;
+  border: 1px solid var(--dap-border);
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+}
+#admin .form-check-input:checked { background-color: var(--dap-navy); border-color: var(--dap-navy); }
+#admin .form-check-input:focus { box-shadow: 0 0 0 0.2rem var(--dap-focus); }
+
+/* ----------------------------------------------------------------- buttons */
+
+/*
+ * Scoped under #admin, and set through Bootstrap's own button variables, on
+ * purpose: _includes/includes.html loads Bootstrap a second time at the end of
+ * the page, and its `.btn` rule (same specificity as a single class, loaded
+ * later) otherwise resets every button here to a transparent background, so
+ * they rendered as plain text.
+ */
+#admin .btn {
+  --bs-btn-font-weight: 700;
+  --bs-btn-border-radius: 6px;
+  --bs-btn-focus-box-shadow: 0 0 0 0.2rem var(--dap-focus);
+}
+
+#admin .dap-btn-primary {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: var(--dap-navy);
+  --bs-btn-border-color: var(--dap-navy);
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: var(--dap-navy-dark);
+  --bs-btn-hover-border-color: var(--dap-navy-dark);
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: var(--dap-navy-dark);
+  --bs-btn-active-border-color: var(--dap-navy-dark);
+  --bs-btn-disabled-color: #fff;
+  --bs-btn-disabled-bg: #7d8db0;
+  --bs-btn-disabled-border-color: #7d8db0;
+  --bs-btn-padding-x: 1.4rem;
+  --bs-btn-padding-y: 0.7rem;
+}
+
+/* Secondary actions: white with a navy outline and label, so they still read as buttons. */
+#admin .dap-btn-quiet {
+  --bs-btn-color: var(--dap-navy);
+  --bs-btn-bg: #fff;
+  --bs-btn-border-color: #b9c5da;
+  --bs-btn-hover-color: var(--dap-navy);
+  --bs-btn-hover-bg: var(--dap-navy-tint);
+  --bs-btn-hover-border-color: var(--dap-navy);
+  --bs-btn-active-color: var(--dap-navy);
+  --bs-btn-active-bg: #d9e2f1;
+  --bs-btn-active-border-color: var(--dap-navy);
+  --bs-btn-disabled-color: var(--dap-muted);
+  --bs-btn-disabled-bg: var(--dap-panel);
+  --bs-btn-disabled-border-color: var(--dap-border);
+  --bs-btn-padding-x: 1.2rem;
+  --bs-btn-padding-y: 0.6rem;
+  box-shadow: 0 1px 1px rgba(0, 32, 106, 0.08);
+}
+
+/* Destructive: small outlined red, rather than a bare link. */
+#admin .dap-remove {
+  --bs-btn-color: #a4262c;
+  --bs-btn-bg: #fff;
+  --bs-btn-border-color: #e3b5b8;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: #a4262c;
+  --bs-btn-hover-border-color: #a4262c;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: #8a1f24;
+  --bs-btn-active-border-color: #8a1f24;
+  --bs-btn-padding-x: 0.75rem;
+  --bs-btn-padding-y: 0.3rem;
+  --bs-btn-font-size: 0.875rem;
+  text-decoration: none;
+}
+#admin .speaker .dap-remove { margin: 0.75rem 0; }
+
+/* Small variants, for the review queue and tables; btn-sm alone loses to the above. */
+#admin .btn-sm.dap-btn-primary,
+#admin .btn-sm.dap-btn-quiet,
+#admin .btn-sm.dap-remove {
+  --bs-btn-padding-x: 0.8rem;
+  --bs-btn-padding-y: 0.3rem;
+  --bs-btn-font-size: 0.875rem;
+}
+
+.dap-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* ----------------------------------------------------------- quick add, review */
+
+.dap-warnings {
+  background: #fff8e6;
+  border: 1px solid #f1d58a;
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+}
+.dap-warnings ul { margin: 0.25rem 0 0; padding-left: 1.2rem; }
+
+#admin .list-group-item.active { background: var(--dap-navy); border-color: var(--dap-navy); }
+
+.queue-item {
+  background: #fff;
+  border: 1px solid var(--dap-border);
+  border-radius: 8px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1rem;
+}
+.queue-item img { max-width: 160px; max-height: 120px; object-fit: cover; border-radius: 6px; }
+.queue-item h3 { font-size: 1.15rem; font-weight: 700; margin: 0 0 0.5rem; }
+pre.body { white-space: pre-wrap; font-family: inherit; margin: 0.5rem 0 0; }
+
+.dap-table { background: transparent; }
+.dap-table th { color: var(--dap-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; }
+.dap-table td { vertical-align: middle; }
+.dap-table .form-select { padding-top: 0.35rem; padding-bottom: 0.35rem; }
+
+.dap-names { columns: 3 12rem; font-size: 0.9rem; }
+.dap-names div { break-inside: avoid; padding: 0.1rem 0; }

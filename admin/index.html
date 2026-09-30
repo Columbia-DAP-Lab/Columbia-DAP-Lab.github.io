@@ -3,272 +3,397 @@ layout: default
 title: Admin
 noindex: true
 sitemap: false
+admin_header: true
 ---
 
 {%- comment -%}
-Submission and review for the content that lives in Convex: events and
-publications. A static page — it talks to Convex straight from the browser, and
-every permission is checked there, not here. See docs/admin-service-design.md.
+Submission and review for the content that lives in Convex: events, publications
+and People-page profiles. A static page — it talks to Convex straight from the
+browser, and every permission is checked there, not here. See
+docs/admin-service-design.md.
 {%- endcomment -%}
 
-<style>
-  #admin [hidden] { display: none !important; }
-  #admin .speaker { border-left: 3px solid #dee2e6; padding-left: 1em; margin-bottom: 1em; }
-  #admin .queue-item img { max-width: 160px; max-height: 120px; object-fit: cover; }
-  #admin .topics { columns: 3 12em; }
-  #admin pre.body { white-space: pre-wrap; font-family: inherit; margin: 0; }
-</style>
+<link rel="stylesheet" href="{{ '/admin/admin.css' | relative_url }}">
 
 <div id="admin"
      data-convex-url="{{ site.admin.convex_url }}"
      data-google-client-id="{{ site.admin.google_client_id }}">
 
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h1 class="mb-0">Admin</h1>
-    <div id="whoami" class="text-end" hidden>
-      <span class="me-2 text-muted" data-email></span>
-      <button type="button" class="btn btn-sm btn-outline-secondary" data-sign-out>Sign out</button>
-    </div>
-  </div>
-
-  <div class="alert alert-info">
-    Events and publications are managed here now. The site is rebuilt from this
-    database, so hand edits to <code>_data/events.yml</code> or
-    <code>_data/pubs.yml</code> are overwritten by the next build.
-  </div>
-
   <div id="status" class="alert alert-danger" role="alert" hidden></div>
 
-  <section id="signed-out">
-    <p>Sign in with your Columbia Google account (<code>uni@columbia.edu</code>) to submit
-      an event or a publication. An editor reviews each submission before it appears on the site.</p>
+  <!-- --------------------------------------------------------- signed out -->
+  <section id="signed-out" class="dap-card dap-signin">
+    <h1 class="dap-title">Sign in</h1>
+    <p>Sign in with your Columbia Google account (<code>uni@columbia.edu</code>) to add an event or a
+      publication. Current lab members on the People page can sign in right away; anyone else needs a
+      lab admin to add them. An admin reviews each submission before it appears on the site.</p>
     <div id="google-button"></div>
   </section>
 
+  <!-- ---------------------------------------------------------- signed in -->
   <section id="signed-in" hidden>
-    <ul class="nav nav-tabs mb-3" role="tablist">
-      <li class="nav-item"><button class="nav-link active" data-tab="event" type="button">Submit an event</button></li>
-      <li class="nav-item"><button class="nav-link" data-tab="publication" type="button">Submit a publication</button></li>
-      <li class="nav-item"><button class="nav-link" data-tab="person" type="button">Submit a person</button></li>
-      <li class="nav-item"><button class="nav-link" data-tab="mine" type="button">My submissions</button></li>
-      <li class="nav-item" hidden data-needs="events publications people"><button class="nav-link" data-tab="review" type="button">Review <span class="badge text-bg-secondary" data-pending-count></span></button></li>
-      <li class="nav-item" hidden data-needs="admin"><button class="nav-link" data-tab="roles" type="button">Roles</button></li>
-    </ul>
-
     <!-- ------------------------------------------------------------ event -->
     <div data-panel="event">
+      <h1 class="dap-title">Add event</h1>
+      {% include admin-quick-add.html kind="event" placeholder="Paste an announcement email or web page, then extract it into the form below." %}
+
       <form id="event-form" novalidate>
-        <div class="row g-3">
-          <div class="col-md-8">
-            <label class="form-label" for="ev-title">Title</label>
+        <fieldset class="dap-card">
+          <legend>Talk details</legend>
+          <div class="mb-3">
+            <label class="form-label" for="ev-title">Title <span class="dap-req">*</span></label>
             <input class="form-control" id="ev-title" name="title" required>
           </div>
-          <div class="col-md-4">
-            <label class="form-label" for="ev-series">Series</label>
+          <div class="mb-3">
+            <label class="form-label" for="ev-series">Type <span class="dap-req">*</span></label>
             <select class="form-select" id="ev-series" name="series" required></select>
           </div>
-          <div class="col-md-3">
-            <label class="form-label" for="ev-start">Date</label>
-            <input class="form-control" type="date" id="ev-start" name="startDate" required>
+          <div>
+            <label class="form-label" for="ev-description">Abstract</label>
+            <textarea class="form-control" id="ev-description" name="description" rows="7"></textarea>
+            <div class="form-text">Markdown is fine.</div>
           </div>
-          <div class="col-md-3">
-            <label class="form-label" for="ev-end">End date <span class="text-muted">(multi-day only)</span></label>
-            <input class="form-control" type="date" id="ev-end" name="endDate">
-          </div>
-          <div class="col-md-6">
-            <label class="form-label" for="ev-time">Time</label>
-            <input class="form-control" id="ev-time" name="timeLabel" placeholder="3PM-4PM">
-          </div>
-          <div class="col-md-6">
-            <label class="form-label" for="ev-where">Where</label>
-            <input class="form-control" id="ev-where" name="location" placeholder="CSB 453">
-          </div>
-          <div class="col-md-6">
-            <label class="form-label" for="ev-link">Event link <span class="text-muted">(registration, etc.)</span></label>
-            <input class="form-control" type="url" id="ev-link" name="link" placeholder="https://">
-          </div>
-          <div class="col-12">
-            <label class="form-label" for="ev-description">Description <span class="text-muted">(Markdown)</span></label>
-            <textarea class="form-control" id="ev-description" name="description" rows="5"></textarea>
-          </div>
-          <div class="col-md-6">
-            <label class="form-label" for="ev-image">Image <span class="text-muted">(optional, under 5 MB)</span></label>
-            <input class="form-control" type="file" id="ev-image" name="image" accept="image/*">
-          </div>
-        </div>
+        </fieldset>
 
-        <h5 class="mt-4">Speakers</h5>
-        <div id="speakers"></div>
-        <button type="button" class="btn btn-sm btn-outline-secondary mb-4" data-add-speaker>Add a speaker</button>
+        <fieldset class="dap-card">
+          <legend>When and where</legend>
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label class="form-label" for="ev-start">Date <span class="dap-req">*</span></label>
+              <input class="form-control" type="date" id="ev-start" name="startDate" required>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label" for="ev-end">End date</label>
+              <input class="form-control" type="date" id="ev-end" name="endDate">
+              <div class="form-text">Only for multi-day events.</div>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label" for="ev-time">Time</label>
+              <input class="form-control" id="ev-time" name="timeLabel" placeholder="3PM-4PM">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="ev-where">Location</label>
+              <input class="form-control" id="ev-where" name="location" placeholder="CSB 453">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="ev-link">Event link</label>
+              <input class="form-control" type="url" id="ev-link" name="link" placeholder="https://">
+              <div class="form-text">Registration or event page, if any.</div>
+            </div>
+          </div>
+        </fieldset>
 
-        <div>
-          <button type="submit" class="btn btn-primary">Submit for review</button>
-          <span class="ms-2" data-result></span>
+        <fieldset class="dap-card">
+          <legend>Speakers</legend>
+          <div id="speakers"></div>
+          <button type="button" class="btn dap-btn-quiet" data-add-speaker>Add a speaker</button>
+        </fieldset>
+
+        <fieldset class="dap-card">
+          <legend>Image</legend>
+          <label class="form-label" for="ev-image">Event image</label>
+          <input class="form-control" type="file" id="ev-image" name="image" accept="image/*">
+          <div class="form-text">Optional. Under 5 MB.</div>
+        </fieldset>
+
+        <div class="dap-actions">
+          <button type="submit" class="btn dap-btn-primary">Submit for review</button>
+          <span data-result></span>
         </div>
       </form>
 
       <template id="speaker-template">
-        <div class="speaker">
-          <div class="row g-2">
-            <div class="col-md-4"><input class="form-control" data-field="name" placeholder="Name"></div>
-            <div class="col-md-4"><input class="form-control" data-field="affiliation" placeholder="Affiliation, e.g. Together.AI"></div>
-            <div class="col-md-4"><input class="form-control" type="url" data-field="url" placeholder="Homepage https://"></div>
-            <div class="col-md-4"><input class="form-control" data-field="role" placeholder="Role (startup talks), e.g. CEO"></div>
-            <div class="col-12"><textarea class="form-control" data-field="bio" rows="2" placeholder="Bio (Markdown)"></textarea></div>
+        <div class="speaker dap-subcard">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Name <span class="dap-req">*</span></label>
+              <input class="form-control" data-field="name">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Affiliation</label>
+              <input class="form-control" data-field="affiliation" placeholder="Together.AI">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Homepage</label>
+              <input class="form-control" type="url" data-field="url" placeholder="https://">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Role</label>
+              <input class="form-control" data-field="role" placeholder="CEO (startup talks)">
+            </div>
+            <div class="col-12">
+              <label class="form-label">Bio</label>
+              <textarea class="form-control" data-field="bio" rows="3"></textarea>
+            </div>
           </div>
-          <button type="button" class="btn btn-sm btn-link text-danger px-0" data-remove-speaker>Remove speaker</button>
+          <button type="button" class="btn dap-remove" data-remove-speaker>Remove speaker</button>
         </div>
       </template>
     </div>
 
     <!-- ------------------------------------------------------ publication -->
     <div data-panel="publication" hidden>
+      <h1 class="dap-title">Add publication(s)</h1>
+      {% include admin-quick-add.html kind="publication" placeholder="Paste a citation, an abstract page, or a list of papers, then extract them into the form below." %}
+
       <form id="publication-form" novalidate>
-        <div class="row g-3">
-          <div class="col-12">
-            <label class="form-label" for="pub-title">Title</label>
+        <fieldset class="dap-card">
+          <legend>Paper</legend>
+          <div class="mb-3">
+            <label class="form-label" for="pub-title">Title <span class="dap-req">*</span></label>
             <input class="form-control" id="pub-title" name="title" required>
           </div>
-          <div class="col-12">
-            <label class="form-label" for="pub-authors">Authors <span class="text-muted">(one per line, in order; end a name with * for equal contribution)</span></label>
+          <div class="mb-3">
+            <label class="form-label" for="pub-authors">Authors <span class="dap-req">*</span></label>
             <textarea class="form-control" id="pub-authors" name="authors" rows="4" required></textarea>
+            <div class="form-text">One per line, in order. End a name with * for equal contribution.</div>
           </div>
-          <div class="col-md-6">
-            <label class="form-label" for="pub-venue">Venue</label>
-            <input class="form-control" id="pub-venue" name="venue" placeholder="SIGMOD 2026, arXiv" required>
+          <div class="row g-3">
+            <div class="col-md-8">
+              <label class="form-label" for="pub-venue">Venue <span class="dap-req">*</span></label>
+              <input class="form-control" id="pub-venue" name="venue" placeholder="SIGMOD 2026, arXiv" required>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label" for="pub-date">Date <span class="dap-req">*</span></label>
+              <input class="form-control" type="date" id="pub-date" name="pubDate" required>
+            </div>
           </div>
-          <div class="col-md-6">
-            <label class="form-label" for="pub-date">Date</label>
-            <input class="form-control" type="date" id="pub-date" name="pubDate" required>
-          </div>
-          <div class="col-12">
+        </fieldset>
+
+        <fieldset class="dap-card">
+          <legend>Links</legend>
+          <div class="mb-3">
             <label class="form-label" for="pub-url">Paper URL</label>
             <input class="form-control" type="url" id="pub-url" name="url" placeholder="https://arxiv.org/abs/…">
+            <div class="form-text">The paper's title links here on the Publications page.</div>
           </div>
-          <div class="col-md-6">
-            <label class="form-label" for="pub-slides">Slides URL</label>
-            <input class="form-control" type="url" id="pub-slides" name="slidesUrl">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label" for="pub-slides">Slides</label>
+              <input class="form-control" type="url" id="pub-slides" name="slidesUrl" placeholder="https://">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="pub-code">Code</label>
+              <input class="form-control" type="url" id="pub-code" name="codeUrl" placeholder="https://">
+            </div>
           </div>
-          <div class="col-md-6">
-            <label class="form-label" for="pub-code">Code URL</label>
-            <input class="form-control" type="url" id="pub-code" name="codeUrl">
-          </div>
-          <div class="col-12">
-            <label class="form-label" for="pub-comment">Comment <span class="text-muted">(shown under the paper)</span></label>
-            <input class="form-control" id="pub-comment" name="comment">
-          </div>
-          <div class="col-12">
+        </fieldset>
+
+        <fieldset class="dap-card">
+          <legend>Topics and notes</legend>
+          <div class="mb-3">
             <span class="form-label d-block">Topics</span>
-            <div class="topics" id="topics"></div>
+            <div class="dap-checks" id="topics"></div>
           </div>
-        </div>
-        <div class="mt-4">
-          <button type="submit" class="btn btn-primary">Submit for review</button>
-          <span class="ms-2" data-result></span>
+          <div>
+            <label class="form-label" for="pub-comment">Comment</label>
+            <input class="form-control" id="pub-comment" name="comment" placeholder="Best Paper Award">
+            <div class="form-text">Shown under the paper.</div>
+          </div>
+        </fieldset>
+
+        <div class="dap-actions">
+          <button type="submit" class="btn dap-btn-primary">Submit for review</button>
+          <span data-result></span>
         </div>
       </form>
     </div>
 
-    <!-- ----------------------------------------------------------- person -->
-    <div data-panel="person" hidden>
+    <!-- ----------------------------------------------------------- people -->
+    <div data-panel="people" hidden>
+      <h1 class="dap-title">People</h1>
+      <div data-needs="people">
+        <h2 class="dap-section">Add a person</h2>
+      {% include admin-quick-add.html kind="person" placeholder="Paste a welcome email, a bio, or a homepage, then extract it into the form below." %}
+
       <form id="person-form" novalidate>
-        <div class="row g-3">
-          <div class="col-md-6">
-            <label class="form-label" for="person-name">Name</label>
-            <input class="form-control" id="person-name" name="name" required>
+        <fieldset class="dap-card">
+          <legend>Person</legend>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label" for="person-name">Name <span class="dap-req">*</span></label>
+              <input class="form-control" id="person-name" name="name" required>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label" for="person-category">Group <span class="dap-req">*</span></label>
+              <select class="form-select" id="person-category" name="category" required>
+                <option value="">Choose…</option>
+                <option value="faculty">Faculty</option>
+                <option value="postdoc">Postdoc</option>
+                <option value="phd">PhD</option>
+                <option value="student">M.S./Undergraduate</option>
+                <option value="staff">Staff</option>
+                <option value="alum">Alum</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label" for="person-title">Title</label>
+              <input class="form-control" id="person-title" name="title" placeholder="PhD Student">
+            </div>
+            <div class="col-12">
+              <label class="form-label" for="person-affiliation">Affiliation</label>
+              <input class="form-control" id="person-affiliation" name="affiliation">
+              <div class="form-text">Only if not Columbia Computer Science.</div>
+            </div>
           </div>
-          <div class="col-md-3">
-            <label class="form-label" for="person-category">Group</label>
-            <select class="form-select" id="person-category" name="category" required>
-              <option value="">Choose…</option>
-              <option value="faculty">Faculty</option>
-              <option value="postdoc">Postdoc</option>
-              <option value="phd">PhD</option>
-              <option value="student">M.S./Undergraduate</option>
-              <option value="staff">Staff</option>
-              <option value="alum">Alum</option>
+        </fieldset>
+
+        <fieldset class="dap-card">
+          <legend>Contact</legend>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label" for="person-homepage">Homepage</label>
+              <input class="form-control" type="url" id="person-homepage" name="homepage" placeholder="https://">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="person-email">Columbia email</label>
+              <input class="form-control" type="email" id="person-email" name="email" placeholder="uni@columbia.edu">
+              <div class="form-text">Not shown on the site. Lets them sign in here.</div>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset class="dap-card">
+          <legend>Profile</legend>
+          <div class="mb-3">
+            <label class="form-label" for="person-advisors">Advisors</label>
+            <textarea class="form-control" id="person-advisors" name="advisors" rows="2"></textarea>
+            <div class="form-text">One per line. Lab members are linked to their profiles.</div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="person-bio">Bio</label>
+            <textarea class="form-control" id="person-bio" name="bio" rows="3"></textarea>
+            <div class="form-text">Shown for faculty.</div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="person-image">Photo</label>
+            <input class="form-control" type="file" id="person-image" name="image" accept="image/*">
+            <div class="form-text">Square works best. Under 5 MB.</div>
+          </div>
+          <div>
+            <span class="form-label d-block">Badges</span>
+            <div class="dap-checks" id="fields"></div>
+          </div>
+        </fieldset>
+
+        <div class="dap-actions">
+          <button type="submit" class="btn dap-btn-primary">Submit for review</button>
+          <span data-result></span>
+        </div>
+      </form>
+      </div>
+      <div data-needs="admin">
+        <h2 class="dap-section">Users</h2>
+
+      <form id="role-form" class="dap-card" novalidate>
+        <h2 class="dap-card-title">Add users</h2>
+        <div class="mb-3">
+          <label class="form-label" for="role-emails">Columbia emails <span class="dap-req">*</span></label>
+          <textarea class="form-control" id="role-emails" name="emails" rows="5" required
+                    placeholder="uni1@columbia.edu, uni2@columbia.edu&#10;Jane Doe &lt;jd1234@columbia.edu&gt;"></textarea>
+          <div class="form-text">Paste one or many, separated however you like; names and brackets from a mailing
+            list are fine. Only @columbia.edu addresses can sign in, so others are skipped.</div>
+        </div>
+        <div class="row g-3 align-items-end">
+          <div class="col-md-4">
+            <label class="form-label" for="role-level">Role</label>
+            <select class="form-select" id="role-level" name="role">
+              <option value="member">Member</option>
+              <option value="admin">Admin</option>
             </select>
           </div>
-          <div class="col-md-3">
-            <label class="form-label" for="person-title">Title <span class="text-muted">(optional)</span></label>
-            <input class="form-control" id="person-title" name="title" placeholder="PhD Student">
-          </div>
-          <div class="col-md-6">
-            <label class="form-label" for="person-homepage">Homepage</label>
-            <input class="form-control" type="url" id="person-homepage" name="homepage" placeholder="https://">
-          </div>
-          <div class="col-md-6">
-            <label class="form-label" for="person-email">Email <span class="text-muted">(not shown on the site)</span></label>
-            <input class="form-control" type="email" id="person-email" name="email">
-          </div>
-          <div class="col-md-6">
-            <label class="form-label" for="person-affiliation">Affiliation <span class="text-muted">(if not Columbia CS)</span></label>
-            <input class="form-control" id="person-affiliation" name="affiliation">
-          </div>
-          <div class="col-md-6">
-            <label class="form-label" for="person-advisors">Advisors <span class="text-muted">(one per line)</span></label>
-            <textarea class="form-control" id="person-advisors" name="advisors" rows="2"></textarea>
-          </div>
-          <div class="col-12">
-            <label class="form-label" for="person-bio">Bio <span class="text-muted">(shown for faculty)</span></label>
-            <textarea class="form-control" id="person-bio" name="bio" rows="3"></textarea>
-          </div>
-          <div class="col-md-6">
-            <label class="form-label" for="person-image">Photo <span class="text-muted">(square works best, under 5 MB)</span></label>
-            <input class="form-control" type="file" id="person-image" name="image" accept="image/*">
-          </div>
-          <div class="col-12">
-            <span class="form-label d-block">Badges</span>
-            <div class="topics" id="fields"></div>
+          <div class="col-md-4">
+            <button type="submit" class="btn dap-btn-primary w-100">Add users</button>
           </div>
         </div>
-        <div class="mt-4">
-          <button type="submit" class="btn btn-primary">Submit for review</button>
-          <span class="ms-2" data-result></span>
-        </div>
+        <div class="mt-3" data-result></div>
+        <div class="form-text mt-2"><strong>Members</strong> add events and publications. <strong>Admins</strong> also
+          review and publish them, add people, and manage this list. Adding someone who is already an admin as a
+          member leaves them an admin.</div>
       </form>
+
+      <div class="dap-card">
+        <h2 class="dap-card-title">Added users</h2>
+        <table class="table dap-table mb-0">
+          <thead><tr><th>Email</th><th>Role</th><th>Added by</th><th></th></tr></thead>
+          <tbody id="roles"></tbody>
+        </table>
+      </div>
+
+      <div class="dap-card">
+        <h2 class="dap-card-title">Lab members from the People page <span class="dap-count" data-lab-count></span></h2>
+        <p class="dap-muted">These people can sign in as members without being added: their Columbia account's name
+          is matched to their profile. To make one an admin, add their email above. Alumni and hidden profiles are
+          not included.</p>
+        <div class="dap-names" id="lab-members"></div>
+      </div>
+      </div>
     </div>
 
-    <!-- ------------------------------------------------------------- mine -->
-    <div data-panel="mine" hidden>
+    <!-- ------------------------------------------------------ submissions -->
+    <div data-panel="submissions" hidden>
+      <h1 class="dap-title">Submissions</h1>
+      <div data-needs="events publications people">
+        <h2 class="dap-section">Waiting for review</h2>
+      <h3 class="dap-subsection" data-needs="events">Events</h3>
+      <div id="review-events" data-needs="events"></div>
+      <h3 class="dap-subsection" data-needs="publications">Publications</h3>
+      <div id="review-publications" data-needs="publications"></div>
+      <h3 class="dap-subsection" data-needs="people">People</h3>
+      <div id="review-people" data-needs="people"></div>
+      <h3 class="dap-subsection" data-needs="people">Profile updates</h3>
+      <div id="review-profiles" data-needs="people"></div>
+      </div>
+      <h2 class="dap-section">Yours</h2>
       <div id="mine"></div>
     </div>
 
-    <!-- ----------------------------------------------------------- review -->
-    <div data-panel="review" hidden>
-      <h4 data-needs="events">Events</h4>
-      <div id="review-events" data-needs="events"></div>
-      <h4 class="mt-4" data-needs="publications">Publications</h4>
-      <div id="review-publications" data-needs="publications"></div>
-      <h4 class="mt-4" data-needs="people">People</h4>
-      <div id="review-people" data-needs="people"></div>
+    <!-- ---------------------------------------------------------- profile -->
+    <div data-panel="profile" hidden>
+      <h1 class="dap-title">Edit profile</h1>
+      <p class="dap-muted" data-profile-intro></p>
+      <div class="dap-warnings mb-4" data-profile-pending hidden>
+        You have changes waiting for an admin to review. Submitting again replaces them.
+      </div>
+
+      <form id="profile-form" novalidate>
+        <fieldset class="dap-card">
+          <legend>Profile</legend>
+          <div class="mb-3">
+            <label class="form-label" for="profile-homepage">Homepage</label>
+            <input class="form-control" type="url" id="profile-homepage" name="homepage" placeholder="https://">
+          </div>
+          <div>
+            <label class="form-label" for="profile-bio">Bio</label>
+            <textarea class="form-control" id="profile-bio" name="bio" rows="3"></textarea>
+            <div class="form-text">Shown for faculty.</div>
+          </div>
+        </fieldset>
+
+        <fieldset class="dap-card">
+          <legend>Photo</legend>
+          <div class="d-flex gap-3 align-items-center">
+            <img class="dap-avatar" data-profile-photo alt="">
+            <div class="flex-grow-1">
+              <label class="form-label" for="profile-image">Replace photo</label>
+              <input class="form-control" type="file" id="profile-image" name="image" accept="image/*">
+              <div class="form-text">Square works best. Under 5 MB.</div>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset class="dap-card">
+          <legend>Badges</legend>
+          <div class="dap-checks" id="profile-fields"></div>
+        </fieldset>
+
+        <div class="dap-actions">
+          <button type="submit" class="btn dap-btn-primary">Save changes</button>
+          <span data-result></span>
+        </div>
+      </form>
     </div>
 
-    <!-- ------------------------------------------------------------ roles -->
-    <div data-panel="roles" hidden>
-      <form id="role-form" class="row g-2 align-items-end mb-4">
-        <div class="col-md-5">
-          <label class="form-label" for="role-email">Email</label>
-          <input class="form-control" type="email" id="role-email" name="email" required>
-        </div>
-        <div class="col-md-5" id="role-capabilities">
-          {%- for capability in "events,publications,people,admin" | split: "," %}
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" type="checkbox" id="cap-{{ capability }}" value="{{ capability }}">
-            <label class="form-check-label" for="cap-{{ capability }}">{{ capability }}</label>
-          </div>
-          {%- endfor %}
-        </div>
-        <div class="col-md-2">
-          <button type="submit" class="btn btn-primary w-100">Save</button>
-        </div>
-        <div class="col-12 form-text">Clear every box and save to revoke access.</div>
-      </form>
-      <table class="table table-sm">
-        <thead><tr><th>Email</th><th>Capabilities</th><th>Granted by</th><th></th></tr></thead>
-        <tbody id="roles"></tbody>
-      </table>
-    </div>
   </section>
 </div>
 

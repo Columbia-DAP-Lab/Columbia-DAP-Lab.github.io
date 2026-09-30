@@ -2,18 +2,19 @@ import { ConvexError, v } from "convex/values";
 import { query } from "./_generated/server";
 import type { MutationCtx, QueryCtx } from "./_generated/server";
 import type { Doc } from "./_generated/dataModel";
+import { matchKey } from "./authors";
 
 /**
  * Who is signed in, and what they are allowed to do.
  *
  * Two independent things:
  *
- *   - Identity. Only Columbia accounts sign in at all (see `columbiaEmail`), and
- *     any of them may *submit* an event, a publication or a profile. Submitting is
- *     cheap and reversible; the point of the admin UI is that adding a talk should
- *     not require a pull request.
- *   - Capability. Publishing, editing and rejecting need a grant in the `roles`
- *     table. Grants are per-area, so an event editor need not be an admin.
+ *   - Identity. Only Columbia accounts sign in at all (see `columbiaEmail`).
+ *   - Access. Of those, only people on the lab's list get in (see `accessFor`):
+ *     anyone an admin has added in the `roles` table, and current lab members on
+ *     the People page, recognized by name. Members submit events and
+ *     publications, which land as pending; admins review and publish them, add
+ *     people, and manage the list.
  *
  * Identity always comes from ctx.auth, never from an argument: a caller-supplied
  * email would let anyone claim to be anyone.
@@ -26,6 +27,8 @@ import type { Doc } from "./_generated/dataModel";
 export type Capability = Doc<"roles">["capabilities"][number];
 
 export const capabilityValidator = v.union(
+  /** On the list: may submit events and publications. */
+  v.literal("member"),
   v.literal("events"),
   v.literal("publications"),
   v.literal("people"),
@@ -71,10 +74,96 @@ export const currentEmail = columbiaEmail;
 /** A grant is only reachable by someone who can sign in, so only Columbia addresses may hold one. */
 export const isColumbiaAddress = (email: string) => normalizeEmail(email).endsWith(`@${COLUMBIA_DOMAIN}`);
 
-export const requireSubmitter = async (ctx: QueryCtx | MutationCtx): Promise<string> => {
+/** People-page groups whose members may sign in without being added by hand. */
+const CURRENT_MEMBERS = new Set<Doc<"people">["category"]>(["faculty", "postdoc", "phd", "student", "staff"]);
+
+const isCurrentMember = (person: Doc<"people">) =>
+  person.status === "published" && !person.hidden && CURRENT_MEMBERS.has(person.category);
+
+/**
+ * A name reduced for matching, plus its first and last words, so the directory's
+ * "Haonan Peter Wang" and the Google account's "Haonan Wang" are the same person.
+ */
+const nameKeys = (name: string): string[] => {
+  const key = matchKey(name);
+  const words = key.split(" ");
+  return words.length > 2 ? [key, `${words[0]} ${words[words.length - 1]}`] : [key];
+};
+
+/**
+ * The current lab member this Columbia account belongs to, if any.
+ *
+ * By email when the profile records one; otherwise by the name on the Google
+ * account, which comes from Columbia's directory. None of the migrated profiles
+ * has an email, so the name is what lets the People page stand in for an
+ * invitation list. Two people with the same name would both match — the most
+ * either can do is submit something pending for an admin to review.
+ */
+export const labMemberFor = async (
+  ctx: QueryCtx | MutationCtx,
+  email: string,
+  name: string | undefined,
+): Promise<Doc<"people"> | null> => {
+  const byEmail = await ctx.db
+    .query("people")
+    .withIndex("by_email", (q) => q.eq("email", email))
+    .first();
+  if (byEmail !== null && isCurrentMember(byEmail)) return byEmail;
+  if (!name) return null;
+
+  const wanted = new Set(nameKeys(name));
+  const published = await ctx.db
+    .query("people")
+    .withIndex("by_status_and_category", (q) => q.eq("status", "published"))
+    .take(2000);
+  return published.find((p) => isCurrentMember(p) && nameKeys(p.name).some((k) => wanted.has(k))) ?? null;
+};
+
+type Access = {
+  email: string;
+  capabilities: Capability[];
+  /** How they got in: added by an admin, or matched to the People page. */
+  via: "added" | "people" | null;
+  /** The profile they were matched to, when `via` is "people". */
+  person: string | null;
+};
+
+/**
+ * The People-page profile that belongs to the signed-in account, whoever let
+ * them in: an admin added by email has a profile too. Null if none matches.
+ */
+export const profileFor = async (ctx: QueryCtx | MutationCtx): Promise<Doc<"people"> | null> => {
   const email = await currentEmail(ctx);
-  if (email === null) throw new ConvexError("Sign in with your Columbia Google account (uni@columbia.edu).");
-  return email;
+  if (email === null) return null;
+  const identity = await ctx.auth.getUserIdentity();
+  return await labMemberFor(ctx, email, typeof identity?.name === "string" ? identity.name : undefined);
+};
+
+/**
+ * Whether a signed-in Columbia account is on the list, and with what capabilities.
+ * Null when nobody, or nobody from Columbia, is signed in.
+ */
+export const accessFor = async (ctx: QueryCtx | MutationCtx): Promise<Access | null> => {
+  const email = await currentEmail(ctx);
+  if (email === null) return null;
+  const granted = await capabilitiesFor(ctx, email);
+  if (granted.length > 0) return { email, capabilities: granted, via: "added", person: null };
+
+  const identity = await ctx.auth.getUserIdentity();
+  const name = typeof identity?.name === "string" ? identity.name : undefined;
+  const person = await labMemberFor(ctx, email, name);
+  if (person !== null) return { email, capabilities: ["member"], via: "people", person: person.name };
+  return { email, capabilities: [], via: null, person: null };
+};
+
+const NOT_ON_LIST = "Your account is not on the DAPLab list yet. Ask a lab admin to add you.";
+
+/** Anyone on the list may submit; what they submit is pending until an admin publishes it. */
+export const requireSubmitter = async (ctx: QueryCtx | MutationCtx): Promise<string> => {
+  const access = await accessFor(ctx);
+  if (access === null) throw new ConvexError("Sign in with your Columbia Google account (uni@columbia.edu).");
+  if (access.capabilities.length === 0) throw new ConvexError(NOT_ON_LIST);
+  return access.email;
 };
 
 export const capabilitiesFor = async (
@@ -97,13 +186,12 @@ export const requireCapability = async (
   ctx: QueryCtx | MutationCtx,
   capability: Capability,
 ): Promise<string> => {
-  const email = await currentEmail(ctx);
-  if (email === null) throw new ConvexError("Sign in to continue.");
-  const capabilities = await capabilitiesFor(ctx, email);
-  if (!capabilities.includes(capability) && !capabilities.includes("admin")) {
-    throw new ConvexError(`You do not have permission to manage ${capability}.`);
+  const access = await accessFor(ctx);
+  if (access === null) throw new ConvexError("Sign in to continue.");
+  if (!access.capabilities.includes(capability) && !access.capabilities.includes("admin")) {
+    throw new ConvexError(access.capabilities.length === 0 ? NOT_ON_LIST : "Only lab admins can do that.");
   }
-  return email;
+  return access.email;
 };
 
 /**
@@ -120,14 +208,39 @@ export const me = query({
      * can say so and sign it out rather than just showing the sign-in button.
      */
     refused: v.union(v.string(), v.null()),
+    /** Set when a Columbia account signed in but is not on the list. */
+    notOnList: v.union(v.string(), v.null()),
     capabilities: v.array(capabilityValidator),
+    via: v.union(v.literal("added"), v.literal("people"), v.null()),
+    person: v.union(v.string(), v.null()),
+    /** Name on the People-page profile this account may edit, if any. */
+    profile: v.union(v.string(), v.null()),
   }),
   handler: async (ctx) => {
-    const email = await currentEmail(ctx);
-    if (email === null) {
-      const signedInAs = await verifiedEmail(ctx);
-      return { email: null, refused: signedInAs, capabilities: [] };
+    const access = await accessFor(ctx);
+    if (access === null) {
+      return {
+        email: null,
+        refused: await verifiedEmail(ctx),
+        notOnList: null,
+        capabilities: [],
+        via: null,
+        person: null,
+        profile: null,
+      };
     }
-    return { email, refused: null, capabilities: await capabilitiesFor(ctx, email) };
+    if (access.capabilities.length === 0) {
+      return {
+        email: null,
+        refused: null,
+        notOnList: access.email,
+        capabilities: [],
+        via: null,
+        person: null,
+        profile: null,
+      };
+    }
+    const profile = await profileFor(ctx);
+    return { ...access, refused: null, notOnList: null, profile: profile?.name ?? null };
   },
 });

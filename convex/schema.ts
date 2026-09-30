@@ -370,10 +370,40 @@ export default defineSchema({
    * Everyone with a verified @columbia.edu identity may submit; these grants are
    * only about publishing, editing, and rejecting.
    */
+  /**
+   * A lab member's proposed change to their own People-page profile.
+   *
+   * Kept apart from `people` so the published profile is untouched until an admin
+   * approves: people sign in matched by name (convex/authz.ts), and a mismatch
+   * must not be able to rewrite someone else's profile. `changes` holds only the
+   * fields that differ; null means "clear this field".
+   */
+  profileEdits: defineTable({
+    personId: v.id("people"),
+    changes: v.object({
+      title: v.optional(v.union(v.string(), v.null())),
+      affiliation: v.optional(v.union(v.string(), v.null())),
+      homepage: v.optional(v.union(v.string(), v.null())),
+      bio: v.optional(v.union(v.string(), v.null())),
+      fields: v.optional(v.array(v.string())),
+      image: v.optional(v.id("_storage")),
+    }),
+    status: v.union(v.literal("pending"), v.literal("published"), v.literal("rejected")),
+    submittedBy: v.string(),
+    submittedAt: v.number(),
+    reviewedBy: v.optional(v.string()),
+    reviewedAt: v.optional(v.number()),
+    reviewNote: v.optional(v.string()),
+  })
+    .index("by_status_and_submittedAt", ["status", "submittedAt"])
+    .index("by_personId_and_status", ["personId", "status"])
+    .index("by_submittedBy_and_submittedAt", ["submittedBy", "submittedAt"]),
+
   roles: defineTable({
     email: v.string(), // lowercased
     capabilities: v.array(
       v.union(
+        v.literal("member"), // on the list: may submit events and publications
         v.literal("events"),
         v.literal("publications"),
         v.literal("people"),

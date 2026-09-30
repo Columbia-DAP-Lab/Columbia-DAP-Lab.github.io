@@ -18,6 +18,7 @@ import type * as extractSupport from "../extractSupport.js";
 import type * as http from "../http.js";
 import type * as llm from "../llm.js";
 import type * as migrate from "../migrate.js";
+import type * as profiles from "../profiles.js";
 import type * as vocabulary from "../vocabulary.js";
 
 import type {
@@ -37,6 +38,7 @@ declare const fullApi: ApiFromModules<{
   http: typeof http;
   llm: typeof llm;
   migrate: typeof migrate;
+  profiles: typeof profiles;
   vocabulary: typeof vocabulary;
 }>;
 

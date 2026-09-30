@@ -226,7 +226,7 @@ export const fromText = action({
     if (!isConfigured()) throw new ConvexError("Paste-to-fill is not set up on this deployment yet.");
 
     // Sign-in, submit permission, and the rate limit, before any money is spent.
-    const vocab = await ctx.runMutation(internal.extractSupport.begin, {});
+    const vocab = await ctx.runMutation(internal.extractSupport.begin, { kind: args.kind });
 
     // "Tuesday, 2026-09-29": the weekday resolves "next Tuesday", and the ISO date
     // matches the format the drafts are asked for.

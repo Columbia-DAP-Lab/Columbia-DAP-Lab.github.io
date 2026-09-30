@@ -1,0 +1,49 @@
+{%- comment -%}
+The header on /admin/, in place of the site's: Columbia dark blue so it is
+obvious you are in the admin tools, with the admin sections and your account in
+it. The buttons are driven by admin/admin.js (data-tab, data-needs); they stay
+hidden until someone on the lab's list signs in.
+{%- endcomment -%}
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top dap-admin-header">
+  <div class="container-md">
+    <a class="navbar-brand d-flex align-items-center" href="{{ '/' | relative_url }}" title="Back to the DAPLab site">
+      <img src="{{ '/files/images/daplab_logo_horiz.png' | relative_url }}" alt="DAPLab" class="dap-admin-logo">
+      <span class="dap-admin-badge">Admin</span>
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#adminNav"
+            aria-controls="adminNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="adminNav">
+      <div class="navbar-nav me-auto" data-admin-tabs hidden>
+        <button class="nav-link dap-tab active" data-tab="event" type="button">Events</button>
+        <button class="nav-link dap-tab" data-tab="publication" type="button">Papers</button>
+        <button class="nav-link dap-tab" data-tab="people" type="button" hidden data-needs="people">People</button>
+        <button class="nav-link dap-tab" data-tab="submissions" type="button">
+          Submissions <span class="dap-count" data-pending-count></span>
+        </button>
+      </div>
+
+      <div class="navbar-nav ms-auto" data-admin-account hidden>
+        <div class="nav-item dropdown">
+          <button class="nav-link dropdown-toggle dap-admin-account" type="button" data-bs-toggle="dropdown"
+                  aria-expanded="false">
+            <span data-email></span> <span class="dap-role" data-role></span>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li hidden data-needs="profile">
+              <button class="dropdown-item" data-tab="profile" type="button">Edit profile</button>
+            </li>
+            <li><button class="dropdown-item" type="button" data-sign-out>Sign out</button></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="navbar-nav ms-auto" data-admin-signed-out>
+        <a class="nav-link" href="{{ '/' | relative_url }}">Back to the site</a>
+      </div>
+    </div>
+  </div>
+</nav>
