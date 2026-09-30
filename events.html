@@ -7,8 +7,8 @@ title: Events
 Entrepreneurship talks used to live in _data/startups.yml; they are events in the
 same table now, so there is nothing left to concatenate.
 {%- endcomment -%}
-{% assign events = site.data.events | sort: "date" | reverse %}
-{% assign oevents = events | sort: "date"  %}
+{% assign events = site.data.events %}
+{% if events %}{% assign events = events | sort: "date" | reverse %}{% assign oevents = events | sort: "date" %}{% endif %}
 {% assign today = 'now' | date: "%Y-%m-%d" %}
 
 {%- comment -%}

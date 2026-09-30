@@ -44,7 +44,9 @@ title: AI Entrepreneurship Series
 These talks used to live in _data/startups.yml; they are events tagged
 Entrepreneurship now, in the same table as everything else.
 {%- endcomment -%}
-{% assign events = site.data.events | where: "tag", "Entrepreneurship" | sort: "date" %}
+{% assign events = site.data.events | where: "tag", "Entrepreneurship" %}
+{%- comment -%} sort raises on nil, e.g. before content has been fetched. {%- endcomment -%}
+{% if events %}{% assign events = events | sort: "date" %}{% endif %}
 {% assign today = 'now' | date: "%Y-%m-%d" %}
 <h2>Upcoming Events</h2>
 <div class="mb-5">

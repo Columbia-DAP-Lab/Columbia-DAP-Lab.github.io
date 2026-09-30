@@ -1,7 +1,8 @@
 <div class="pubs">
   <ol connect="rows">
     {% assign lab_authors = site.data.people | map: "name" %}
-    {% assign sorted_pubs = site.data.pubs | sort: "pub_date" | reverse %}
+    {% assign sorted_pubs = site.data.pubs %}
+    {% if sorted_pubs %}{% assign sorted_pubs = sorted_pubs | sort: "pub_date" | reverse %}{% endif %}
     {% for p in sorted_pubs %}
       {% if p.hide == true %}
         {% continue %}

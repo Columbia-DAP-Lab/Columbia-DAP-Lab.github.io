@@ -125,7 +125,8 @@ layout: default
             <h4 class="mb-0">Publications</h4>
           </div>
           <div class="card-body p-3">
-            {% assign recent_pubs = site.data.pubs | sort: "pub_date" | reverse | slice: 0, 7 %}
+            {% assign recent_pubs = site.data.pubs %}
+            {% if recent_pubs %}{% assign recent_pubs = recent_pubs | sort: "pub_date" | reverse | slice: 0, 7 %}{% endif %}
             <ul class="list-unstyled">
               {% for pub in recent_pubs %}
               <li class="mb-2">
