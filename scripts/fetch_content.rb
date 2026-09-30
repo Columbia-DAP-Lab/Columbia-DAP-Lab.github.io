@@ -6,6 +6,12 @@
 # Run by .github/workflows/deploy.yml before `jekyll build`. The files it writes are
 # build output: they are overwritten every run and never committed by this script.
 #
+#   ruby scripts/fetch_content.rb
+#
+# The deployment comes from `convex.site_url` in _config.yml, the same place the
+# admin page reads its URL from. CONVEX_SITE_URL overrides it, e.g. to build a
+# local copy from the dev deployment:
+#
 #   CONVEX_SITE_URL=https://<deployment>.convex.site ruby scripts/fetch_content.rb
 #
 # If Convex cannot be reached after several tries, the committed _data/*.yml are
@@ -18,7 +24,8 @@ require "net/http"
 require "uri"
 require "yaml"
 
-SITE_URL = ENV["CONVEX_SITE_URL"].to_s.strip
+SITE_URL = (ENV["CONVEX_SITE_URL"].to_s.strip.then { |url| url.empty? ? nil : url } ||
+            YAML.load_file(File.expand_path("../_config.yml", __dir__)).dig("convex", "site_url").to_s.strip)
 ATTEMPTS = Integer(ENV.fetch("CONVEX_FETCH_ATTEMPTS", "3"))
 STRICT = ENV["CONVEX_FETCH_STRICT"] == "1"
 
@@ -65,7 +72,7 @@ def give_up(message)
   exit 0
 end
 
-give_up("CONVEX_SITE_URL is not set") if SITE_URL.empty?
+give_up("no Convex deployment: set convex.site_url in _config.yml") if SITE_URL.empty?
 
 payload =
   begin

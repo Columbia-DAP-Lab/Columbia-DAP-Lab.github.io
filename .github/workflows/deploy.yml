@@ -41,9 +41,8 @@ jobs:
       # committed _data/*.yml in the runner only — nothing is pushed back. If Convex
       # is unreachable the committed snapshot is used and the step warns; set
       # CONVEX_FETCH_STRICT=1 to fail the build instead.
+      # The deployment is `convex.site_url` in _config.yml.
       - name: Fetch content from Convex
-        env:
-          CONVEX_SITE_URL: ${{ vars.CONVEX_SITE_URL }}
         run: ruby scripts/fetch_content.rb
 
       - name: Build site

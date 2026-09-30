@@ -36,7 +36,7 @@ jobs:
 
       - name: Fetch content from Convex
         env:
-          CONVEX_SITE_URL: ${{ vars.CONVEX_SITE_URL }}
+          # The deployment is `convex.site_url` in _config.yml.
           # A snapshot that silently kept yesterday's copy would be worthless, so
           # unlike the build, this fails loudly when Convex cannot be reached.
           CONVEX_FETCH_STRICT: "1"
