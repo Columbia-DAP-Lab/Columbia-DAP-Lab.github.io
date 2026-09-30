@@ -34,23 +34,22 @@ it starts.
   {% endif %}
 {% endfor %}
 
-<style>
-.who {
-  font-weight: normal;
-  color: gray;
-}
-</style>
+<header class="page-header">
+  <h1 class="page-title">Events</h1>
+  <p class="page-lede">Seminars, talks, courses, and workshops hosted by the lab, including the
+    <a href="{{ '/entrepreneurship' | relative_url }}">AI Entrepreneurship Series</a>.</p>
+</header>
 
-<div class="container my-5">
-  <div class="event-filter mb-6">
+<div class="events-page">
+  <div class="chips" role="group" aria-label="Filter by series">
     {% for type in site.data.event_types %}
-      <button class="event-filter-btn{% if type.slug == 'all' %} active{% endif %}" data-filter="{{ type.slug }}">{{ type.label }}</button>
+      <button type="button" class="chip event-filter-btn" aria-pressed="{% if type.slug == 'all' %}true{% else %}false{% endif %}" data-filter="{{ type.slug }}">{{ type.label }}</button>
     {% endfor %}
   </div>
 
   {% for type in site.data.event_types %}
     {% if type.description or type.logo %}
-      <div class="series-header" data-series="{{ type.slug }}" hidden>
+      <div class="series-header panel" data-series="{{ type.slug }}" hidden>
         {% if type.logo %}
           {% if type.logo contains '://' %}
             {% assign logo_url = type.logo %}
@@ -69,8 +68,8 @@ it starts.
   <p class="event-empty" hidden>No events scheduled yet — check back soon.</p>
 
   {% if upcoming %}
-    <div class="event-section mb-5">
-      <h2 style="color:gray">Upcoming Events</h2>
+    <section class="section event-section">
+      <h2 class="section-title">Upcoming</h2>
       {% for event in oevents %}
         {% assign tag_slug = event.tag | slugify %}
         {% if tag_slug == 'course' %}
@@ -82,12 +81,12 @@ it starts.
           {% include event-entry.html event=event is_past=false page_url=page.url %}
         {% endif %}
       {% endfor %}
-    </div>
+    </section>
   {% endif %}
 
   {% if past %}
-    <div class="event-section">
-      <h2 style="color:gray">Past Events</h2>
+    <section class="section event-section">
+      <h2 class="section-title">Past</h2>
       {% for event in events %}
         {% assign tag_slug = event.tag | slugify %}
         {% if tag_slug == 'course' %}
@@ -99,109 +98,19 @@ it starts.
           {% include event-entry.html event=event is_past=true page_url=page.url %}
         {% endif %}
       {% endfor %}
-    </div>
+    </section>
   {% endif %}
 </div>
 
 <style>
-.markdown-content p {
-  margin-bottom: 0.5em;
-}
-.markdown-content strong {
-  font-weight: bold;
-}
-.markdown-content em {
-  font-style: italic;
-}
+.series-header { margin: 0 0 2.25rem; }
+.series-header[hidden], .event-empty[hidden], .event-section[hidden] { display: none; }
+.series-logo { display: block; width: 100%; max-width: 380px; height: auto; margin-bottom: 1rem; }
+.series-header .markdown-content > :last-child { margin-bottom: 0; }
+.event-empty { color: var(--dap-muted); }
+.event-section .section-title { margin-bottom: 0.5rem; }
 
-/* Event Filter Buttons */
-.event-filter {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 1.5rem;
-}
-.event-filter-btn {
-  background-color: #f3f4f6;
-  border: 1px solid #d1d5db;
-  border-radius: 9999px;
-  padding: 0.4rem 1rem;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-}
-.event-filter-btn:hover {
-  background-color: #e5e7eb;
-}
-.event-filter-btn.active {
-  background-color: #2563eb;
-  color: white;
-  border-color: #2563eb;
-}
 
-/* Series header: description/logo for event types that run as a series */
-.series-header {
-  margin: 0 0 2rem 0;
-  padding: 1.25rem 1.5rem;
-  background: #f8fafc;
-  border: 1px solid #e5e7eb;
-  border-radius: 0.75rem;
-}
-.series-header[hidden] { display: none; }
-.series-logo {
-  display: block;
-  width: 100%;
-  max-width: 420px;
-  height: auto;
-  margin-bottom: 1rem;
-}
-.series-header .markdown-content p { margin-bottom: 0.75em; }
-.series-header .markdown-content p:last-child { margin-bottom: 0; }
-
-.event-empty { color: #6b7280; }
-.event-empty[hidden], .event-section[hidden] { display: none; }
-
-/* Event layout: simple, natural flow */
-.event-flex { display: block; }
-.event-main { min-width: 0; }
-.event-title { margin: 0 0 0.25rem 0; }
-.event-meta { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.25rem 0.5rem; margin: 0 0 0.5rem 0; color: #6b7280; }
-.event-meta .who { display: inline; color: #374151; margin-right: 0.25rem; }
-/* Colors live in files/css/style.css, which loads after this block */
-.event-tag { white-space: nowrap; }
-.event-link-anchor {
-  opacity: 0.4;
-  text-decoration: none;
-  font-size: 0.85rem;
-}
-.event-link-anchor:hover { opacity: 1; text-decoration: none; }
-.event-item:hover .event-link-anchor { opacity: 1; }
-
-/* Image floats to top-right on larger screens; stacks on mobile */
-.event-media { float: right; margin: 0.2rem 0 0.75rem 1rem; max-width: 240px; }
-.event-media img { display: block; width: 100%; height: auto; object-fit: contain; border-radius: 0.5rem; }
-@media (max-width: 768px) {
-  .event-media { float: none; max-width: none; margin: 0 0 0.75rem 0; }
-  .event-media img { max-height: none; width: 100%; height: auto; }
-}
-
-.event-body.clamped {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
-  overflow: hidden;
-}
-.expand-btn {
-  background: transparent;
-  border: none;
-  color: #2563eb;
-  cursor: pointer;
-  padding: 0;
-  margin-top: 0.25rem;
-  font-weight: 500;
-}
-.expand-btn:focus { outline: none; }
 </style>
 
 <script>
@@ -244,7 +153,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (filters.indexOf(filter) === -1) filter = "all";
 
     buttons.forEach(btn => {
-      btn.classList.toggle("active", btn.getAttribute("data-filter") === filter);
+      btn.setAttribute("aria-pressed", String(btn.getAttribute("data-filter") === filter));
     });
 
     let visible = 0;

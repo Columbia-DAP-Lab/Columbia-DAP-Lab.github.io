@@ -3,32 +3,30 @@ layout: default
 title: News
 ---
 
-{% assign items = site.data.news %}
+<header class="page-header">
+  <h1 class="page-title">News</h1>
+  <p class="page-lede">Announcements, courses, and milestones from the lab.</p>
+</header>
 
-<div class="container my-5">
-  <h2 class="mb-4">News & Education</h2>
+{% assign sorted = site.data.news %}
+{% if sorted %}{% assign sorted = sorted | sort: 'date' | reverse %}{% endif %}
 
-  <div class="news-list">
-    {% assign sorted = items %}
-    {% if sorted %}{% assign sorted = sorted | sort: 'date' | reverse %}{% endif %}
-    {% for item in sorted %}
-      <article class="mb-4 pb-3 border-bottom">
-        <header class="mb-1">
-          <h4 class="mb-1">{{ item.title | markdownify }}</h4>
-        </header>
-        {% assign body = item.details | default: item.content %}
-        <div class="markdown-content">
-          {{ body | markdownify }}
-        </div>
-      </article>
-    {% endfor %}
-  </div>
-
-  <div class="mt-4">
-    <a href="{{ '/' | relative_url }}" class="btn btn-sm btn-outline-secondary">Back to home</a>
-  </div>
+<div class="news-list prose">
+  {%- for item in sorted %}
+  <article class="news-item">
+    {%- if item.date %}<p class="news-date"><time datetime="{{ item.date }}">{{ item.date | date: "%B %Y" }}</time></p>{% endif %}
+    {%- if item.title %}<h2 class="news-title">{{ item.title | markdownify | remove: '<p>' | remove: '</p>' | strip }}</h2>{% endif %}
+    {%- assign body = item.details | default: item.content %}
+    <div class="markdown-content">{{ body | markdownify }}</div>
+  </article>
+  {%- endfor %}
 </div>
 
 <style>
-.news-list .markdown-content p { margin-bottom: 0.5rem; }
+.news-item { padding: 1.5rem 0; }
+.news-item:first-child { padding-top: 0; }
+.news-item + .news-item { border-top: 1px solid var(--dap-rule); }
+.news-date { font-size: 0.8rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--dap-navy); margin: 0 0 0.3rem; }
+.news-title { font-size: 1.2rem; margin: 0 0 0.5rem; }
+.news-item .markdown-content > :last-child { margin-bottom: 0; }
 </style>

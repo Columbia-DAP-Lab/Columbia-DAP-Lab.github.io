@@ -1,87 +1,62 @@
+{%- comment -%}
+One event on /events: a date block, then title, speaker, time and place, the
+description, and links; an image, if any, on the right. Past events show their
+description clamped with "See more".
+{%- endcomment -%}
 {% assign event = include.event %}
 {% capture event_id %}{{ event.date | date: '%y%m%d' }}-{{ event.title | slugify }}{% endcapture %}
 
-<div class="mb-4 event-item event-{{ event.tag | slugify | default: 'other' }}" id="{{ event_id }}">
-  <div class="event-flex">
-    {% if event.image %}
-      {% assign img = event.image %}
-      {% if img contains '://' %}
-        {% assign img_url = img %}
-      {% else %}
-        {% assign img_url = img | relative_url %}
-      {% endif %}
-      <div class="event-media">
-        <img src="{{ img_url }}" alt="{{ event.title | escape }}" loading="lazy">
-      </div>
-    {% endif %}
-
-    <div class="event-main">
-      <h4 class="event-title">
-        {% if event.link %}
-          <a href="{{ event.link }}">{{ event.title }}</a>
-        {% else %}
-          {{ event.title }}
-        {% endif %}
-      </h4>
-
-      {% if event.who or event.tag %}
-      <div class="event-meta">
-        {% if event.who %}
-          {% if event.wholink %}
-            <a href="{{ event.wholink }}" class="who-link"><span class="who">{{ event.who }}</span></a>
-          {% else %}
-            <span class="who">{{ event.who }}</span>
-          {% endif %}
-        {% endif %}
-        {% if event.tag %}
-          <span class="event-tag event-tag--{{ event.tag | slugify }}">{{ event.tag }}</span>
-        {% endif %}
-      </div>
-      {% endif %}
-
-      <p class="text-muted">
-        <span>{{ event.time }}  {{ event.date | date: "%B %d, %Y" }}</span>
-        <span style="margin-left: 2em">{{ event.where }}</span>
-        <a class="event-link-anchor" href="{{ include.page_url | relative_url }}#{{ event_id }}" aria-label="Link to this event" title="Link to this event">🔗</a>
-      </p>
-
-      {% if include.is_past %}
-        {% if event.description | strip != "tba" or event.bio %}
-          <div class="event-body clamped">
-            {% if event.description | strip != "tba" %}
-              <div class="markdown-content">
-                {{ event.description | markdownify }}
-              </div>
-            {% endif %}
-            {% if event.bio %}
-              <p>{{ event.bio | markdownify }}</p>
-            {% endif %}
-          </div>
-          <button class="expand-btn">See more</button>
-        {% endif %}
-      {% else %}
-        {% if event.description | strip != "tba" %}
-          <div class="markdown-content">
-            {{ event.description | markdownify }}
-          </div>
-        {% endif %}
-        {% if event.bio %}
-          <p>{{ event.bio | markdownify }}</p>
-        {% endif %}
-      {% endif %}
-
-      <div class="mt-4">
-        {% if event.video %}
-        <a href="{{ event.video }}" class="btn btn-primary rounded-pill px-3 py-1" style="text-decoration: none; font-weight: 500;">
-          <i class="fas fa-play-circle me-2">Video Recording</i>
-        </a>
-        {% endif %}
-        {% if event.slides %}
-        <a href="{{ event.slides }}" class="btn btn-primary rounded-pill px-3 py-1" style="text-decoration: none; font-weight: 500;">
-          <i class="fas fa-file-alt me-2">Slides</i>
-        </a>
-        {% endif %}
-      </div>
-    </div>
+<article class="event-item event-{{ event.tag | slugify | default: 'other' }}" id="{{ event_id }}">
+  <div class="event-date" aria-hidden="true">
+    <span class="month">{{ event.date | date: "%b" }}</span>
+    <span class="day">{{ event.date | date: "%-d" }}</span>
+    <span class="year">{{ event.date | date: "%Y" }}</span>
   </div>
-</div>
+
+  <div class="event-main">
+    <h3 class="event-title">
+      {%- if event.link %}<a href="{{ event.link }}">{{ event.title }}</a>{% else %}{{ event.title }}{% endif -%}
+    </h3>
+
+    {%- if event.who %}
+    <p class="event-who">
+      {%- if event.wholink %}<a href="{{ event.wholink }}">{{ event.who }}</a>{% else %}{{ event.who }}{% endif -%}
+      {%- if event.role %}<span class="event-role">, {{ event.role }}</span>{% endif -%}
+    </p>
+    {%- endif %}
+
+    <div class="event-meta">
+      <time datetime="{{ event.date }}">{{ event.date | date: "%A, %B %-d, %Y" }}</time>
+      {%- if event.time %}<span>{{ event.time }}</span>{% endif -%}
+      {%- if event.where %}<span>{{ event.where }}</span>{% endif -%}
+      {%- if event.tag %}<span class="event-tag event-tag--{{ event.tag | slugify }}">{{ event.tag }}</span>{% endif %}
+      <a class="event-link-anchor" href="{{ include.page_url | relative_url }}#{{ event_id }}" aria-label="Link to this event" title="Link to this event">#</a>
+    </div>
+
+    {%- assign has_description = false -%}
+    {%- assign description = event.description | strip -%}
+    {%- if description != "" and description != "tba" and description != "TBA" -%}{%- assign has_description = true -%}{%- endif -%}
+
+    {%- if has_description or event.bio %}
+    <div class="event-body{% if include.is_past %} clamped{% endif %}">
+      {%- if has_description %}<div class="markdown-content">{{ event.description | markdownify }}</div>{% endif -%}
+      {%- if event.bio %}<div class="markdown-content event-bio">{{ event.bio | markdownify }}</div>{% endif -%}
+    </div>
+    {%- if include.is_past %}<button type="button" class="expand-btn">See more</button>{% endif -%}
+    {%- endif %}
+
+    {%- if event.video or event.slides %}
+    <div class="event-links">
+      {%- if event.video %}<a href="{{ event.video }}">Video</a>{% endif -%}
+      {%- if event.slides %}<a href="{{ event.slides }}">Slides</a>{% endif -%}
+    </div>
+    {%- endif %}
+  </div>
+
+  {%- if event.image %}
+    {%- if event.image contains '://' %}{% assign img_url = event.image %}{% else %}{% assign img_url = event.image | relative_url %}{% endif %}
+  <div class="event-media">
+    <img src="{{ img_url }}" alt="" loading="lazy">
+  </div>
+  {%- endif %}
+</article>

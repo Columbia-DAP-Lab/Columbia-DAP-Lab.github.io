@@ -1,27 +1,23 @@
 ---
-layout: page
+layout: null
 title: Blog
-color: '#0c6a99'
-logo: Blog
-urlprefix: .
 ---
-
-<!-- Redirect to the latest blog post -->
-{% assign latest_post = nil %}
-{% for post in site.posts %}
-  {% if post.layout == "post" and post.published != false %}
-    {% assign latest_post = post %}
-    {% break %}
-  {% endif %}
-{% endfor %}
-
-{% if latest_post %}
-<script>
-  window.location.href = "{{ latest_post.url | relative_url }}";
-</script>
-<noscript>
-  <p>Please enable JavaScript or <a href="{{ latest_post.url | relative_url }}">click here</a> to view the latest blog post.</p>
-</noscript>
-{% else %}
-<p>No blog posts found.</p>
-{% endif %}
+{%- comment -%}
+There is no blog index: each post shows the list of all posts beside it, so
+/blog forwards to the newest one. Kept so old links to /blog still work.
+{%- endcomment -%}
+{%- assign newest_post = site.posts | where: "layout", "post" | first -%}
+{%- assign target = newest_post.url | relative_url -%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Blog | {{ site.title }}</title>
+  <link rel="canonical" href="{{ newest_post.url | absolute_url }}">
+  <meta http-equiv="refresh" content="0; url={{ target }}">
+  <script>location.replace("{{ target }}");</script>
+</head>
+<body>
+  <p><a href="{{ target }}">Go to the newest blog post</a></p>
+</body>
+</html>

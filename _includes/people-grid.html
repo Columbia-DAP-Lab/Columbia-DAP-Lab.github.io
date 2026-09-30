@@ -1,56 +1,46 @@
+{%- comment -%}
+One group on the People page: a section heading and a grid of people, each with
+a photo, name (linked to their homepage) and research-area badges. Faculty bios
+appear over the photo on hover.
+Parameters: category (as in the data), title (optional heading), show_bio.
+{%- endcomment -%}
 {% assign field_colors = site.data.field_colors %}
 {% assign people = site.data.people | where: "category", include.category %}
 {% assign category_title = include.title | default: include.category %}
 {% assign show_bio = include.show_bio | default: false %}
-{% assign fallback_image = "/files/images/avatar/avatar-default.png" %}
-{% assign avatar_size = 120 %}
+{% assign fallback_image = "/files/images/avatar/avatar-default.png" | relative_url %}
 {% if include.category != "Faculty" and people %}
   {% assign people = people | sort: "name" %}
 {% endif %}
 
-<h2 class="mt-5">{{ category_title }}</h2>
-<div class="container">
-  <div class="row">
-    {% for person in people %}
-      {% assign name_parts = person.name | split: ' ' %}
-
-      <div class="col-sm-6 col-md-4 col-lg-3 col-xl-2 mb-4">
-        <div class="card h-100 text-center" style="border: none;">
-          <div class="card-img-container position-relative">
-            <img src="{{ person.image | default: fallback_image }}"
-                alt="{{ person.name }}"
-                class="card-img-top rounded-circle mx-auto mt-3 bio-img"
-                style="--avatar-size: {{ avatar_size }}px; width: var(--avatar-size); height: var(--avatar-size); object-fit: cover;">
-
-            {% if show_bio and person.bio %}
-              <div class="overlay-bio">
-                <div class="overlay-content">
-                  <small>{{ person.bio }}</small>
-                </div>
-              </div>
-            {% endif %}
-          </div>
-
-          <div class="card-body">
-            {% assign first_names_count = name_parts.size | minus: 1 %}
-            {% if person.homepage %}
-              <h5 class="card-title mb-1"><a href="{{ person.homepage }}" target="_blank" style="text-decoration: none;">{{ name_parts | slice: 0, first_names_count | join: ' ' }}<br>{{ name_parts.last }}</a></h5>
-            {% else %}
-              <h5 class="card-title mb-1">{{ name_parts | slice: 0, first_names_count | join: ' ' }}<br>{{ name_parts.last }}</h5>
-            {% endif %}
-
-            {% if person.field %}
-              <div class="mb-2">
-              {% for tag in person.field %}
-                {% assign color = field_colors[tag] | default: field_colors["Default"] %}
-                <span class="badge {{ color }}">{{ tag }}</span>
-              {% endfor %}
-              </div>
-            {% endif %}
-          </div>
-
-        </div>
-      </div>
-    {% endfor %}
+{%- if people and people.size > 0 %}
+<section class="section">
+  <div class="section-header">
+    <h2 class="section-title">{{ category_title }}</h2>
+    <span class="muted small">{{ people.size }}</span>
   </div>
-</div>
+  <ul class="people-grid">
+    {%- for person in people %}
+    <li class="person">
+      <div class="person-photo">
+        <img src="{{ person.image | default: fallback_image }}" alt="" loading="lazy">
+        {%- if show_bio and person.bio %}
+        <div class="person-bio"><p>{{ person.bio }}</p></div>
+        {%- endif %}
+      </div>
+      <h3 class="person-name">
+        {%- if person.homepage %}<a href="{{ person.homepage }}">{{ person.name }}</a>{% else %}{{ person.name }}{% endif -%}
+      </h3>
+      {%- if person.field %}
+      <div class="person-fields">
+        {%- for tag in person.field %}
+        {%- assign color = field_colors[tag] | default: field_colors["Default"] %}
+        <span class="badge {{ color }}">{{ tag }}</span>
+        {%- endfor %}
+      </div>
+      {%- endif %}
+    </li>
+    {%- endfor %}
+  </ul>
+</section>
+{%- endif %}

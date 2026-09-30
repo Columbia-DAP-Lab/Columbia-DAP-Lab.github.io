@@ -2,235 +2,177 @@
 layout: default
 ---
 
-<div class="container">
-  <div class="row justify-content-center">
-    <div class="col-sm-12 col-md-12 col-lg-4 text-center my-4 align-middle">
-      <img src="{{ '/files/images/daplab_logo_square.png' | relative_url }}" style="max-width:250px; width: 75%; margin:30px">
-    </div>
-
-    <div class="col-sm-12 col-md-12 col-lg-8 my-4">
-      <h2 style="font-size:1.6rem; font-weight:700; margin-bottom:0.75rem; line-height:1.3;">Building the Foundations for Trustworthy Agent Automation</h2>
-
-      <p>
-      The Data, Agents, and Processes Lab (DAPLab) at Columbia University develops the systems, infrastructure, and interaction principles required for AI agents to safely and reliably automate real work.
-      </p>
-
-      <p>
-      We believe trustworthy agent automation cannot be solved at a single layer of the stack. DAPLab vertically integrates expertise across operating systems, data systems, AI, HCI, security, and enterprise workflows to build end-to-end agentic systems with real guarantees around reliability, observability, safety, and control. We work closely with industry partners to ground this research in real organizational needs and ensure it delivers practical impact.
-      </p>
-
-      <p>
-        For more information about the lab, please contact ewu@cs.columbia.edu
-      </p>
-    </div>
+<section class="home-hero">
+  <img class="home-logo" src="{{ '/files/images/daplab_logo_square.png' | relative_url }}" alt="DAPLab">
+  <div>
+    <h1 class="home-title">Trustworthy, Safe, Efficient and Reliable Agents</h1>
+    <p class="home-lede">The Data, Agents, and Processes Lab (DAPLab) at Columbia University develops systems,
+      infrastructure, and interaction principles for AI agents to safely and reliably automate real work.</p>
+    <p>Agents turn every layer of the stack into a semantic quality problem. As a consequence, trustworthy agent
+      automation cannot be solved at a single layer of the stack. DAPLab vertically integrates expertise across
+      operating systems, data systems, AI, HCI, security, and enterprise workflows to rethink what agent development,
+      evaluation, and interaction, along with the computing infrastructure should look like. We work closely with
+      industry partners to ground this research in real organizational needs and ensure it delivers practical
+      impact.</p>
+    <p class="muted">For more information about the lab, contact <a href="mailto:ewu@cs.columbia.edu">ewu@cs.columbia.edu</a>.</p>
   </div>
+</section>
 
-  <div class="row mb-4">
-    <div class="col-12">
-      <div class="card border-0" style="background: linear-gradient(135deg, #f8faff 0%, #f0f5ff 100%); border-radius: 1rem; padding: 2rem;">
-        <h3 style="font-size:1.25rem; font-weight:700; margin-bottom:1rem;">Why Vertical Integration Matters</h3>
-        <p style="margin-bottom:1rem;">AI agents fail across the entire stack: models hallucinate, retrieval misses critical context, execution environments lack isolation, workflows leak data, and human oversight breaks under scale. Fixing only one layer is not enough.</p>
-        <p style="margin-bottom:1.5rem;">DAPLab brings together researchers across systems, databases, AI, HCI, security, and organizational workflows because trustworthy automation requires coordinated advances across the full agent stack — from infrastructure and state management to evaluation, safety, and human interaction.</p>
-        <div style="display:flex; flex-wrap:wrap; gap:0.5rem; align-items:center; justify-content:center; font-size:0.85rem;">
-          <span style="background:#003262; color:#fff; padding:0.3rem 0.85rem; border-radius:999px; font-weight:600;">Human Interaction</span>
-          <span style="color:#666;">↑</span>
-          <span style="background:#005aaf; color:#fff; padding:0.3rem 0.85rem; border-radius:999px; font-weight:600;">Agent Reasoning + Learning</span>
-          <span style="color:#666;">↑</span>
-          <span style="background:#1a75c4; color:#fff; padding:0.3rem 0.85rem; border-radius:999px; font-weight:600;">Retrieval + Memory</span>
-          <span style="color:#666;">↑</span>
-          <span style="background:#3d8fd1; color:#fff; padding:0.3rem 0.85rem; border-radius:999px; font-weight:600;">Workflow + Policies</span>
-          <span style="color:#666;">↑</span>
-          <span style="background:#60a9de; color:#fff; padding:0.3rem 0.85rem; border-radius:999px; font-weight:600;">Data + Execution Systems</span>
-          <span style="color:#666;">↑</span>
-          <span style="background:#85c3eb; color:#1a1a1a; padding:0.3rem 0.85rem; border-radius:999px; font-weight:600;">OS + Infrastructure</span>
-        </div>
-        <p style="text-align:center; margin-top:0.75rem; font-size:0.8rem; color:#555; font-style:italic;">Trustworthy Automation Requires Integration Across Layers</p>
-      </div>
+<section class="section panel home-stack">
+  <h2 class="section-title">Why vertical integration matters</h2>
+  <p>AI agents fail across the entire stack: models hallucinate, retrieval misses critical context, execution
+    environments lack isolation, workflows leak data, and human oversight breaks under scale. Fixing only one layer is
+    not enough.</p>
+  <p>DAPLab brings together researchers across systems, databases, AI, HCI, security, and organizational workflows
+    because trustworthy automation requires coordinated advances across the full agent stack — from infrastructure and
+    state management to evaluation, safety, and human interaction.</p>
+  <ol class="stack" aria-label="The agent stack, top to bottom">
+    <li style="--c:#012169">Human Interaction</li>
+    <li style="--c:#0b3d8c">Agent Reasoning + Learning</li>
+    <li style="--c:#1d5aa8">Retrieval + Memory</li>
+    <li style="--c:#3674bf">Workflow + Policies</li>
+    <li style="--c:#5890d1">Data + Execution Systems</li>
+    <li style="--c:#7eaee0">OS + Infrastructure</li>
+  </ol>
+  <p class="stack-caption muted">Trustworthy automation requires integration across layers.</p>
+</section>
+
+{%- if site.ug_ms_application_url and site.ug_ms_application_url != '' %}
+<aside class="section home-notice">
+  <p><strong>Fall 2026 recruiting.</strong> We are recruiting undergraduate and M.S. students to work on agentic systems.</p>
+  <a class="btn btn-sm btn-dap" href="https://forms.gle/hFPEsZqLmTxLg2927">Apply for Fall 2026</a>
+</aside>
+{%- endif %}
+
+<div class="section home-columns">
+  <section>
+    <div class="section-header">
+      <h2 class="section-title">News</h2>
+      <a class="section-link" href="{{ '/news' | relative_url }}">All news →</a>
     </div>
-  </div>
+    {% assign featured_news = site.data.news | where: 'featured', true %}
+    <ul class="home-list">
+      {%- for item in featured_news %}
+      <li>
+        {%- if item.title %}<h3 class="home-item-title">{{ item.title | markdownify | remove: '<p>' | remove: '</p>' | strip }}</h3>{% endif %}
+        <div class="home-item-body">{{ item.content | markdownify }}</div>
+      </li>
+      {%- endfor %}
+    </ul>
+  </section>
 
-  <div class="container-fluid">
-    <div class="row">
-      {% if site.ug_ms_application_url and site.ug_ms_application_url != '' %}
-      <div class="col-12 mb-4">
-        <div class="alert alert-light border text-dark d-flex justify-content-between align-items-center" role="alert">
-          <div class="me-3">
-            <strong>Fall 2026 recruiting:</strong> We are recruiting Undergraduate and MS students to work on agentic systems. Apply now!
-          </div>
-          <a class="btn btn-sm btn-primary" href="https://forms.gle/hFPEsZqLmTxLg2927">Apply for Fall 2026</a>
-        </div>
-      </div>
+  <section>
+    <div class="section-header">
+      <h2 class="section-title">Events</h2>
+      <a class="section-link" href="{{ '/events' | relative_url }}">All events →</a>
+    </div>
+    {% assign valid_events = "" | split: "" %}
+    {% for e in site.data.events %}
+      {% if e.title != "TBA" and e.description and e.description.size > 1 %}
+        {% assign valid_events = valid_events | push: e %}
       {% endif %}
-      <div class="col-sm-12 col-md-12 col-lg-6 mb-4">
-        <div class="card h-100">
-          <div class="card-header bg-light bg-gradient text-dark border-bottom-0">
-            <h4 class="mb-0">News & Education</h4>
-          </div>
-          <div class="card-body p-4">
-            {% assign featured_news = site.data.news | where: 'featured', true %}
-            {% for item in featured_news %}
-              <div class="mb-3">
-                <h5>{{ item.title | markdownify }}</h5>
-                <p>{{ item.content | markdownify }}</p>
-              </div>
-            {% endfor %}
-          </div>
-          <div class="card-footer bg-white border-top-0 text-end">
-            <a href="{{ '/news' | relative_url }}" class="btn btn-sm btn-outline-primary">More news...</a>
-          </div>
-        </div>
-      </div>
+    {% endfor %}
+    {% assign recent_events = valid_events | sort: "date" | reverse | slice: 0, 4 %}
+    <ul class="home-list">
+      {%- for event in recent_events %}
+      <li>
+        <p class="home-item-meta">{{ event.date | date: "%b %-d, %Y" }}</p>
+        <h3 class="home-item-title">{% if event.link %}<a href="{{ event.link }}">{{ event.title }}</a>{% else %}{{ event.title }}{% endif %}</h3>
+        {%- if event.who %}<p class="home-item-meta">{{ event.who }}</p>{% endif %}
+      </li>
+      {%- endfor %}
+    </ul>
+  </section>
 
-      <div class="col-sm-12 col-md-6 col-lg-3 mb-4">
-        <div class="card h-100">
-          <div class="card-header bg-light bg-gradient text-dark border-bottom-0">
-            <h4 class="mb-0">Events</h4>
-          </div>
-          <div class="card-body p-3">
-            {% assign all_events = site.data.events %}
-            {% assign valid_events = "" | split: "" %}
-
-            {% for e in all_events %}
-              {% if e.title != "TBA" and e.description and e.description.size > 1 %}
-                {% assign valid_events = valid_events | push: e %}
-              {% endif %}
-            {% endfor %}
-
-            {% assign recent_events = valid_events | sort: "date" | reverse | slice: 0, 4 %}
-            <ul class="list-unstyled">
-              {% for event in recent_events %}
-              <li class="mb-3">
-                <small>{{ event.date }}</small><br>
-                {% if event.link %}
-                  <a href="{{ event.link }}"><strong>{{ event.title }}</strong></a> 
-                {% else %}
-                  <strong>{{ event.title }}</strong>
-                {% endif %}
-                {% if event.who %}  <span class="who">{{ event.who }}</span>{% endif %}
-
-                {{ event.description | markdownify | truncate: 100 }}
-              </li>
-              {% endfor %}
-            </ul>
-          </div>
-          <div class="card-footer bg-white border-top-0 text-end">
-            <a href="{{ '/events' | relative_url }}" class="btn btn-sm btn-outline-primary">More events...</a>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-sm-12 col-md-6 col-lg-3 mb-4">
-        <div class="card h-100">
-          <div class="card-header bg-light bg-gradient text-dark border-bottom-0">
-            <h4 class="mb-0">Publications</h4>
-          </div>
-          <div class="card-body p-3">
-            {% assign recent_pubs = site.data.pubs %}
-            {% if recent_pubs %}{% assign recent_pubs = recent_pubs | sort: "pub_date" | reverse | slice: 0, 7 %}{% endif %}
-            <ul class="list-unstyled">
-              {% for pub in recent_pubs %}
-              <li class="mb-2">
-                <small class="text-muted">{{ pub.pub_date | date: "%b %Y" }}, {{ pub.conf }}</small><br>
-                <a href="{{ pub.url }}" style="text-decoration: none;">{{ pub.title }}</a>
-              </li>
-              {% endfor %}
-            </ul>
-          </div>
-          <div class="card-footer bg-white border-top-0 text-end">
-            <a href="{{ '/publications' | relative_url }}" class="btn btn-sm btn-outline-primary">More publications...</a>
-          </div>
-        </div>
-      </div>
+  <section>
+    <div class="section-header">
+      <h2 class="section-title">Publications</h2>
+      <a class="section-link" href="{{ '/publications' | relative_url }}">All →</a>
     </div>
-  </div>
-
+    {% assign recent_pubs = site.data.pubs %}
+    {% if recent_pubs %}{% assign recent_pubs = recent_pubs | sort: "pub_date" | reverse | slice: 0, 6 %}{% endif %}
+    <ul class="home-list">
+      {%- for pub in recent_pubs %}
+      <li>
+        <p class="home-item-meta">{{ pub.pub_date | date: "%b %Y" }} · {{ pub.conf }}</p>
+        <h3 class="home-item-title">{% if pub.url %}<a href="{{ pub.url }}">{{ pub.title }}</a>{% else %}{{ pub.title }}{% endif %}</h3>
+      </li>
+      {%- endfor %}
+    </ul>
+  </section>
 </div>
 
-
-<div class="partner-carousel">
-  <div class="partner-heading text-center">Thanks to our industry partners</div>
+<section class="section home-partners">
+  <p class="eyebrow">Thanks to our industry partners</p>
   <div class="partner-grid">
-    <img src="files/images/partner-amazon.svg" class="partner-logo" alt="Amazon">
-    <img src="files/images/partner-intellect.png" class="partner-logo" alt="Intellect">
-    <img src="files/images/partner-infosys.svg" class="partner-logo" alt="Infosys">
-    <img src="files/images/partner-tidalwave.png" class="partner-logo" alt="TidalWave">
-    <img src="files/images/partner-veris.svg" class="partner-logo" alt="Veris">
-    <img src="files/images/partner-shopify.svg" class="partner-logo" alt="Shopify">
-    <img src="files/images/partner-microsoft.png" class="partner-logo" alt="Microsoft">
-    <img src="files/images/partner-thinkingmachines.png" class="partner-logo" alt="Thinking Machines">
-    <img src="files/images/partner-dandy.png" class="partner-logo" alt="Dandy">
-    <img src="files/images/partner-daytona.png" class="partner-logo" alt="Daytona">
-    <img src="files/images/partner-perplexity.png" class="partner-logo" alt="Perplexity">
-    <img src="files/images/partner-toloka.svg" class="partner-logo partner-logo-compact" alt="Toloka">
-    <img src="files/images/partner-td.png" class="partner-logo" alt="TD Bank">
-    <img src="files/images/partner-coefficientgiving.png" class="partner-logo" alt="Coefficient Giving">
+    <img src="{{ '/files/images/partner-amazon.svg' | relative_url }}" class="partner-logo" alt="Amazon">
+    <img src="{{ '/files/images/partner-intellect.png' | relative_url }}" class="partner-logo" alt="Intellect">
+    <img src="{{ '/files/images/partner-infosys.svg' | relative_url }}" class="partner-logo" alt="Infosys">
+    <img src="{{ '/files/images/partner-tidalwave.png' | relative_url }}" class="partner-logo" alt="TidalWave">
+    <img src="{{ '/files/images/partner-veris.svg' | relative_url }}" class="partner-logo" alt="Veris">
+    <img src="{{ '/files/images/partner-shopify.svg' | relative_url }}" class="partner-logo" alt="Shopify">
+    <img src="{{ '/files/images/partner-microsoft.png' | relative_url }}" class="partner-logo" alt="Microsoft">
+    <img src="{{ '/files/images/partner-thinkingmachines.png' | relative_url }}" class="partner-logo" alt="Thinking Machines">
+    <img src="{{ '/files/images/partner-dandy.png' | relative_url }}" class="partner-logo" alt="Dandy">
+    <img src="{{ '/files/images/partner-daytona.png' | relative_url }}" class="partner-logo" alt="Daytona">
+    <img src="{{ '/files/images/partner-perplexity.png' | relative_url }}" class="partner-logo" alt="Perplexity">
+    <img src="{{ '/files/images/partner-toloka.svg' | relative_url }}" class="partner-logo partner-logo-compact" alt="Toloka">
+    <img src="{{ '/files/images/partner-td.png' | relative_url }}" class="partner-logo" alt="TD Bank">
+    <img src="{{ '/files/images/partner-coefficientgiving.png' | relative_url }}" class="partner-logo" alt="Coefficient Giving">
   </div>
-</div>
+</section>
 
 <style>
-.card {
-  border-radius: 1rem;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  background-color: #fafafa;
-}
+.home-hero { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 2.75rem; align-items: center; }
+.home-logo { width: 100%; height: auto; }
+.home-title { font-size: 2rem; margin: 0 0 0.9rem; }
+.home-lede { font-size: 1.12rem; line-height: 1.65; }
 
-.partner-logo {
-  display: inline-block;
-  height: 42px;
-  width: auto;
-  max-width: 100%;
-  object-fit: contain;
-  opacity: 0.9;
-  flex: 0 0 auto;
-}
-
-.partner-logo-compact {
-  height: 32px;
-}
-
-.partner-carousel {
-  overflow: visible;
-  width: 100%;
-  margin: 2em 0;
-}
-
-.partner-track {
-  display: flex;
-  align-items: center;
-  gap: 40px;
-  width: max-content;
-  animation: scroll 30s linear infinite;
-}
-
-.partner-grid {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 24px 40px;
-}
-
-.partner-heading {
+.home-stack .section-title { margin-bottom: 0.75rem; }
+.stack { list-style: none; margin: 1.5rem 0 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 0.4rem; }
+.stack li {
+  background: var(--c);
+  color: #fff;
+  font-size: 0.82rem;
   font-weight: 600;
-  font-size: large;
-  color: #555;
-  text-align: center;
-  margin-bottom: 1rem;
+  padding: 0.3rem 0.8rem;
+  border-radius: 999px;
 }
+.stack li:nth-last-child(-n + 2) { color: #0c1f3f; }
+.stack-caption { text-align: center; font-size: 0.82rem; margin: 0.75rem 0 0; }
 
-@keyframes scroll {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
+.home-notice {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem 1.5rem;
+  padding: 1rem 1.25rem; border: 1px solid var(--dap-rule); border-left: 3px solid var(--dap-navy); border-radius: var(--dap-radius);
 }
+.home-notice p { margin: 0; }
 
-@media (max-width: 576px) {
-  .partner-logo { height: 25px; }
-  .partner-logo-compact { height: 19px; }
-  .partner-grid { gap: 16px 24px; }
+.home-columns { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 1fr); gap: 2.5rem; }
+.home-columns .section-header { border-bottom: 1px solid var(--dap-rule); padding-bottom: 0.6rem; }
+.home-columns .section-title { font-size: 1.1rem; }
+.home-list { list-style: none; margin: 0; padding: 0; }
+.home-list li + li { margin-top: 1.1rem; }
+.home-item-title { font-size: 0.98rem; font-weight: 600; line-height: 1.4; margin: 0; }
+.home-item-title a { color: var(--dap-ink); }
+.home-item-title a:hover { color: var(--dap-navy); }
+.home-item-meta { font-size: 0.8rem; color: var(--dap-muted); margin: 0 0 0.15rem; }
+.home-item-body { font-size: 0.93rem; color: #2c3645; margin-top: 0.3rem; }
+.home-item-body > :last-child { margin-bottom: 0; }
+
+.home-partners { text-align: center; padding-top: 2.5rem; border-top: 1px solid var(--dap-rule); }
+.partner-grid { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 1.5rem 2.5rem; margin-top: 1rem; }
+.partner-logo { height: 34px; width: auto; max-width: 140px; object-fit: contain; opacity: 0.85; filter: grayscale(1); transition: opacity 0.15s, filter 0.15s; }
+.partner-logo:hover { opacity: 1; filter: none; }
+.partner-logo-compact { height: 26px; }
+
+@media (max-width: 991.98px) {
+  .home-columns { grid-template-columns: 1fr 1fr; }
+  .home-columns > :first-child { grid-column: 1 / -1; }
 }
-
+@media (max-width: 767.98px) {
+  .home-hero { grid-template-columns: 1fr; gap: 1.25rem; }
+  .home-logo { width: 140px; }
+  .home-columns { grid-template-columns: 1fr; }
+  .home-title { font-size: 1.6rem; }
+}
 </style>

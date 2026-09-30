@@ -1,35 +1,34 @@
-<aside class="blog-sidebar {{ include.container_class }}" style="position:sticky;top:1rem;">
-  <div class="list-group">
-    {% for post in site.posts %}
-      {% if post.layout == "post" and post.published != false %}
-      {% assign link_cls = "blog-nav-link" %}
-      {% if include.link_class == nil %}
-        {% assign link_cls = "blog-nav-link" %}
-      {% else %}
-        {% assign link_cls = include.link_class %}
-      {% endif %}
-      <a href="{{ post.url | relative_url }}" class="list-group-item list-group-item-action d-flex flex-column align-items-start {{ link_cls }}">
-        <h6 class="mb-1" style="margin-bottom:0.1rem">{{ post.title }}</h6>
-        <small class="text-muted">{{ post.date | date: "%b %d, %Y" }}</small>
-        {% if post.excerpt %}
-        <p class="mb-1 text-muted" style="font-size:0.9rem">{{ post.excerpt }}</p>
-        {% endif %}
+{%- comment -%}
+The list of blog posts, newest first: title and date, the current post marked.
+Used in the post layout's left column and in its drawer on narrow screens.
+{%- endcomment -%}
+<ul class="post-list">
+  {%- for post in site.posts -%}
+    {%- if post.layout == "post" and post.published != false -%}
+    {%- assign current = false -%}{%- if post.url == page.url -%}{%- assign current = true -%}{%- endif %}
+    <li>
+      <a href="{{ post.url | relative_url }}" class="post-list-link{% if current %} current{% endif %}"{% if current %} aria-current="page"{% endif %}>
+        <span class="post-list-title">{{ post.title }}</span>
+        <span class="post-list-date">{{ post.date | date: "%b %-d, %Y" }}</span>
       </a>
-      {% endif %}
-    {% endfor %}
-  </div>
-</aside>
+    </li>
+    {%- endif -%}
+  {%- endfor %}
+</ul>
 
 <style>
-.blog-sidebar .list-group-item { border: none; border-radius: 0; padding: 0.75rem 0.75rem; }
-.blog-sidebar .list-group-item:hover { background: #f5f8ff; }
-.blog-sidebar h6 { font-size: 0.95rem; color: #012169; }
-.blog-sidebar p { margin: 0.2rem 0 0; }
-
-/* Mobile: remove sticky positioning to avoid scroll conflicts */
-@media (max-width: 768px) {
-  .blog-sidebar {
-    position: static !important;
-  }
+.post-list { list-style: none; margin: 0; padding: 0; }
+.post-list li + li { margin-top: 0.15rem; }
+.post-list-link {
+  display: block;
+  padding: 0.5rem 0.65rem;
+  border-left: 2px solid transparent;
+  border-radius: 0 6px 6px 0;
+  color: var(--dap-ink);
 }
+.post-list-link:hover { background: var(--dap-surface); text-decoration: none; color: var(--dap-navy); }
+.post-list-link.current { border-left-color: var(--dap-navy); background: var(--dap-surface); }
+.post-list-title { display: block; font-size: 0.9rem; font-weight: 600; line-height: 1.35; }
+.post-list-link.current .post-list-title { color: var(--dap-navy); }
+.post-list-date { display: block; font-size: 0.78rem; color: var(--dap-muted); margin-top: 0.15rem; }
 </style>

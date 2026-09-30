@@ -1,11 +1,4 @@
-.container {
-  max-width: 1000px;
-}
-
-
-h1, h2, h3, h4, h5, h6 {
-  margin-top: .75em;
-}
+/* Component styles. The frame, type scale and shared components are in site.css. */
 
 
 .callout-container {
@@ -34,161 +27,160 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 
-/* For member avatar cards */
-.card {
-  /* overflow: hidden; */
-  transition: transform 0.2s ease;
-}
+/* ------------------------------------------------------------ People page */
 
-.card:hover {
-  transform: scale(1.02);
+.people-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 2rem 1.25rem;
 }
-
-.card-img-container {
+.person { text-align: center; }
+.person-photo {
   position: relative;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-}
-
-.card-img-top {
-  width: 120px;
-  height: 120px;
-  object-fit: cover;
-  margin-top: 1rem;
-}
-
-.card-title {
-  min-height: 2.5em;
+  width: 112px;
+  height: 112px;
+  margin: 0 auto 0.75rem;
+  border-radius: 50%;
   overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  -webkit-box-orient: vertical;
-
-  /* Optional: clean look */
-  text-overflow: ellipsis;
-  white-space: normal;
+  background: var(--dap-surface);
 }
-
-/* For member avatar cards' overlay container */
-.overlay-bio {
+.person-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.person-bio {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(33, 33, 33, 0.75);
-  color: white;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  padding: 0.75em;
+  inset: 0;
   display: flex;
   align-items: center;
-  justify-content: center;
-  text-align: left;
-  font-size: 0.85em;
-  pointer-events: none;
+  padding: 0.9rem;
+  background: rgba(1, 33, 105, 0.88);
+  color: #fff;
+  font-size: 0.68rem;
+  line-height: 1.35;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  overflow: hidden;
 }
+.person-bio p { margin: 0; }
+.person-photo:hover .person-bio { opacity: 1; }
+.person-name { font-size: 0.95rem; font-weight: 600; line-height: 1.3; margin: 0 0 0.4rem; }
+.person-name a { color: var(--dap-ink); }
+.person-name a:hover { color: var(--dap-navy); }
+.person-fields { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.25rem; }
 
-.card-img-container:hover .overlay-bio {
-  opacity: 1;
-}
-
-.overlay-content {
-  pointer-events: auto;
-  max-height: 100%;
-  overflow-y: auto;
-  scrollbar-width: none;        /* Hide scrollbar :: Firefox */
-  -ms-overflow-style: none;     /* Hide scrollbar :: IE / Edge */
-}
-
-.overlay-content::-webkit-scrollbar {
-  display: none;                /* Hide scrollbar :: Chrome, Safari */
-}
-
-/* For member avatar cards' badge */
+/*
+ * Research-area badges. Each class names a color (--c); the badge is a soft tint
+ * of it with the text in a darker shade, so every field keeps its color without
+ * the page turning into a rainbow.
+ */
 .badge {
-  font-size: 0.75em;
-  border-radius: 0.75em;
-  padding: 0.3em 0.6em;
-  color: white;
+  --c: #6c757d;
   display: inline-block;
+  padding: 0.18em 0.55em;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1.4;
+  background: color-mix(in srgb, var(--c) 14%, #fff);
+  color: color-mix(in srgb, var(--c) 72%, #000);
 }
 
-.badge-indigo          { background-color: #24129b; }  /* Security */
-.badge-dark-blue       { background-color: #004080; }  /* Systems */
-.badge-light-blue      { background-color: #66b2ff; }  /* Software Eng */
-.badge-sky-blue        { background-color: #8ad3ef; }  /* Data Mgmt */
-.badge-steel-blue      { background-color: #46b4b0; }  /* Robotics */
+.badge-indigo          { --c: #24129b; }  /* Security */
+.badge-dark-blue       { --c: #004080; }  /* Systems */
+.badge-light-blue      { --c: #66b2ff; }  /* Software Eng */
+.badge-sky-blue        { --c: #8ad3ef; }  /* Data Mgmt */
+.badge-steel-blue      { --c: #46b4b0; }  /* Robotics */
 
-.badge-teal            { background-color: #008080; }  /* Causal Inference */
-.badge-green           { background-color: #28a745; }  /* ML */
-.badge-lime            { background-color: #a5d700; }  /* RL */
-.badge-forest-green    { background-color: #228b22; }  /* ML Theory */
-.badge-olive           { background-color: #6b8e23; }  /* Decision Making */
-.badge-mint            { background-color: #beef75; }  /* Pricing */
+.badge-teal            { --c: #008080; }  /* Causal Inference */
+.badge-green           { --c: #28a745; }  /* ML */
+.badge-lime            { --c: #a5d700; }  /* RL */
+.badge-forest-green    { --c: #228b22; }  /* ML Theory */
+.badge-olive           { --c: #6b8e23; }  /* Decision Making */
+.badge-mint            { --c: #beef75; }  /* Pricing */
 
-.badge-magenta         { background-color: #d63384; }  /* Human-AI */
-.badge-violet          { background-color: #8a2be2; }  /* NLP */
-.badge-light-purple    { background-color: #c3b1e1; } /* Vision */
-.badge-orchid          { background-color: #da70d6; }  /* Neuro-symbolic */
-.badge-fuchsia         { background-color: #ff77ff; }  /* HCI */
-.badge-dark-slate-blue { background-color: #483d8b; }  /* AI for Health */
+.badge-magenta         { --c: #d63384; }  /* Human-AI */
+.badge-violet          { --c: #8a2be2; }  /* NLP */
+.badge-light-purple    { --c: #c3b1e1; } /* Vision */
+.badge-orchid          { --c: #da70d6; }  /* Neuro-symbolic */
+.badge-fuchsia         { --c: #ff77ff; }  /* HCI */
+.badge-dark-slate-blue { --c: #483d8b; }  /* AI for Health */
 
 /* Academic Groups */
-.badge-gold            { background-color: #ffd700; color: black; }  /* CS */
-.badge-silver          { background-color: #c0c0c0; color: black; }  /* IEOR */
-.badge-orange          { background-color: #ff9500; color: black; }  /* CBS */
-.badge-aquamarine      { background-color: #7fffd4; color: black; }  /* DBMI */
+.badge-gold            { --c: #ffd700; }  /* CS */
+.badge-silver          { --c: #c0c0c0; }  /* IEOR */
+.badge-orange          { --c: #ff9500; }  /* CBS */
+.badge-aquamarine      { --c: #7fffd4; }  /* DBMI */
 
 /* Administrative and advisory */
-.badge-advisory       { background-color: #cc0000; }  /* Advisory Board */
-.badge-director        { background-color: #ff0000; }  /* Co-Directors */
+.badge-advisory       { --c: #cc0000; }  /* Advisory Board */
+.badge-director        { --c: #ff0000; }  /* Co-Directors */
 
 /* Fallback */
-.badge-default         { background-color: #6c757d; }  /* Neutral gray */
+.badge-default         { --c: #6c757d; }  /* Neutral gray */
 
 
-/* Base tag style. Dark-on-light by default so a category with no color below
-   stays legible; the colored variants opt into white text. */
+/* Event series tags: the same soft tint as the badges above, one color each. */
 .event-tag {
+  --c: #6b7280;
   display: inline-block;
-  padding: 0.25em 0.6em;
-  font-size: 0.8rem;
+  padding: 0.15em 0.6em;
+  font-size: 0.75rem;
   font-weight: 600;
-  border-radius: 9999px; /* fully rounded pill */
-  background-color: #e5e7eb;
-  color: #374151;
-  margin-left: 0.5em;
-  vertical-align: middle;
+  line-height: 1.4;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--c) 14%, #fff);
+  color: color-mix(in srgb, var(--c) 75%, #000);
+  white-space: nowrap;
 }
+.event-tag--entrepreneurship { --c: #cb4b16; }
+.event-tag--seminar { --c: #268bd2; }
+.event-tag--course { --c: #09b703; }
+.event-tag--workshop { --c: #2aa198; }
+.event-tag--ai-in-the-public-interest { --c: #d33682; } /* the series logo's heart */
 
-/* Category-specific colors */
-.event-tag--entrepreneurship,
-.event-tag--seminar,
-.event-tag--course,
-.event-tag--workshop,
-.event-tag--ai-in-the-public-interest {
-  color: #fff;
-}
+/* ----------------------------------------------------------- Event entries */
+/* Used on /events and /entrepreneurship (_includes/event-entry.html). */
 
-.event-tag--entrepreneurship {
-  background-color: #CB4B16; /* orange */
+/* One event: a date block, the details, and an optional image. */
+.event-item {
+  display: grid;
+  grid-template-columns: 4.25rem minmax(0, 1fr) auto;
+  gap: 0 1.5rem;
+  padding: 1.5rem 0;
+  border-top: 1px solid var(--dap-rule);
 }
+.event-date { text-align: center; line-height: 1.1; padding-top: 0.2rem; }
+.event-date .month { display: block; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--dap-navy); }
+.event-date .day { display: block; font-size: 1.6rem; font-weight: 700; color: var(--dap-ink); }
+.event-date .year { display: block; font-size: 0.72rem; color: var(--dap-muted); margin-top: 0.15rem; }
+.event-main { min-width: 0; max-width: var(--dap-prose); }
+.event-title { font-size: 1.15rem; margin: 0 0 0.3rem; }
+.event-title a { color: var(--dap-ink); }
+.event-title a:hover { color: var(--dap-navy); }
+.event-who { font-weight: 600; margin: 0 0 0.2rem; }
+.event-who a { color: var(--dap-link); }
+.event-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem 0.9rem; font-size: 0.875rem; color: var(--dap-muted); margin: 0 0 0.75rem; }
+.event-link-anchor { color: var(--dap-faint); }
+.event-link-anchor:hover { color: var(--dap-navy); }
+.event-body, .event-main .markdown-content { color: #2c3645; }
+.markdown-content > :last-child { margin-bottom: 0; }
+.event-links { display: flex; gap: 1rem; margin-top: 0.75rem; font-weight: 600; font-size: 0.9rem; }
+.event-media img { display: block; width: 180px; height: auto; border-radius: 6px; border: 1px solid var(--dap-rule); }
 
-.event-tag--seminar {
-  background-color: #268BD2; /* blue */
+.event-body.clamped {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
 }
+.expand-btn { background: none; border: 0; padding: 0; margin-top: 0.4rem; color: var(--dap-link); font-weight: 600; font-size: 0.9rem; cursor: pointer; }
+.expand-btn:hover { color: var(--dap-navy); text-decoration: underline; }
 
-.event-tag--course {
-  background-color: #09B703; /* green */
+@media (max-width: 767.98px) {
+  .event-item { grid-template-columns: 3.25rem minmax(0, 1fr); }
+  .event-media { grid-column: 2; margin-top: 0.75rem; }
+  .event-media img { width: 100%; max-width: 320px; }
 }
-
-.event-tag--workshop {
-  background-color: #2AA198; /* teal */
-}
-
-.event-tag--ai-in-the-public-interest {
-  background-color: #D33682; /* magenta, echoing the series logo's heart */
-}
+.event-role { font-weight: 400; color: var(--dap-muted); }

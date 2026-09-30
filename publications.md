@@ -3,19 +3,18 @@ layout: default
 title: Publications
 ---
 
-<h1 ><span id="pubs-title">All Publications</span>
-  <!--<small id="pubs-toggle">(<span>Show Selected</span>)</small>-->
-</h1>
-<div class="" style="margin-bottom:1.5em; ">
-  <span class="btn btn-sm tagbtn btn-primary tagbtn-selected" data-tag="all" >All</span>
-  <span class="btn btn-outline-secondary btn-sm tagbtn" data-tag="sys" >Agent-ready Systems</span>
-  <span class="btn btn-outline-secondary btn-sm tagbtn" data-tag="hac" >Human-agent Collaboration</span>
-  <span class="btn btn-outline-secondary btn-sm tagbtn" data-tag="ai" >Agent Intelligence</span>
-  <span class="btn btn-outline-secondary btn-sm tagbtn" data-tag="automation" >Automation</span>
-  <!--<span class="btn btn-outline-secondary btn-sm tagbtn" data-tag="benchmark" >Benchmarks</span>-->
-  <span class="btn btn-outline-secondary btn-sm tagbtn" data-tag="whitepaper" >White & Position Papers</span>
+<header class="page-header">
+  <h1 class="page-title">Publications</h1>
+  <p class="page-lede">Papers by DAPLab members, newest first. Lab members are in bold.</p>
+</header>
+
+<div class="chips" role="group" aria-label="Filter by topic" data-pub-filters>
+  <button type="button" class="chip" aria-pressed="true" data-tag="all">All</button>
+  <button type="button" class="chip" aria-pressed="false" data-tag="sys">Agent-ready Systems</button>
+  <button type="button" class="chip" aria-pressed="false" data-tag="hac">Human-agent Collaboration</button>
+  <button type="button" class="chip" aria-pressed="false" data-tag="ai">Agent Intelligence</button>
+  <button type="button" class="chip" aria-pressed="false" data-tag="automation">Automation</button>
+  <button type="button" class="chip" aria-pressed="false" data-tag="whitepaper">White &amp; Position Papers</button>
 </div>
-{% include pubs.html  %}
 
-
-
+{% include pubs.html %}
