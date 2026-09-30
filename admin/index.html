@@ -322,25 +322,30 @@ docs/admin-service-design.md.
       <h1 class="dap-title">Users</h1>
 
       <form id="role-form" class="dap-card" novalidate>
-        <h2 class="dap-card-title">Add a user</h2>
+        <h2 class="dap-card-title">Add users</h2>
+        <div class="mb-3">
+          <label class="form-label" for="role-emails">Columbia emails <span class="dap-req">*</span></label>
+          <textarea class="form-control" id="role-emails" name="emails" rows="5" required
+                    placeholder="uni1@columbia.edu, uni2@columbia.edu&#10;Jane Doe &lt;jd1234@columbia.edu&gt;"></textarea>
+          <div class="form-text">Paste one or many, separated however you like; names and brackets from a mailing
+            list are fine. Only @columbia.edu addresses can sign in, so others are skipped.</div>
+        </div>
         <div class="row g-3 align-items-end">
-          <div class="col-md-6">
-            <label class="form-label" for="role-email">Columbia email <span class="dap-req">*</span></label>
-            <input class="form-control" type="email" id="role-email" name="email" placeholder="uni@columbia.edu" required>
-          </div>
-          <div class="col-md-3">
+          <div class="col-md-4">
             <label class="form-label" for="role-level">Role</label>
             <select class="form-select" id="role-level" name="role">
               <option value="member">Member</option>
               <option value="admin">Admin</option>
             </select>
           </div>
-          <div class="col-md-3">
-            <button type="submit" class="btn dap-btn-primary w-100">Add</button>
+          <div class="col-md-4">
+            <button type="submit" class="btn dap-btn-primary w-100">Add users</button>
           </div>
         </div>
+        <div class="mt-3" data-result></div>
         <div class="form-text mt-2"><strong>Members</strong> add events and publications. <strong>Admins</strong> also
-          review and publish them, add people, and manage this list.</div>
+          review and publish them, add people, and manage this list. Adding someone who is already an admin as a
+          member leaves them an admin.</div>
       </form>
 
       <div class="dap-card">

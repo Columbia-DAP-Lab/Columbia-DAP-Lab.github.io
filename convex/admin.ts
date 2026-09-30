@@ -573,6 +573,71 @@ export const setRole = mutation({
   },
 });
 
+/** Longest list the Users tab accepts in one paste; a lab roster is well under this. */
+const MAX_USERS_PER_ADD = 500;
+
+/**
+ * Add a pasted list of people to the list, all with one role.
+ *
+ * Adding never takes anything away: someone already an admin stays an admin when
+ * the list is added as members. Addresses that cannot sign in (not columbia.edu)
+ * are reported rather than stored.
+ */
+export const addUsers = mutation({
+  args: {
+    emails: v.array(v.string()),
+    role: v.union(v.literal("member"), v.literal("admin")),
+  },
+  returns: v.object({
+    added: v.array(v.string()),
+    changed: v.array(v.string()),
+    unchanged: v.array(v.string()),
+    skipped: v.array(v.string()),
+  }),
+  handler: async (ctx, args) => {
+    const actor = await requireCapability(ctx, "admin");
+    if (args.emails.length > MAX_USERS_PER_ADD) {
+      throw new ConvexError(`Add at most ${MAX_USERS_PER_ADD} people at a time.`);
+    }
+
+    const result = { added: [] as string[], changed: [] as string[], unchanged: [] as string[], skipped: [] as string[] };
+    const seen = new Set<string>();
+    for (const raw of args.emails) {
+      const email = raw.trim().toLowerCase();
+      if (!email || seen.has(email)) continue;
+      seen.add(email);
+      if (!isColumbiaAddress(email)) {
+        result.skipped.push(email);
+        continue;
+      }
+
+      const existing = await ctx.db
+        .query("roles")
+        .withIndex("by_email", (q) => q.eq("email", email))
+        .unique();
+      if (existing === null) {
+        await ctx.db.insert("roles", { email, capabilities: [args.role], grantedBy: actor, grantedAt: Date.now() });
+        result.added.push(email);
+      } else if (existing.capabilities.includes("admin") || existing.capabilities.includes(args.role)) {
+        result.unchanged.push(email);
+        continue;
+      } else {
+        await ctx.db.patch("roles", existing._id, { capabilities: [args.role] });
+        result.changed.push(email);
+      }
+      await ctx.db.insert("revisions", {
+        table: "roles",
+        documentId: email,
+        action: existing === null ? "create" : "update",
+        actor,
+        at: Date.now(),
+        snapshot: { email, capabilities: [args.role] },
+      });
+    }
+    return result;
+  },
+});
+
 /**
  * Grant the first admin, from the command line:
  *

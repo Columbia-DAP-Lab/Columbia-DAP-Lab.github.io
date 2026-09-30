@@ -611,12 +611,25 @@ const renderLabMembers = (people) => {
   );
 };
 
+/** Every address in pasted text, whatever separates them ("Jane <jd1@columbia.edu>, …"). */
+const emailsIn = (text) => [...new Set((text.match(/[^\s<>,;:"'()[\]]+@[^\s<>,;:"'()[\]]+/g) ?? []).map((e) => e.toLowerCase()))];
+
+const plural = (n, word, many = `${word}s`) => `${n} ${n === 1 ? word : many}`;
+
 const roleForm = $("#role-form");
-roleForm.addEventListener("submit", async (event) => {
-  event.preventDefault();
-  if (!roleForm.reportValidity()) return;
-  await saveRole(roleForm.elements.email.value, roleForm.elements.role.value);
-  roleForm.reset();
+handleSubmit(roleForm, async () => {
+  const emails = emailsIn(roleForm.elements.emails.value);
+  if (emails.length === 0) throw new Error("No email addresses found in that text.");
+  const role = roleForm.elements.role.value;
+  const { added, changed, unchanged, skipped } = await client.mutation(api.admin.addUsers, { emails, role });
+  roleForm.elements.emails.value = skipped.join("\n");
+  const parts = [
+    added.length && `Added ${plural(added.length, "user")} as ${ROLE_LABELS[role].toLowerCase()}s.`,
+    changed.length && `Changed ${plural(changed.length, "user")} to ${ROLE_LABELS[role].toLowerCase()}.`,
+    unchanged.length && `${plural(unchanged.length, "user")} already had that role or higher.`,
+    skipped.length && `Skipped ${plural(skipped.length, "address", "addresses")} that ${skipped.length === 1 ? "is" : "are"} not @columbia.edu (left in the box above).`,
+  ].filter(Boolean);
+  return parts.join(" ");
 });
 
 // ------------------------------------------------------ who is signed in
