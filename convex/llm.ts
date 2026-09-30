@@ -97,6 +97,11 @@ export const generateStructured = async (request: StructuredRequest): Promise<St
       if (error.status === 429 || error.status >= 500) {
         throw new ConvexError("The model is busy. Try again in a minute.");
       }
+      if (error.status === 403 && error.message.includes("SERVICE_DISABLED")) {
+        // The key is fine; the Google Cloud project has not enabled the API.
+        console.error("Vertex AI API is not enabled on the key's project", error.message);
+        throw new ConvexError("Paste-to-fill is not switched on in Google Cloud yet (Vertex AI API disabled).");
+      }
       if (error.status === 401 || error.status === 403) {
         console.error("Google Cloud rejected GEMINI_API_KEY", error.status, error.message);
         throw new ConvexError("Paste-to-fill is misconfigured; ask an admin to check the API key.");
