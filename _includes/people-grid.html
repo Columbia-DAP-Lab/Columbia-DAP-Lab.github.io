@@ -1,13 +1,14 @@
 {%- comment -%}
 One group on the People page: a section heading and a grid of people, each with
-a photo, name (linked to their homepage) and research-area badges. Faculty bios
-appear over the photo on hover.
-Parameters: category (as in the data), title (optional heading), show_bio.
+a photo, name (linked to their homepage) and, where wanted, badges. Anyone with a
+bio shows it in a tooltip on hover or keyboard focus.
+Parameters: category (as in the data), title (optional heading), show_fields
+(default true; the student groups leave their badges off).
 {%- endcomment -%}
 {% assign field_colors = site.data.field_colors %}
 {% assign people = site.data.people | where: "category", include.category %}
 {% assign category_title = include.title | default: include.category %}
-{% assign show_bio = include.show_bio | default: false %}
+{% assign show_fields = true %}{% if include.show_fields == false %}{% assign show_fields = false %}{% endif %}
 {% assign fallback_image = "/files/images/avatar/avatar-default.png" | relative_url %}
 {% if include.category != "Faculty" and people %}
   {% assign people = people | sort: "name" %}
@@ -21,17 +22,19 @@ Parameters: category (as in the data), title (optional heading), show_bio.
   </div>
   <ul class="people-grid">
     {%- for person in people %}
-    <li class="person">
+    {%- assign bio = person.bio | strip %}
+    {%- capture tip_id %}bio-{{ person.name | slugify }}{% endcapture %}
+    <li class="person{% if bio != '' %} has-bio{% endif %}">
       <div class="person-photo">
         <img src="{{ person.image | default: fallback_image }}" alt="" loading="lazy">
-        {%- if show_bio and person.bio %}
-        <div class="person-bio"><p>{{ person.bio }}</p></div>
-        {%- endif %}
       </div>
       <h3 class="person-name">
-        {%- if person.homepage %}<a href="{{ person.homepage }}">{{ person.name }}</a>{% else %}{{ person.name }}{% endif -%}
+        {%- if person.homepage %}<a href="{{ person.homepage }}"{% if bio != '' %} aria-describedby="{{ tip_id }}"{% endif %}>{{ person.name }}</a>{% else %}{{ person.name }}{% endif -%}
       </h3>
-      {%- if person.field %}
+      {%- if bio != '' %}
+      <div class="person-tip" id="{{ tip_id }}" role="tooltip">{{ bio }}</div>
+      {%- endif %}
+      {%- if show_fields and person.field %}
       <div class="person-fields">
         {%- for tag in person.field %}
         {%- assign color = field_colors[tag] | default: field_colors["Default"] %}
