@@ -8,7 +8,7 @@ title: Positions
   <p class="page-lede">Openings for students and postdocs who want to work on trustworthy agent automation.</p>
 </header>
 
-<div class="prose" markdown="1">
+<div class="prose prose-full" markdown="1">
 
 ## Undergraduate and M.S. students
 

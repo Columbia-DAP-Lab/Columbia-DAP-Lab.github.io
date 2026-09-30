@@ -137,6 +137,8 @@ h1, h2, h3, h4, h5, h6 {
 
 /* A centered reading column for paragraphs of text. */
 .prose { max-width: var(--dap-prose); margin-inline: auto; }
+/* Prose typography across the whole frame, for text pages that sit beside list pages. */
+.prose.prose-full { max-width: none; }
 .prose > :first-child { margin-top: 0; }
 .prose p, .prose li { line-height: 1.7; }
 .prose h2 { font-size: 1.45rem; margin: 2.5rem 0 0.75rem; }
