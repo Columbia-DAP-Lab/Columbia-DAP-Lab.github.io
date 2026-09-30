@@ -9,18 +9,21 @@ import { env } from "./_generated/server";
  * parsed JSON that matches the schema. Nothing else in the app imports a provider
  * SDK, so changing provider is a change to this file alone.
  *
- * Today this is OpenAI's GPT-6 Luna on Amazon Bedrock, called through Bedrock's
- * OpenAI-compatible Chat Completions API with a long-term Bedrock API key as the
- * bearer token. The OpenAI SDK needs only fetch, so this runs in the default
- * Convex runtime.
+ * Today this is OpenAI's GPT-6 Luna, through the Chat Completions API with a strict
+ * JSON-schema response format. The OpenAI SDK needs only fetch, so this runs in the
+ * default Convex runtime. Any OpenAI-compatible endpoint works by pointing
+ * LLM_BASE_URL at it:
  *
- * It uses the bedrock-runtime endpoint, not bedrock-mantle: the model card lists
- * structured outputs for bedrock-runtime only, and the forms depend on them. On
- * that endpoint the model is named by a cross-Region inference profile
- * (`us.openai.gpt-6-luna`), not the bare model id.
+ *   OpenAI directly (the default):
+ *     npx convex env set LLM_API_KEY <sk-... key from platform.openai.com>
  *
- *   npx convex env set BEDROCK_API_KEY <long-term Bedrock API key>
- *   npx convex env set BEDROCK_MODEL us.openai.gpt-6-sol    # optional; see MODEL
+ *   Amazon Bedrock, with a long-term Bedrock API key (ABSK...):
+ *     npx convex env set LLM_API_KEY <Bedrock API key>
+ *     npx convex env set LLM_BASE_URL https://bedrock-runtime.us-east-1.amazonaws.com/openai/v1
+ *     npx convex env set LLM_MODEL us.openai.gpt-6-luna
+ *   Use bedrock-runtime rather than bedrock-mantle: Bedrock lists structured
+ *   outputs for this model on runtime only, and there the model is named by a
+ *   cross-Region inference profile rather than the bare model id.
  *
  * (Gemini on Vertex AI was tried first; Columbia's Google Cloud organization
  * policy iam.managed.disableServiceAccountApiKeyCreation rules out the API key it
@@ -39,16 +42,15 @@ import { env } from "./_generated/server";
  *      keeping the refusal and truncation checks as errors for the caller.
  *   2. Add "use node"; to the top of convex/extract.ts, which exports only an
  *      action for exactly this reason.
- *   3. Remove the BEDROCK_* variables from convex/convex.config.ts and the
+ *   3. Remove the LLM_* variables from convex/convex.config.ts and the
  *      deployment.
  */
 
 /**
  * Luna is the family's model for extraction and other focused, high-volume work,
- * and the person is waiting on it. BEDROCK_MODEL overrides it without a deploy.
+ * and the person is waiting on it. LLM_MODEL overrides it without a deploy.
  */
-const MODEL = "us.openai.gpt-6-luna";
-const BASE_URL = "https://bedrock-runtime.us-east-1.amazonaws.com/openai/v1";
+const MODEL = "gpt-6-luna";
 
 export type StructuredRequest = {
   system: string;
@@ -65,15 +67,16 @@ export type StructuredResult = {
   outputTokens: number;
 };
 
-export const isConfigured = () => Boolean(env.BEDROCK_API_KEY);
+export const isConfigured = () => Boolean(env.LLM_API_KEY);
 
 export const generateStructured = async (request: StructuredRequest): Promise<StructuredResult> => {
-  if (!env.BEDROCK_API_KEY) {
+  if (!env.LLM_API_KEY) {
     throw new ConvexError("Paste-to-fill is not set up on this deployment yet.");
   }
-  // Trimmed: a key pasted with a trailing newline fails Bedrock's prefix check.
-  const client = new OpenAI({ apiKey: env.BEDROCK_API_KEY.trim(), baseURL: BASE_URL });
-  const model = env.BEDROCK_MODEL || MODEL;
+  // Trimmed: a key pasted with a trailing newline fails the provider's format check.
+  // An unset base URL means OpenAI's own API.
+  const client = new OpenAI({ apiKey: env.LLM_API_KEY.trim(), baseURL: env.LLM_BASE_URL || undefined });
+  const model = env.LLM_MODEL || MODEL;
 
   let completion;
   try {
@@ -94,12 +97,12 @@ export const generateStructured = async (request: StructuredRequest): Promise<St
       throw new ConvexError("The model is busy. Try again in a minute.");
     }
     if (error instanceof OpenAI.AuthenticationError || error instanceof OpenAI.PermissionDeniedError) {
-      console.error("Bedrock rejected BEDROCK_API_KEY", error.status, error.message);
+      console.error("The model provider rejected LLM_API_KEY", error.status, error.message);
       throw new ConvexError("Paste-to-fill is misconfigured; ask an admin to check the API key.");
     }
     if (error instanceof OpenAI.APIError) {
       // A 400 here is most likely the schema or the model id; the log says which.
-      console.error("Bedrock API error", error.status, error.message);
+      console.error("Model API error", error.status, error.message);
       throw new ConvexError("Could not read the text. Try again, or fill the form by hand.");
     }
     throw error;

@@ -30,10 +30,11 @@ import type { DataModel } from "./dataModel.js";
 type Env = {
   readonly CONVEX_CLOUD_URL: string;
   readonly CONVEX_SITE_URL: string;
-  readonly BEDROCK_API_KEY: string | undefined;
-  readonly BEDROCK_MODEL: string | undefined;
   readonly GITHUB_DISPATCH_TOKEN: string | undefined;
   readonly GITHUB_REPOSITORY: string | undefined;
+  readonly LLM_API_KEY: string | undefined;
+  readonly LLM_BASE_URL: string | undefined;
+  readonly LLM_MODEL: string | undefined;
 };
 
 /**
