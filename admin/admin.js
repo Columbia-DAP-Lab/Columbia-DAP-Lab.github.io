@@ -316,7 +316,12 @@ const pasteToFill = (kind, form) => {
     status.className = tone === "muted" ? "dap-muted" : `text-${tone}`;
   };
 
-  const show = (index) => {
+  /**
+   * Load a draft into the form. `scroll` brings the form into view after an
+   * extraction or a submit; picking from the list leaves the page where it is,
+   * so the list stays under the pointer.
+   */
+  const show = (index, { scroll = true } = {}) => {
     current = index;
     const { draft, warnings: notes } = items[index];
     FILL[kind](form, draft);
@@ -327,7 +332,7 @@ const pasteToFill = (kind, form) => {
       el("ul", {}, notes.map((note) => el("li", {}, note))),
     );
     renderList();
-    form.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (scroll) form.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   const renderList = () => {
@@ -341,7 +346,7 @@ const pasteToFill = (kind, form) => {
             type: "button",
             class: `list-group-item list-group-item-action${index === current ? " active" : ""}`,
             disabled: done.has(index),
-            onclick: () => show(index),
+            onclick: () => show(index, { scroll: false }),
           },
           `${index + 1}. ${draftTitle(item.draft)}`,
           done.has(index) && el("span", { class: "badge text-bg-success ms-2" }, "submitted"),
