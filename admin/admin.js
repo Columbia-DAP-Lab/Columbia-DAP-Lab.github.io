@@ -300,19 +300,21 @@ const FILL = {
 const draftTitle = (draft) => draft.title ?? draft.name ?? "Untitled";
 
 const pasteToFill = (kind, form) => {
-  const textarea = el("textarea", {
-    class: "form-control mb-2",
-    rows: 6,
-    placeholder: "Paste an announcement, an email, a web page, a CV or a list. Nothing is submitted until you press Submit below.",
-  });
-  const button = el("button", { type: "button", class: "btn btn-outline-primary" }, "Fill the form");
-  const status = el("span", { class: "ms-2" });
-  const draftList = el("div", { class: "list-group mt-3" });
-  const warnings = el("div", { class: "alert alert-warning mt-3 mb-0", hidden: true });
+  const card = $(`[data-quick-add="${kind}"]`);
+  const textarea = $("[data-quick-text]", card);
+  const button = $("[data-quick-extract]", card);
+  const status = $("[data-quick-status]", card);
+  const draftList = $("[data-quick-drafts]", card);
+  const warnings = $("[data-quick-warnings]", card);
 
   let items = [];
   let current = -1;
   const done = new Set();
+
+  const setStatus = (text, tone = "muted") => {
+    status.textContent = text;
+    status.className = tone === "muted" ? "dap-muted" : `text-${tone}`;
+  };
 
   const show = (index) => {
     current = index;
@@ -322,9 +324,10 @@ const pasteToFill = (kind, form) => {
     warnings.hidden = notes.length === 0;
     warnings.replaceChildren(
       el("strong", {}, "Check before submitting:"),
-      el("ul", { class: "mb-0" }, notes.map((note) => el("li", {}, note))),
+      el("ul", {}, notes.map((note) => el("li", {}, note))),
     );
     renderList();
+    form.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   const renderList = () => {
@@ -349,25 +352,23 @@ const pasteToFill = (kind, form) => {
 
   button.addEventListener("click", async () => {
     button.disabled = true;
-    status.className = "ms-2 text-muted";
-    status.textContent = "Reading… this can take up to a minute.";
+    setStatus("Reading… this can take up to a minute.");
     try {
       ({ items } = await client.action(api.extract.fromText, { kind, text: textarea.value }));
       done.clear();
       if (items.length === 0) {
-        status.className = "ms-2 text-danger";
-        status.textContent = `Couldn't find a ${kind} in that text.`;
-        renderList();
+        setStatus(`Couldn't find a ${kind} in that text.`, "danger");
         warnings.hidden = true;
+        renderList();
         return;
       }
-      status.className = "ms-2 text-success";
-      status.textContent =
-        items.length === 1 ? "Filled in below. Check it, then submit." : `Found ${items.length}. The first is filled in below.`;
+      setStatus(
+        items.length === 1 ? "Filled in below. Check it, then submit." : `Found ${items.length}. The first is filled in below.`,
+        "success",
+      );
       show(0);
     } catch (error) {
-      status.className = "ms-2 text-danger";
-      status.textContent = message(error);
+      setStatus(message(error), "danger");
     } finally {
       button.disabled = false;
     }
@@ -384,15 +385,6 @@ const pasteToFill = (kind, form) => {
       renderList();
     }
   });
-
-  form.before(
-    el(
-      "details",
-      { class: "card card-body mb-4" },
-      el("summary", { class: "fw-semibold" }, "Paste text to fill this form"),
-      el("div", { class: "mt-3" }, textarea, button, status, draftList, warnings),
-    ),
-  );
 };
 
 pasteToFill("event", eventForm);
@@ -403,7 +395,7 @@ pasteToFill("person", personForm);
 
 const renderMine = ({ events, publications, people }) => {
   const list = (heading, rows) => [
-    el("h5", { class: "mt-3" }, heading),
+    el("h2", { class: "dap-section" }, heading),
     rows.length === 0
       ? el("p", { class: "text-muted" }, "None yet.")
       : el(
@@ -462,7 +454,7 @@ const link = (href) => href && el("a", { href, target: "_blank", rel: "noopener 
 const renderEvent = (row) =>
   el(
     "div",
-    { class: "card card-body mb-3 queue-item" },
+    { class: "queue-item" },
     el(
       "div",
       { class: "d-flex gap-3" },
@@ -470,7 +462,7 @@ const renderEvent = (row) =>
       el(
         "div",
         { class: "flex-grow-1" },
-        el("h5", {}, row.title),
+        el("h3", {}, row.title),
         field("Series", row.series),
         field("Date", row.endDate ? `${row.startDate} – ${row.endDate}` : row.startDate),
         field("Time", row.timeLabel),
@@ -492,8 +484,8 @@ const renderEvent = (row) =>
 const renderPublication = (row) =>
   el(
     "div",
-    { class: "card card-body mb-3 queue-item" },
-    el("h5", {}, row.title),
+    { class: "queue-item" },
+    el("h3", {}, row.title),
     field("Authors", row.authors.join(", ")),
     field("Venue", row.venue),
     field("Date", row.pubDate),
@@ -518,7 +510,7 @@ const CATEGORY_LABELS = {
 const renderPerson = (row) =>
   el(
     "div",
-    { class: "card card-body mb-3 queue-item" },
+    { class: "queue-item" },
     el(
       "div",
       { class: "d-flex gap-3" },
@@ -526,7 +518,7 @@ const renderPerson = (row) =>
       el(
         "div",
         { class: "flex-grow-1" },
-        el("h5", {}, row.name),
+        el("h3", {}, row.name),
         field("Group", CATEGORY_LABELS[row.category] ?? row.category),
         field("Title", row.title),
         field("Affiliation", row.affiliation),
@@ -551,46 +543,80 @@ const renderQueue = (table, rows, render) => {
   );
 };
 
-// ------------------------------------------------------------------- roles
+// ------------------------------------------------------------------- users
+//
+// Two roles. Members add events and publications; admins also review, add
+// people, and manage this list. Current lab members on the People page are
+// members without being added (convex/authz.ts); the list below shows them.
 
-const roleForm = $("#role-form");
-const editRole = (role) => {
-  roleForm.elements.email.value = role.email;
-  for (const box of $$("#role-capabilities input")) box.checked = role.capabilities.includes(box.value);
-  roleForm.elements.email.focus();
+const ROLE_LABELS = { member: "Member", admin: "Admin" };
+
+/** A row's role, for the select; older fine-grained grants read as what they allow. */
+const roleOf = (capabilities) => (capabilities.includes("admin") ? "admin" : "member");
+
+const saveRole = async (email, role) => {
+  try {
+    await client.mutation(api.admin.setRole, { email, capabilities: role ? [role] : [] });
+    showStatus(null);
+  } catch (error) {
+    showStatus(message(error));
+  }
 };
 
 const renderRoles = (roles) =>
   $("#roles").replaceChildren(
     ...roles
       .sort((a, b) => a.email.localeCompare(b.email))
-      .map((role) =>
-        el(
+      .map((role) => {
+        const select = el(
+          "select",
+          { class: "form-select form-select-sm", "aria-label": `Role for ${role.email}` },
+          ...Object.entries(ROLE_LABELS).map(([value, label]) =>
+            el("option", { value, selected: roleOf(role.capabilities) === value }, label),
+          ),
+        );
+        select.addEventListener("change", () => saveRole(role.email, select.value));
+        return el(
           "tr",
           {},
           el("td", {}, role.email),
-          el("td", {}, role.capabilities.join(", ")),
-          el("td", { class: "text-muted" }, role.grantedBy),
+          el("td", {}, select),
+          el("td", { class: "dap-muted" }, role.grantedBy),
           el(
             "td",
-            {},
-            el("button", { type: "button", class: "btn btn-sm btn-link", onclick: () => editRole(role) }, "Edit"),
+            { class: "text-end" },
+            el(
+              "button",
+              {
+                type: "button",
+                class: "btn btn-link dap-remove",
+                onclick: () => {
+                  if (confirm(`Remove ${role.email}? They will no longer be able to sign in here, unless they are on the People page.`)) {
+                    saveRole(role.email, null);
+                  }
+                },
+              },
+              "Remove",
+            ),
           ),
-        ),
-      ),
+        );
+      }),
   );
 
+const CATEGORY_SHORT = { faculty: "Faculty", postdoc: "Postdoc", phd: "PhD", student: "Student", staff: "Staff" };
+const renderLabMembers = (people) => {
+  $("[data-lab-count]").textContent = people.length || "";
+  $("#lab-members").replaceChildren(
+    ...people.map((p) => el("div", {}, p.name, el("span", { class: "dap-muted" }, ` · ${CATEGORY_SHORT[p.category] ?? p.category}`))),
+  );
+};
+
+const roleForm = $("#role-form");
 roleForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   if (!roleForm.reportValidity()) return;
-  const capabilities = $$("#role-capabilities input:checked").map((box) => box.value);
-  try {
-    await client.mutation(api.admin.setRole, { email: roleForm.elements.email.value, capabilities });
-    roleForm.reset();
-    showStatus(null);
-  } catch (error) {
-    showStatus(message(error));
-  }
+  await saveRole(roleForm.elements.email.value, roleForm.elements.role.value);
+  roleForm.reset();
 });
 
 // ------------------------------------------------------ who is signed in
@@ -614,6 +640,13 @@ const renderMe = (me) => {
     auth?.signOut();
   }
 
+  // A Columbia account that is not on the list: say who to ask, and sign it out
+  // so the next person at this browser starts clean.
+  if (me.notOnList) {
+    showStatus(`${me.notOnList} is not on the DAPLab list yet. Ask a lab admin to add you.`);
+    auth?.signOut();
+  }
+
   const signedIn = me.email !== null;
   $("#signed-out").hidden = signedIn;
   $("#signed-in").hidden = !signedIn;
@@ -621,6 +654,9 @@ const renderMe = (me) => {
   if (!signedIn) return;
 
   $("[data-email]").textContent = me.email;
+  $("[data-role]").textContent = me.capabilities.includes("admin") ? "Admin" : "Member";
+  $("[data-role]").title =
+    me.via === "people" ? `Signed in as a lab member, matched to ${me.person} on the People page.` : "";
 
   for (const node of $$("[data-needs]")) node.hidden = !can(me.capabilities, node.dataset.needs);
   // Leave a tab the user just lost access to.
@@ -639,7 +675,10 @@ const renderMe = (me) => {
       renderQueue("publications", rows, renderPublication),
     );
   }
-  if (me.capabilities.includes("admin")) subscribe(api.admin.listRoles, {}, renderRoles);
+  if (me.capabilities.includes("admin")) {
+    subscribe(api.admin.listRoles, {}, renderRoles);
+    subscribe(api.admin.labMembers, {}, renderLabMembers);
+  }
 };
 
 /** Set once Google sign-in has loaded; renderMe may run before that. */

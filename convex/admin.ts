@@ -250,7 +250,8 @@ export const submitPerson = mutation({
   },
   returns: v.id("people"),
   handler: async (ctx, args) => {
-    const submitter = await requireSubmitter(ctx);
+    // Profiles are the People page itself, so adding one is an admin's call.
+    const submitter = await requireCapability(ctx, "people");
     const name = args.name.trim();
     if (!name) throw new ConvexError("A profile needs a name.");
 
@@ -496,6 +497,26 @@ export const setStatus = mutation({
 
 // --------------------------------------------------------------------- roles
 
+/**
+ * Current lab members on the People page, who can sign in as members without
+ * being added (see accessFor in convex/authz.ts), for the Users tab.
+ */
+export const labMembers = query({
+  args: {},
+  returns: v.array(v.object({ name: v.string(), category: v.string() })),
+  handler: async (ctx) => {
+    await requireCapability(ctx, "admin");
+    const rows = await ctx.db
+      .query("people")
+      .withIndex("by_status_and_category", (q) => q.eq("status", "published"))
+      .take(2000);
+    return rows
+      .filter((p) => !p.hidden && p.category !== "alum")
+      .map((p) => ({ name: p.name, category: p.category }))
+      .sort((a, b) => a.name.localeCompare(b.name));
+  },
+});
+
 export const listRoles = query({
   args: {},
   returns: v.array(schema.doc("roles")),
@@ -521,6 +542,12 @@ export const setRole = mutation({
       .withIndex("by_email", (q) => q.eq("email", email))
       .unique();
 
+    // Guard against an admin removing or demoting themselves and locking everyone
+    // out; bootstrapAdmin is an internal escape hatch, not a UI.
+    if (email === actor && !args.capabilities.includes("admin")) {
+      throw new ConvexError("You cannot remove your own admin role. Ask another admin.");
+    }
+
     if (args.capabilities.length === 0) {
       if (existing !== null) await ctx.db.delete("roles", existing._id);
     } else if (existing === null) {
@@ -531,11 +558,6 @@ export const setRole = mutation({
         grantedAt: Date.now(),
       });
     } else {
-      // Guard against an admin removing their own last admin grant and locking
-      // everyone out; bootstrapAdmin is an internal escape hatch, not a UI.
-      if (email === actor && !args.capabilities.includes("admin")) {
-        throw new ConvexError("You cannot remove your own admin capability.");
-      }
       await ctx.db.patch("roles", existing._id, { capabilities: args.capabilities });
     }
 

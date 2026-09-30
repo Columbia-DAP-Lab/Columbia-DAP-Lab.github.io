@@ -1,0 +1,16 @@
+{%- comment -%}
+The "Quick add" card at the top of each admin form: paste text, and the model's
+reading of it fills the form below (admin/admin.js, convex/extract.ts).
+Parameters: kind (event | publication | person), placeholder.
+{%- endcomment -%}
+<div class="dap-card" data-quick-add="{{ include.kind }}">
+  <h2 class="dap-card-title">Quick add</h2>
+  <textarea class="form-control mb-3" rows="6" placeholder="{{ include.placeholder }}" data-quick-text></textarea>
+  <div class="d-flex align-items-center flex-wrap gap-2">
+    <button type="button" class="btn dap-btn-quiet" data-quick-extract>Extract into form</button>
+    <span class="dap-muted" data-quick-status></span>
+  </div>
+  <div class="list-group mt-3" data-quick-drafts hidden></div>
+  <div class="dap-warnings mt-3" data-quick-warnings hidden></div>
+  <div class="form-text mt-2">Nothing is submitted until you check the form and press Submit.</div>
+</div>

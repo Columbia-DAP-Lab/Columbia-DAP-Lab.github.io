@@ -374,6 +374,7 @@ export default defineSchema({
     email: v.string(), // lowercased
     capabilities: v.array(
       v.union(
+        v.literal("member"), // on the list: may submit events and publications
         v.literal("events"),
         v.literal("publications"),
         v.literal("people"),

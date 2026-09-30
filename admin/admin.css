@@ -1,0 +1,246 @@
+/*
+ * The admin page. Laid out like CAIL's submission form — light panels, small
+ * uppercase section labels, generous inputs — in DAPLab's navy, the color the
+ * rest of the site uses for its callouts (files/css/style.css).
+ */
+
+#admin {
+  --dap-navy: #00206a;
+  --dap-navy-dark: #001750;
+  --dap-navy-tint: #e8edf7;
+  --dap-ink: #16202e;
+  --dap-muted: #5b6b80;
+  --dap-panel: #f3f6fa;
+  --dap-border: #dce3ec;
+  --dap-focus: rgba(0, 32, 106, 0.18);
+  color: var(--dap-ink);
+  max-width: 880px;
+  margin: 0 auto 4rem;
+}
+
+#admin [hidden] { display: none !important; }
+
+/* ------------------------------------------------------------------ chrome */
+
+.dap-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.dap-eyebrow {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--dap-navy);
+}
+
+.dap-muted { color: var(--dap-muted); }
+
+.dap-role {
+  display: inline-block;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  background: var(--dap-navy-tint);
+  color: var(--dap-navy);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.dap-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  border-bottom: 1px solid var(--dap-border);
+  margin-bottom: 1.25rem;
+}
+
+.dap-tab {
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  padding: 0.6rem 0.9rem;
+  margin-bottom: -1px;
+  font-weight: 600;
+  color: var(--dap-muted);
+}
+.dap-tab:hover { color: var(--dap-navy); }
+.dap-tab.active { color: var(--dap-navy); border-bottom-color: var(--dap-navy); }
+
+.dap-count {
+  display: inline-block;
+  min-width: 1.4em;
+  padding: 0 0.4em;
+  border-radius: 999px;
+  background: var(--dap-navy);
+  color: #fff;
+  font-size: 0.75rem;
+  text-align: center;
+}
+.dap-count:empty { display: none; }
+
+.dap-note {
+  font-size: 0.875rem;
+  color: var(--dap-muted);
+  margin-bottom: 0.5rem;
+}
+
+.dap-title {
+  font-size: 2.6rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0.75rem 0 1.25rem;
+}
+
+.dap-section {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 2rem 0 1rem;
+}
+
+/* ------------------------------------------------------------------ panels */
+
+.dap-card {
+  background: var(--dap-panel);
+  border: 1px solid var(--dap-border);
+  border-radius: 8px;
+  padding: 1.5rem 2rem 1.75rem;
+  margin: 0 0 2rem;
+  min-width: 0; /* fieldsets otherwise refuse to shrink */
+}
+
+/* Section labels: on the border for form sections, as a heading elsewhere. */
+.dap-card > legend,
+.dap-card-title {
+  float: none;
+  width: auto;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #44546a;
+  margin: 0 0 1rem;
+}
+.dap-card > legend {
+  padding: 0 0.6rem;
+  margin: 0 0 0.75rem -0.6rem;
+}
+fieldset.dap-card { padding-top: 1rem; }
+
+.dap-subcard {
+  background: #fff;
+  border: 1px solid var(--dap-border);
+  border-radius: 8px;
+  padding: 1.25rem 1.25rem 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.dap-signin p { max-width: 38rem; }
+
+/* ------------------------------------------------------------------ fields */
+
+#admin .form-label {
+  font-weight: 700;
+  color: var(--dap-ink);
+  margin-bottom: 0.4rem;
+}
+
+#admin .form-control,
+#admin .form-select {
+  border: 1px solid var(--dap-border);
+  border-radius: 6px;
+  padding: 0.7rem 0.85rem;
+  font-size: 1rem;
+  background-color: #fff;
+}
+#admin .form-select { padding-right: 2.5rem; }
+#admin .form-control:focus,
+#admin .form-select:focus {
+  border-color: var(--dap-navy);
+  box-shadow: 0 0 0 0.2rem var(--dap-focus);
+}
+#admin .form-control::placeholder { color: #8a97a8; }
+#admin .form-text { color: var(--dap-muted); }
+
+.dap-req { color: var(--dap-navy); }
+
+.dap-checks {
+  columns: 3 12rem;
+  background: #fff;
+  border: 1px solid var(--dap-border);
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+}
+#admin .form-check-input:checked { background-color: var(--dap-navy); border-color: var(--dap-navy); }
+#admin .form-check-input:focus { box-shadow: 0 0 0 0.2rem var(--dap-focus); }
+
+/* ----------------------------------------------------------------- buttons */
+
+.dap-btn-primary {
+  background: var(--dap-navy);
+  border: 1px solid var(--dap-navy);
+  color: #fff;
+  font-weight: 700;
+  padding: 0.7rem 1.4rem;
+  border-radius: 6px;
+}
+.dap-btn-primary:hover,
+.dap-btn-primary:focus { background: var(--dap-navy-dark); border-color: var(--dap-navy-dark); color: #fff; }
+.dap-btn-primary:disabled { background: #7d8db0; border-color: #7d8db0; }
+
+.dap-btn-quiet {
+  background: var(--dap-panel);
+  border: 1px solid var(--dap-border);
+  color: var(--dap-navy);
+  font-weight: 700;
+  padding: 0.65rem 1.2rem;
+  border-radius: 6px;
+}
+.dap-card .dap-btn-quiet { background: #eef2f8; }
+.dap-btn-quiet:hover,
+.dap-btn-quiet:focus { background: var(--dap-navy-tint); border-color: #c5d0e3; color: var(--dap-navy); }
+.btn-sm.dap-btn-quiet { padding: 0.25rem 0.75rem; }
+
+.dap-remove { color: #a4262c; padding-left: 0; font-weight: 600; }
+
+.dap-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* ----------------------------------------------------------- quick add, review */
+
+.dap-warnings {
+  background: #fff8e6;
+  border: 1px solid #f1d58a;
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+}
+.dap-warnings ul { margin: 0.25rem 0 0; padding-left: 1.2rem; }
+
+#admin .list-group-item.active { background: var(--dap-navy); border-color: var(--dap-navy); }
+
+.queue-item {
+  background: #fff;
+  border: 1px solid var(--dap-border);
+  border-radius: 8px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1rem;
+}
+.queue-item img { max-width: 160px; max-height: 120px; object-fit: cover; border-radius: 6px; }
+.queue-item h3 { font-size: 1.15rem; font-weight: 700; margin: 0 0 0.5rem; }
+pre.body { white-space: pre-wrap; font-family: inherit; margin: 0.5rem 0 0; }
+
+.dap-table { background: transparent; }
+.dap-table th { color: var(--dap-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; }
+.dap-table td { vertical-align: middle; }
+.dap-table .form-select { padding-top: 0.35rem; padding-bottom: 0.35rem; }
+
+.dap-names { columns: 3 12rem; font-size: 0.9rem; }
+.dap-names div { break-inside: avoid; padding: 0.1rem 0; }
