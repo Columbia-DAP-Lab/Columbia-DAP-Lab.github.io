@@ -16,9 +16,10 @@ import type * as deployHook from "../deployHook.js";
 import type * as extract from "../extract.js";
 import type * as extractSupport from "../extractSupport.js";
 import type * as http from "../http.js";
+import type * as imageMigration from "../imageMigration.js";
 import type * as llm from "../llm.js";
-import type * as migrate from "../migrate.js";
 import type * as profiles from "../profiles.js";
+import type * as projectAdmin from "../projectAdmin.js";
 import type * as vocabulary from "../vocabulary.js";
 
 import type {
@@ -36,9 +37,10 @@ declare const fullApi: ApiFromModules<{
   extract: typeof extract;
   extractSupport: typeof extractSupport;
   http: typeof http;
+  imageMigration: typeof imageMigration;
   llm: typeof llm;
-  migrate: typeof migrate;
   profiles: typeof profiles;
+  projectAdmin: typeof projectAdmin;
   vocabulary: typeof vocabulary;
 }>;
 

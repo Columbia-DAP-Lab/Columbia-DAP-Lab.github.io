@@ -19,6 +19,10 @@ collections:
     permalink: /benchmarks/:name/
 include:
   - _projects  # Include images from _projects in the build
+# Images downloaded from Convex during the build (_plugins/convex_content.rb); the
+# plugin publishes them itself, and the watcher must not rebuild when they appear.
+exclude:
+  - .convex-media
 defaults:
   - scope:
       path: ""
@@ -32,12 +36,17 @@ defaults:
       layout: "benchmark"
 ug_ms_application_url: "https://forms.gle/6FkeeJv43arrbN1n9"
 
-# The admin UI at /admin/ talks to Convex straight from the browser. Both values are
-# public by design — the client id is not a secret, and every call is authorized
-# server-side. Keep them in step with the deployment the build fetches from:
-#   convex_url       same deployment as the CONVEX_SITE_URL repository variable,
-#                    but .convex.cloud rather than .convex.site
-#   google_client_id the deployment's GOOGLE_CLIENT_ID (npx convex env get)
+# The Convex deployment behind the site: the build loads its content from it
+# (_plugins/convex_content.rb) and the admin page at /admin/ talks to it from the
+# browser. One place, so the two can never point at different deployments; the
+# production deployment, changed only by `npx convex deploy`.
+#   url       the client URL (.convex.cloud), for the admin page
+#   site_url  the HTTP-actions URL (.convex.site) that serves /content.json
+convex:
+  url: "https://dutiful-turtle-748.convex.cloud"
+  site_url: "https://dutiful-turtle-748.convex.site"
+
+# Public by design: the client id is not a secret, and every call is authorized
+# server-side. Must match that deployment's GOOGLE_CLIENT_ID (npx convex env get --prod).
 admin:
-  convex_url: "https://agreeable-stork-479.convex.cloud"
   google_client_id: "814853589863-qarb0aar2q4l04nogei9hvam6e2f3rdb.apps.googleusercontent.com"

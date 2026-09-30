@@ -37,15 +37,20 @@ jobs:
       - name: Install dependencies
         run: bundle install
 
-      # Events, publications, people and news live in Convex. This overwrites the
-      # committed _data/*.yml in the runner only — nothing is pushed back. If Convex
-      # is unreachable the committed snapshot is used and the step warns; set
-      # CONVEX_FETCH_STRICT=1 to fail the build instead.
-      - name: Fetch content from Convex
-        env:
-          CONVEX_SITE_URL: ${{ vars.CONVEX_SITE_URL }}
-        run: ruby scripts/fetch_content.rb
+      # Images stored in Convex are downloaded during the build and published with
+      # the site. A stored file never changes under its id, so keep them between
+      # builds and download only new ones.
+      - name: Cache images from Convex
+        uses: actions/cache@v4
+        with:
+          path: .convex-media
+          key: convex-media-${{ github.run_id }}
+          restore-keys: convex-media-
 
+      # Events, publications, people, news and projects live only in Convex; the
+      # build loads them itself (_plugins/convex_content.rb) from `convex.site_url`
+      # in _config.yml. If Convex cannot be reached the build fails, and Pages keeps
+      # the last deploy.
       - name: Build site
         run: bundle exec jekyll build  # Modify if using a different static site generator
 

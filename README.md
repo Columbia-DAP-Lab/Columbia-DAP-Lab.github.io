@@ -1,187 +1,111 @@
 # Columbia DAP Lab Website
 
-The official website for the Data, Agents, and Processes Lab (DAPLab) at Columbia University.
+The website for the Data, Agents, and Processes Lab (DAPLab) at Columbia University:
+[daplab.cs.columbia.edu](https://daplab.cs.columbia.edu).
 
 
-## Editing Content
+## How the site works
 
-After editing, please test your changes locally using Docker (see below), submit a Pull Request to [Columbia-DAP-Lab.github.io](https://github.com/Columbia-DAP-Lab/Columbia-DAP-Lab.github.io), and request [@Alex-XJK](https://github.com/Alex-XJK/) (for students or general inquiries) or [@sirrice](https://github.com/sirrice) (for faculty-related inquiries) to review and merge.
+The site is static HTML built by Jekyll and served by GitHub Pages. Its content lives
+in two places:
 
-If you are adding a new feature or making significant changes, please talk to our maintaining team in advance.
+- **In [Convex](https://convex.dev)**: events, publications, people, news and projects.
+  They are added and edited through the [admin page](https://daplab.cs.columbia.edu/admin/).
+- **In this repo**: blog posts, pages, layouts and styles.
 
+The build loads that content from the production Convex deployment itself:
+`_plugins/convex_content.rb` fetches it while Jekyll runs and hands it to the
+templates as `site.data.events`, `site.data.pubs` and so on, plus the project pages.
+Nothing is read from or written to `_data/` or `_projects/*.md`, and there are no
+content files in the repo. Publishing something on the admin page triggers a
+build (`.github/workflows/deploy.yml`), so a change is live in about a minute.
 
-### Contributing Your Profile
+If Convex cannot be reached, the build fails and GitHub Pages keeps serving the last
+good version.
 
-You can now add yourself or update your profile by editing the `_data/people.yml` file.
+Images are stored in Convex too: people photos, event images, series logos and
+project images, including anything uploaded on the admin page. Visitors do not
+load them from Convex, though. The build downloads each stored image once, keeps
+it in a cache between builds (`.convex-media/`), and publishes it with the site
+under `/media/`, so Convex's bandwidth goes to builds rather than page views. The
+admin page shrinks large photos before uploading them.
 
-- For Faculty members:  
-  ```yaml
-  - name: Your Name
-    homepage: (optional) https://your.website
-    image: (optional) /files/images/avatar/your_image.jpg
-    bio: >
-      (optional) A brief multi-line introduction
-    category: Faculty
-    field: [CS, Systems...]  # comma-separated research fields
-  ```
+Every night `.github/workflows/snapshot.yml` commits the public content feed to
+`_backup/content.json`. The site never reads it; it is there so
+`git log -p _backup/` shows what content changed and when, and as an off-Convex
+copy of what the site publishes.
 
-- For Postdoc and PhD Students:  
-  If you are adding yourself as a **new** member, you must include **your supervisor's name** in your PR description for verification. Without that, your PR may be delayed or rejected!
-  ```yaml
-  - name: Your Name
-    homepage: (optional) https://your.website
-    image: (optional) /files/images/avatar/your_fullname.jpg
-    category: Postdoc/PhD
-  ```
-
-- For MS/Undergraduate Students:  
-  For **new** members, please ask your advisor or advising PhD to make the PR **on your behalf** for verification. Personal PRs will be directly rejected without review.
-  ```yaml
-  - name: Your Name
-    image: (optional) /files/images/avatar/your_fullname.jpg
-    category: Student
-    advisor:
-      - Advisor Name 1
-      - Advisor Name 2  # add more if you have multiple advisors
-  ```
-
-Please upload your avatar image to `/files/images/avatar/` and use that full path above. Please ensure your image is in square format and appropriately sized *under 1MB* for the best display.
-
-For Students and Researchers ordering: Since commit a92a4bc, for ease of maintenance, student categories no longer need to be sorted; Liquid will automatically sort them at deployment-time.
+The design, and why it is built this way, is in
+[`docs/admin-service-design.md`](docs/admin-service-design.md). That was written
+before the build, so some details there have since changed.
 
 
-### Updating Publications
+## Adding and Editing Content
 
-Edit `_data/pubs.yml` and follow the existing format to add your publications. Basically, you will need to provide the following information for each publication:
-```yaml
-- title: Title of the paper
-  authors: name 1, name 2
-  conf: conference name
-  pub_date: "YYYY-MM-DD"
-  url: url to the paper
-  tags:
-    - tag1
-    - tag2
-```
-A explanation of the publication date: Only the year and month will be displayed, but you need to provide complete information for sorting purposes.
+| Content | Where |
+|---|---|
+| Events | [Admin page](https://daplab.cs.columbia.edu/admin/) → **Events** |
+| Publications | Admin page → **Papers** (a pasted list of papers becomes one draft each) |
+| Your own People-page profile | Admin page → your email (top right) → **Edit profile** |
+| A new person | Admin page → **People** (admins) |
+| Blog posts | This repo: [Blog Posts](#blog-posts) below |
+| Projects and software | Admin page → **Projects** (admins) |
+| News | Convex, with no form yet: ask an admin (see below) |
+| Pages, layouts, styles | This repo, by pull request |
 
-
-### Adding Projects and Software
-
-All project-like content (including software releases) should be added under `_projects/` using one shared format.
-
-#### 1. Create a project folder and markdown file
-
-Use this exact structure:
-```text
-_projects/<slug>/<slug>.md
-```
-
-Example:
-```text
-_projects/my-cool-project/my-cool-project.md
-```
-
-Important:
-- Keep `<slug>` lowercase and hyphen-separated (no spaces).
-- The folder name and markdown filename should match.
-- This keeps URLs and image paths predictable.
-
-#### 2. Add front matter
-
-Copy this template and fill it in:
-
-```yaml
----
-title: "Project Title"
-subtitle: "One-line summary (optional but recommended)"
-date: 2026-04-02
-authors:
-  - name: "Author One"
-    url: "https://author.website"  # optional
-  - name: "Author Two"
-
-avatar: project-image.png  # optional; place file in same folder as this .md
-# avatar_url: /files/images/...  # optional alternative to avatar
-
-tags:
-  - "Tag1"
-  - "Tag2"
-
-# Set this only for open-sourced software entries:
-# is_software: true
-
-links:  # optional; currently supported keys are github/pypi/blog/demo
-  github: "https://github.com/org/repo"
-  pypi: "https://pypi.org/project/your-package/"
-  blog: "https://link.to/blog-post"
-  demo: "https://link.to/demo"
-
-publications:  # optional
-  - title: "Paper Title"
-    venue: "Conference/Journal"
-    url: "https://paper-link"
-    year: 2026
----
-```
-
-Field requirements:
-- Required/recommended for all entries:
-  - `title`
-  - `date` (`YYYY-MM-DD`)
-  - at least one author under `authors`
-- Optional:
-  - `subtitle`, `avatar`/`avatar_url`, `tags`, `links`, `publications`
-- For software:
-  - set `is_software: true`
-- For normal projects:
-  - leave `is_software` unset (or set `false`)
-
-#### 3. Write the project/software description
-
-After front matter, write normal Markdown content for overview, features, methods, etc.
-
-To reference files in the same project folder, use:
-```text
-/_projects/<slug>/<filename>
-```
-
-Example:
-```md
-![Architecture](/_projects/my-cool-project/architecture.png)
-```
-
-#### 4. Where your entry appears
-
-- All entries: `/projects/?view=all`
-- Non-software projects: `/projects/?view=projects`
-- Software entries (`is_software: true`): `/projects/?view=software`
-
-Each entry also gets its own detail page at:
-```text
-/projects/<slug>/
-```
+For changes to the repo, test locally ([Developing locally](#developing-locally)),
+open a pull request against
+[Columbia-DAP-Lab.github.io](https://github.com/Columbia-DAP-Lab/Columbia-DAP-Lab.github.io),
+and ask [@Alex-XJK](https://github.com/Alex-XJK/) (students, general questions) or
+[@sirrice](https://github.com/sirrice) (faculty) to review. Talk to the maintainers
+before large changes.
 
 
-### Managing Events
+### The admin page
 
-To manage events,
-- Edit the `_data/events.yml` file, or
-- Add new events directly to the "website" table in the shared "Fall 2025 DAP Lab Seminar" Google Sheet. They will be automatically synced into the YAML file at 9 AM EST every day.
+Sign in at [daplab.cs.columbia.edu/admin/](https://daplab.cs.columbia.edu/admin/) with
+your Columbia Google account (`uni@columbia.edu`). Other Google accounts are refused.
 
-> Note: The Google Sheet method is temporarily disabled due to the low frequency of use after Sept. 9, 2025. Please edit the YAML file directly for now.
+- **Who can sign in.** Current lab members on the People page get in automatically:
+  the name on their Columbia account is matched to their profile. Anyone else has to
+  be added by an admin under **People → Users**.
+- **Members** can add events and publications, and edit their own profile.
+- **Admins** can also add people, review submissions, and manage users.
+- **Everything is reviewed.** A member's submission, including a profile edit, is
+  pending until an admin publishes it under **Submissions**.
+- **Quick add.** Each form has a Quick add box at the top: paste an announcement, a
+  citation list or a bio, press **Extract into form**, and a language model fills the
+  form in. Nothing is submitted until you check the form and press **Submit for
+  review**. Images are attached by hand.
 
-However, if you are in charge of regularly adding events (such as seminar organizers), please contact our maintaining team for further assistance.
+Photos go in the upload field on the form. Square images under 5 MB work best.
 
 
-### Adding Blog Posts
+### Projects
+
+Admins create and edit projects under **Projects** on the admin page. A new project
+is a draft until you publish it. Its short name becomes the address,
+`/projects/<short-name>/`, and is fixed once the project is published. Upload a
+card image in the form. **Insert image** puts a picture into the description.
+
+Images in a description are written `convex-storage:<id>`; **Insert image**
+writes that for you.
+
+### News
+
+News is stored in Convex, but the admin page has no form for it yet. Until it
+does, an admin edits it in the [Convex dashboard](https://dashboard.convex.dev)
+(production deployment → **Data** → `news`).
+
+
+## Blog Posts
 
 To create a new blog post, follow these steps:
 
-#### 1. Create the post file
+### 1. Create the post file
 Create a new file in `_posts/` with the name format: `YYYY-MM-DD-slug.md` (e.g., `2026-01-16-my-great-post.md`).
 
-#### 2. Add front-matter
+### 2. Add front-matter
 Include the following required fields at the top of your post:
 ```yaml
 ---
@@ -199,10 +123,10 @@ slug: "my-great-post"  # Must match the filename slug
 ---
 ```
 
-#### 3. Write your content
+### 3. Write your content
 Use standard Markdown syntax. For best readability, keep your article within ~900px width (this is enforced by the layout).
 
-#### 4. Add images
+### 4. Add images
 - Create a folder: `files/images/blog/{slug}/` (e.g., `files/images/blog/my-great-post/`)
 - Place your images there
 - In your post, reference images using the `blog-image` include:
@@ -221,13 +145,13 @@ Use standard Markdown syntax. For best readability, keep your article within ~90
   {% include blog-image.html file="diagram.png" alt="Diagram" class="img-fluid shadow" %}
   ```
 
-#### 5. Link to other blog posts
+### 5. Link to other blog posts
 Use Jekyll's standard `{% link %}` syntax to reference other posts:
 ```liquid
 As {% link _posts/2026-01-01-my-other-post.md %} shows, ...
 ```
 
-#### 6. Add custom styles (optional)
+### 6. Add custom styles (optional)
 You can define custom CSS directly in your post using a `<style>` block:
 ```html
 <style>
@@ -240,23 +164,55 @@ You can define custom CSS directly in your post using a `<style>` block:
 <p class="my-custom-class">This text will be styled.</p>
 ```
 
-#### 7. Test locally
-See the [Local Development with Docker](#local-development-with-docker) section below for complete testing instructions.
+### 7. Test locally
+See [Developing locally](#developing-locally) below.
 
-#### 8. Submit a Pull Request
+### 8. Submit a Pull Request
 Push your changes to a branch and open a PR for review.
 
 
-## Local Development with Docker
+
+## Developing locally
+
+### Without Docker
+
+Ruby is managed with [rbenv](https://github.com/rbenv/rbenv); the version is in
+`.ruby-version` (which is gitignored, so copy it into a fresh checkout or worktree).
+
+```bash
+export PATH="$HOME/.rbenv/shims:$PATH"
+bundle install
+bundle exec jekyll serve --host localhost --drafts --future --trace
+```
+
+Then open http://localhost:4000. Use `localhost`, not `127.0.0.1`: Google sign-in on
+the admin page accepts only the origins registered for it.
+
+The content loads from production Convex as part of the build, so this needs a
+network connection, and each regeneration picks up the latest content.
+
+The admin page at http://localhost:4000/admin/ also talks to **production** (both
+read `convex:` in `_config.yml`), so anything you publish from a local copy is live.
+To work against the dev sandbox instead, layer `_config.dev.yml` on top; it points
+both the admin page and the content at dev:
+
+```bash
+bundle exec jekyll serve --config _config.yml,_config.dev.yml --host localhost --drafts --future
+```
+
+`CONVEX_SITE_URL=https://<deployment>.convex.site` overrides only where the content
+comes from, for a one-off build.
+
+### With Docker
 
 This project uses Docker to provide a consistent development environment. Follow these steps to test changes locally:
 
-### Prerequisites
+#### Prerequisites
 
 - [Docker](https://www.docker.com/get-started) installed on your system
 - [Docker Compose](https://docs.docker.com/compose/install/) (usually included with Docker Desktop)
 
-### Quick Start
+#### Quick Start
 
 1. **Clone the repository** (if you haven't already):
    ```bash
@@ -274,40 +230,40 @@ This project uses Docker to provide a consistent development environment. Follow
    - The site will automatically reload when you make changes to files
    - LiveReload is available at: http://localhost:35729
 
-### Development Commands
+#### Development commands
 
-#### Start the site (with rebuild)
+##### Start the site (with rebuild)
 ```bash
 docker compose up --build
 ```
 
-#### Start the site in the background
+##### Start the site in the background
 ```bash
 docker compose up -d
 ```
 
-#### View logs
+##### View logs
 ```bash
 docker compose logs
 docker compose logs --follow  # Follow logs in real-time
 ```
 
-#### Stop the site
+##### Stop the site
 ```bash
 docker compose down
 ```
 
-#### Restart after making changes
+##### Restart after making changes
 ```bash
 docker compose restart
 ```
 
-#### Access the container shell (for debugging)
+##### Access the container shell (for debugging)
 ```bash
 docker compose exec jekyll bash
 ```
 
-### Making Changes
+#### Making Changes
 
 1. Edit any file in the repository
 2. The site will automatically regenerate (watch for changes in the logs)
@@ -317,23 +273,62 @@ docker compose exec jekyll bash
    docker compose restart
    ```
 
-### Troubleshooting
+#### Troubleshooting
 
-#### Port already in use
+##### Port already in use
 If port 8080 is already in use, you can change it in `docker-compose.yml`:
 ```yaml
 ports:
   - "3000:8080"  # Use port 3000 instead
 ```
 
-#### Container won't start
+##### Container won't start
 ```bash
 # Clean up and rebuild
 docker compose down
 docker compose up --build
 ```
 
-#### View detailed build logs
+##### View detailed build logs
 ```bash
 docker compose up --build --no-cache
 ```
+
+
+## The Convex backend
+
+The backend is in `convex/`. It holds the schema, the queries and mutations behind
+the admin page, and the `/content.json` feed the build reads. There are two
+deployments:
+
+| Deployment | Role |
+|---|---|
+| `dutiful-turtle-748` (production) | Serves the live site and the admin page. Named in `_config.yml` under `convex:`. |
+| `agreeable-stork-479` (dev) | A sandbox for trying backend changes. |
+
+- `npx convex dev` pushes the code in your checkout to **dev**; `--once` pushes once
+  without watching.
+- `npx convex deploy` pushes to **production**, after asking you to confirm. Run it
+  from an up-to-date `main`, after the change is merged.
+
+Needs Node and `npm install`. Configuration is in deployment environment variables,
+set with `npx convex env set [--prod] NAME value`:
+
+| Variable | Purpose |
+|---|---|
+| `GOOGLE_CLIENT_ID` | Google sign-in. Public; must match `admin.google_client_id` in `_config.yml`. |
+| `GITHUB_REPOSITORY`, `GITHUB_DISPATCH_TOKEN` | Rebuilding the site after a publish. The token is a fine-grained token with Contents: read and write on this repo. |
+| `LLM_API_KEY`, `LLM_BASE_URL`, `LLM_MODEL` | Quick add. Any OpenAI-compatible endpoint; see `convex/llm.ts`. |
+
+To copy the whole deployment, including users, drafts and uploaded files:
+
+```bash
+npx convex export --prod --include-file-storage --path backup.zip
+```
+
+The one-time scripts that imported the old `_data/*.yml` into Convex, and checked
+that import, have been removed. They are in the git history if you need them.
+
+`scripts/migrate_images_to_convex.mjs` moves images that still live in the repo into
+Convex, resized (a dry run by default; `--write` to do it, `--prod` for
+production). It needs macOS and a checkout that still has the image files.

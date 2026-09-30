@@ -1,14 +1,17 @@
-name: Snapshot Convex content to _data
+name: Back up Convex content
 
-# Convex is the source of truth for events, publications, people and news. This
-# commits a copy back every night, which does three things:
+# Convex is the only source of the site's content; the repo holds no copy the site
+# reads. This commits the public content feed (content.json) to _backup/ every
+# night, which does two things:
 #
-#   - gives the build a fallback when Convex is unreachable (see deploy.yml)
-#   - restores a readable history of content changes, which moving out of the repo
-#     otherwise costs: `git log -p _data/` still answers what changed and when
-#   - is the disaster-recovery copy if the deployment is ever lost
+#   - keeps a readable history of content changes: `git log -p _backup/` answers
+#     what changed and when, which moving out of the repo otherwise costs
+#   - keeps an off-Convex copy of everything the site publishes
 #
-# The committed files are generated. Edit content at /admin, not here.
+# Jekyll ignores directories that start with an underscore, so the site never reads
+# or publishes this file. It holds only what the site already shows; users, drafts
+# and uploaded files are not in it. For a full copy of the deployment, use
+# `npx convex export --prod --include-file-storage`.
 
 on:
   workflow_dispatch:
@@ -19,33 +22,30 @@ permissions:
   contents: write
 
 concurrency:
-  group: snapshot-convex
+  group: backup-convex
   cancel-in-progress: false
 
 jobs:
-  snapshot:
+  backup:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: "3.4.5"
-
-      - name: Fetch content from Convex
-        env:
-          CONVEX_SITE_URL: ${{ vars.CONVEX_SITE_URL }}
-          # A snapshot that silently kept yesterday's copy would be worthless, so
-          # unlike the build, this fails loudly when Convex cannot be reached.
-          CONVEX_FETCH_STRICT: "1"
-        run: ruby scripts/fetch_content.rb
+      - name: Fetch content.json from Convex
+        # Pretty-printed and without the timestamp, so a night with no content
+        # changes makes no commit and the diff shows only what changed.
+        run: |
+          site_url=$(sed -n 's/^  site_url: *"\(.*\)".*/\1/p' _config.yml)
+          test -n "$site_url" || { echo "::error::no convex.site_url in _config.yml"; exit 1; }
+          mkdir -p _backup
+          curl --fail --silent --show-error --retry 3 "$site_url/content.json" \
+            | jq --indent 2 'del(.generatedAt)' > _backup/content.json
 
       - name: Commit if changed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add _data/events.yml _data/pubs.yml _data/people.yml _data/news.yml
-          git diff --cached --quiet || git commit -m "Snapshot Convex content to _data"
+          git add _backup/content.json
+          git diff --cached --quiet || git commit -m "Back up Convex content"
           git push

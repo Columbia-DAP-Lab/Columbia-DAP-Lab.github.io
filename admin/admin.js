@@ -73,7 +73,8 @@ const handleSubmit = (form, handler) =>
     button.disabled = true;
     setResult(form, "Submitting…", true);
     try {
-      setResult(form, await handler(), true);
+      // The event goes along so a form with two submit buttons can tell which.
+      setResult(form, await handler(event), true);
       // Paste-to-fill listens for this to move on to the next draft.
       form.dispatchEvent(new CustomEvent("submitted"));
     } catch (error) {
@@ -172,7 +173,36 @@ addSpeaker();
 
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024; // matches convex/admin.ts
 
-const uploadImage = async (file) => {
+/** Longest side for an uploaded image; people photos render small. */
+const PHOTO_SIDE = 480;
+const IMAGE_SIDE = 1600;
+
+/**
+ * Shrink a photo in the browser before it is uploaded: to `maxSide` pixels on its
+ * longest side, JPEGs and WebPs re-encoded as JPEG. PNGs stay PNG (they may be
+ * transparent); GIFs and SVGs are left alone, as is anything already small.
+ */
+const shrink = async (file, maxSide) => {
+  if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) return file;
+  let bitmap;
+  try {
+    bitmap = await createImageBitmap(file);
+  } catch {
+    return file; // a format this browser cannot decode: upload as is
+  }
+  const scale = Math.min(1, maxSide / Math.max(bitmap.width, bitmap.height));
+  if (scale === 1 && file.size < 500_000) return file;
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.round(bitmap.width * scale);
+  canvas.height = Math.round(bitmap.height * scale);
+  canvas.getContext("2d").drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+  const type = file.type === "image/png" ? "image/png" : "image/jpeg";
+  const blob = await new Promise((resolve) => canvas.toBlob(resolve, type, 0.85));
+  return blob && blob.size < file.size ? blob : file;
+};
+
+const uploadImage = async (original, maxSide = IMAGE_SIDE) => {
+  const file = await shrink(original, maxSide);
   if (file.size > MAX_IMAGE_BYTES) throw new Error("Images must be under 5 MB.");
   const url = await client.mutation(api.admin.generateUploadUrl, {});
   const response = await fetch(url, {
@@ -266,7 +296,7 @@ handleSubmit(personForm, async () => {
   const fields = checkedValues($("#fields"));
 
   const file = personForm.elements.image.files[0];
-  if (file) person.image = await uploadImage(file);
+  if (file) person.image = await uploadImage(file, PHOTO_SIDE);
 
   await client.mutation(api.admin.submitPerson, { ...person, advisors, fields });
   personForm.reset();
@@ -653,11 +683,211 @@ handleSubmit(profileForm, async () => {
     fields: checkedValues($("#profile-fields")),
   };
   const file = profileForm.elements.image.files[0];
-  if (file) edit.image = await uploadImage(file);
+  if (file) edit.image = await uploadImage(file, PHOTO_SIDE);
   const { applied } = await client.mutation(api.profiles.submitProfileEdit, edit);
   profileForm.elements.image.value = "";
   return applied ? "Saved. The People page updates in about a minute." : "Sent for review. An admin will look at it.";
 });
+
+// ---------------------------------------------------------------- projects
+//
+// Admins create and edit the Projects page here (convex/projectAdmin.ts). A new
+// project is a draft until published; a published one's short name is fixed.
+
+const projectForm = $("#project-form");
+
+/** A repeatable row (author, link, paper) from its template, filled with `values`. */
+const addRow = (kind, values = {}) => {
+  const row = $(`#row-${kind}`).content.firstElementChild.cloneNode(true);
+  for (const input of $$("[data-field]", row)) input.value = values[input.dataset.field] ?? input.value;
+  $("[data-remove-row]", row).addEventListener("click", () => row.remove());
+  $(`[data-rows="${kind}"]`).append(row);
+};
+for (const button of $$("[data-add-row]")) button.addEventListener("click", () => addRow(button.dataset.addRow));
+
+/** The filled-in rows of one kind, as objects of trimmed values; blank rows are dropped. */
+const rowValues = (kind) =>
+  $$(`[data-rows="${kind}"] .dap-row`)
+    .map((row) => Object.fromEntries($$("[data-field]", row).map((i) => [i.dataset.field, i.value.trim()])))
+    .filter((r) => Object.entries(r).some(([key, value]) => key !== "kind" && value));
+
+const slugify = (text) =>
+  text.toLowerCase().normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+
+/** The project in the form, or null for a new one. */
+let editing = null;
+// While creating, the short name follows the title until someone edits it.
+let slugTouched = false;
+
+const setProjectImage = (url) => {
+  const img = $("[data-project-image]");
+  if (url) img.src = url.includes("://") ? url : new URL(url, location.origin).href;
+  else img.removeAttribute("src");
+};
+
+const resetProjectForm = () => {
+  editing = null;
+  slugTouched = false;
+  projectForm.reset();
+  projectForm.elements.id.value = "";
+  projectForm.elements.date.value = new Date().toISOString().slice(0, 10);
+  projectForm.elements.slug.readOnly = false;
+  for (const kind of ["authors", "links", "papers"]) $(`[data-rows="${kind}"]`).replaceChildren();
+  addRow("authors");
+  setProjectImage(null);
+  $("[data-remove-image-wrap]").hidden = true;
+  $("[data-project-heading]").textContent = "New project";
+  $("[data-save=draft]").textContent = "Save draft";
+  $("[data-save=publish]").hidden = false;
+  $("[data-slug-preview]").textContent = "my-project";
+  setResult(projectForm, "", true);
+};
+
+const loadProject = async (id) => {
+  const project = await client.query(api.projectAdmin.get, { id });
+  if (project === null) return showStatus("That project no longer exists.");
+  resetProjectForm();
+  editing = project;
+  slugTouched = true;
+  const f = projectForm.elements;
+  f.id.value = project._id;
+  for (const key of ["title", "subtitle", "slug", "date", "body"]) f[key].value = project[key] ?? "";
+  f.tags.value = project.tags.join(", ");
+  for (const box of $$('input[name="kinds"]', projectForm)) box.checked = project.kinds.includes(box.value);
+  $(`[data-rows="authors"]`).replaceChildren();
+  for (const author of project.authors) addRow("authors", author);
+  if (project.authors.length === 0) addRow("authors");
+  for (const link of project.links) addRow("links", link);
+  for (const paper of project.publications) addRow("papers", { ...paper, year: paper.year ?? "" });
+  setProjectImage(project.imageUrl);
+  $("[data-remove-image-wrap]").hidden = !project.hasUploadedImage;
+  const published = project.status === "published";
+  f.slug.readOnly = published;
+  $("[data-slug-preview]").textContent = project.slug;
+  $("[data-project-heading]").textContent = `Editing: ${project.title}`;
+  $("[data-save=draft]").textContent = published ? "Save changes" : "Save draft";
+  $("[data-save=publish]").hidden = published;
+  projectForm.scrollIntoView({ behavior: "smooth", block: "start" });
+};
+
+projectForm.elements.title.addEventListener("input", () => {
+  if (slugTouched || editing?.status === "published") return;
+  projectForm.elements.slug.value = slugify(projectForm.elements.title.value);
+  $("[data-slug-preview]").textContent = projectForm.elements.slug.value || "my-project";
+});
+projectForm.elements.slug.addEventListener("input", () => {
+  slugTouched = true;
+  $("[data-slug-preview]").textContent = projectForm.elements.slug.value || "my-project";
+});
+projectForm.elements.image.addEventListener("change", () => {
+  const file = projectForm.elements.image.files[0];
+  if (file) setProjectImage(URL.createObjectURL(file));
+});
+$("[data-project-new]").addEventListener("click", () => {
+  resetProjectForm();
+  projectForm.scrollIntoView({ behavior: "smooth", block: "start" });
+});
+
+// Upload a picture and put its Markdown where the cursor is in the description.
+$("[data-body-image]").addEventListener("change", async (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
+  const status = $("[data-body-image-status]");
+  status.textContent = "Uploading…";
+  try {
+    const storageId = await uploadImage(file);
+    const body = projectForm.elements.body;
+    const at = body.selectionStart ?? body.value.length;
+    // A reference, not a URL: the export turns it into the file's address on
+    // whichever deployment serves the site (convex/content.ts).
+    const markdown = `![${file.name.replace(/\.[^.]+$/, "")}](convex-storage:${storageId})`;
+    body.value = body.value.slice(0, at) + markdown + body.value.slice(body.selectionEnd ?? at);
+    body.focus();
+    body.selectionStart = body.selectionEnd = at + markdown.length;
+    status.textContent = "Inserted. Edit the text in [ ] to describe the image.";
+  } catch (error) {
+    status.textContent = message(error);
+  } finally {
+    event.target.value = "";
+  }
+});
+
+handleSubmit(projectForm, async (event) => {
+  const f = projectForm.elements;
+  const publish = event.submitter?.dataset.save === "publish";
+  const project = {
+    ...(f.id.value ? { id: f.id.value } : {}),
+    title: f.title.value,
+    subtitle: f.subtitle.value,
+    slug: f.slug.value,
+    date: f.date.value,
+    kinds: $$('input[name="kinds"]:checked', projectForm).map((box) => box.value),
+    tags: f.tags.value.split(","),
+    body: f.body.value,
+    authors: rowValues("authors").map((a) => ({ name: a.name, ...(a.url ? { url: a.url } : {}) })),
+    links: rowValues("links").filter((l) => l.url),
+    publications: rowValues("papers").map((p) => ({
+      title: p.title,
+      venue: p.venue,
+      ...(p.url ? { url: p.url } : {}),
+      ...(p.year ? { year: Number(p.year) } : {}),
+    })),
+    ...(f.removeImage.checked ? { removeImage: true } : {}),
+  };
+  const file = f.image.files[0];
+  if (file) project.image = await uploadImage(file);
+
+  const id = await client.mutation(api.projectAdmin.save, project);
+  if (publish) await client.mutation(api.projectAdmin.setStatus, { id, published: true });
+  await loadProject(id);
+  if (publish) return "Published. The Projects page updates in about a minute.";
+  return editing?.status === "published" ? "Saved. The live page updates in about a minute." : "Draft saved. It is not on the site until you publish it.";
+});
+
+const KIND_LABELS = { project: "Project", software: "Software", benchmark: "Benchmark" };
+const renderProjects = (projects) =>
+  $("#project-list").replaceChildren(
+    ...projects.map((p) => {
+      const published = p.status === "published";
+      const toggle = el(
+        "button",
+        {
+          type: "button",
+          class: `btn btn-sm ${published ? "dap-btn-quiet" : "dap-btn-primary"} ms-2`,
+          onclick: async () => {
+            try {
+              await client.mutation(api.projectAdmin.setStatus, { id: p._id, published: !published });
+            } catch (error) {
+              showStatus(message(error));
+            }
+          },
+        },
+        published ? "Unpublish" : "Publish",
+      );
+      return el(
+        "tr",
+        {},
+        el(
+          "td",
+          {},
+          published
+            ? el("a", { href: `/projects/${p.slug}/`, target: "_blank", rel: "noopener" }, p.title)
+            : p.title,
+        ),
+        el("td", { class: "dap-muted" }, p.kinds.map((k) => KIND_LABELS[k] ?? k).join(", ")),
+        el("td", { class: "dap-muted" }, p.date),
+        el("td", {}, published ? badge("published") : el("span", { class: "badge text-bg-secondary" }, "draft")),
+        el(
+          "td",
+          { class: "text-end text-nowrap" },
+          el("button", { type: "button", class: "btn btn-sm dap-btn-quiet", onclick: () => loadProject(p._id) }, "Edit"),
+          toggle,
+        ),
+      );
+    }),
+  );
+
+resetProjectForm();
 
 // ------------------------------------------------------------------- users
 //
@@ -823,6 +1053,7 @@ const renderMe = (me) => {
   if (me.capabilities.includes("admin")) {
     subscribe(api.admin.listRoles, {}, renderRoles);
     subscribe(api.admin.labMembers, {}, renderLabMembers);
+    subscribe(api.projectAdmin.list, {}, renderProjects);
   }
 };
 

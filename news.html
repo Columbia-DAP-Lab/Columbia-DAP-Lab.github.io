@@ -9,7 +9,8 @@ title: News
   <h2 class="mb-4">News & Education</h2>
 
   <div class="news-list">
-    {% assign sorted = items | sort: 'date' | reverse %}
+    {% assign sorted = items %}
+    {% if sorted %}{% assign sorted = sorted | sort: 'date' | reverse %}{% endif %}
     {% for item in sorted %}
       <article class="mb-4 pb-3 border-bottom">
         <header class="mb-1">

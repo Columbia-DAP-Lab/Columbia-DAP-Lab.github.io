@@ -16,7 +16,7 @@ docs/admin-service-design.md.
 <link rel="stylesheet" href="{{ '/admin/admin.css' | relative_url }}">
 
 <div id="admin"
-     data-convex-url="{{ site.admin.convex_url }}"
+     data-convex-url="{{ site.convex.url }}"
      data-google-client-id="{{ site.admin.google_client_id }}">
 
   <div id="status" class="alert alert-danger" role="alert" hidden></div>
@@ -93,7 +93,7 @@ docs/admin-service-design.md.
           <legend>Image</legend>
           <label class="form-label" for="ev-image">Event image</label>
           <input class="form-control" type="file" id="ev-image" name="image" accept="image/*">
-          <div class="form-text">Optional. Under 5 MB.</div>
+          <div class="form-text">Optional. Large images are resized automatically.</div>
         </fieldset>
 
         <div class="dap-actions">
@@ -268,7 +268,7 @@ docs/admin-service-design.md.
           <div class="mb-3">
             <label class="form-label" for="person-image">Photo</label>
             <input class="form-control" type="file" id="person-image" name="image" accept="image/*">
-            <div class="form-text">Square works best. Under 5 MB.</div>
+            <div class="form-text">Square works best. Large photos are resized automatically.</div>
           </div>
           <div>
             <span class="form-label d-block">Badges</span>
@@ -330,6 +330,146 @@ docs/admin-service-design.md.
       </div>
     </div>
 
+    <!-- --------------------------------------------------------- projects -->
+    <div data-panel="projects" hidden>
+      <h1 class="dap-title">Projects</h1>
+
+      <div class="dap-card">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+          <h2 class="dap-card-title mb-0">All projects</h2>
+          <button type="button" class="btn btn-sm dap-btn-quiet" data-project-new>New project</button>
+        </div>
+        <table class="table dap-table mb-0">
+          <thead><tr><th>Project</th><th>Kind</th><th>Date</th><th>Status</th><th></th></tr></thead>
+          <tbody id="project-list"></tbody>
+        </table>
+      </div>
+
+      <h2 class="dap-section" data-project-heading>New project</h2>
+      <form id="project-form" novalidate>
+        <input type="hidden" name="id">
+        <fieldset class="dap-card">
+          <legend>Project</legend>
+          <div class="mb-3">
+            <label class="form-label" for="proj-title">Title <span class="dap-req">*</span></label>
+            <input class="form-control" id="proj-title" name="title" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="proj-subtitle">One-line summary</label>
+            <input class="form-control" id="proj-subtitle" name="subtitle">
+          </div>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label" for="proj-slug">Short name <span class="dap-req">*</span></label>
+              <input class="form-control" id="proj-slug" name="slug" required placeholder="my-project">
+              <div class="form-text" data-slug-help>The page's address: /projects/<span data-slug-preview>my-project</span>/.
+                Fixed once published.</div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="proj-date">Date <span class="dap-req">*</span></label>
+              <input class="form-control" type="date" id="proj-date" name="date" required>
+            </div>
+          </div>
+          <div class="mt-3">
+            <span class="form-label d-block">Show under <span class="dap-req">*</span></span>
+            <div class="dap-inline-checks">
+              <label class="form-check-label"><input class="form-check-input me-1" type="checkbox" name="kinds" value="project">Projects</label>
+              <label class="form-check-label"><input class="form-check-input me-1" type="checkbox" name="kinds" value="software">Software</label>
+              <label class="form-check-label"><input class="form-check-input me-1" type="checkbox" name="kinds" value="benchmark">Benchmarks</label>
+            </div>
+          </div>
+          <div class="mt-3">
+            <label class="form-label" for="proj-tags">Tags</label>
+            <input class="form-control" id="proj-tags" name="tags" placeholder="Workflow, LLM Safety">
+            <div class="form-text">Comma-separated. Shown as chips on the project card.</div>
+          </div>
+        </fieldset>
+
+        <fieldset class="dap-card">
+          <legend>Card image</legend>
+          <div class="d-flex gap-3 align-items-center">
+            <img class="dap-project-image" data-project-image alt="">
+            <div class="flex-grow-1">
+              <label class="form-label" for="proj-image">Upload an image</label>
+              <input class="form-control" type="file" id="proj-image" name="image" accept="image/*">
+              <div class="form-text">Shown on the Projects page and at the top of the project's page. Large images are resized automatically.</div>
+              <label class="form-check-label mt-2" data-remove-image-wrap hidden>
+                <input class="form-check-input me-1" type="checkbox" name="removeImage">Remove the uploaded image
+              </label>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset class="dap-card">
+          <legend>Description</legend>
+          <textarea class="form-control dap-mono" id="proj-body" name="body" rows="14"></textarea>
+          <div class="d-flex align-items-center gap-2 mt-2 flex-wrap">
+            <label class="btn btn-sm dap-btn-quiet mb-0">
+              Insert image<input type="file" accept="image/*" hidden data-body-image>
+            </label>
+            <span class="form-text m-0" data-body-image-status>Markdown. The image is uploaded and a reference to it inserted where the cursor is.</span>
+          </div>
+        </fieldset>
+
+        <fieldset class="dap-card">
+          <legend>Authors</legend>
+          <div data-rows="authors"></div>
+          <button type="button" class="btn btn-sm dap-btn-quiet" data-add-row="authors">Add an author</button>
+          <div class="form-text mt-2">In order. End a name with * for equal contribution.</div>
+        </fieldset>
+
+        <fieldset class="dap-card">
+          <legend>Links</legend>
+          <div data-rows="links"></div>
+          <button type="button" class="btn btn-sm dap-btn-quiet" data-add-row="links">Add a link</button>
+        </fieldset>
+
+        <fieldset class="dap-card">
+          <legend>Papers</legend>
+          <div data-rows="papers"></div>
+          <button type="button" class="btn btn-sm dap-btn-quiet" data-add-row="papers">Add a paper</button>
+        </fieldset>
+
+        <div class="dap-actions">
+          <button type="submit" class="btn dap-btn-primary" data-save="draft">Save draft</button>
+          <button type="submit" class="btn dap-btn-quiet" data-save="publish">Save and publish</button>
+          <span data-result></span>
+        </div>
+      </form>
+
+      <template id="row-authors">
+        <div class="dap-row">
+          <input class="form-control" data-field="name" placeholder="Name">
+          <input class="form-control" type="url" data-field="url" placeholder="Homepage (optional)">
+          <button type="button" class="btn btn-sm dap-remove" data-remove-row aria-label="Remove">Remove</button>
+        </div>
+      </template>
+      <template id="row-links">
+        <div class="dap-row">
+          <select class="form-select dap-row-narrow" data-field="kind">
+            <option value="github">GitHub</option>
+            <option value="website">Website</option>
+            <option value="paper">Paper</option>
+            <option value="blog">Blog</option>
+            <option value="demo">Demo</option>
+            <option value="pypi">PyPI</option>
+            <option value="leaderboard">Leaderboard</option>
+          </select>
+          <input class="form-control" type="url" data-field="url" placeholder="https://">
+          <button type="button" class="btn btn-sm dap-remove" data-remove-row aria-label="Remove">Remove</button>
+        </div>
+      </template>
+      <template id="row-papers">
+        <div class="dap-row">
+          <input class="form-control" data-field="title" placeholder="Title">
+          <input class="form-control dap-row-narrow" data-field="venue" placeholder="Venue">
+          <input class="form-control dap-row-year" data-field="year" inputmode="numeric" placeholder="Year">
+          <input class="form-control" type="url" data-field="url" placeholder="URL (optional)">
+          <button type="button" class="btn btn-sm dap-remove" data-remove-row aria-label="Remove">Remove</button>
+        </div>
+      </template>
+    </div>
+
     <!-- ------------------------------------------------------ submissions -->
     <div data-panel="submissions" hidden>
       <h1 class="dap-title">Submissions</h1>
@@ -377,7 +517,7 @@ docs/admin-service-design.md.
             <div class="flex-grow-1">
               <label class="form-label" for="profile-image">Replace photo</label>
               <input class="form-control" type="file" id="profile-image" name="image" accept="image/*">
-              <div class="form-text">Square works best. Under 5 MB.</div>
+              <div class="form-text">Square works best. Large photos are resized automatically.</div>
             </div>
           </div>
         </fieldset>

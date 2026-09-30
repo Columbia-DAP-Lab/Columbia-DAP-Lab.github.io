@@ -4,7 +4,7 @@
 {% assign show_bio = include.show_bio | default: false %}
 {% assign fallback_image = "/files/images/avatar/avatar-default.png" %}
 {% assign avatar_size = 120 %}
-{% if include.category != "Faculty" %}
+{% if include.category != "Faculty" and people %}
   {% assign people = people | sort: "name" %}
 {% endif %}
 
