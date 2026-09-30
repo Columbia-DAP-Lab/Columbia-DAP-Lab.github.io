@@ -13,7 +13,10 @@ import type * as authors from "../authors.js";
 import type * as authz from "../authz.js";
 import type * as content from "../content.js";
 import type * as deployHook from "../deployHook.js";
+import type * as extract from "../extract.js";
+import type * as extractSupport from "../extractSupport.js";
 import type * as http from "../http.js";
+import type * as llm from "../llm.js";
 import type * as migrate from "../migrate.js";
 import type * as vocabulary from "../vocabulary.js";
 
@@ -29,7 +32,10 @@ declare const fullApi: ApiFromModules<{
   authz: typeof authz;
   content: typeof content;
   deployHook: typeof deployHook;
+  extract: typeof extract;
+  extractSupport: typeof extractSupport;
   http: typeof http;
+  llm: typeof llm;
   migrate: typeof migrate;
   vocabulary: typeof vocabulary;
 }>;
@@ -60,4 +66,6 @@ export declare const internal: FilterApi<
   FunctionReference<any, "internal">
 >;
 
-export declare const components: {};
+export declare const components: {
+  rateLimiter: import("@convex-dev/rate-limiter/_generated/component.js").ComponentApi<"rateLimiter">;
+};

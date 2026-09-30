@@ -32,6 +32,9 @@ type Env = {
   readonly CONVEX_SITE_URL: string;
   readonly GITHUB_DISPATCH_TOKEN: string | undefined;
   readonly GITHUB_REPOSITORY: string | undefined;
+  readonly LLM_API_KEY: string | undefined;
+  readonly LLM_BASE_URL: string | undefined;
+  readonly LLM_MODEL: string | undefined;
 };
 
 /**
