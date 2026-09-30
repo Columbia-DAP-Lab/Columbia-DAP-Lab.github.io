@@ -95,12 +95,11 @@ h1, h2, h3, h4, h5, h6 {
   align-items: flex-start;
   gap: 1rem 2rem;
 }
-.site-footer-info p { margin: 0 0 0.6rem; }
+.site-footer-info p { margin: 0; }
 .site-footer-admin { white-space: nowrap; }
 .site-footer strong { color: var(--dap-ink); font-weight: 600; }
 .site-footer a { color: var(--dap-muted); }
 .site-footer a:hover { color: var(--dap-navy); }
-.site-footer nav { display: flex; flex-wrap: wrap; gap: 0.25rem 1.25rem; }
 
 /* ---------------------------------------------------------- page structure */
 
