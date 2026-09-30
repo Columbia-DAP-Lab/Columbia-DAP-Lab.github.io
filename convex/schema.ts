@@ -197,6 +197,7 @@ export default defineSchema({
   })
     .index("by_status_and_pubDate", ["status", "pubDate"])
     .index("by_year", ["year"])
+    .index("by_submittedBy_and_submittedAt", ["submittedBy", "submittedAt"])
     .index("by_url", ["url"])
     .index("by_bibtexKey", ["bibtexKey"])
     .searchIndex("search_title", { searchField: "title" }),
@@ -313,6 +314,7 @@ export default defineSchema({
   })
     .index("by_status_and_startDate", ["status", "startDate"])
     .index("by_series_and_startDate", ["series", "startDate"])
+    .index("by_submittedBy_and_submittedAt", ["submittedBy", "submittedAt"])
     .searchIndex("search_title", { searchField: "title" }),
 
   /**

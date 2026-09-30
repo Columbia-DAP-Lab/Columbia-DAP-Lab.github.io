@@ -1,10 +1,10 @@
-import { v } from "convex/values";
+import { ConvexError, v } from "convex/values";
 import { internalMutation, mutation, query } from "./_generated/server";
 import { internal } from "./_generated/api";
-import type { MutationCtx } from "./_generated/server";
+import type { MutationCtx, QueryCtx } from "./_generated/server";
 import type { Doc, Id } from "./_generated/dataModel";
 import schema from "./schema";
-import { capabilityValidator, requireCapability, requireSubmitter } from "./authz";
+import { capabilityValidator, currentEmail, isColumbiaAddress, requireCapability, requireSubmitter } from "./authz";
 import { adjustAuthorCounts, peopleByMatchKey, upsertAuthor } from "./authors";
 
 /**
@@ -68,6 +68,31 @@ const submissionFields = (submittedBy: string) => ({
 
 // --------------------------------------------------------------- submitting
 
+/** Largest event image accepted. The site shows it as a thumbnail. */
+const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+
+/**
+ * A one-time URL the browser POSTs an image to; the response carries the storageId
+ * that `submitEvent` then takes. Gated like submitting, so storage is not an open
+ * upload bucket.
+ */
+export const generateUploadUrl = mutation({
+  args: {},
+  returns: v.string(),
+  handler: async (ctx) => {
+    await requireSubmitter(ctx);
+    return await ctx.storage.generateUploadUrl();
+  },
+});
+
+/** Check an uploaded file before an event points at it. */
+const checkImage = async (ctx: MutationCtx, storageId: Id<"_storage">) => {
+  const file = await ctx.db.system.get("_storage", storageId);
+  if (file === null) throw new ConvexError("The uploaded image is missing; upload it again.");
+  if (!file.contentType?.startsWith("image/")) throw new ConvexError("The upload is not an image.");
+  if (file.size > MAX_IMAGE_BYTES) throw new ConvexError("Images must be under 5 MB.");
+};
+
 /**
  * Propose an event. Lands as `pending`; an editor publishes it.
  *
@@ -85,6 +110,8 @@ export const submitEvent = mutation({
     location: v.optional(v.string()),
     link: v.optional(v.string()),
     description: v.optional(v.string()),
+    /** From generateUploadUrl. */
+    image: v.optional(v.id("_storage")),
     speakers: v.array(
       v.object({
         name: v.string(),
@@ -103,11 +130,17 @@ export const submitEvent = mutation({
       .query("eventSeries")
       .withIndex("by_slug", (q) => q.eq("slug", args.series))
       .unique();
-    if (series === null) throw new Error(`Unknown series: ${args.series}`);
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(args.startDate)) throw new Error("Date must be YYYY-MM-DD.");
+    if (series === null) throw new ConvexError(`Unknown series: ${args.series}`);
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(args.startDate)) throw new ConvexError("Date must be YYYY-MM-DD.");
 
-    const { speakers, ...event } = args;
-    const eventId = await ctx.db.insert("events", { ...event, ...submissionFields(email) });
+    if (args.image !== undefined) await checkImage(ctx, args.image);
+
+    const { speakers, image, ...event } = args;
+    const eventId = await ctx.db.insert("events", {
+      ...event,
+      image: image === undefined ? undefined : { kind: "storage", storageId: image },
+      ...submissionFields(email),
+    });
     for (const [position, speaker] of speakers.entries()) {
       await ctx.db.insert("eventSpeakers", { eventId, position, ...speaker });
     }
@@ -140,7 +173,7 @@ export const submitPublication = mutation({
   returns: v.id("publications"),
   handler: async (ctx, args) => {
     const email = await requireSubmitter(ctx);
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(args.pubDate)) throw new Error("Date must be YYYY-MM-DD.");
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(args.pubDate)) throw new ConvexError("Date must be YYYY-MM-DD.");
 
     // The vocabulary is closed: a typo here would create a filter nothing matches.
     for (const slug of args.topics) {
@@ -148,7 +181,7 @@ export const submitPublication = mutation({
         .query("topics")
         .withIndex("by_slug", (q) => q.eq("slug", slug))
         .unique();
-      if (topic === null) throw new Error(`Unknown topic: ${slug}`);
+      if (topic === null) throw new ConvexError(`Unknown topic: ${slug}`);
     }
 
     const people = await peopleByMatchKey(ctx);
@@ -165,11 +198,20 @@ export const submitPublication = mutation({
       authorCount: authors.length,
       ...submissionFields(email),
     });
-    for (const [position, name] of authors.entries()) {
+    for (const [position, printed] of authors.entries()) {
+      // "Weiliang Zhao*" is equal contribution on this paper, not a different
+      // person — the same split the migration makes, so the two paths agree.
+      const equalContribution = printed.trim().endsWith("*");
+      const name = printed.replace(/\*+\s*$/, "").trim();
       // publicationCount tracks published papers, so a pending submission links the
       // author without counting the authorship yet; setStatus does that on publish.
       const authorId = await upsertAuthor(ctx, name, people, { countAuthorship: false });
-      await ctx.db.insert("publicationAuthors", { publicationId, authorId, position });
+      await ctx.db.insert("publicationAuthors", {
+        publicationId,
+        authorId,
+        position,
+        equalContribution: equalContribution ? true : undefined,
+      });
     }
 
     await record(ctx, {
@@ -185,6 +227,35 @@ export const submitPublication = mutation({
 
 // ----------------------------------------------------------------- reviewing
 
+/**
+ * An event or publication with what a reviewer needs to judge it: its speakers or
+ * authors, which live in their own tables, and a viewable URL for an uploaded image.
+ */
+const withSpeakers = async (ctx: QueryCtx, event: Doc<"events">) => ({
+  ...event,
+  speakers: await ctx.db
+    .query("eventSpeakers")
+    .withIndex("by_eventId_and_position", (q) => q.eq("eventId", event._id))
+    .take(50),
+  imageUrl:
+    event.image?.kind === "storage"
+      ? await ctx.storage.getUrl(event.image.storageId)
+      : event.image?.path ?? null,
+});
+
+const withAuthors = async (ctx: QueryCtx, publication: Doc<"publications">) => {
+  const rows = await ctx.db
+    .query("publicationAuthors")
+    .withIndex("by_publicationId_and_position", (q) => q.eq("publicationId", publication._id))
+    .take(500);
+  const authors = [];
+  for (const row of rows) {
+    const author = await ctx.db.get("authors", row.authorId);
+    if (author !== null) authors.push(row.equalContribution ? `${author.name}*` : author.name);
+  }
+  return { ...publication, authors };
+};
+
 /** Everything awaiting review, for the queue in the admin UI. */
 export const pending = query({
   args: { table: contentTableValidator },
@@ -192,16 +263,20 @@ export const pending = query({
   handler: async (ctx, args) => {
     await requireCapability(ctx, GOVERNS[args.table]);
     switch (args.table) {
-      case "events":
-        return await ctx.db
+      case "events": {
+        const rows = await ctx.db
           .query("events")
           .withIndex("by_status_and_startDate", (q) => q.eq("status", "pending"))
           .take(200);
-      case "publications":
-        return await ctx.db
+        return await Promise.all(rows.map((row) => withSpeakers(ctx, row)));
+      }
+      case "publications": {
+        const rows = await ctx.db
           .query("publications")
           .withIndex("by_status_and_pubDate", (q) => q.eq("status", "pending"))
           .take(200);
+        return await Promise.all(rows.map((row) => withAuthors(ctx, row)));
+      }
       case "people":
         return await ctx.db
           .query("people")
@@ -213,6 +288,39 @@ export const pending = query({
           .withIndex("by_status_and_sortOrder", (q) => q.eq("status", "pending"))
           .take(200);
     }
+  },
+});
+
+/**
+ * The signed-in user's own recent submissions, with their status and any review
+ * note, so a submitter can see what happened to an entry without asking.
+ */
+export const mySubmissions = query({
+  args: {},
+  returns: v.object({ events: v.array(v.any()), publications: v.array(v.any()) }),
+  handler: async (ctx) => {
+    const email = await currentEmail(ctx);
+    if (email === null) return { events: [], publications: [] };
+    const [events, publications] = await Promise.all([
+      ctx.db
+        .query("events")
+        .withIndex("by_submittedBy_and_submittedAt", (q) => q.eq("submittedBy", email))
+        .order("desc")
+        .take(25),
+      ctx.db
+        .query("publications")
+        .withIndex("by_submittedBy_and_submittedAt", (q) => q.eq("submittedBy", email))
+        .order("desc")
+        .take(25),
+    ]);
+    const summary = (row: Doc<"events"> | Doc<"publications">) => ({
+      _id: row._id,
+      title: row.title,
+      status: row.status,
+      submittedAt: row.submittedAt,
+      reviewNote: row.reviewNote,
+    });
+    return { events: events.map(summary), publications: publications.map(summary) };
   },
 });
 
@@ -233,10 +341,10 @@ export const setStatus = mutation({
   handler: async (ctx, args) => {
     const email = await requireCapability(ctx, GOVERNS[args.table]);
     const id = ctx.db.normalizeId(args.table, args.id);
-    if (id === null) throw new Error("No such record.");
+    if (id === null) throw new ConvexError("No such record.");
 
     const before = await ctx.db.get(args.table, id as Id<ContentTable>);
-    if (before === null) throw new Error("No such record.");
+    if (before === null) throw new ConvexError("No such record.");
 
     if (args.table === "publications") {
       const wasPublished = before.status === "published";
@@ -284,6 +392,9 @@ export const setRole = mutation({
   handler: async (ctx, args) => {
     const actor = await requireCapability(ctx, "admin");
     const email = args.email.trim().toLowerCase();
+    if (!isColumbiaAddress(email)) {
+      throw new ConvexError("Only @columbia.edu accounts can sign in, so only they can hold a role.");
+    }
 
     const existing = await ctx.db
       .query("roles")
@@ -303,7 +414,7 @@ export const setRole = mutation({
       // Guard against an admin removing their own last admin grant and locking
       // everyone out; bootstrapAdmin is an internal escape hatch, not a UI.
       if (email === actor && !args.capabilities.includes("admin")) {
-        throw new Error("You cannot remove your own admin capability.");
+        throw new ConvexError("You cannot remove your own admin capability.");
       }
       await ctx.db.patch("roles", existing._id, { capabilities: args.capabilities });
     }
@@ -334,6 +445,7 @@ export const bootstrapAdmin = internalMutation({
   returns: v.null(),
   handler: async (ctx, args) => {
     const email = args.email.trim().toLowerCase();
+    if (!isColumbiaAddress(email)) throw new ConvexError("Only @columbia.edu accounts can sign in.");
     const existing = await ctx.db
       .query("roles")
       .withIndex("by_email", (q) => q.eq("email", email))
