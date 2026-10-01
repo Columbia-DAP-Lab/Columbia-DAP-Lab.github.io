@@ -75,7 +75,15 @@ export const generateStructured = async (request: StructuredRequest): Promise<St
   }
   // Trimmed: a key pasted with a trailing newline fails the provider's format check.
   // An unset base URL means OpenAI's own API.
-  const client = new OpenAI({ apiKey: env.LLM_API_KEY.trim(), baseURL: env.LLM_BASE_URL || undefined });
+  // The SDK's defaults (10 minutes, 2 retries) outlast a Convex action's 10-minute
+  // limit, which would end in a bare timeout. Reads take seconds; a long paste, a
+  // minute or two. Worst case here is two tries of 2 minutes.
+  const client = new OpenAI({
+    apiKey: env.LLM_API_KEY.trim(),
+    baseURL: env.LLM_BASE_URL || undefined,
+    timeout: 120_000,
+    maxRetries: 1,
+  });
   const model = env.LLM_MODEL || MODEL;
 
   let completion;
@@ -99,6 +107,9 @@ export const generateStructured = async (request: StructuredRequest): Promise<St
     if (error instanceof OpenAI.AuthenticationError || error instanceof OpenAI.PermissionDeniedError) {
       console.error("The model provider rejected LLM_API_KEY", error.status, error.message);
       throw new ConvexError("Paste-to-fill is misconfigured; ask an admin to check the API key.");
+    }
+    if (error instanceof OpenAI.APIConnectionTimeoutError) {
+      throw new ConvexError("The model took too long. Try again, or paste less.");
     }
     if (error instanceof OpenAI.APIError) {
       // A 400 here is most likely the schema or the model id; the log says which.
@@ -125,8 +136,17 @@ export const generateStructured = async (request: StructuredRequest): Promise<St
   const text = choice?.message.content;
   if (!text) throw new ConvexError("The model returned nothing usable. Try again.");
 
+  let data;
+  try {
+    data = JSON.parse(text);
+  } catch {
+    // Length only: the output restates the pasted text, which may be personal.
+    console.error("Model returned invalid JSON", { length: text.length, finish: choice?.finish_reason });
+    throw new ConvexError("The model returned nothing usable. Try again.");
+  }
+
   return {
-    data: JSON.parse(text),
+    data,
     model: completion.model,
     inputTokens: completion.usage?.prompt_tokens ?? 0,
     outputTokens: completion.usage?.completion_tokens ?? 0,

@@ -27,7 +27,8 @@ const nullable = (schema: Schema): Schema => ({ anyOf: [schema, { type: "null" }
 const optionalText = nullable(text);
 const date: Schema = { type: "string", format: "date" };
 const list = (items: Schema): Schema => ({ type: "array", items });
-const oneOf = (values: string[]): Schema => ({ type: "string", enum: values });
+/** An empty enum is an invalid schema and fails the whole read; toDrafts drops unknown values anyway. */
+const oneOf = (values: string[]): Schema => (values.length > 0 ? { type: "string", enum: values } : text);
 const object = (properties: Record<string, Schema>): Schema => ({
   type: "object",
   properties,
