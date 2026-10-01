@@ -105,6 +105,8 @@ const showTab = (name) => {
 for (const tab of $$("[data-tab]")) {
   tab.addEventListener("click", () => {
     showTab(tab.dataset.tab);
+    // The account menu's Edit profile opens People at your own profile.
+    if (tab.dataset.scrollTo) document.getElementById(tab.dataset.scrollTo)?.scrollIntoView({ block: "start" });
     // On a phone the header is a collapsed menu; close it once a section is picked.
     const menu = $("#adminNav");
     if (menu?.classList.contains("show")) window.bootstrap?.Collapse.getOrCreateInstance(menu).hide();
@@ -1187,9 +1189,11 @@ const renderMe = (me) => {
     me.via === "people" ? `Signed in as a lab member, matched to ${me.person} on the People page.` : "";
 
   for (const node of $$("[data-needs]")) {
-    // "profile" is about having one to edit, not a capability; admins without a
-    // People-page profile have nothing to edit.
-    node.hidden = node.dataset.needs === "profile" ? me.profile === null : !can(me.capabilities, node.dataset.needs);
+    // Any one of the listed needs will do. "profile" is about having one to edit,
+    // not a capability: admins without a People-page profile have nothing to edit.
+    node.hidden = !node.dataset.needs
+      .split(" ")
+      .some((need) => (need === "profile" ? me.profile !== null : can(me.capabilities, need)));
   }
   // Leave a tab the user just lost access to.
   const open = $("[data-panel]:not([hidden])")?.dataset.panel;

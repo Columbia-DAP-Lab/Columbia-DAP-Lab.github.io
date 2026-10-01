@@ -282,6 +282,50 @@ docs/admin-service-design.md.
     <!-- ----------------------------------------------------------- people -->
     <div data-panel="people" hidden>
       <h1 class="dap-title">People</h1>
+      <div data-needs="profile" id="your-profile">
+        <h2 class="dap-section">Your profile</h2>
+        <p class="dap-muted" data-profile-intro></p>
+        <div class="dap-warnings mb-4" data-profile-pending hidden>
+          You have changes waiting for an admin to review. Submitting again replaces them.
+        </div>
+
+        <form id="profile-form" novalidate>
+          <fieldset class="dap-card">
+            <legend>Profile</legend>
+            <div class="mb-3">
+              <label class="form-label" for="profile-homepage">Homepage</label>
+              <input class="form-control" type="url" id="profile-homepage" name="homepage" placeholder="https://">
+            </div>
+            <div>
+              <label class="form-label" for="profile-bio">Bio</label>
+              <textarea class="form-control" id="profile-bio" name="bio" rows="3"></textarea>
+              <div class="form-text">Shown when someone hovers over your photo on the People page.</div>
+            </div>
+          </fieldset>
+
+          <fieldset class="dap-card">
+            <legend>Photo</legend>
+            <div class="d-flex gap-3 align-items-center">
+              <img class="dap-avatar" data-profile-photo alt="">
+              <div class="flex-grow-1">
+                <label class="form-label" for="profile-image">Replace photo</label>
+                <input class="form-control" type="file" id="profile-image" name="image" accept="image/*">
+                <div class="form-text">Square works best. Large photos are resized automatically.</div>
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset class="dap-card">
+            <legend>Badges</legend>
+            <div class="dap-checks" id="profile-fields"></div>
+          </fieldset>
+
+          <div class="dap-actions">
+            <button type="submit" class="btn dap-btn-primary">Save changes</button>
+            <span data-result></span>
+          </div>
+        </form>
+      </div>
       <div data-needs="people">
         <h2 class="dap-section">Add a person</h2>
       {% include admin-quick-add.html kind="person" placeholder="Paste a welcome email, a bio, or a homepage, then extract it into the form below." %}
@@ -344,7 +388,7 @@ docs/admin-service-design.md.
           <div class="mb-3">
             <label class="form-label" for="person-bio">Bio</label>
             <textarea class="form-control" id="person-bio" name="bio" rows="3"></textarea>
-            <div class="form-text">Shown for faculty.</div>
+            <div class="form-text">Shown when someone hovers over their photo on the People page.</div>
           </div>
           <div class="mb-3">
             <label class="form-label" for="person-image">Photo</label>
@@ -365,8 +409,12 @@ docs/admin-service-design.md.
         </div>
       </form>
       </div>
-      <div data-needs="admin">
-        <h2 class="dap-section">Users</h2>
+    </div>
+
+    <!-- ------------------------------------------------------------ users -->
+    <div data-panel="users" hidden>
+      <h1 class="dap-title">Users</h1>
+      <p class="dap-muted">Who can sign in here, and as what. Profiles on the People page are under People.</p>
 
       <form id="role-form" class="dap-card" novalidate>
         <h2 class="dap-card-title">Add users</h2>
@@ -406,10 +454,9 @@ docs/admin-service-design.md.
       <div class="dap-card">
         <h2 class="dap-card-title">Lab members from the People page <span class="dap-count" data-lab-count></span></h2>
         <p class="dap-muted">These people can sign in as members without being added: their Columbia account's name
-          is matched to their profile. To make one an admin, add their email above. Alumni and hidden profiles are
+          or the email on their profile is matched to it. To make one an admin, add their email above. Alumni and hidden profiles are
           not included.</p>
         <div class="dap-names" id="lab-members"></div>
-      </div>
       </div>
     </div>
 
@@ -572,51 +619,6 @@ docs/admin-service-design.md.
       <div id="mine"></div>
     </div>
 
-    <!-- ---------------------------------------------------------- profile -->
-    <div data-panel="profile" hidden>
-      <h1 class="dap-title">Edit profile</h1>
-      <p class="dap-muted" data-profile-intro></p>
-      <div class="dap-warnings mb-4" data-profile-pending hidden>
-        You have changes waiting for an admin to review. Submitting again replaces them.
-      </div>
-
-      <form id="profile-form" novalidate>
-        <fieldset class="dap-card">
-          <legend>Profile</legend>
-          <div class="mb-3">
-            <label class="form-label" for="profile-homepage">Homepage</label>
-            <input class="form-control" type="url" id="profile-homepage" name="homepage" placeholder="https://">
-          </div>
-          <div>
-            <label class="form-label" for="profile-bio">Bio</label>
-            <textarea class="form-control" id="profile-bio" name="bio" rows="3"></textarea>
-            <div class="form-text">Shown for faculty.</div>
-          </div>
-        </fieldset>
-
-        <fieldset class="dap-card">
-          <legend>Photo</legend>
-          <div class="d-flex gap-3 align-items-center">
-            <img class="dap-avatar" data-profile-photo alt="">
-            <div class="flex-grow-1">
-              <label class="form-label" for="profile-image">Replace photo</label>
-              <input class="form-control" type="file" id="profile-image" name="image" accept="image/*">
-              <div class="form-text">Square works best. Large photos are resized automatically.</div>
-            </div>
-          </div>
-        </fieldset>
-
-        <fieldset class="dap-card">
-          <legend>Badges</legend>
-          <div class="dap-checks" id="profile-fields"></div>
-        </fieldset>
-
-        <div class="dap-actions">
-          <button type="submit" class="btn dap-btn-primary">Save changes</button>
-          <span data-result></span>
-        </div>
-      </form>
-    </div>
 
   </section>
 </div>
