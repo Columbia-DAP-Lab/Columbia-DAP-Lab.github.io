@@ -63,7 +63,8 @@ http.route({
   path: "/slack/events",
   method: "POST",
   handler: httpAction(async (ctx, request) => {
-    const secret = env.SLACK_SIGNING_SECRET;
+    // Trimmed: a secret pasted with a trailing newline would never match.
+    const secret = env.SLACK_SIGNING_SECRET?.trim();
     if (!secret) return new Response("Slack is not set up on this deployment", { status: 503 });
 
     // The signature covers the raw body, so read it as text before parsing.

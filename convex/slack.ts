@@ -50,8 +50,15 @@ const sameString = (a: string, b: string) => {
 export const verifySlackRequest = async (headers: Headers, body: string, secret: string) => {
   const timestamp = headers.get("x-slack-request-timestamp");
   const signature = headers.get("x-slack-signature");
-  if (!timestamp || !signature) return false;
-  if (Math.abs(Date.now() / 1000 - Number(timestamp)) > MAX_AGE_SECONDS) return false;
+  // Logged without the secret or signature, so a refused request says why.
+  if (!timestamp || !signature) {
+    console.warn("Slack request refused: no signature headers");
+    return false;
+  }
+  if (Math.abs(Date.now() / 1000 - Number(timestamp)) > MAX_AGE_SECONDS) {
+    console.warn("Slack request refused: timestamp too old", { timestamp });
+    return false;
+  }
   const key = await crypto.subtle.importKey(
     "raw",
     new TextEncoder().encode(secret),
@@ -60,7 +67,13 @@ export const verifySlackRequest = async (headers: Headers, body: string, secret:
     ["sign"],
   );
   const mac = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(`v0:${timestamp}:${body}`));
-  return sameString(`v0=${hex(mac)}`, signature);
+  const ok = sameString(`v0=${hex(mac)}`, signature);
+  if (!ok) {
+    console.warn("Slack request refused: signature mismatch; is SLACK_SIGNING_SECRET this app's Signing Secret?", {
+      secretLength: secret.length,
+    });
+  }
+  return ok;
 };
 
 const mention = {
@@ -236,7 +249,7 @@ export const handleMention = internalAction({
   args: mention,
   returns: v.null(),
   handler: async (ctx, args): Promise<null> => {
-    const token = env.SLACK_BOT_TOKEN;
+    const token = env.SLACK_BOT_TOKEN?.trim();
     if (!token) {
       console.error("A Slack mention arrived, but SLACK_BOT_TOKEN is not set");
       return null;
