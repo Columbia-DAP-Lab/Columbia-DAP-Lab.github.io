@@ -156,6 +156,11 @@ export const submitPublication = internalMutation({
 });
 
 type Draft = Record<string, unknown>;
+type Vocabulary = { slug: string; label: string; description?: string }[];
+/** extractSupport:beginForSlack's answer, spelled out: handleMention refers to itself through `internal`. */
+type Gate =
+  | { ok: true; vocab: { series: Vocabulary; topics: Vocabulary; fields: Vocabulary } }
+  | { ok: false; reason: string };
 const str = (value: unknown) => (typeof value === "string" ? value : undefined);
 const strings = (value: unknown) => (Array.isArray(value) ? value.filter((s): s is string => typeof s === "string") : []);
 
@@ -230,7 +235,7 @@ const check = (warnings: string[]) => (warnings.length > 0 ? `\n      _Check: ${
 export const handleMention = internalAction({
   args: mention,
   returns: v.null(),
-  handler: async (ctx, args) => {
+  handler: async (ctx, args): Promise<null> => {
     const token = env.SLACK_BOT_TOKEN;
     if (!token) {
       console.error("A Slack mention arrived, but SLACK_BOT_TOKEN is not set");
@@ -257,7 +262,7 @@ export const handleMention = internalAction({
         return await say("I can't see an email on your Slack profile. Add your @columbia.edu address to it and try again.");
       }
 
-      const gate = await ctx.runMutation(internal.extractSupport.beginForSlack, {
+      const gate: Gate = await ctx.runMutation(internal.extractSupport.beginForSlack, {
         email,
         name: user.real_name ?? user.profile?.real_name,
       });
