@@ -50,9 +50,11 @@ layout: default
       <h2 class="section-title">News</h2>
       <a class="section-link" href="{{ '/news' | relative_url }}">All news →</a>
     </div>
+    {%- comment -%} The five most recent of the items marked featured; /news has the rest. {%- endcomment %}
     {% assign featured_news = site.data.news | where: 'featured', true %}
+    {% if featured_news %}{% assign featured_news = featured_news | sort: 'date', 'last' | reverse %}{% endif %}
     <ul class="home-list">
-      {%- for item in featured_news %}
+      {%- for item in featured_news limit: 5 %}
       <li>
         {%- if item.title %}<h3 class="home-item-title">{{ item.title | markdownify | remove: '<p>' | remove: '</p>' | strip }}</h3>{% endif %}
         <div class="home-item-body">{{ item.content | markdownify }}</div>
