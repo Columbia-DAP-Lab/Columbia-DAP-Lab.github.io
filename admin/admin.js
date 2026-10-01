@@ -241,7 +241,7 @@ handleSubmit(eventForm, async (submit) => {
   const file = eventForm.elements.image.files[0];
   if (file) event.image = await uploadImage(file);
 
-  if (editing.has(eventForm)) return await saveEdit(eventForm, submit.submitter, { ...event, speakers });
+  if (reviewEdits.has(eventForm)) return await saveEdit(eventForm, submit.submitter, { ...event, speakers });
   await client.mutation(api.admin.submitEvent, { ...event, speakers });
   eventForm.reset();
   $("#speakers").replaceChildren();
@@ -268,7 +268,7 @@ handleSubmit(publicationForm, async (submit) => {
     .filter(Boolean);
   const topics = checkedValues($("#topics"));
 
-  if (editing.has(publicationForm)) {
+  if (reviewEdits.has(publicationForm)) {
     return await saveEdit(publicationForm, submit.submitter, { ...publication, authors, topics });
   }
   await client.mutation(api.admin.submitPublication, { ...publication, authors, topics });
@@ -302,7 +302,7 @@ handleSubmit(personForm, async (submit) => {
   const file = personForm.elements.image.files[0];
   if (file) person.image = await uploadImage(file, PHOTO_SIDE);
 
-  if (editing.has(personForm)) return await saveEdit(personForm, submit.submitter, { ...person, advisors, fields });
+  if (reviewEdits.has(personForm)) return await saveEdit(personForm, submit.submitter, { ...person, advisors, fields });
   await client.mutation(api.admin.submitPerson, { ...person, advisors, fields });
   personForm.reset();
   return "Submitted. An admin will review it; follow it under Submissions.";
@@ -321,11 +321,11 @@ const EDITABLE = {
 };
 
 /** form → { table, id } while it holds a pending submission rather than a new one. */
-const editing = new Map();
+const reviewEdits = new Map();
 
 const setEditing = (form, table, row) => {
-  if (row) editing.set(form, { table, id: row._id });
-  else editing.delete(form);
+  if (row) reviewEdits.set(form, { table, id: row._id });
+  else reviewEdits.delete(form);
   const banner = $("[data-editing]", form);
   banner.hidden = !row;
   if (row) {
@@ -360,7 +360,7 @@ const startEditing = (table, row) => {
 };
 
 const stopEditing = (form) => {
-  const edit = editing.get(form);
+  const edit = reviewEdits.get(form);
   if (!edit) return;
   clearForm(form);
   setEditing(form, edit.table, null);
@@ -374,7 +374,7 @@ const reviewNote = (text) => {
 
 /** Save the form over the submission it holds, then go back to the queue. */
 const saveEdit = async (form, submitter, payload) => {
-  const { table, id } = editing.get(form);
+  const { table, id } = reviewEdits.get(form);
   await client.mutation(EDITABLE[table].update, { id, ...payload });
   const publish = submitter?.dataset.save === "publish";
   if (publish) await client.mutation(api.admin.setStatus, { table, id, status: "published" });
