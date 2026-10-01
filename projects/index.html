@@ -40,9 +40,13 @@ description: DAPLab develops the infrastructure needed to make AI agents safe, r
       <a href="{{ '/projects/' | relative_url }}?view=software"   class="chip view-toggle-btn active" data-view="software" role="tab" aria-selected="true">Software</a>
       <a href="{{ '/projects/' | relative_url }}?view=benchmarks" class="chip view-toggle-btn" data-view="benchmarks" role="tab" aria-selected="false">Benchmarks</a>
     </div>
-    <div class="chips layout-toggle" role="group" aria-label="Layout">
-      <button type="button" class="chip" data-layout="list" aria-pressed="true">List</button>
-      <button type="button" class="chip" data-layout="cozy" aria-pressed="false">Cozy</button>
+    <div class="layout-toggle" role="group" aria-label="Layout">
+      <button type="button" data-layout="list" aria-pressed="true">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 3.5h12M2 8h12M2 12.5h12"/></svg>List
+      </button>
+      <button type="button" data-layout="cozy" aria-pressed="false">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>Cozy
+      </button>
     </div>
   </div>
 
@@ -115,7 +119,25 @@ description: DAPLab develops the infrastructure needed to make AI agents safe, r
   gap: 0.5rem 1rem; margin: 0 0 2rem;
 }
 .projects-controls .chips { margin: 0; }
-.projects-controls .layout-toggle { flex-wrap: nowrap; margin-left: auto; }
+
+/* Segmented control: one track, the selected half filled. */
+.layout-toggle {
+  display: inline-flex; margin-left: auto; padding: 3px;
+  border: 1px solid var(--dap-rule); border-radius: 999px; background: var(--dap-surface);
+}
+.layout-toggle button {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  padding: 0.3rem 0.8rem; border: 0; border-radius: 999px; background: none;
+  color: var(--dap-muted); font-size: 0.85rem; font-weight: 500; line-height: 1.3;
+  transition: background-color 0.15s, color 0.15s;
+}
+.layout-toggle button:hover { color: var(--dap-ink); }
+.layout-toggle button[aria-pressed="true"] {
+  background: var(--dap-navy); color: #fff; box-shadow: 0 1px 2px rgb(0 0 0 / 0.15);
+}
+.layout-toggle svg {
+  width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round;
+}
 
 /* List: one row per project. Cozy: cards with the project image. */
 .projects-grid { border-top: 1px solid var(--dap-rule); }
@@ -218,7 +240,7 @@ const noResults   = document.getElementById('no-results');
 const noResultsTitle = noResults.querySelector('h3');
 const noResultsText  = noResults.querySelector('p');
 const viewButtons = Array.from(document.querySelectorAll('.view-toggle-btn'));
-const layoutButtons = Array.from(document.querySelectorAll('.layout-toggle .chip'));
+const layoutButtons = Array.from(document.querySelectorAll('.layout-toggle button'));
 
 const initialDocumentTitle = document.title;
 const titleSuffix = initialDocumentTitle.includes(' | ') ? initialDocumentTitle.slice(initialDocumentTitle.indexOf(' | ')) : '';
