@@ -47,7 +47,7 @@ defaults:
 # Undergraduate and M.S. recruiting: the home page notice and the Positions page.
 # Set ug_ms_applications_open to true when applications reopen, and update the
 # reopening text for the next round.
-ug_ms_application_url: "https://forms.gle/6FkeeJv43arrbN1n9"
+ug_ms_application_url: "https://forms.gle/hFPEsZqLmTxLg2927"
 ug_ms_applications_open: false
 ug_ms_applications_reopen: "early January"
 
