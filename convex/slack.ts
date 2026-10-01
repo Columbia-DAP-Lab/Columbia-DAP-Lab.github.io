@@ -28,7 +28,7 @@ import { generateStructured, isConfigured } from "./llm";
  *   - Then SLACK_SIGNING_SECRET and SLACK_BOT_TOKEN (convex/convex.config.ts).
  */
 
-const ADMIN_URL = "https://daplab.cs.columbia.edu/admin/";
+export const ADMIN_URL = "https://daplab.cs.columbia.edu/admin/";
 
 /** Slack signs requests this long ago at most; older ones may be replays. */
 const MAX_AGE_SECONDS = 5 * 60;
@@ -112,7 +112,7 @@ export const receive = internalMutation({
 type SlackResponse = { ok: boolean; error?: string; [key: string]: unknown };
 
 /** One Web API call. Form-encoded, which every method accepts (read methods refuse JSON). */
-const slackApi = async (token: string, method: string, params: Record<string, string | undefined>) => {
+export const slackApi = async (token: string, method: string, params: Record<string, string | undefined>) => {
   const body = new URLSearchParams();
   for (const [key, value] of Object.entries(params)) if (value !== undefined) body.set(key, value);
   const response = await fetch(`https://slack.com/api/${method}`, {
@@ -128,7 +128,7 @@ const slackApi = async (token: string, method: string, params: Record<string, st
 type SlackUser = { real_name?: string; profile?: { email?: string; real_name?: string; display_name?: string } };
 
 /** Slack's markup for what we send: only &, < and > are special. */
-const escape = (text: string) => text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+export const escape = (text: string) => text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
 /**
  * Slack's message markup as plain text for the model: links as "label (url)",
@@ -189,7 +189,7 @@ const str = (value: unknown) => (typeof value === "string" ? value : undefined);
 const strings = (value: unknown) => (Array.isArray(value) ? value.filter((s): s is string => typeof s === "string") : []);
 
 /** "Fri, Oct 3, 2026" from "2026-10-03". */
-const readableDate = (iso: string) =>
+export const readableDate = (iso: string) =>
   new Intl.DateTimeFormat("en-US", { timeZone: "UTC", weekday: "short", month: "short", day: "numeric", year: "numeric" }).format(
     new Date(`${iso}T00:00:00Z`),
   );

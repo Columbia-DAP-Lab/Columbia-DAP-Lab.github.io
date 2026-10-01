@@ -404,6 +404,17 @@ export default defineSchema({
    * Slack event ids already handled. Slack retries an event it thinks went
    * unanswered, and a retry must not submit the same talk twice.
    */
+  /**
+   * The Slack DMs that told a reviewer a submission was waiting, so they can be
+   * updated once someone decides (convex/slackReview.ts). Removed when decided.
+   */
+  slackReviewMessages: defineTable({
+    table: v.string(),
+    docId: v.string(),
+    channel: v.string(),
+    ts: v.string(),
+  }).index("by_table_and_docId", ["table", "docId"]),
+
   slackEvents: defineTable({
     eventId: v.string(),
     receivedAt: v.number(),

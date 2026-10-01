@@ -133,6 +133,16 @@ type Access = {
   viewingAsMember: boolean;
 };
 
+/**
+ * What an email may do, for a caller identified some other way than ctx.auth
+ * (the Slack review buttons): its added role, honoring a preview as a member.
+ */
+export const grantedCapabilities = async (ctx: QueryCtx | MutationCtx, email: string): Promise<Capability[]> => {
+  const row = await roleFor(ctx, email);
+  if (row === null) return [];
+  return row.viewingAsMember === true && beyondMember(row.capabilities) ? ["member"] : row.capabilities;
+};
+
 /** Whether a grant holds anything beyond `member`, so there is something to preview without. */
 const beyondMember = (capabilities: Capability[]) => capabilities.some((c) => c !== "member");
 

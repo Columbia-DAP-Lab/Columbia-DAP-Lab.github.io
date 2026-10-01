@@ -361,6 +361,14 @@ create an app (from scratch) named **DAPLab** in the lab workspace, then:
    `app_mention`. Save; Slack may ask you to reinstall the app.
 4. Invite the bot to the channels it should listen in: `/invite @DAPLab`.
 
+**Reviewing from Slack.** When something is submitted, everyone who can review it
+gets a DM from the bot with **Approve**, **Reject…** (with an optional note) and
+**Open in admin**. Whoever decides first, in Slack or on the admin page, settles it,
+and every reviewer's DM changes to say who published or rejected it. Reviewers are
+matched to Slack by email. This needs two more settings in the Slack app: the
+`im:write` bot scope (then reinstall), and **Interactivity & Shortcuts** turned on
+with the request URL `https://dutiful-turtle-748.convex.site/slack/interactions`.
+
 To try it on dev first, use a second app pointed at
 `https://agreeable-stork-479.convex.site/slack/events`, with the variables set without `--prod`.
 
