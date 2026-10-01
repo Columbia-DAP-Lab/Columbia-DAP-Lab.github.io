@@ -337,6 +337,57 @@ export const checkPerson = async (ctx: MutationCtx, args: ObjectType<typeof pers
   return { name, slug, advisorIds, externalAdvisors };
 };
 
+// --------------------------------------------------------------------- news
+
+/** A news item as the form submits it. Title, summary and details are Markdown. */
+export const newsSubmission = {
+  title: v.string(),
+  /** The summary: the homepage, and /news when there are no details. */
+  content: v.string(),
+  /** Longer text for /news. */
+  details: v.optional(v.string()),
+  date: v.optional(v.string()),
+  /** Whether it may appear on the homepage (the five most recent featured items do). */
+  featured: v.boolean(),
+};
+
+const checkNews = (args: ObjectType<typeof newsSubmission>) => {
+  if (!args.title.trim()) throw new ConvexError("A news item needs a title.");
+  if (!args.content.trim()) throw new ConvexError("A news item needs a summary.");
+  if (args.date !== undefined && !/^\d{4}-\d{2}-\d{2}$/.test(args.date)) throw new ConvexError("Date must be YYYY-MM-DD.");
+};
+
+/** Insert a pending news item for an already-checked `email`; see insertEvent. */
+export const insertNews = async (
+  ctx: MutationCtx,
+  email: string,
+  args: ObjectType<typeof newsSubmission>,
+): Promise<Id<"news">> => {
+  checkNews(args);
+  // The hand-set order is ascending; a new item goes ahead of every published one.
+  const first = await ctx.db
+    .query("news")
+    .withIndex("by_status_and_sortOrder", (q) => q.eq("status", "published"))
+    .first();
+  const newsId = await ctx.db.insert("news", {
+    ...args,
+    title: args.title.trim(),
+    content: args.content.trim(),
+    details: args.details?.trim() || undefined,
+    sortOrder: (first?.sortOrder ?? 0) - 1,
+    ...submissionFields(email),
+  });
+  await record(ctx, { table: "news", documentId: newsId, action: "create", actor: email, affectsSite: false });
+  return newsId;
+};
+
+/** Propose a news item. Lands as `pending`, like an event. */
+export const submitNews = mutation({
+  args: newsSubmission,
+  returns: v.id("news"),
+  handler: async (ctx, args) => insertNews(ctx, await requireSubmitter(ctx), args),
+});
+
 /**
  * Propose a profile for the People page.
  *
@@ -385,7 +436,7 @@ export const submitPerson = mutation({
 // setStatus. Only pending rows, so nothing live changes without a rebuild.
 
 /** The pending row a reviewer is editing, or a refusal if it was reviewed meanwhile. */
-const pendingRow = async <T extends "events" | "publications" | "people">(ctx: MutationCtx, table: T, id: Id<T>) => {
+const pendingRow = async <T extends "events" | "publications" | "people" | "news">(ctx: MutationCtx, table: T, id: Id<T>) => {
   const row = await ctx.db.get(table, id);
   if (row === null || row.status !== "pending") {
     throw new ConvexError("That submission is no longer waiting for review.");
@@ -455,6 +506,25 @@ export const updatePendingPublication = mutation({
     await linkAuthors(ctx, id, args.authors);
 
     await record(ctx, { table: "publications", documentId: id, action: "update", actor: email, affectsSite: false });
+    return null;
+  },
+});
+
+export const updatePendingNews = mutation({
+  args: { id: v.id("news"), ...newsSubmission },
+  returns: v.null(),
+  handler: async (ctx, { id, ...args }) => {
+    const email = await requireCapability(ctx, GOVERNS.news);
+    await pendingRow(ctx, "news", id);
+    checkNews(args);
+    await ctx.db.patch("news", id, {
+      title: args.title.trim(),
+      content: args.content.trim(),
+      details: args.details?.trim() || undefined,
+      date: args.date,
+      featured: args.featured,
+    });
+    await record(ctx, { table: "news", documentId: id, action: "update", actor: email, affectsSite: false });
     return null;
   },
 });
@@ -581,11 +651,12 @@ export const mySubmissions = query({
     events: v.array(v.any()),
     publications: v.array(v.any()),
     people: v.array(v.any()),
+    news: v.array(v.any()),
   }),
   handler: async (ctx) => {
     const email = await currentEmail(ctx);
-    if (email === null) return { events: [], publications: [], people: [] };
-    const [events, publications, people] = await Promise.all([
+    if (email === null) return { events: [], publications: [], people: [], news: [] };
+    const [events, publications, people, news] = await Promise.all([
       ctx.db
         .query("events")
         .withIndex("by_submittedBy_and_submittedAt", (q) => q.eq("submittedBy", email))
@@ -601,9 +672,14 @@ export const mySubmissions = query({
         .withIndex("by_submittedBy_and_submittedAt", (q) => q.eq("submittedBy", email))
         .order("desc")
         .take(25),
+      ctx.db
+        .query("news")
+        .withIndex("by_submittedBy_and_submittedAt", (q) => q.eq("submittedBy", email))
+        .order("desc")
+        .take(25),
     ]);
     // A person's `title` is their role ("PhD Student"); what the list shows is the name.
-    const summary = (title: string, row: Doc<"events"> | Doc<"publications"> | Doc<"people">) => ({
+    const summary = (title: string, row: Doc<"events"> | Doc<"publications"> | Doc<"people"> | Doc<"news">) => ({
       _id: row._id,
       title,
       status: row.status,
@@ -614,6 +690,7 @@ export const mySubmissions = query({
       events: events.map((row) => summary(row.title, row)),
       publications: publications.map((row) => summary(row.title, row)),
       people: people.map((row) => summary(row.name, row)),
+      news: news.map((row) => summary(row.title, row)),
     };
   },
 });

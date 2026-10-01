@@ -26,7 +26,7 @@ const entry = v.object({ slug: v.string(), label: v.string(), description: v.opt
  * vocabularies the model must choose from.
  */
 export const begin = internalMutation({
-  args: { kind: v.union(v.literal("event"), v.literal("publication"), v.literal("person")) },
+  args: { kind: v.union(v.literal("event"), v.literal("publication"), v.literal("person"), v.literal("news")) },
   returns: v.object({ series: v.array(entry), topics: v.array(entry), fields: v.array(entry) }),
   handler: async (ctx, args) => {
     // Filling the person form is for whoever may submit one: admins.
