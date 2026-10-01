@@ -37,7 +37,7 @@
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 2rem 1.25rem;
 }
-.person { text-align: center; }
+.person { position: relative; text-align: center; }
 .person-photo {
   position: relative;
   width: 112px;
@@ -48,27 +48,41 @@
   background: var(--dap-surface);
 }
 .person-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.person-bio {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  padding: 0.9rem;
-  background: rgba(1, 33, 105, 0.88);
-  color: #fff;
-  font-size: 0.68rem;
-  line-height: 1.35;
-  text-align: center;
-  opacity: 0;
-  transition: opacity 0.2s ease;
-  overflow: hidden;
-}
-.person-bio p { margin: 0; }
-.person-photo:hover .person-bio { opacity: 1; }
 .person-name { font-size: 0.95rem; font-weight: 600; line-height: 1.3; margin: 0 0 0.4rem; }
 .person-name a { color: var(--dap-ink); }
 .person-name a:hover { color: var(--dap-navy); }
 .person-fields { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.25rem; }
+
+/* A person's bio, in a card just under their photo, on hover or keyboard focus. */
+.person-tip {
+  position: absolute;
+  z-index: 20;
+  top: calc(112px + 0.4rem);
+  left: 50%;
+  width: 260px;
+  padding: 0.7rem 0.85rem;
+  background: #fff;
+  border: 1px solid var(--dap-rule);
+  border-radius: var(--dap-radius);
+  box-shadow: 0 8px 24px rgba(25, 33, 45, 0.14);
+  color: var(--dap-ink);
+  font-size: 0.8rem;
+  line-height: 1.5;
+  text-align: left;
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(-50%, 4px);
+  transition: opacity 0.15s ease, transform 0.15s ease, visibility 0s linear 0.15s;
+  pointer-events: none;
+}
+.person.has-bio:hover .person-tip,
+.person.has-bio:focus-within .person-tip {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, 0);
+  transition-delay: 0.15s, 0.15s, 0s;
+}
+.person.has-bio .person-photo { cursor: help; }
 
 /*
  * Research-area badges. Each class names a color (--c); the badge is a soft tint
