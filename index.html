@@ -39,8 +39,13 @@ layout: default
 
 {%- if site.ug_ms_application_url and site.ug_ms_application_url != '' %}
 <aside class="section home-notice">
-  <p><strong>Fall 2026 recruiting.</strong> We are recruiting undergraduate and M.S. students to work on agentic systems.</p>
-  <a class="btn btn-sm btn-dap" href="https://forms.gle/hFPEsZqLmTxLg2927">Apply for Fall 2026</a>
+  {%- if site.ug_ms_applications_open %}
+  <p><strong>Now recruiting.</strong> We are recruiting undergraduate and M.S. students to work on agentic systems.</p>
+  <a class="btn btn-sm btn-dap" href="{{ site.ug_ms_application_url }}">Apply</a>
+  {%- else %}
+  <p><strong>Recruiting is closed for this semester.</strong> Applications for undergraduate and M.S. students open again in {{ site.ug_ms_applications_reopen }}.</p>
+  <button type="button" class="btn btn-sm btn-dap" disabled>Applications closed</button>
+  {%- endif %}
 </aside>
 {%- endif %}
 
