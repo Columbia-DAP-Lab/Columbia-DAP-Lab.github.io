@@ -109,6 +109,14 @@ http.route({
         text: event.text ?? "",
         botUserId: payload.authorizations?.[0]?.user_id,
       });
+    } else {
+      // Only shapes, no message text: enough to tell a wrong subscription from a bot's own post.
+      console.log("Slack request ignored", {
+        type: payload.type,
+        event: event?.type,
+        subtype: event?.subtype,
+        fromBot: Boolean(event?.bot_id),
+      });
     }
     return new Response(null, { status: 200 });
   }),
