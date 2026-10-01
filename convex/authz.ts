@@ -1,5 +1,5 @@
 import { ConvexError, v } from "convex/values";
-import { query } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
 import type { MutationCtx, QueryCtx } from "./_generated/server";
 import type { Doc } from "./_generated/dataModel";
 import { matchKey } from "./authors";
@@ -126,7 +126,15 @@ type Access = {
   via: "added" | "people" | null;
   /** The profile they were matched to, when `via` is "people". */
   person: string | null;
+  /**
+   * True while previewing as a member: `capabilities` is then just `member`,
+   * though the account holds more.
+   */
+  viewingAsMember: boolean;
 };
+
+/** Whether a grant holds anything beyond `member`, so there is something to preview without. */
+const beyondMember = (capabilities: Capability[]) => capabilities.some((c) => c !== "member");
 
 /**
  * The People-page profile that belongs to the signed-in account, whoever let
@@ -146,14 +154,26 @@ export const profileFor = async (ctx: QueryCtx | MutationCtx): Promise<Doc<"peop
 export const accessFor = async (ctx: QueryCtx | MutationCtx): Promise<Access | null> => {
   const email = await currentEmail(ctx);
   if (email === null) return null;
-  const granted = await capabilitiesFor(ctx, email);
-  if (granted.length > 0) return { email, capabilities: granted, via: "added", person: null };
+  const row = await roleFor(ctx, email);
+  const granted = row?.capabilities ?? [];
+  if (granted.length > 0) {
+    const viewingAsMember = row?.viewingAsMember === true && beyondMember(granted);
+    return {
+      email,
+      capabilities: viewingAsMember ? ["member"] : granted,
+      via: "added",
+      person: null,
+      viewingAsMember,
+    };
+  }
 
   const identity = await ctx.auth.getUserIdentity();
   const name = typeof identity?.name === "string" ? identity.name : undefined;
   const person = await labMemberFor(ctx, email, name);
-  if (person !== null) return { email, capabilities: ["member"], via: "people", person: person.name };
-  return { email, capabilities: [], via: null, person: null };
+  if (person !== null) {
+    return { email, capabilities: ["member"], via: "people", person: person.name, viewingAsMember: false };
+  }
+  return { email, capabilities: [], via: null, person: null, viewingAsMember: false };
 };
 
 const NOT_ON_LIST = "Your account is not on the DAPLab list yet. Ask a lab admin to add you.";
@@ -166,16 +186,12 @@ export const requireSubmitter = async (ctx: QueryCtx | MutationCtx): Promise<str
   return access.email;
 };
 
-export const capabilitiesFor = async (
-  ctx: QueryCtx | MutationCtx,
-  email: string,
-): Promise<Capability[]> => {
-  const row = await ctx.db
+const roleFor = async (ctx: QueryCtx | MutationCtx, email: string): Promise<Doc<"roles"> | null> =>
+  await ctx.db
     .query("roles")
     .withIndex("by_email", (q) => q.eq("email", normalizeEmail(email)))
     .unique();
-  return row?.capabilities ?? [];
-};
+
 
 /**
  * Require one capability, or `admin`, which implies the rest.
@@ -215,6 +231,8 @@ export const me = query({
     person: v.union(v.string(), v.null()),
     /** Name on the People-page profile this account may edit, if any. */
     profile: v.union(v.string(), v.null()),
+    /** Previewing as a member; `capabilities` is then just `member`. */
+    viewingAsMember: v.boolean(),
   }),
   handler: async (ctx) => {
     const access = await accessFor(ctx);
@@ -227,6 +245,7 @@ export const me = query({
         via: null,
         person: null,
         profile: null,
+        viewingAsMember: false,
       };
     }
     if (access.capabilities.length === 0) {
@@ -238,9 +257,31 @@ export const me = query({
         via: null,
         person: null,
         profile: null,
+        viewingAsMember: false,
       };
     }
     const profile = await profileFor(ctx);
     return { ...access, refused: null, notOnList: null, profile: profile?.name ?? null };
+  },
+});
+
+/**
+ * Preview the admin page as a lab member sees it, or stop.
+ *
+ * Checked against the account's real grant, not accessFor, which reports only
+ * `member` while a preview is on; otherwise there would be no way back.
+ */
+export const setViewingAsMember = mutation({
+  args: { on: v.boolean() },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const email = await currentEmail(ctx);
+    if (email === null) throw new ConvexError("Sign in to continue.");
+    const row = await roleFor(ctx, email);
+    if (row === null || !beyondMember(row.capabilities)) {
+      throw new ConvexError("You already see the page as a member does.");
+    }
+    await ctx.db.patch("roles", row._id, { viewingAsMember: args.on || undefined });
+    return null;
   },
 });
