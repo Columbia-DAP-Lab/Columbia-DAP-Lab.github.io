@@ -31,9 +31,77 @@ docs/admin-service-design.md.
   <section id="signed-out" class="dap-card dap-signin">
     <h1 class="dap-title">Sign in</h1>
     <p>Sign in with your Columbia Google account (<code>uni@columbia.edu</code>) to add an event or a
-      publication. Current lab members on the People page can sign in right away; anyone else needs a
-      lab admin to add them. An admin reviews each submission before it appears on the site.</p>
+      publication. Current lab members on the People page can sign in right away. New to the lab? Sign
+      in, then add yourself; a lab admin approves it. An admin reviews each submission before it
+      appears on the site.</p>
     <div id="google-button"></div>
+  </section>
+
+  <!-- --------------------------------- signed in, not on the list: join -->
+  <section id="join" hidden>
+    <h1 class="dap-title">Add yourself to the lab</h1>
+    <p>You are signed in as <strong data-join-email></strong>, which is not on the DAPLab list yet. If
+      you are a student, postdoc or staff member in the lab, add your profile for the People page. A lab
+      admin reviews it; once it is approved, sign in here again to add events and papers.</p>
+    <p class="dap-muted">Faculty are added by an admin. Not in the lab, or signed in with the wrong
+      account? <button type="button" class="btn btn-link p-0 align-baseline" data-join-sign-out>Sign out</button></p>
+
+    <div class="alert" role="status" data-join-state hidden></div>
+
+    <form id="join-form" novalidate>
+      <fieldset class="dap-card">
+        <legend>You</legend>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label" for="join-name">Name <span class="dap-req">*</span></label>
+            <input class="form-control" id="join-name" name="name" required>
+            <div class="form-text">As it should appear on the People page.</div>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label" for="join-category">Group <span class="dap-req">*</span></label>
+            <select class="form-select" id="join-category" name="category" required>
+              <option value="">Choose…</option>
+              <option value="phd">PhD</option>
+              <option value="student">M.S./Undergraduate</option>
+              <option value="postdoc">Postdoc</option>
+              <option value="staff">Staff</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label" for="join-title">Title</label>
+            <input class="form-control" id="join-title" name="title" placeholder="PhD Student">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label" for="join-homepage">Homepage</label>
+            <input class="form-control" type="url" id="join-homepage" name="homepage" placeholder="https://">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label" for="join-affiliation">Affiliation</label>
+            <input class="form-control" id="join-affiliation" name="affiliation">
+            <div class="form-text">Only if not Columbia Computer Science.</div>
+          </div>
+          <div class="col-12">
+            <label class="form-label" for="join-advisors">Advisors</label>
+            <textarea class="form-control" id="join-advisors" name="advisors" rows="2"></textarea>
+            <div class="form-text">One per line.</div>
+          </div>
+          <div class="col-12">
+            <label class="form-label" for="join-bio">Short bio</label>
+            <textarea class="form-control" id="join-bio" name="bio" rows="3"></textarea>
+            <div class="form-text">One or two sentences; shown when someone hovers over your photo.</div>
+          </div>
+          <div class="col-12">
+            <label class="form-label" for="join-image">Photo</label>
+            <input class="form-control" type="file" id="join-image" name="image" accept="image/*">
+            <div class="form-text">Square works best. Large photos are resized automatically.</div>
+          </div>
+        </div>
+      </fieldset>
+      <div class="dap-actions">
+        <button type="submit" class="btn dap-btn-primary">Submit for review</button>
+        <span data-result></span>
+      </div>
+    </form>
   </section>
 
   <!-- ---------------------------------------------------------- signed in -->

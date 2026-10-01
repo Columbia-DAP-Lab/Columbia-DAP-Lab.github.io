@@ -17,6 +17,7 @@ import type * as extract from "../extract.js";
 import type * as extractSupport from "../extractSupport.js";
 import type * as http from "../http.js";
 import type * as imageMigration from "../imageMigration.js";
+import type * as join from "../join.js";
 import type * as llm from "../llm.js";
 import type * as profiles from "../profiles.js";
 import type * as projectAdmin from "../projectAdmin.js";
@@ -39,6 +40,7 @@ declare const fullApi: ApiFromModules<{
   extractSupport: typeof extractSupport;
   http: typeof http;
   imageMigration: typeof imageMigration;
+  join: typeof join;
   llm: typeof llm;
   profiles: typeof profiles;
   projectAdmin: typeof projectAdmin;
