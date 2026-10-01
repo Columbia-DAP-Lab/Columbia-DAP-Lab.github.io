@@ -158,6 +158,7 @@ client.onUpdate(api.content.fields, {}, (fields) => {
   const sorted = [...fields].sort((a, b) => FIELD_KIND_ORDER[a.kind] - FIELD_KIND_ORDER[b.kind]);
   renderChecks($("#fields"), sorted, "field", (f) => f.kind);
   renderChecks($("#profile-fields"), sorted, "profile-field", (f) => f.kind);
+  renderChecks($("#merge-fields"), sorted, "merge-field", (f) => f.kind);
   // The badge boxes are rebuilt empty; put the profile's own back.
   if (profile) setChecks($("#profile-fields"), profile.fields);
 });
@@ -1161,10 +1162,25 @@ const otherRow = (user) => {
     },
     "×",
   );
+  const merge = el(
+    "button",
+    {
+      type: "button",
+      class: "dap-roster-merge",
+      title: `Merge ${user.email} into a profile`,
+      onclick: () => {
+        $("#merge-other").value = `account:${user.email}`;
+        $("#merge-card").scrollIntoView({ behavior: "smooth", block: "start" });
+        $("#merge-keep").focus();
+      },
+    },
+    "merge…",
+  );
   return el(
     "div",
     { class: "dap-roster-row" },
     el("span", { class: "dap-roster-who", title: `Added by ${user.grantedBy}` }, user.email),
+    merge,
     role,
     remove,
   );
@@ -1182,11 +1198,127 @@ const rosterGroup = (title, rows) =>
 
 const renderRoster = ({ members, others }) => {
   $("[data-lab-count]").textContent = members.length || "";
+  renderMergeChoices(members, others);
   $("#roster").replaceChildren(
     ...ROSTER_GROUPS.map((g) => rosterGroup(g.title, members.filter((p) => g.has(p.category)).map(memberRow))).filter(Boolean),
     ...[rosterGroup("Added by email, not on the People page", others.map(otherRow))].filter(Boolean),
   );
 };
+
+// -------------------------------------------------------------------- merge
+//
+// Pick a profile to keep and another entry (profile or added account), review
+// the combined profile in a form, and merge (admin:mergeUsers).
+
+/** Refill a select's options, keeping what was chosen if it is still there. */
+const fillChoices = (node, choices, placeholder) => {
+  const chosen = node.value;
+  node.replaceChildren(
+    el("option", { value: "" }, placeholder),
+    ...choices.map(({ value, label }) => el("option", { value, selected: value === chosen }, label)),
+  );
+};
+
+const renderMergeChoices = (members, others) => {
+  const profiles = members.map((p) => ({ value: `profile:${p.id}`, label: `${p.name} · ${GROUP_LABELS[p.category] ?? p.category}` }));
+  fillChoices($("#merge-keep"), profiles, "Choose a profile…");
+  fillChoices(
+    $("#merge-other"),
+    [...profiles, ...others.map((u) => ({ value: `account:${u.email}`, label: `${u.email} · added account` }))],
+    "Choose a profile or account…",
+  );
+};
+
+const mergeForm = $("#merge-form");
+let merging = null; // { keep, other, preview } while the form is open
+
+/** "profile:<id>" or "account:<email>" as the mutations' `other`. */
+const asOther = (value) => {
+  const [kind, ...rest] = value.split(":");
+  const id = rest.join(":");
+  return kind === "profile" ? { kind: "profile", id } : { kind: "account", email: id };
+};
+
+const closeMerge = () => {
+  merging = null;
+  mergeForm.reset();
+  mergeForm.hidden = true;
+  setResult(mergeForm, "", true);
+};
+
+$("[data-merge-review]").addEventListener("click", async () => {
+  const keepValue = $("#merge-keep").value;
+  const otherValue = $("#merge-other").value;
+  if (!keepValue || !otherValue) return showStatus("Choose the profile to keep and what to merge into it.");
+  if (keepValue === otherValue) return showStatus("Pick two different entries to merge.");
+  const keep = keepValue.slice("profile:".length);
+  const other = asOther(otherValue);
+  let preview;
+  try {
+    preview = await client.query(api.admin.mergePreview, { keep, other });
+    showStatus(null);
+  } catch (error) {
+    return showStatus(message(error));
+  }
+  merging = { keep, other, preview };
+  $("[data-merge-note]").hidden = true;
+
+  // Start from the kept profile; fill its gaps from the other.
+  const a = preview.keep;
+  const b = preview.other;
+  const fromB = (key) => (b.id ? b[key] : undefined);
+  const f = mergeForm.elements;
+  f.name.value = a.name;
+  f.category.value = a.category;
+  f.title.value = a.title ?? fromB("title") ?? "";
+  f.affiliation.value = a.affiliation ?? fromB("affiliation") ?? "";
+  f.homepage.value = a.homepage ?? fromB("homepage") ?? "";
+  f.email.value = a.email ?? b.email ?? "";
+  f.bio.value = a.bio ?? fromB("bio") ?? "";
+  f.advisors.value = [...new Set([...a.advisors, ...(fromB("advisors") ?? [])])].join("\n");
+  setChecks($("#merge-fields"), [...new Set([...a.fields, ...(fromB("fields") ?? [])])]);
+
+  const photo = (value, label, url, checked) =>
+    el(
+      "label",
+      { class: "dap-merge-photo" },
+      el("input", { type: "radio", name: "photo", value, checked: checked || undefined, class: "form-check-input" }),
+      url ? el("img", { src: url, alt: "" }) : el("span", { class: "dap-muted" }, "(none)"),
+      label,
+    );
+  $("[data-merge-photos]").replaceChildren(
+    photo("keep", a.name, a.imageUrl, true),
+    b.id ? photo("other", b.name, b.imageUrl, !a.imageUrl && Boolean(b.imageUrl)) : null,
+  );
+
+  mergeForm.hidden = false;
+  mergeForm.scrollIntoView({ behavior: "smooth", block: "start" });
+});
+
+$("[data-merge-cancel]").addEventListener("click", closeMerge);
+
+handleSubmit(mergeForm, async () => {
+  if (!merging) throw new Error("Choose what to merge first.");
+  const profile = values(mergeForm, ["name", "category", "title", "affiliation", "homepage", "email", "bio"]);
+  profile.advisors = lines(mergeForm.elements.advisors);
+  profile.fields = checkedValues($("#merge-fields"));
+  const file = mergeForm.elements.image.files[0];
+  if (file) profile.image = await uploadImage(file, PHOTO_SIDE);
+  const photo = mergeForm.elements.photo?.value === "other" ? "other" : "keep";
+
+  const otherLabel = merging.preview.other.name ?? merging.preview.other.email;
+  if (!confirm(`Merge ${otherLabel} into ${profile.name}? The other entry is archived and can't be split back out here.`)) {
+    return "";
+  }
+  await client.mutation(api.admin.mergeUsers, { keep: merging.keep, other: merging.other, profile, photo });
+  closeMerge();
+  $("#merge-keep").value = "";
+  $("#merge-other").value = "";
+  const note = $("[data-merge-note]");
+  note.textContent = `Merged into ${profile.name}.`;
+  note.hidden = false;
+  return "";
+});
 
 /** Every address in pasted text, whatever separates them ("Jane <jd1@columbia.edu>, …"). */
 const emailsIn = (text) => [...new Set((text.match(/[^\s<>,;:"'()[\]]+@[^\s<>,;:"'()[\]]+/g) ?? []).map((e) => e.toLowerCase()))];

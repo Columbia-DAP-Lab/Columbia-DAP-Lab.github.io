@@ -299,13 +299,14 @@ export const checkPerson = async (ctx: MutationCtx, args: ObjectType<typeof pers
 
   // The slug is the profile's identity; a second row for the same name would
   // split the person the way a misspelled author splits an author.
-  // A rejected profile does not hold the name: its person may try again.
+  // A rejected or archived profile does not hold the name: its person may try
+  // again, and a merge archives the profile it folds in before renaming.
   const slug = slugify(name);
   const sameSlug = await ctx.db
     .query("people")
     .withIndex("by_slug", (q) => q.eq("slug", slug))
     .take(20);
-  const existing = sameSlug.find((p) => p._id !== self && p.status !== "rejected") ?? null;
+  const existing = sameSlug.find((p) => p._id !== self && p.status !== "rejected" && p.status !== "archived") ?? null;
   if (existing !== null) {
     throw new ConvexError(
       existing.status === "pending"
@@ -801,6 +802,206 @@ export const removeFromLab = mutation({
       action: "reject",
       actor,
       snapshot: { status: "archived" },
+      affectsSite: true,
+    });
+    return null;
+  },
+});
+
+// ----------------------------------------------------------------- merging
+//
+// Two entries on the roster that are one person: two profiles (a duplicate, or
+// "Haonan Wang" and "Haonan Peter Wang"), or a profile and an account added by
+// email that sign-in could not match to it. The reviewer picks the profile to
+// keep and fixes up the combined details in a form; the merge moves everything
+// that pointed at the other profile to the kept one, leaves one email with the
+// stronger of the two roles, and archives the other profile.
+
+const mergeOther = v.union(
+  v.object({ kind: v.literal("profile"), id: v.id("people") }),
+  v.object({ kind: v.literal("account"), email: v.string() }),
+);
+
+/** A profile as the merge form shows it: advisors as names, the photo as a URL. */
+const profileForForm = v.object({
+  id: v.id("people"),
+  name: v.string(),
+  category: categoryValidator,
+  title: v.optional(v.string()),
+  affiliation: v.optional(v.string()),
+  homepage: v.optional(v.string()),
+  email: v.optional(v.string()),
+  bio: v.optional(v.string()),
+  fields: v.array(v.string()),
+  advisors: v.array(v.string()),
+  imageUrl: v.union(v.string(), v.null()),
+});
+
+/** Both sides of a proposed merge, for the form to start from. */
+export const mergePreview = query({
+  args: { keep: v.id("people"), other: mergeOther },
+  returns: v.object({
+    keep: profileForForm,
+    other: v.union(profileForForm, v.object({ email: v.string(), role: roleValidator })),
+  }),
+  handler: async (ctx, args) => {
+    await requireCapability(ctx, "admin");
+    const forForm = async (id: Id<"people">) => {
+      const person = await ctx.db.get("people", id);
+      if (person === null) throw new ConvexError("That profile no longer exists.");
+      const p = await withAdvisors(ctx, person);
+      return {
+        id: p._id,
+        name: p.name,
+        category: p.category,
+        title: p.title,
+        affiliation: p.affiliation,
+        homepage: p.homepage,
+        email: p.email,
+        bio: p.bio,
+        fields: p.fields,
+        advisors: p.advisors,
+        imageUrl: p.imageUrl,
+      };
+    };
+    if (args.other.kind === "profile") {
+      if (args.other.id === args.keep) throw new ConvexError("Pick two different entries to merge.");
+      return { keep: await forForm(args.keep), other: await forForm(args.other.id) };
+    }
+    const email = args.other.email.trim().toLowerCase();
+    const grant = await ctx.db
+      .query("roles")
+      .withIndex("by_email", (q) => q.eq("email", email))
+      .unique();
+    if (grant === null) throw new ConvexError(`${email} has not been added.`);
+    return {
+      keep: await forForm(args.keep),
+      other: { email, role: grant.capabilities.includes("admin") ? ("admin" as const) : ("member" as const) },
+    };
+  },
+});
+
+export const mergeUsers = mutation({
+  args: {
+    keep: v.id("people"),
+    other: mergeOther,
+    /** The kept profile as the reviewer fixed it up. */
+    profile: v.object(personSubmission),
+    /** Which photo the kept profile ends with; a new upload comes in `profile.image`. */
+    photo: v.union(v.literal("keep"), v.literal("other")),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const actor = await requireCapability(ctx, "admin");
+    const kept = await ctx.db.get("people", args.keep);
+    if (kept === null || kept.status !== "published") throw new ConvexError("The profile to keep is not on the People page.");
+
+    const email = args.profile.email?.trim().toLowerCase() || undefined;
+    if (email && !isColumbiaAddress(email)) throw new ConvexError("The email must be a @columbia.edu address.");
+
+    // Checked before anything is written: the other side, and the roles of every
+    // email involved, which fold into the one the kept profile ends with.
+    const other = args.other.kind === "profile" ? await ctx.db.get("people", args.other.id) : null;
+    if (args.other.kind === "profile") {
+      if (args.other.id === kept._id) throw new ConvexError("Pick two different entries to merge.");
+      if (other === null) throw new ConvexError("The other profile no longer exists.");
+    }
+    const emails = new Set<string>();
+    if (kept.email) emails.add(kept.email);
+    if (other?.email) emails.add(other.email);
+    if (args.other.kind === "account") emails.add(args.other.email.trim().toLowerCase());
+    const grants = [];
+    for (const e of emails) {
+      const grant = await ctx.db
+        .query("roles")
+        .withIndex("by_email", (q) => q.eq("email", e))
+        .unique();
+      if (grant !== null) grants.push(grant);
+    }
+    const strongest = grants.some((g) => g.capabilities.includes("admin")) ? "admin" : grants.length > 0 ? "member" : null;
+    if (strongest !== null && !email) {
+      throw new ConvexError(`Keep an email on the profile: ${grants.map((g) => g.email).join(" and ")} signs in with it.`);
+    }
+    if (grants.some((g) => g.email === actor) && email !== actor) {
+      throw new ConvexError(`Keep your own email (${actor}) on the profile, or you would lose your admin role.`);
+    }
+
+    if (other !== null) {
+      const otherId = other._id;
+
+      // Everything that named the other profile now names the kept one.
+      const authors = await ctx.db
+        .query("authors")
+        .withIndex("by_personId", (q) => q.eq("personId", otherId))
+        .take(500);
+      for (const a of authors) await ctx.db.patch("authors", a._id, { personId: kept._id });
+      const speakers = await ctx.db
+        .query("eventSpeakers")
+        .withIndex("by_personId", (q) => q.eq("personId", otherId))
+        .take(1000);
+      for (const sp of speakers) await ctx.db.patch("eventSpeakers", sp._id, { personId: kept._id });
+      const edits = await ctx.db
+        .query("profileEdits")
+        .withIndex("by_personId_and_status", (q) => q.eq("personId", otherId))
+        .take(200);
+      for (const e of edits) await ctx.db.patch("profileEdits", e._id, { personId: kept._id });
+      // The directory is a few hundred rows, so scanning it for advisor links is fine.
+      const everyone = await ctx.db.query("people").take(3000);
+      for (const p of everyone) {
+        if (!p.advisorIds.includes(otherId)) continue;
+        const advisorIds = [...new Set(p.advisorIds.map((id) => (id === otherId ? kept._id : id)))].filter(
+          (id) => id !== p._id,
+        );
+        await ctx.db.patch("people", p._id, { advisorIds });
+      }
+
+      // Archived, not deleted, and without its email, so sign-in never finds it.
+      await ctx.db.patch("people", otherId, { status: "archived", email: undefined });
+      await record(ctx, {
+        table: "people",
+        documentId: otherId,
+        action: "reject",
+        actor,
+        snapshot: { mergedInto: kept._id },
+        affectsSite: other.status === "published",
+      });
+    }
+
+    // The kept profile as the form left it.
+    const { name, slug, advisorIds, externalAdvisors } = await checkPerson(ctx, args.profile, kept._id);
+    const image =
+      args.profile.image !== undefined
+        ? { kind: "storage" as const, storageId: args.profile.image }
+        : args.photo === "other" && other?.image !== undefined
+          ? other.image
+          : kept.image;
+    await ctx.db.patch("people", kept._id, {
+      name,
+      slug,
+      category: args.profile.category,
+      title: args.profile.title,
+      affiliation: args.profile.affiliation,
+      homepage: args.profile.homepage,
+      email,
+      bio: args.profile.bio,
+      fields: args.profile.fields,
+      advisorIds: advisorIds.filter((id) => id !== kept._id),
+      externalAdvisors,
+      image,
+    });
+
+    // One email keeps the stronger role; the others' added roles go.
+    if (email && strongest !== null) await writeRole(ctx, actor, email, [strongest]);
+    for (const g of grants) {
+      if (g.email !== email) await writeRole(ctx, actor, g.email, []);
+    }
+
+    await record(ctx, {
+      table: "people",
+      documentId: kept._id,
+      action: "update",
+      actor,
+      snapshot: { merged: args.other, email },
       affectsSite: true,
     });
     return null;

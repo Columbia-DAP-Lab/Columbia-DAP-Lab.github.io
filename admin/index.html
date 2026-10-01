@@ -449,6 +449,90 @@ docs/admin-service-design.md.
           their profile or by name. Changing a group updates the People page; Alum or Remove ends their sign-in.</p>
         <div id="roster"></div>
       </div>
+
+      <div class="dap-card" id="merge-card">
+        <h2 class="dap-card-title">Merge</h2>
+        <p class="dap-muted small">For two entries that are one person: a duplicate profile, or an account added by
+          email that sign-in did not match to its profile. Keep one profile; everything that pointed at the other
+          (papers, talks, advisor links, role) moves to it, and the other is archived.</p>
+        <div class="row g-2 align-items-end">
+          <div class="col-md-5">
+            <label class="form-label small" for="merge-keep">Keep this profile</label>
+            <select class="form-select form-select-sm" id="merge-keep"></select>
+          </div>
+          <div class="col-md-5">
+            <label class="form-label small" for="merge-other">Merge this into it</label>
+            <select class="form-select form-select-sm" id="merge-other"></select>
+          </div>
+          <div class="col-md-2">
+            <button type="button" class="btn btn-sm dap-btn-quiet w-100" data-merge-review>Review</button>
+          </div>
+        </div>
+        <p class="text-success small mt-2 mb-0" role="status" data-merge-note hidden></p>
+
+        <form id="merge-form" class="mt-3" novalidate hidden>
+          <p class="dap-muted small mb-2">The combined profile, starting from the one you keep and filling gaps from the
+            other. Fix anything before merging.</p>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label" for="merge-name">Name <span class="dap-req">*</span></label>
+              <input class="form-control" id="merge-name" name="name" required>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label" for="merge-category">Group <span class="dap-req">*</span></label>
+              <select class="form-select" id="merge-category" name="category" required>
+                <option value="faculty">Faculty</option>
+                <option value="postdoc">Postdoc</option>
+                <option value="phd">PhD</option>
+                <option value="student">M.S./Undergraduate</option>
+                <option value="staff">Staff</option>
+                <option value="alum">Alum</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label" for="merge-title">Title</label>
+              <input class="form-control" id="merge-title" name="title">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="merge-email">Columbia email</label>
+              <input class="form-control" type="email" id="merge-email" name="email" placeholder="uni@columbia.edu">
+              <div class="form-text">What they sign in with. Keeps the stronger of the two roles.</div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="merge-homepage">Homepage</label>
+              <input class="form-control" type="url" id="merge-homepage" name="homepage">
+            </div>
+            <div class="col-12">
+              <label class="form-label" for="merge-affiliation">Affiliation</label>
+              <input class="form-control" id="merge-affiliation" name="affiliation">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="merge-advisors">Advisors</label>
+              <textarea class="form-control" id="merge-advisors" name="advisors" rows="3"></textarea>
+              <div class="form-text">One per line.</div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="merge-bio">Bio</label>
+              <textarea class="form-control" id="merge-bio" name="bio" rows="3"></textarea>
+            </div>
+            <div class="col-12">
+              <span class="form-label d-block">Photo</span>
+              <div class="d-flex flex-wrap gap-3 align-items-center" data-merge-photos></div>
+              <input class="form-control form-control-sm mt-2" type="file" name="image" accept="image/*"
+                     aria-label="Or upload a new photo">
+            </div>
+            <div class="col-12">
+              <span class="form-label d-block">Badges</span>
+              <div class="dap-checks" id="merge-fields"></div>
+            </div>
+          </div>
+          <div class="dap-actions">
+            <button type="submit" class="btn dap-btn-primary">Merge</button>
+            <button type="button" class="btn btn-link" data-merge-cancel>Cancel</button>
+            <span data-result></span>
+          </div>
+        </form>
+      </div>
     </div>
 
     <!-- --------------------------------------------------------- projects -->
