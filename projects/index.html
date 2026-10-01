@@ -33,11 +33,21 @@ description: DAPLab develops the infrastructure needed to make AI agents safe, r
     <h2 class="section-title" id="projects-page-title">Software</h2>
   </div>
 
-  <div class="chips" role="tablist" aria-label="Project categories">
-    <a href="{{ '/projects/' | relative_url }}?view=all"        class="chip view-toggle-btn" data-view="all"        role="tab" aria-selected="false">All</a>
-    <a href="{{ '/projects/' | relative_url }}?view=projects"   class="chip view-toggle-btn" data-view="projects"   role="tab" aria-selected="false">Projects</a>
-    <a href="{{ '/projects/' | relative_url }}?view=software"   class="chip view-toggle-btn active" data-view="software" role="tab" aria-selected="true">Software</a>
-    <a href="{{ '/projects/' | relative_url }}?view=benchmarks" class="chip view-toggle-btn" data-view="benchmarks" role="tab" aria-selected="false">Benchmarks</a>
+  <div class="projects-controls">
+    <div class="chips" role="tablist" aria-label="Project categories">
+      <a href="{{ '/projects/' | relative_url }}?view=all"        class="chip view-toggle-btn" data-view="all"        role="tab" aria-selected="false">All</a>
+      <a href="{{ '/projects/' | relative_url }}?view=projects"   class="chip view-toggle-btn" data-view="projects"   role="tab" aria-selected="false">Projects</a>
+      <a href="{{ '/projects/' | relative_url }}?view=software"   class="chip view-toggle-btn active" data-view="software" role="tab" aria-selected="true">Software</a>
+      <a href="{{ '/projects/' | relative_url }}?view=benchmarks" class="chip view-toggle-btn" data-view="benchmarks" role="tab" aria-selected="false">Benchmarks</a>
+    </div>
+    <div class="layout-toggle" role="group" aria-label="Layout">
+      <button type="button" data-layout="list" aria-pressed="true">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 3.5h12M2 8h12M2 12.5h12"/></svg>List
+      </button>
+      <button type="button" data-layout="cozy" aria-pressed="false">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>Cozy
+      </button>
+    </div>
   </div>
 
   <div class="projects-grid" id="projects-grid">
@@ -49,6 +59,14 @@ description: DAPLab develops the infrastructure needed to make AI agents safe, r
       data-is-project="{% if project.is_project %}true{% elsif project.is_software %}false{% else %}true{% endif %}"
       data-is-benchmark="{% if project.is_benchmark %}true{% else %}false{% endif %}"
     >
+      <a href="{{ project.url }}" class="project-avatar-wrap" tabindex="-1" aria-hidden="true">
+        {% if project.avatar_url %}
+        <img src="{{ project.avatar_url | relative_url }}" alt="" class="project-avatar" loading="lazy">
+        {% else %}
+        <span class="project-avatar-placeholder">🔬</span>
+        {% endif %}
+      </a>
+
       <div class="project-main">
         <div class="project-title-line">
           <a href="{{ project.url }}" class="project-title">{{ project.title }}</a>
@@ -95,7 +113,33 @@ description: DAPLab develops the infrastructure needed to make AI agents safe, r
 .thrust-title { font-size: 0.98rem; margin: 0 0 0.35rem; }
 .thrusts p { font-size: 0.875rem; color: var(--dap-muted); margin: 0; line-height: 1.55; }
 
-/* One row per project. */
+/* Category filters on the left, the layout toggle on the right. */
+.projects-controls {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+  gap: 0.5rem 1rem; margin: 0 0 2rem;
+}
+.projects-controls .chips { margin: 0; }
+
+/* Segmented control: one track, the selected half filled. */
+.layout-toggle {
+  display: inline-flex; margin-left: auto; padding: 3px;
+  border: 1px solid var(--dap-rule); border-radius: 999px; background: var(--dap-surface);
+}
+.layout-toggle button {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  padding: 0.3rem 0.8rem; border: 0; border-radius: 999px; background: none;
+  color: var(--dap-muted); font-size: 0.85rem; font-weight: 500; line-height: 1.3;
+  transition: background-color 0.15s, color 0.15s;
+}
+.layout-toggle button:hover { color: var(--dap-ink); }
+.layout-toggle button[aria-pressed="true"] {
+  background: var(--dap-navy); color: #fff; box-shadow: 0 1px 2px rgb(0 0 0 / 0.15);
+}
+.layout-toggle svg {
+  width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round;
+}
+
+/* List: one row per project. Cozy: cards with the project image. */
 .projects-grid { border-top: 1px solid var(--dap-rule); }
 .project-card {
   display: grid;
@@ -105,6 +149,16 @@ description: DAPLab develops the infrastructure needed to make AI agents safe, r
   padding: 0.85rem 0;
   border-bottom: 1px solid var(--dap-rule);
 }
+.project-avatar-wrap {
+  display: none;
+  align-items: center; justify-content: center;
+  overflow: hidden;
+  border: 1px solid var(--dap-rule);
+  border-radius: var(--dap-radius);
+  background: var(--dap-surface);
+}
+.project-avatar { width: 100%; height: 100%; object-fit: contain; }
+.project-avatar-placeholder { font-size: 2.5rem; line-height: 1; }
 
 .project-main { min-width: 0; }
 .project-title-line { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
@@ -125,6 +179,22 @@ description: DAPLab develops the infrastructure needed to make AI agents safe, r
 }
 .project-meta-links { display: flex; gap: 0.85rem; font-size: 0.82rem; font-weight: 500; white-space: nowrap; }
 
+.projects-grid.cozy {
+  border-top: 0;
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem;
+}
+.projects-grid.cozy .project-card {
+  grid-template-columns: 96px minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  align-items: start;
+  gap: 0.75rem 1rem;
+  padding: 1rem;
+  border: 1px solid var(--dap-rule);
+  border-radius: var(--dap-radius);
+}
+.projects-grid.cozy .project-avatar-wrap { display: flex; width: 96px; height: 96px; grid-row: 1 / 3; }
+.projects-grid.cozy .project-meta { align-items: flex-start; }
+.projects-grid.cozy .project-meta-tags { justify-content: flex-start; }
 
 /* Hidden: used only for search indexing */
 .project-content, .project-tags-hidden { display: none; }
@@ -135,11 +205,17 @@ description: DAPLab develops the infrastructure needed to make AI agents safe, r
 
 @media (max-width: 991.98px) {
   .thrusts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .projects-grid.cozy { grid-template-columns: 1fr; }
 }
 @media (max-width: 767.98px) {
   .thrusts { grid-template-columns: 1fr; }
   .project-card { grid-template-columns: 1fr; row-gap: 0.4rem; }
   .project-meta, .project-meta-tags { align-items: flex-start; justify-content: flex-start; }
+  /* Cozy keeps a smaller image beside the title; tags and links go below. */
+  .projects-grid.cozy .project-card { grid-template-columns: 64px minmax(0, 1fr); }
+  .projects-grid.cozy .project-avatar-wrap { width: 64px; height: 64px; grid-row: 1; }
+  .projects-grid.cozy .project-meta { grid-column: 1 / -1; }
+  .projects-grid.cozy .project-avatar-placeholder { font-size: 1.75rem; }
 }
 </style>
 
@@ -158,11 +234,13 @@ const VIEW_CONFIG = {
 };
 
 const pageTitle   = document.getElementById('projects-page-title');
-const cards       = Array.from(document.querySelectorAll('.projects-grid > .project-card'));
+const grid        = document.getElementById('projects-grid');
+const cards      = Array.from(document.querySelectorAll('.projects-grid > .project-card'));
 const noResults   = document.getElementById('no-results');
 const noResultsTitle = noResults.querySelector('h3');
 const noResultsText  = noResults.querySelector('p');
 const viewButtons = Array.from(document.querySelectorAll('.view-toggle-btn'));
+const layoutButtons = Array.from(document.querySelectorAll('.layout-toggle button'));
 
 const initialDocumentTitle = document.title;
 const titleSuffix = initialDocumentTitle.includes(' | ') ? initialDocumentTitle.slice(initialDocumentTitle.indexOf(' | ')) : '';
@@ -174,6 +252,19 @@ const twitterDescriptionTag = document.querySelector('meta[name="twitter:descrip
 const ogUrlTag              = document.querySelector('meta[property="og:url"]');
 const canonicalTag          = document.querySelector('link[rel="canonical"]');
 const webPageSchemaTag      = document.querySelector('script[type="application/ld+json"]');
+
+// List or cozy layout, remembered across visits.
+function applyLayout(layout) {
+  grid.classList.toggle('cozy', layout === 'cozy');
+  layoutButtons.forEach(btn => btn.setAttribute('aria-pressed', btn.dataset.layout === layout ? 'true' : 'false'));
+}
+layoutButtons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    localStorage.setItem('projects-density', btn.dataset.layout);
+    applyLayout(btn.dataset.layout);
+  });
+});
+applyLayout(localStorage.getItem('projects-density') === 'cozy' ? 'cozy' : 'list');
 
 function getViewFromURL() {
   const view = new URLSearchParams(window.location.search).get('view');
