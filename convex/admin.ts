@@ -4,6 +4,7 @@ import { internalMutation, mutation, query } from "./_generated/server";
 import { internal } from "./_generated/api";
 import type { MutationCtx, QueryCtx } from "./_generated/server";
 import type { Doc, Id } from "./_generated/dataModel";
+import type { Capability } from "./authz";
 import schema from "./schema";
 import { capabilityValidator, currentEmail, isColumbiaAddress, requireCapability, requireSubmitter } from "./authz";
 import { adjustAuthorCounts, matchKey, peopleByMatchKey, upsertAuthor } from "./authors";
@@ -667,79 +668,191 @@ export const setStatus = mutation({
 });
 
 // --------------------------------------------------------------------- roles
+//
+// The Users tab's roster: current lab members from the People page, each with the
+// role they sign in with, and anyone added by email who is not one of them.
+
+const roleValidator = v.union(v.literal("member"), v.literal("admin"));
+const categoryValidator = schema.tables.people.validator.fields.category;
+
+/** Who signs in as what: lab members by group, then other added accounts. */
+export const roster = query({
+  args: {},
+  returns: v.object({
+    members: v.array(
+      v.object({
+        id: v.id("people"),
+        name: v.string(),
+        category: categoryValidator,
+        email: v.union(v.string(), v.null()),
+        role: roleValidator,
+      }),
+    ),
+    others: v.array(v.object({ email: v.string(), role: roleValidator, grantedBy: v.string() })),
+  }),
+  handler: async (ctx) => {
+    await requireCapability(ctx, "admin");
+    const [people, roles] = await Promise.all([
+      ctx.db
+        .query("people")
+        .withIndex("by_status_and_category", (q) => q.eq("status", "published"))
+        .take(2000),
+      ctx.db.query("roles").take(500),
+    ]);
+    const roleOf = (capabilities: Capability[]) => (capabilities.includes("admin") ? "admin" : "member") as "admin" | "member";
+    const byEmail = new Map(roles.map((r) => [r.email, r]));
+
+    const current = people.filter((p) => !p.hidden && p.category !== "alum");
+    const memberEmails = new Set(current.map((p) => p.email).filter((e): e is string => Boolean(e)));
+    return {
+      members: current
+        .map((p) => {
+          const grant = p.email ? byEmail.get(p.email) : undefined;
+          return {
+            id: p._id,
+            name: p.name,
+            category: p.category,
+            email: p.email ?? null,
+            role: grant ? roleOf(grant.capabilities) : ("member" as const),
+          };
+        })
+        .sort((a, b) => a.name.localeCompare(b.name)),
+      others: roles
+        .filter((r) => !memberEmails.has(r.email))
+        .map((r) => ({ email: r.email, role: roleOf(r.capabilities), grantedBy: r.grantedBy }))
+        .sort((a, b) => a.email.localeCompare(b.email)),
+    };
+  },
+});
+
+const currentMember = async (ctx: MutationCtx, id: Id<"people">) => {
+  const person = await ctx.db.get("people", id);
+  if (person === null || person.status !== "published") throw new ConvexError("That profile is not on the People page.");
+  return person;
+};
 
 /**
- * Current lab members on the People page, who can sign in as members without
- * being added (see accessFor in convex/authz.ts), for the Users tab.
+ * A lab member's role. Being on the People page already makes them a member;
+ * an admin also needs their Columbia email, which is saved on the profile so
+ * sign-in matches them by it.
  */
-export const labMembers = query({
-  args: {},
-  returns: v.array(v.object({ name: v.string(), category: v.string() })),
-  handler: async (ctx) => {
-    await requireCapability(ctx, "admin");
-    const rows = await ctx.db
-      .query("people")
-      .withIndex("by_status_and_category", (q) => q.eq("status", "published"))
-      .take(2000);
-    return rows
-      .filter((p) => !p.hidden && p.category !== "alum")
-      .map((p) => ({ name: p.name, category: p.category }))
-      .sort((a, b) => a.name.localeCompare(b.name));
+export const setMemberRole = mutation({
+  args: { personId: v.id("people"), role: roleValidator, email: v.optional(v.string()) },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const actor = await requireCapability(ctx, "admin");
+    const person = await currentMember(ctx, args.personId);
+    const email = (args.email ?? person.email)?.trim().toLowerCase();
+
+    if (args.role === "admin") {
+      if (!email) throw new ConvexError(`Add ${person.name}'s Columbia email to make them an admin.`);
+      if (!isColumbiaAddress(email)) throw new ConvexError("Only @columbia.edu accounts can sign in.");
+      if (person.email !== email) {
+        await ctx.db.patch("people", person._id, { email });
+        await record(ctx, { table: "people", documentId: person._id, action: "update", actor, snapshot: { email }, affectsSite: false });
+      }
+      await writeRole(ctx, actor, email, ["admin"]);
+    } else if (email) {
+      // Back to what the People page gives them on its own.
+      await writeRole(ctx, actor, email, []);
+    }
+    return null;
   },
 });
 
-export const listRoles = query({
-  args: {},
-  returns: v.array(schema.doc("roles")),
-  handler: async (ctx) => {
-    await requireCapability(ctx, "admin");
-    return await ctx.db.query("roles").take(200);
+/** Move a lab member to another group on the People page. Alum ends their sign-in. */
+export const setPersonCategory = mutation({
+  args: { personId: v.id("people"), category: categoryValidator },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const actor = await requireCapability(ctx, "admin");
+    const person = await currentMember(ctx, args.personId);
+    if (person.category === args.category) return null;
+    if (args.category === "alum" && person.email === actor) throw new ConvexError("You cannot make yourself an alum here.");
+    await ctx.db.patch("people", person._id, { category: args.category });
+    await record(ctx, {
+      table: "people",
+      documentId: person._id,
+      action: "update",
+      actor,
+      snapshot: { category: args.category },
+      affectsSite: true,
+    });
+    return null;
   },
 });
 
-/** Grant or replace someone's capabilities. An empty list revokes their access. */
+/**
+ * Take someone out of the lab: their profile comes off the People page (it is
+ * archived, not deleted) and any role added for them is removed.
+ */
+export const removeFromLab = mutation({
+  args: { personId: v.id("people") },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const actor = await requireCapability(ctx, "admin");
+    const person = await currentMember(ctx, args.personId);
+    if (person.email === actor) throw new ConvexError("You cannot remove yourself. Ask another admin.");
+    await ctx.db.patch("people", person._id, { status: "archived" });
+    if (person.email) await writeRole(ctx, actor, person.email, []);
+    await record(ctx, {
+      table: "people",
+      documentId: person._id,
+      action: "reject",
+      actor,
+      snapshot: { status: "archived" },
+      affectsSite: true,
+    });
+    return null;
+  },
+});
+
+/**
+ * Give `email` exactly `capabilities`, as `actor`; an empty list revokes their
+ * access. Shared by setRole and the roster's controls.
+ */
+const writeRole = async (ctx: MutationCtx, actor: string, rawEmail: string, capabilities: Capability[]) => {
+  const email = rawEmail.trim().toLowerCase();
+  if (!isColumbiaAddress(email)) {
+    throw new ConvexError("Only @columbia.edu accounts can sign in, so only they can hold a role.");
+  }
+
+  const existing = await ctx.db
+    .query("roles")
+    .withIndex("by_email", (q) => q.eq("email", email))
+    .unique();
+
+  // Guard against an admin removing or demoting themselves and locking everyone
+  // out; bootstrapAdmin is an internal escape hatch, not a UI.
+  if (email === actor && !capabilities.includes("admin")) {
+    throw new ConvexError("You cannot remove your own admin role. Ask another admin.");
+  }
+
+  if (capabilities.length === 0) {
+    if (existing !== null) await ctx.db.delete("roles", existing._id);
+  } else if (existing === null) {
+    await ctx.db.insert("roles", { email, capabilities, grantedBy: actor, grantedAt: Date.now() });
+  } else {
+    await ctx.db.patch("roles", existing._id, { capabilities });
+  }
+
+  await ctx.db.insert("revisions", {
+    table: "roles",
+    documentId: email,
+    action: capabilities.length === 0 ? "delete" : "update",
+    actor,
+    at: Date.now(),
+    snapshot: { email, capabilities },
+  });
+};
+
+/** Set an added account's role, for the Add new users form and the roster's other users. */
 export const setRole = mutation({
   args: { email: v.string(), capabilities: v.array(capabilityValidator) },
   returns: v.null(),
   handler: async (ctx, args) => {
     const actor = await requireCapability(ctx, "admin");
-    const email = args.email.trim().toLowerCase();
-    if (!isColumbiaAddress(email)) {
-      throw new ConvexError("Only @columbia.edu accounts can sign in, so only they can hold a role.");
-    }
-
-    const existing = await ctx.db
-      .query("roles")
-      .withIndex("by_email", (q) => q.eq("email", email))
-      .unique();
-
-    // Guard against an admin removing or demoting themselves and locking everyone
-    // out; bootstrapAdmin is an internal escape hatch, not a UI.
-    if (email === actor && !args.capabilities.includes("admin")) {
-      throw new ConvexError("You cannot remove your own admin role. Ask another admin.");
-    }
-
-    if (args.capabilities.length === 0) {
-      if (existing !== null) await ctx.db.delete("roles", existing._id);
-    } else if (existing === null) {
-      await ctx.db.insert("roles", {
-        email,
-        capabilities: args.capabilities,
-        grantedBy: actor,
-        grantedAt: Date.now(),
-      });
-    } else {
-      await ctx.db.patch("roles", existing._id, { capabilities: args.capabilities });
-    }
-
-    await ctx.db.insert("revisions", {
-      table: "roles",
-      documentId: email,
-      action: args.capabilities.length === 0 ? "delete" : "update",
-      actor,
-      at: Date.now(),
-      snapshot: { email, capabilities: args.capabilities },
-    });
+    await writeRole(ctx, actor, args.email, args.capabilities);
     return null;
   },
 });

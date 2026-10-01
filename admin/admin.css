@@ -321,6 +321,28 @@ pre.body { white-space: pre-wrap; font-family: inherit; margin: 0.5rem 0 0; }
 
 .dap-names { columns: 3 12rem; font-size: 0.9rem; }
 
+/* The Users tab's roster: a group heading, then two columns of one-line rows. */
+.dap-roster-group { margin-top: 1.25rem; }
+.dap-roster-group h3 {
+  font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--dap-muted); margin: 0 0 0.35rem;
+}
+.dap-roster { display: grid; grid-template-columns: repeat(auto-fill, minmax(25rem, 1fr)); column-gap: 1.5rem; }
+.dap-roster-row {
+  display: flex; align-items: center; gap: 0.4rem;
+  padding: 0.3rem 0; border-bottom: 1px solid var(--dap-border, #e3e7ed); font-size: 0.9rem;
+}
+.dap-roster-who { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dap-roster-who .dap-muted { font-size: 0.8rem; margin-left: 0.35rem; }
+.dap-roster-row .form-select {
+  width: auto; padding: 0.15rem 1.6rem 0.15rem 0.45rem; font-size: 0.82rem; background-position: right 0.4rem center;
+}
+.dap-roster-row .form-select.is-admin { font-weight: 700; color: var(--dap-columbia-dark, #012169); }
+#admin .dap-roster-remove {
+  border: 0; background: none; color: var(--dap-muted); padding: 0 0.3rem; font-size: 1.1rem; line-height: 1;
+}
+#admin .dap-roster-remove:hover { color: #a4262c; }
+
 /* ---------------------------------------------------------------- projects */
 
 .dap-row {

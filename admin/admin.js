@@ -1051,63 +1051,138 @@ resetProjectForm();
 
 const ROLE_LABELS = { member: "Member", admin: "Admin" };
 
-/** A row's role, for the select; older fine-grained grants read as what they allow. */
-const roleOf = (capabilities) => (capabilities.includes("admin") ? "admin" : "member");
+// ------------------------------------------------------------------- roster
+//
+// Lab members by group, each on one line with their role, group and a remove
+// button, then anyone added by email who is not on the People page.
 
-const saveRole = async (email, role) => {
+const GROUP_LABELS = {
+  faculty: "Faculty",
+  postdoc: "Postdoc",
+  phd: "PhD",
+  student: "M.S./Undergrad",
+  staff: "Staff",
+  alum: "Alum",
+};
+const ROSTER_GROUPS = [
+  { title: "Faculty", has: (c) => c === "faculty" },
+  { title: "Ph.D. students", has: (c) => c === "phd" },
+  { title: "Everyone else", has: (c) => c !== "faculty" && c !== "phd" },
+];
+
+/** Run a roster change; on failure say why, and redraw so the row shows what is true. */
+const rosterChange = async (run, revert) => {
   try {
-    await client.mutation(api.admin.setRole, { email, capabilities: role ? [role] : [] });
+    await run();
     showStatus(null);
   } catch (error) {
     showStatus(message(error));
+    revert?.();
   }
 };
 
-const renderRoles = (roles) =>
-  $("#roles").replaceChildren(
-    ...roles
-      .sort((a, b) => a.email.localeCompare(b.email))
-      .map((role) => {
-        const select = el(
-          "select",
-          { class: "form-select form-select-sm", "aria-label": `Role for ${role.email}` },
-          ...Object.entries(ROLE_LABELS).map(([value, label]) =>
-            el("option", { value, selected: roleOf(role.capabilities) === value }, label),
-          ),
+const pickList = (label, options, value) => {
+  const node = el(
+    "select",
+    { class: "form-select form-select-sm", "aria-label": label },
+    ...Object.entries(options).map(([v, text]) => el("option", { value: v, selected: v === value }, text)),
+  );
+  node.classList.toggle("is-admin", value === "admin");
+  return node;
+};
+
+const memberRow = (person) => {
+  const role = pickList(`Role for ${person.name}`, ROLE_LABELS, person.role);
+  role.addEventListener("change", () => {
+    const back = () => (role.value = person.role);
+    let email;
+    if (role.value === "admin" && !person.email) {
+      email = prompt(`${person.name}'s Columbia email, to make them an admin:`)?.trim();
+      if (!email) return back();
+    }
+    rosterChange(() => client.mutation(api.admin.setMemberRole, { personId: person.id, role: role.value, email }), back);
+  });
+
+  const group = pickList(`Group for ${person.name}`, GROUP_LABELS, person.category);
+  group.addEventListener("change", () => {
+    const back = () => (group.value = person.category);
+    if (group.value === "alum" && !confirm(`Move ${person.name} to alumni? They will no longer be able to sign in here.`)) {
+      return back();
+    }
+    rosterChange(() => client.mutation(api.admin.setPersonCategory, { personId: person.id, category: group.value }), back);
+  });
+
+  const remove = el(
+    "button",
+    {
+      type: "button",
+      class: "dap-roster-remove",
+      title: `Remove ${person.name}`,
+      "aria-label": `Remove ${person.name}`,
+      onclick: () => {
+        const ok = confirm(
+          `Remove ${person.name} from the lab? Their profile comes off the People page and they can no longer sign in.\n\nTo list them as an alum instead, change their group to Alum.`,
         );
-        select.addEventListener("change", () => saveRole(role.email, select.value));
-        return el(
-          "tr",
-          {},
-          el("td", {}, role.email),
-          el("td", {}, select),
-          el("td", { class: "dap-muted" }, role.grantedBy),
-          el(
-            "td",
-            { class: "text-end" },
-            el(
-              "button",
-              {
-                type: "button",
-                class: "btn btn-sm dap-remove",
-                onclick: () => {
-                  if (confirm(`Remove ${role.email}? They will no longer be able to sign in here, unless they are on the People page.`)) {
-                    saveRole(role.email, null);
-                  }
-                },
-              },
-              "Remove",
-            ),
-          ),
-        );
-      }),
+        if (ok) rosterChange(() => client.mutation(api.admin.removeFromLab, { personId: person.id }));
+      },
+    },
+    "×",
   );
 
-const CATEGORY_SHORT = { faculty: "Faculty", postdoc: "Postdoc", phd: "PhD", student: "Student", staff: "Staff" };
-const renderLabMembers = (people) => {
-  $("[data-lab-count]").textContent = people.length || "";
-  $("#lab-members").replaceChildren(
-    ...people.map((p) => el("div", {}, p.name, el("span", { class: "dap-muted" }, ` · ${CATEGORY_SHORT[p.category] ?? p.category}`))),
+  return el(
+    "div",
+    { class: "dap-roster-row" },
+    el("span", { class: "dap-roster-who", title: person.email ?? "" }, person.name, person.email && el("span", { class: "dap-muted" }, person.email)),
+    role,
+    group,
+    remove,
+  );
+};
+
+const otherRow = (user) => {
+  const role = pickList(`Role for ${user.email}`, ROLE_LABELS, user.role);
+  role.addEventListener("change", () =>
+    rosterChange(() => client.mutation(api.admin.setRole, { email: user.email, capabilities: [role.value] }), () => (role.value = user.role)),
+  );
+  const remove = el(
+    "button",
+    {
+      type: "button",
+      class: "dap-roster-remove",
+      title: `Remove ${user.email}`,
+      "aria-label": `Remove ${user.email}`,
+      onclick: () => {
+        if (confirm(`Remove ${user.email}? They will no longer be able to sign in here.`)) {
+          rosterChange(() => client.mutation(api.admin.setRole, { email: user.email, capabilities: [] }));
+        }
+      },
+    },
+    "×",
+  );
+  return el(
+    "div",
+    { class: "dap-roster-row" },
+    el("span", { class: "dap-roster-who", title: `Added by ${user.grantedBy}` }, user.email),
+    role,
+    remove,
+  );
+};
+
+const rosterGroup = (title, rows) =>
+  rows.length === 0
+    ? null
+    : el(
+        "section",
+        { class: "dap-roster-group" },
+        el("h3", {}, `${title} · ${rows.length}`),
+        el("div", { class: "dap-roster" }, rows),
+      );
+
+const renderRoster = ({ members, others }) => {
+  $("[data-lab-count]").textContent = members.length || "";
+  $("#roster").replaceChildren(
+    ...ROSTER_GROUPS.map((g) => rosterGroup(g.title, members.filter((p) => g.has(p.category)).map(memberRow))).filter(Boolean),
+    ...[rosterGroup("Added by email, not on the People page", others.map(otherRow))].filter(Boolean),
   );
 };
 
@@ -1218,8 +1293,7 @@ const renderMe = (me) => {
     );
   }
   if (me.capabilities.includes("admin")) {
-    subscribe(api.admin.listRoles, {}, renderRoles);
-    subscribe(api.admin.labMembers, {}, renderLabMembers);
+    subscribe(api.admin.roster, {}, renderRoster);
     subscribe(api.projectAdmin.list, {}, renderProjects);
   }
 };

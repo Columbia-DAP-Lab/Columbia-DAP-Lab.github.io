@@ -369,7 +369,7 @@ docs/admin-service-design.md.
         <h2 class="dap-section">Users</h2>
 
       <form id="role-form" class="dap-card" novalidate>
-        <h2 class="dap-card-title">Add users</h2>
+        <h2 class="dap-card-title">Add new users</h2>
         <div class="mb-3">
           <label class="form-label" for="role-emails">Columbia emails <span class="dap-req">*</span></label>
           <textarea class="form-control" id="role-emails" name="emails" rows="5" required
@@ -390,25 +390,16 @@ docs/admin-service-design.md.
           </div>
         </div>
         <div class="mt-3" data-result></div>
-        <div class="form-text mt-2"><strong>Members</strong> add events and publications. <strong>Admins</strong> also
-          review and publish them, add people, and manage this list. Adding someone who is already an admin as a
-          member leaves them an admin.</div>
+        <div class="form-text mt-2">For people not on the People page yet, or to let someone in by email.
+          <strong>Members</strong> add events and publications; <strong>admins</strong> also review and publish
+          them, add people, and manage this list. Adding an admin again as a member leaves them an admin.</div>
       </form>
 
       <div class="dap-card">
-        <h2 class="dap-card-title">Added users</h2>
-        <table class="table dap-table mb-0">
-          <thead><tr><th>Email</th><th>Role</th><th>Added by</th><th></th></tr></thead>
-          <tbody id="roles"></tbody>
-        </table>
-      </div>
-
-      <div class="dap-card">
-        <h2 class="dap-card-title">Lab members from the People page <span class="dap-count" data-lab-count></span></h2>
-        <p class="dap-muted">These people can sign in as members without being added: their Columbia account's name
-          is matched to their profile. To make one an admin, add their email above. Alumni and hidden profiles are
-          not included.</p>
-        <div class="dap-names" id="lab-members"></div>
+        <h2 class="dap-card-title">Lab members <span class="dap-count" data-lab-count></span></h2>
+        <p class="dap-muted small">Everyone current on the People page signs in as a member, matched by the email on
+          their profile or by name. Changing a group updates the People page; Alum or Remove ends their sign-in.</p>
+        <div id="roster"></div>
       </div>
       </div>
     </div>
