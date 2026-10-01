@@ -1,0 +1,7 @@
+{%- comment -%} One event in the home page's Events column. {%- endcomment -%}
+{%- assign event = include.event %}
+      <li>
+        <p class="home-item-meta">{{ event.date | date: "%b %-d, %Y" }}</p>
+        <h3 class="home-item-title">{% if event.link %}<a href="{{ event.link }}">{{ event.title }}</a>{% else %}{{ event.title }}{% endif %}</h3>
+        {%- if event.who %}<p class="home-item-meta">{{ event.who }}</p>{% endif %}
+      </li>
