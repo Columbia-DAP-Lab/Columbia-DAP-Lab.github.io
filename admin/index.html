@@ -44,6 +44,7 @@ docs/admin-service-design.md.
       {% include admin-quick-add.html kind="event" placeholder="Paste an announcement email or web page, then extract it into the form below." %}
 
       <form id="event-form" novalidate>
+        <div class="alert alert-info dap-editing" role="status" data-editing hidden></div>
         <fieldset class="dap-card">
           <legend>Talk details</legend>
           <div class="mb-3">
@@ -103,7 +104,9 @@ docs/admin-service-design.md.
         </fieldset>
 
         <div class="dap-actions">
-          <button type="submit" class="btn dap-btn-primary">Submit for review</button>
+          <button type="submit" class="btn dap-btn-primary" data-submit-label>Submit for review</button>
+          <button type="submit" class="btn dap-btn-quiet" data-save="publish" data-edit-only hidden>Save and publish</button>
+          <button type="button" class="btn btn-link" data-cancel-edit data-edit-only hidden>Cancel</button>
           <span data-result></span>
         </div>
       </form>
@@ -143,6 +146,7 @@ docs/admin-service-design.md.
       {% include admin-quick-add.html kind="publication" placeholder="Paste a citation, an abstract page, or a list of papers, then extract them into the form below." %}
 
       <form id="publication-form" novalidate>
+        <div class="alert alert-info dap-editing" role="status" data-editing hidden></div>
         <fieldset class="dap-card">
           <legend>Paper</legend>
           <div class="mb-3">
@@ -199,7 +203,9 @@ docs/admin-service-design.md.
         </fieldset>
 
         <div class="dap-actions">
-          <button type="submit" class="btn dap-btn-primary">Submit for review</button>
+          <button type="submit" class="btn dap-btn-primary" data-submit-label>Submit for review</button>
+          <button type="submit" class="btn dap-btn-quiet" data-save="publish" data-edit-only hidden>Save and publish</button>
+          <button type="button" class="btn btn-link" data-cancel-edit data-edit-only hidden>Cancel</button>
           <span data-result></span>
         </div>
       </form>
@@ -213,6 +219,7 @@ docs/admin-service-design.md.
       {% include admin-quick-add.html kind="person" placeholder="Paste a welcome email, a bio, or a homepage, then extract it into the form below." %}
 
       <form id="person-form" novalidate>
+        <div class="alert alert-info dap-editing" role="status" data-editing hidden></div>
         <fieldset class="dap-card">
           <legend>Person</legend>
           <div class="row g-3">
@@ -283,7 +290,9 @@ docs/admin-service-design.md.
         </fieldset>
 
         <div class="dap-actions">
-          <button type="submit" class="btn dap-btn-primary">Submit for review</button>
+          <button type="submit" class="btn dap-btn-primary" data-submit-label>Submit for review</button>
+          <button type="submit" class="btn dap-btn-quiet" data-save="publish" data-edit-only hidden>Save and publish</button>
+          <button type="button" class="btn btn-link" data-cancel-edit data-edit-only hidden>Cancel</button>
           <span data-result></span>
         </div>
       </form>
@@ -481,6 +490,7 @@ docs/admin-service-design.md.
       <h1 class="dap-title">Submissions</h1>
       <div data-needs="events publications people">
         <h2 class="dap-section">Waiting for review</h2>
+        <p class="text-success" role="status" data-review-note hidden></p>
       <h3 class="dap-subsection" data-needs="events">Events</h3>
       <div id="review-events" data-needs="events"></div>
       <h3 class="dap-subsection" data-needs="publications">Publications</h3>
