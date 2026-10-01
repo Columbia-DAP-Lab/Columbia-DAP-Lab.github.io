@@ -1,6 +1,7 @@
 import { httpRouter } from "convex/server";
-import { httpAction } from "./_generated/server";
-import { api } from "./_generated/api";
+import { env, httpAction } from "./_generated/server";
+import { api, internal } from "./_generated/api";
+import { verifySlackRequest } from "./slack";
 
 /**
  * Public content feed for the site build.
@@ -51,6 +52,64 @@ http.route({
         },
       },
     );
+  }),
+});
+
+/**
+ * Slack's Events API: each @DAPLab mention, signed with the app's signing secret.
+ * Answers within Slack's 3 seconds and leaves the reading to convex/slack.ts.
+ */
+http.route({
+  path: "/slack/events",
+  method: "POST",
+  handler: httpAction(async (ctx, request) => {
+    const secret = env.SLACK_SIGNING_SECRET;
+    if (!secret) return new Response("Slack is not set up on this deployment", { status: 503 });
+
+    // The signature covers the raw body, so read it as text before parsing.
+    const body = await request.text();
+    if (!(await verifySlackRequest(request.headers, body, secret))) {
+      return new Response("Bad signature", { status: 401 });
+    }
+
+    const payload = JSON.parse(body) as {
+      type?: string;
+      challenge?: string;
+      event_id?: string;
+      authorizations?: { user_id?: string }[];
+      event?: { type?: string; subtype?: string; bot_id?: string; user?: string; text?: string; ts?: string; thread_ts?: string; channel?: string };
+    };
+
+    // Slack checks the URL once, when it is entered in the app's settings.
+    if (payload.type === "url_verification") {
+      return new Response(JSON.stringify({ challenge: payload.challenge }), {
+        status: 200,
+        headers: { "content-type": "application/json" },
+      });
+    }
+
+    const event = payload.event;
+    if (
+      payload.type === "event_callback" &&
+      event?.type === "app_mention" &&
+      !event.bot_id &&
+      !event.subtype &&
+      event.user &&
+      event.ts &&
+      event.channel &&
+      payload.event_id
+    ) {
+      await ctx.runMutation(internal.slack.receive, {
+        eventId: payload.event_id,
+        channel: event.channel,
+        ts: event.ts,
+        threadTs: event.thread_ts,
+        user: event.user,
+        text: event.text ?? "",
+        botUserId: payload.authorizations?.[0]?.user_id,
+      });
+    }
+    return new Response(null, { status: 200 });
   }),
 });
 

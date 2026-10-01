@@ -80,6 +80,19 @@ your Columbia Google account (`uni@columbia.edu`). Other Google accounts are ref
 
 Photos go in the upload field on the form. Square images under 5 MB work best.
 
+### From Slack
+
+Mention **@DAPLab** in a message about a talk or a paper, in any channel the bot has
+been added to (`/invite @DAPLab`). It reads the message, or the thread's first message
+when the mention is a reply, submits each event and paper it finds for review, and
+answers in the thread with what it added and anything to check.
+
+- It is held to the same list as the admin page, by the email on your Slack profile,
+  which must be your `@columbia.edu` address.
+- What it adds is pending, like any submission, and shows up under **Submissions**.
+- It shares Quick add's hourly limit, and it cannot attach images; add those on the
+  admin page.
+
 
 ### Projects
 
@@ -319,6 +332,29 @@ set with `npx convex env set [--prod] NAME value`:
 | `GOOGLE_CLIENT_ID` | Google sign-in. Public; must match `admin.google_client_id` in `_config.yml`. |
 | `GITHUB_REPOSITORY`, `GITHUB_DISPATCH_TOKEN` | Rebuilding the site after a publish. The token is a fine-grained token with Contents: read and write on this repo. |
 | `LLM_API_KEY`, `LLM_BASE_URL`, `LLM_MODEL` | Quick add. Any OpenAI-compatible endpoint; see `convex/llm.ts`. |
+| `SLACK_SIGNING_SECRET`, `SLACK_BOT_TOKEN` | The Slack bot; see below. |
+
+**Setting up the Slack bot.** At [api.slack.com/apps](https://api.slack.com/apps),
+create an app (from scratch) named **DAPLab** in the lab workspace, then:
+
+1. **OAuth & Permissions → Bot Token Scopes:** `app_mentions:read`, `chat:write`,
+   `users:read`, `users:read.email`, `channels:history`, `groups:history`. The last two
+   only let it read the first message of a thread it is mentioned in.
+2. **Install to Workspace**, then set the deployment's variables: the **Bot User
+   OAuth Token** (`xoxb-…`) from that page, and the **Signing Secret** from **Basic
+   Information**.
+   ```bash
+   npx convex env set --prod SLACK_BOT_TOKEN <xoxb-…>
+   npx convex env set --prod SLACK_SIGNING_SECRET <signing secret>
+   ```
+3. **Event Subscriptions:** turn them on, set the request URL to
+   `https://dutiful-turtle-748.convex.site/slack/events` (Slack checks it right away,
+   so set the signing secret first), and under **Subscribe to bot events** add
+   `app_mention`. Save; Slack may ask you to reinstall the app.
+4. Invite the bot to the channels it should listen in: `/invite @DAPLab`.
+
+To try it on dev first, use a second app pointed at
+`https://agreeable-stork-479.convex.site/slack/events`, with the variables set without `--prod`.
 
 To copy the whole deployment, including users, drafts and uploaded files:
 

@@ -1,4 +1,5 @@
 import { ConvexError, v } from "convex/values";
+import type { ObjectType } from "convex/values";
 import { internalMutation, mutation, query } from "./_generated/server";
 import { internal } from "./_generated/api";
 import type { MutationCtx, QueryCtx } from "./_generated/server";
@@ -95,135 +96,156 @@ export const checkImage = async (ctx: MutationCtx, storageId: Id<"_storage">) =>
 };
 
 /**
- * Propose an event. Lands as `pending`; an editor publishes it.
+ * An event as the form submits it.
  *
  * Speakers arrive already split — the form has a row per speaker, which is the
  * whole reason the migration had to guess at comma-separated `who:` strings and
  * new submissions will not.
  */
+export const eventSubmission = {
+  title: v.string(),
+  series: v.string(),
+  startDate: v.string(),
+  endDate: v.optional(v.string()),
+  timeLabel: v.optional(v.string()),
+  location: v.optional(v.string()),
+  link: v.optional(v.string()),
+  description: v.optional(v.string()),
+  /** From generateUploadUrl. */
+  image: v.optional(v.id("_storage")),
+  speakers: v.array(
+    v.object({
+      name: v.string(),
+      affiliation: v.optional(v.string()),
+      role: v.optional(v.string()),
+      url: v.optional(v.string()),
+      bio: v.optional(v.string()),
+    }),
+  ),
+};
+
+/**
+ * Insert a pending event for `email`, who has already been checked: by
+ * requireSubmitter here, or by extractSupport:beginForSlack for the Slack bot.
+ * Everything is validated before the first write, so a refusal leaves nothing behind.
+ */
+export const insertEvent = async (
+  ctx: MutationCtx,
+  email: string,
+  args: ObjectType<typeof eventSubmission>,
+): Promise<Id<"events">> => {
+  const series = await ctx.db
+    .query("eventSeries")
+    .withIndex("by_slug", (q) => q.eq("slug", args.series))
+    .unique();
+  if (series === null) throw new ConvexError(`Unknown series: ${args.series}`);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(args.startDate)) throw new ConvexError("Date must be YYYY-MM-DD.");
+
+  if (args.image !== undefined) await checkImage(ctx, args.image);
+
+  const { speakers, image, ...event } = args;
+  const eventId = await ctx.db.insert("events", {
+    ...event,
+    image: image === undefined ? undefined : { kind: "storage", storageId: image },
+    ...submissionFields(email),
+  });
+  for (const [position, speaker] of speakers.entries()) {
+    await ctx.db.insert("eventSpeakers", { eventId, position, ...speaker });
+  }
+
+  // Pending content is invisible to the site, so no rebuild.
+  await record(ctx, {
+    table: "events",
+    documentId: eventId,
+    action: "create",
+    actor: email,
+    affectsSite: false,
+  });
+  return eventId;
+};
+
+/** Propose an event. Lands as `pending`; an editor publishes it. */
 export const submitEvent = mutation({
-  args: {
-    title: v.string(),
-    series: v.string(),
-    startDate: v.string(),
-    endDate: v.optional(v.string()),
-    timeLabel: v.optional(v.string()),
-    location: v.optional(v.string()),
-    link: v.optional(v.string()),
-    description: v.optional(v.string()),
-    /** From generateUploadUrl. */
-    image: v.optional(v.id("_storage")),
-    speakers: v.array(
-      v.object({
-        name: v.string(),
-        affiliation: v.optional(v.string()),
-        role: v.optional(v.string()),
-        url: v.optional(v.string()),
-        bio: v.optional(v.string()),
-      }),
-    ),
-  },
+  args: eventSubmission,
   returns: v.id("events"),
-  handler: async (ctx, args) => {
-    const email = await requireSubmitter(ctx);
-
-    const series = await ctx.db
-      .query("eventSeries")
-      .withIndex("by_slug", (q) => q.eq("slug", args.series))
-      .unique();
-    if (series === null) throw new ConvexError(`Unknown series: ${args.series}`);
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(args.startDate)) throw new ConvexError("Date must be YYYY-MM-DD.");
-
-    if (args.image !== undefined) await checkImage(ctx, args.image);
-
-    const { speakers, image, ...event } = args;
-    const eventId = await ctx.db.insert("events", {
-      ...event,
-      image: image === undefined ? undefined : { kind: "storage", storageId: image },
-      ...submissionFields(email),
-    });
-    for (const [position, speaker] of speakers.entries()) {
-      await ctx.db.insert("eventSpeakers", { eventId, position, ...speaker });
-    }
-
-    // Pending content is invisible to the site, so no rebuild.
-    await record(ctx, {
-      table: "events",
-      documentId: eventId,
-      action: "create",
-      actor: email,
-      affectsSite: false,
-    });
-    return eventId;
-  },
+  handler: async (ctx, args) => insertEvent(ctx, await requireSubmitter(ctx), args),
 });
 
-/** Propose a publication. Authors arrive as an ordered list, one row each. */
+/** A publication as the form submits it. Authors arrive as an ordered list, one row each. */
+export const publicationSubmission = {
+  title: v.string(),
+  venue: v.string(),
+  pubDate: v.string(),
+  authors: v.array(v.string()),
+  topics: v.array(v.string()),
+  url: v.optional(v.string()),
+  slidesUrl: v.optional(v.string()),
+  codeUrl: v.optional(v.string()),
+  comment: v.optional(v.string()),
+};
+
+/** Insert a pending publication for an already-checked `email`; see insertEvent. */
+export const insertPublication = async (
+  ctx: MutationCtx,
+  email: string,
+  args: ObjectType<typeof publicationSubmission>,
+): Promise<Id<"publications">> => {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(args.pubDate)) throw new ConvexError("Date must be YYYY-MM-DD.");
+
+  // The vocabulary is closed: a typo here would create a filter nothing matches.
+  for (const slug of args.topics) {
+    const topic = await ctx.db
+      .query("topics")
+      .withIndex("by_slug", (q) => q.eq("slug", slug))
+      .unique();
+    if (topic === null) throw new ConvexError(`Unknown topic: ${slug}`);
+  }
+
+  const people = await peopleByMatchKey(ctx);
+
+  const { authors, ...publication } = args;
+  const publicationId = await ctx.db.insert("publications", {
+    ...publication,
+    year: Number(args.pubDate.slice(0, 4)),
+    awards: [],
+    selected: false,
+    short: false,
+    future: false,
+    hidden: false,
+    authorCount: authors.length,
+    ...submissionFields(email),
+  });
+  for (const [position, printed] of authors.entries()) {
+    // "Weiliang Zhao*" is equal contribution on this paper, not a different
+    // person — the same split the migration makes, so the two paths agree.
+    const equalContribution = printed.trim().endsWith("*");
+    const name = printed.replace(/\*+\s*$/, "").trim();
+    // publicationCount tracks published papers, so a pending submission links the
+    // author without counting the authorship yet; setStatus does that on publish.
+    const authorId = await upsertAuthor(ctx, name, people, { countAuthorship: false });
+    await ctx.db.insert("publicationAuthors", {
+      publicationId,
+      authorId,
+      position,
+      equalContribution: equalContribution ? true : undefined,
+    });
+  }
+
+  await record(ctx, {
+    table: "publications",
+    documentId: publicationId,
+    action: "create",
+    actor: email,
+    affectsSite: false,
+  });
+  return publicationId;
+};
+
+/** Propose a publication. Lands as `pending`, like an event. */
 export const submitPublication = mutation({
-  args: {
-    title: v.string(),
-    venue: v.string(),
-    pubDate: v.string(),
-    authors: v.array(v.string()),
-    topics: v.array(v.string()),
-    url: v.optional(v.string()),
-    slidesUrl: v.optional(v.string()),
-    codeUrl: v.optional(v.string()),
-    comment: v.optional(v.string()),
-  },
+  args: publicationSubmission,
   returns: v.id("publications"),
-  handler: async (ctx, args) => {
-    const email = await requireSubmitter(ctx);
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(args.pubDate)) throw new ConvexError("Date must be YYYY-MM-DD.");
-
-    // The vocabulary is closed: a typo here would create a filter nothing matches.
-    for (const slug of args.topics) {
-      const topic = await ctx.db
-        .query("topics")
-        .withIndex("by_slug", (q) => q.eq("slug", slug))
-        .unique();
-      if (topic === null) throw new ConvexError(`Unknown topic: ${slug}`);
-    }
-
-    const people = await peopleByMatchKey(ctx);
-
-    const { authors, ...publication } = args;
-    const publicationId = await ctx.db.insert("publications", {
-      ...publication,
-      year: Number(args.pubDate.slice(0, 4)),
-      awards: [],
-      selected: false,
-      short: false,
-      future: false,
-      hidden: false,
-      authorCount: authors.length,
-      ...submissionFields(email),
-    });
-    for (const [position, printed] of authors.entries()) {
-      // "Weiliang Zhao*" is equal contribution on this paper, not a different
-      // person — the same split the migration makes, so the two paths agree.
-      const equalContribution = printed.trim().endsWith("*");
-      const name = printed.replace(/\*+\s*$/, "").trim();
-      // publicationCount tracks published papers, so a pending submission links the
-      // author without counting the authorship yet; setStatus does that on publish.
-      const authorId = await upsertAuthor(ctx, name, people, { countAuthorship: false });
-      await ctx.db.insert("publicationAuthors", {
-        publicationId,
-        authorId,
-        position,
-        equalContribution: equalContribution ? true : undefined,
-      });
-    }
-
-    await record(ctx, {
-      table: "publications",
-      documentId: publicationId,
-      action: "create",
-      actor: email,
-      affectsSite: false,
-    });
-    return publicationId;
-  },
+  handler: async (ctx, args) => insertPublication(ctx, await requireSubmitter(ctx), args),
 });
 
 /**
