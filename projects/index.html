@@ -31,17 +31,19 @@ description: DAPLab develops the infrastructure needed to make AI agents safe, r
 <section class="section">
   <div class="section-header">
     <h2 class="section-title" id="projects-page-title">Software</h2>
+  </div>
+
+  <div class="projects-controls">
+    <div class="chips" role="tablist" aria-label="Project categories">
+      <a href="{{ '/projects/' | relative_url }}?view=all"        class="chip view-toggle-btn" data-view="all"        role="tab" aria-selected="false">All</a>
+      <a href="{{ '/projects/' | relative_url }}?view=projects"   class="chip view-toggle-btn" data-view="projects"   role="tab" aria-selected="false">Projects</a>
+      <a href="{{ '/projects/' | relative_url }}?view=software"   class="chip view-toggle-btn active" data-view="software" role="tab" aria-selected="true">Software</a>
+      <a href="{{ '/projects/' | relative_url }}?view=benchmarks" class="chip view-toggle-btn" data-view="benchmarks" role="tab" aria-selected="false">Benchmarks</a>
+    </div>
     <div class="chips layout-toggle" role="group" aria-label="Layout">
       <button type="button" class="chip" data-layout="list" aria-pressed="true">List</button>
       <button type="button" class="chip" data-layout="cozy" aria-pressed="false">Cozy</button>
     </div>
-  </div>
-
-  <div class="chips" role="tablist" aria-label="Project categories">
-    <a href="{{ '/projects/' | relative_url }}?view=all"        class="chip view-toggle-btn" data-view="all"        role="tab" aria-selected="false">All</a>
-    <a href="{{ '/projects/' | relative_url }}?view=projects"   class="chip view-toggle-btn" data-view="projects"   role="tab" aria-selected="false">Projects</a>
-    <a href="{{ '/projects/' | relative_url }}?view=software"   class="chip view-toggle-btn active" data-view="software" role="tab" aria-selected="true">Software</a>
-    <a href="{{ '/projects/' | relative_url }}?view=benchmarks" class="chip view-toggle-btn" data-view="benchmarks" role="tab" aria-selected="false">Benchmarks</a>
   </div>
 
   <div class="projects-grid" id="projects-grid">
@@ -107,8 +109,13 @@ description: DAPLab develops the infrastructure needed to make AI agents safe, r
 .thrust-title { font-size: 0.98rem; margin: 0 0 0.35rem; }
 .thrusts p { font-size: 0.875rem; color: var(--dap-muted); margin: 0; line-height: 1.55; }
 
-.layout-toggle { margin: 0; flex-wrap: nowrap; }
-.layout-toggle .chip { padding: 0.25rem 0.75rem; font-size: 0.82rem; }
+/* Category filters on the left, the layout toggle on the right. */
+.projects-controls {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+  gap: 0.5rem 1rem; margin: 0 0 2rem;
+}
+.projects-controls .chips { margin: 0; }
+.projects-controls .layout-toggle { flex-wrap: nowrap; margin-left: auto; }
 
 /* List: one row per project. Cozy: cards with the project image. */
 .projects-grid { border-top: 1px solid var(--dap-rule); }
