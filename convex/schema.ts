@@ -399,6 +399,15 @@ export default defineSchema({
     .index("by_personId_and_status", ["personId", "status"])
     .index("by_submittedBy_and_submittedAt", ["submittedBy", "submittedAt"]),
 
+  /**
+   * Slack event ids already handled. Slack retries an event it thinks went
+   * unanswered, and a retry must not submit the same talk twice.
+   */
+  slackEvents: defineTable({
+    eventId: v.string(),
+    receivedAt: v.number(),
+  }).index("by_eventId", ["eventId"]),
+
   roles: defineTable({
     email: v.string(), // lowercased
     capabilities: v.array(

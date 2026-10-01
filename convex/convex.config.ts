@@ -14,6 +14,11 @@ import rateLimiter from "@convex-dev/rate-limiter/convex.config.js";
  *   npx convex env set GITHUB_REPOSITORY Columbia-DAP-Lab/Columbia-DAP-Lab.github.io
  *   npx convex env set GITHUB_DISPATCH_TOKEN <token with contents:write>
  *   npx convex env set LLM_API_KEY <OpenAI or Bedrock key, see convex/llm.ts>
+ *
+ * Without the Slack pair, /slack/events refuses every request (see convex/slack.ts):
+ *
+ *   npx convex env set SLACK_SIGNING_SECRET <Basic Information → Signing Secret>
+ *   npx convex env set SLACK_BOT_TOKEN <OAuth & Permissions → Bot User OAuth Token, xoxb-...>
  */
 const app = defineApp({
   env: {
@@ -24,6 +29,10 @@ const app = defineApp({
     LLM_BASE_URL: v.optional(v.string()),
     /** Overrides the default model in convex/llm.ts. */
     LLM_MODEL: v.optional(v.string()),
+    /** Proves a request to /slack/events came from Slack. */
+    SLACK_SIGNING_SECRET: v.optional(v.string()),
+    /** The bot's token, for reading the sender's profile and replying in the thread. */
+    SLACK_BOT_TOKEN: v.optional(v.string()),
   },
 });
 
