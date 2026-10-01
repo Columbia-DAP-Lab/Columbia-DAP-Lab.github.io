@@ -9,6 +9,7 @@ Parameters: category (as in the data), title (optional heading), show_fields
 {% assign people = site.data.people | where: "category", include.category %}
 {% assign category_title = include.title | default: include.category %}
 {% assign show_fields = true %}{% if include.show_fields == false %}{% assign show_fields = false %}{% endif %}
+{%- comment -%} The lab's banana, for anyone without a photo yet. {%- endcomment %}
 {% assign fallback_image = "/files/images/avatar/avatar-default.png" | relative_url %}
 {% if include.category != "Faculty" and people %}
   {% assign people = people | sort: "name" %}
