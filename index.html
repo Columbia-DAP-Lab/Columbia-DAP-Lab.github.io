@@ -74,16 +74,27 @@ layout: default
         {% assign valid_events = valid_events | push: e %}
       {% endif %}
     {% endfor %}
-    {% assign recent_events = valid_events | sort: "date" | reverse | slice: 0, 4 %}
+    {%- comment -%}
+    Eight events: what is coming up, soonest first, then the most recent past ones
+    to fill the rest. "Today" is when the site was built; it rebuilds daily.
+    {%- endcomment -%}
+    {% assign today = 'now' | date: "%Y-%m-%d" %}
+    {% assign by_date = valid_events | sort: "date" %}
+    {% assign upcoming_events = by_date | where_exp: "e", "e.date >= today" | slice: 0, 8 %}
+    {% assign room = 8 | minus: upcoming_events.size %}
+    {% assign past_events = by_date | where_exp: "e", "e.date < today" | reverse | slice: 0, room %}
+    {%- if upcoming_events.size > 0 %}
+    <p class="home-list-label">Upcoming</p>
     <ul class="home-list">
-      {%- for event in recent_events %}
-      <li>
-        <p class="home-item-meta">{{ event.date | date: "%b %-d, %Y" }}</p>
-        <h3 class="home-item-title">{% if event.link %}<a href="{{ event.link }}">{{ event.title }}</a>{% else %}{{ event.title }}{% endif %}</h3>
-        {%- if event.who %}<p class="home-item-meta">{{ event.who }}</p>{% endif %}
-      </li>
-      {%- endfor %}
+      {%- for event in upcoming_events %}{% include home-event.html event=event %}{% endfor %}
     </ul>
+    {%- endif %}
+    {%- if past_events.size > 0 %}
+    <p class="home-list-label">Recent</p>
+    <ul class="home-list">
+      {%- for event in past_events %}{% include home-event.html event=event %}{% endfor %}
+    </ul>
+    {%- endif %}
   </section>
 
   <section>
@@ -92,7 +103,7 @@ layout: default
       <a class="section-link" href="{{ '/publications' | relative_url }}">All →</a>
     </div>
     {% assign recent_pubs = site.data.pubs %}
-    {% if recent_pubs %}{% assign recent_pubs = recent_pubs | sort: "pub_date" | reverse | slice: 0, 6 %}{% endif %}
+    {% if recent_pubs %}{% assign recent_pubs = recent_pubs | sort: "pub_date" | reverse | slice: 0, 8 %}{% endif %}
     <ul class="home-list">
       {%- for pub in recent_pubs %}
       <li>
@@ -125,6 +136,11 @@ layout: default
 </section>
 
 <style>
+.home-list-label {
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--dap-muted); margin: 0 0 0.4rem;
+}
+.home-list + .home-list-label { margin-top: 1.25rem; }
 .home-hero { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 2.75rem; align-items: center; }
 .home-logo { width: 100%; height: auto; }
 .home-title { font-size: 2rem; margin: 0 0 0.9rem; }
