@@ -279,6 +279,18 @@ handleSubmit(publicationForm, async (submit) => {
   return "Submitted. An admin will review it; follow it under Submissions.";
 });
 
+// ---------------------------------------------------------------- news form
+
+const newsForm = $("#news-form");
+handleSubmit(newsForm, async (submit) => {
+  const item = values(newsForm, ["title", "content", "details", "date"]);
+  item.featured = newsForm.elements.featured.checked;
+  if (reviewEdits.has(newsForm)) return await saveEdit(newsForm, submit.submitter, item);
+  await client.mutation(api.admin.submitNews, item);
+  newsForm.reset();
+  return "Submitted. An admin will review it; follow it under Submissions.";
+});
+
 // -------------------------------------------------------------- person form
 
 /** Non-empty trimmed lines of a textarea. */
@@ -321,6 +333,7 @@ const EDITABLE = {
   events: { form: eventForm, tab: "event", kind: "event", update: api.admin.updatePendingEvent },
   publications: { form: publicationForm, tab: "publication", kind: "publication", update: api.admin.updatePendingPublication },
   people: { form: personForm, tab: "people", kind: "person", update: api.admin.updatePendingPerson },
+  news: { form: newsForm, tab: "news", kind: "news", update: api.admin.updatePendingNews },
 };
 
 /** form → { table, id } while it holds a pending submission rather than a new one. */
@@ -420,6 +433,11 @@ const FILL = {
     setFields(form, draft, ["title", "venue", "pubDate", "url", "slidesUrl", "codeUrl", "comment"]);
     form.elements.authors.value = (draft.authors ?? []).join("\n");
     setChecks($("#topics"), draft.topics);
+  },
+  news: (form, draft) => {
+    setFields(form, draft, ["title", "content", "details", "date"]);
+    // A reviewer's edit keeps the submitter's choice; a fresh draft starts featured.
+    form.elements.featured.checked = draft.featured ?? true;
   },
   person: (form, draft) => {
     setFields(form, draft, ["name", "category", "title", "homepage", "email", "affiliation", "bio"]);
@@ -526,13 +544,14 @@ const pasteToFill = (kind, form) => {
 pasteToFill("event", eventForm);
 pasteToFill("publication", publicationForm);
 pasteToFill("person", personForm);
+pasteToFill("news", newsForm);
 
 // ---------------------------------------------------------- my submissions
 
 /** Latest of each subscription, so either one arriving re-renders the whole list. */
-const mine = { submissions: { events: [], publications: [], people: [] }, edits: [] };
+const mine = { submissions: { events: [], publications: [], people: [], news: [] }, edits: [] };
 const renderMine = () => {
-  const { events, publications, people } = mine.submissions;
+  const { events, publications, people, news = [] } = mine.submissions;
   const edits = mine.edits.map((e) => ({ ...e, title: "Profile update" }));
   const list = (heading, rows) => [
     el("h3", { class: "dap-subsection" }, heading),
@@ -557,6 +576,7 @@ const renderMine = () => {
   $("#mine").replaceChildren(
     ...list("Events", events),
     ...list("Publications", publications),
+    ...list("News", news),
     ...list("People", people),
     ...(edits.length > 0 ? list("Your profile", edits) : []),
   );
@@ -644,6 +664,19 @@ const renderPublication = (row) =>
     field("Comment", row.comment),
     el("div", { class: "small text-muted mt-2" }, `Submitted by ${row.submittedBy}, ${when(row.submittedAt)}`),
     reviewActions("publications", row),
+  );
+
+const renderNews = (row) =>
+  el(
+    "div",
+    { class: "queue-item" },
+    el("h3", {}, row.title),
+    field("Date", row.date),
+    field("Home page", row.featured ? "yes" : "no"),
+    el("pre", { class: "body mt-2" }, row.content),
+    row.details && el("pre", { class: "body mt-2" }, row.details),
+    el("div", { class: "small text-muted mt-2" }, `Submitted by ${row.submittedBy}, ${when(row.submittedAt)}`),
+    reviewActions("news", row),
   );
 
 const CATEGORY_LABELS = {
@@ -762,7 +795,7 @@ const profileEditActions = (row) => {
   );
 };
 
-const pendingCounts = { events: 0, publications: 0, people: 0, profiles: 0 };
+const pendingCounts = { events: 0, publications: 0, people: 0, profiles: 0, news: 0 };
 const renderQueue = (table, rows, render) => {
   pendingCounts[table] = rows.length;
   const total = Object.values(pendingCounts).reduce((a, b) => a + b, 0);
@@ -1418,6 +1451,8 @@ const renderMe = (me) => {
   if (me.profile !== null) subscribe(api.profiles.myProfile, {}, renderProfile);
   if (can(me.capabilities, "events")) {
     subscribe(api.admin.pending, { table: "events" }, (rows) => renderQueue("events", rows, renderEvent));
+    // News is reviewed by whoever reviews events (GOVERNS in convex/admin.ts).
+    subscribe(api.admin.pending, { table: "news" }, (rows) => renderQueue("news", rows, renderNews));
   }
   if (can(me.capabilities, "people")) {
     subscribe(api.admin.pending, { table: "people" }, (rows) => renderQueue("people", rows, renderPerson));

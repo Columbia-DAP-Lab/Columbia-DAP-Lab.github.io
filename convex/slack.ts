@@ -1,7 +1,7 @@
 import { ConvexError, v } from "convex/values";
 import { internal } from "./_generated/api";
 import { env, internalAction, internalMutation } from "./_generated/server";
-import { eventSubmission, insertEvent, insertPublication, publicationSubmission } from "./admin";
+import { eventSubmission, insertEvent, insertNews, insertPublication, newsSubmission, publicationSubmission } from "./admin";
 import { MAX_TEXT, requestEventsAndPublications, toDrafts, todayInNewYork } from "./extract";
 import { generateStructured, isConfigured } from "./llm";
 
@@ -15,12 +15,14 @@ import { generateStructured, isConfigured } from "./llm";
  * page (extractSupport:beginForSlack), reads the message with the same model and
  * prompts as paste-to-fill, and submits what it finds through the same inserts
  * as the forms, so everything is pending until an admin publishes it. Mentioning
- * the bot in a thread reply reads the thread's first message too.
+ * the bot in a thread reply reads the whole thread, so "@DAPLab make this a news
+ * item" under a discussion works; the mention itself is passed as the request,
+ * which picks what to add (events, papers or news).
  *
  * Slack app setup (api.slack.com/apps):
  *   - Bot token scopes: app_mentions:read, chat:write, users:read,
  *     users:read.email, channels:history, groups:history (the last two only to
- *     read a thread's first message).
+ *     read the thread a mention is in).
  *   - Event Subscriptions: request URL https://<deployment>.convex.site/slack/events,
  *     bot event app_mention.
  *   - Then SLACK_SIGNING_SECRET and SLACK_BOT_TOKEN (convex/convex.config.ts).
@@ -168,6 +170,15 @@ export const submitPublication = internalMutation({
   handler: async (ctx, { email, publication }) => await insertPublication(ctx, email, publication),
 });
 
+export const submitNews = internalMutation({
+  args: { email: v.string(), news: v.object(newsSubmission) },
+  returns: v.id("news"),
+  handler: async (ctx, { email, news }) => await insertNews(ctx, email, news),
+});
+
+/** Most of a thread worth reading; longer ones are cut from the start. */
+const MAX_THREAD_MESSAGES = 50;
+
 type Draft = Record<string, unknown>;
 type Vocabulary = { slug: string; label: string; description?: string }[];
 /** extractSupport:beginForSlack's answer, spelled out: handleMention refers to itself through `internal`. */
@@ -213,6 +224,15 @@ const asEvent = (draft: Draft) => {
       speakers,
     },
   };
+};
+
+/** A draft as submitNews's arguments, or what is missing. */
+const asNews = (draft: Draft) => {
+  const title = str(draft.title);
+  const content = str(draft.content);
+  if (!title || !content) return { ok: false as const, missing: [!title && "a title", !content && "a summary"].filter(Boolean).join(" and ") };
+  // Featured, so it can reach the homepage; the reviewer can change that.
+  return { ok: true as const, news: { title, content, details: str(draft.details), date: str(draft.date), featured: true } };
 };
 
 /** A draft as submitPublication's arguments, or what is missing. */
@@ -290,36 +310,47 @@ export const handleMention = internalAction({
         }
       };
 
-      let text = await toPlainText(args.text, args.botUserId, nameOf);
-      // A mention in a reply is usually about the post that started the thread.
+      // The mention says what to add; the thread (or the message itself, when it
+      // is not in one) is what to read. People's names label the messages.
+      const request = await toPlainText(args.text, args.botUserId, nameOf);
+      let thread = request;
       if (args.threadTs && args.threadTs !== args.ts) {
         const replies = await call("conversations.replies", {
           channel: args.channel,
           ts: args.threadTs,
-          limit: "1",
+          limit: String(MAX_THREAD_MESSAGES),
           inclusive: "true",
         });
-        const first = (replies.messages as { text?: string }[] | undefined)?.[0]?.text;
-        if (first) text = `${await toPlainText(first, args.botUserId, nameOf)}\n\n${text}`.trim();
+        const messages = (replies.messages as { text?: string; user?: string; bot_id?: string; ts?: string }[] | undefined) ?? [];
+        const lines: string[] = [];
+        // Up to the mention, and not the bot's own replies.
+        for (const m of messages) {
+          if (m.bot_id || !m.text || (m.ts && Number(m.ts) > Number(args.ts))) continue;
+          const who = m.user ? await nameOf(m.user) : "someone";
+          lines.push(`${who}: ${await toPlainText(m.text, args.botUserId, nameOf)}`);
+        }
+        thread = lines.join("\n\n");
       }
+      let text = request || thread ? `<request>\n${request}\n</request>\n<thread>\n${thread}\n</thread>` : "";
+      if (text.length > MAX_TEXT) text = text.slice(0, 200) + text.slice(-(MAX_TEXT - 200));
 
-      if (!text) {
+      if (!thread.trim()) {
         return await say(
-          "Mention me in a message with a talk announcement or a paper's details, or in a reply to one, and I'll add it for review.",
+          "Mention me in a message with a talk announcement, a paper's details or some news, or in a reply to one, and I'll add it for review.",
         );
       }
-      if (text.length > MAX_TEXT) return await say("That is too long for me to read at once. Use the admin page instead.");
       if (!isConfigured()) return await say("Reading messages is not set up on this deployment yet.");
 
       const { system, schema } = requestEventsAndPublications(gate.vocab, todayInNewYork());
       const { data } = await generateStructured({ system, schema, text, maxTokens: 16_000 });
-      const found = data as { events?: unknown; publications?: unknown };
+      const found = data as { events?: unknown; publications?: unknown; news?: unknown };
       const events = toDrafts(found.events ?? { items: [] }, gate.vocab);
       const publications = toDrafts(found.publications ?? { items: [] }, gate.vocab);
+      const news = toDrafts(found.news ?? { items: [] }, gate.vocab);
 
-      if (events.length === 0 && publications.length === 0) {
+      if (events.length === 0 && publications.length === 0 && news.length === 0) {
         return await say(
-          "I couldn't find a talk or a paper in that. Include the details (title, date, speaker; or title, authors, venue) and mention me again.",
+          "I couldn't find a talk, a paper or news in that. Include the details (title, date, speaker; title, authors, venue; or what happened), or say \"add this as news\", and mention me again.",
         );
       }
 
@@ -357,6 +388,22 @@ export const handleMention = internalAction({
         } catch (error) {
           skipped.push(`• Paper *${name}*: ${escape(error instanceof ConvexError ? String(error.data) : "could not be saved")}`);
           if (!(error instanceof ConvexError)) console.error("Slack publication submit failed", error);
+        }
+      }
+
+      for (const { draft, warnings } of news) {
+        const name = escape(str(draft.title) ?? "a news item");
+        const parsed = asNews(draft);
+        if (!parsed.ok) {
+          skipped.push(`• News *${name}*: couldn't find ${parsed.missing}.`);
+          continue;
+        }
+        try {
+          await ctx.runMutation(internal.slack.submitNews, { email, news: parsed.news });
+          added.push(`• News: *${name}*${parsed.news.date ? `, ${readableDate(parsed.news.date)}` : ""}${check(warnings)}`);
+        } catch (error) {
+          skipped.push(`• News *${name}*: ${escape(error instanceof ConvexError ? String(error.data) : "could not be saved")}`);
+          if (!(error instanceof ConvexError)) console.error("Slack news submit failed", error);
         }
       }
 

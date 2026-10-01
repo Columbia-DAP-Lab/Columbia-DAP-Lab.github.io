@@ -279,6 +279,53 @@ docs/admin-service-design.md.
       </form>
     </div>
 
+    <!-- ------------------------------------------------------------- news -->
+    <div data-panel="news" hidden>
+      <h1 class="dap-title">Add news</h1>
+      {% include admin-quick-add.html kind="news" title="Paste and clean up" button="Clean up with Luna" placeholder="Paste the announcement as you have it: an email, a Slack message, a press link and a few notes. Clean up turns it into a headline and summary below." %}
+
+      <form id="news-form" novalidate>
+        <div class="alert alert-info dap-editing" role="status" data-editing hidden></div>
+        <fieldset class="dap-card">
+          <legend>News item</legend>
+          <div class="row g-3">
+            <div class="col-md-9">
+              <label class="form-label" for="news-title">Headline <span class="dap-req">*</span></label>
+              <input class="form-control" id="news-title" name="title" required>
+              <div class="form-text">Markdown; a link may go inline, like <code>[MortarBench](https://…) featured in Realtor.com</code>.</div>
+            </div>
+            <div class="col-md-3">
+              <label class="form-label" for="news-date">Date</label>
+              <input class="form-control" type="date" id="news-date" name="date">
+            </div>
+            <div class="col-12">
+              <label class="form-label" for="news-content">Summary <span class="dap-req">*</span></label>
+              <textarea class="form-control" id="news-content" name="content" rows="3" required></textarea>
+              <div class="form-text">One to three sentences, in Markdown. Shown on the home page and the News page.</div>
+            </div>
+            <div class="col-12">
+              <label class="form-label" for="news-details">Details</label>
+              <textarea class="form-control" id="news-details" name="details" rows="5"></textarea>
+              <div class="form-text">Optional longer Markdown, shown on the News page in place of the summary.</div>
+            </div>
+            <div class="col-12">
+              <label class="form-check">
+                <input class="form-check-input" type="checkbox" name="featured" checked>
+                <span class="form-check-label">Show on the home page (it shows the five most recent)</span>
+              </label>
+            </div>
+          </div>
+        </fieldset>
+
+        <div class="dap-actions">
+          <button type="submit" class="btn dap-btn-primary" data-submit-label>Submit for review</button>
+          <button type="submit" class="btn dap-btn-quiet" data-save="publish" data-edit-only hidden>Save and publish</button>
+          <button type="button" class="btn btn-link" data-cancel-edit data-edit-only hidden>Cancel</button>
+          <span data-result></span>
+        </div>
+      </form>
+    </div>
+
     <!-- ----------------------------------------------------------- people -->
     <div data-panel="people" hidden>
       <h1 class="dap-title">People</h1>
@@ -685,6 +732,8 @@ docs/admin-service-design.md.
       <div id="review-events" data-needs="events"></div>
       <h3 class="dap-subsection" data-needs="publications">Publications</h3>
       <div id="review-publications" data-needs="publications"></div>
+      <h3 class="dap-subsection" data-needs="events">News</h3>
+      <div id="review-news" data-needs="events"></div>
       <h3 class="dap-subsection" data-needs="people">People</h3>
       <div id="review-people" data-needs="people"></div>
       <h3 class="dap-subsection" data-needs="people">Profile updates</h3>

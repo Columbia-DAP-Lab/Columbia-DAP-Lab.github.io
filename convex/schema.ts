@@ -361,7 +361,8 @@ export default defineSchema({
     ...submission,
   })
     .index("by_status_and_sortOrder", ["status", "sortOrder"])
-    .index("by_status_and_date", ["status", "date"]),
+    .index("by_status_and_date", ["status", "date"])
+    .index("by_submittedBy_and_submittedAt", ["submittedBy", "submittedAt"]),
 
   /**
    * Who may publish. Capability-based, so an event editor need not be an admin and

@@ -77,6 +77,9 @@ your Columbia Google account (`uni@columbia.edu`). Other Google accounts are ref
 - **Admins** can also add people, review submissions, and manage users.
 - **Everything is reviewed.** A member's submission, including a profile edit, is
   pending until an admin publishes it under **Submissions**.
+- **News.** The **News** tab takes a headline, a short summary, optional details and
+  a date. Paste the announcement however you have it and press **Clean up with
+  Luna** to get a draft to check.
 - **Quick add.** Each form has a Quick add box at the top: paste an announcement, a
   citation list or a bio, press **Extract into form**, and a language model fills the
   form in. Nothing is submitted until you check the form and press **Submit for
@@ -86,10 +89,11 @@ Photos go in the upload field on the form. Square images under 5 MB work best.
 
 ### From Slack
 
-Mention **@DAPLab** in a message about a talk or a paper, in any channel the bot has
-been added to (`/invite @DAPLab`). It reads the message, or the thread's first message
-when the mention is a reply, submits each event and paper it finds for review, and
-answers in the thread with what it added and anything to check.
+Mention **@DAPLab** in a message about a talk, a paper or some news, in any channel the
+bot has been added to (`/invite @DAPLab`). It reads the message, or the whole thread
+when the mention is a reply, submits each event, paper and news item it finds for
+review, and answers in the thread with what it added and anything to check. Say what
+you want in the mention, e.g. "@DAPLab make this a news item" under a thread.
 
 - It is held to the same list as the admin page, by the email on your Slack profile,
   which must be your `@columbia.edu` address.
