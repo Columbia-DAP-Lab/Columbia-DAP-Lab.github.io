@@ -1,7 +1,8 @@
 import { httpRouter } from "convex/server";
 import { env, httpAction } from "./_generated/server";
 import { api, internal } from "./_generated/api";
-import { verifySlackRequest } from "./slack";
+import { slackApi, verifySlackRequest } from "./slack";
+import { rejectDialog } from "./slackReview";
 
 /**
  * Public content feed for the site build.
@@ -117,6 +118,60 @@ http.route({
         subtype: event?.subtype,
         fromBot: Boolean(event?.bot_id),
       });
+    }
+    return new Response(null, { status: 200 });
+  }),
+});
+
+/**
+ * Slack's Interactivity: the review DMs' buttons and the Reject dialog
+ * (convex/slackReview.ts). Signed like events; the body is form-encoded with
+ * the JSON in `payload`.
+ */
+http.route({
+  path: "/slack/interactions",
+  method: "POST",
+  handler: httpAction(async (ctx, request) => {
+    const secret = env.SLACK_SIGNING_SECRET?.trim();
+    if (!secret) return new Response("Slack is not set up on this deployment", { status: 503 });
+    const body = await request.text();
+    if (!(await verifySlackRequest(request.headers, body, secret))) {
+      return new Response("Bad signature", { status: 401 });
+    }
+
+    const payload = JSON.parse(new URLSearchParams(body).get("payload") ?? "{}") as {
+      type?: string;
+      trigger_id?: string;
+      user?: { id?: string };
+      actions?: { action_id?: string; value?: string }[];
+      view?: { callback_id?: string; private_metadata?: string; state?: { values?: Record<string, Record<string, { value?: string | null }>> } };
+    };
+    const slackUser = payload.user?.id;
+    if (!slackUser) return new Response(null, { status: 200 });
+    const target = (value: string | undefined) => {
+      const parsed = JSON.parse(value ?? "{}") as { table?: string; id?: string };
+      const tables = ["events", "publications", "people", "news", "profileEdits"] as const;
+      const table = tables.find((t) => t === parsed.table);
+      return table && parsed.id ? { table, id: parsed.id } : null;
+    };
+
+    if (payload.type === "block_actions") {
+      const action = payload.actions?.[0];
+      const which = target(action?.value);
+      if (which && action?.action_id === "review_approve") {
+        await ctx.scheduler.runAfter(0, internal.slackReview.decide, { slackUser, ...which, decision: "published" });
+      } else if (which && action?.action_id === "review_reject" && payload.trigger_id) {
+        // The dialog has to open within Slack's 3 seconds, so it is opened here.
+        const token = env.SLACK_BOT_TOKEN?.trim();
+        if (token) await slackApi(token, "views.open", rejectDialog(payload.trigger_id, action.value ?? ""));
+      }
+      // "Open in admin" is a link; Slack still reports the click, and there is nothing to do.
+    } else if (payload.type === "view_submission" && payload.view?.callback_id === "review_reject") {
+      const which = target(payload.view.private_metadata);
+      const note = payload.view.state?.values?.note?.note?.value?.trim() || undefined;
+      if (which) {
+        await ctx.scheduler.runAfter(0, internal.slackReview.decide, { slackUser, ...which, decision: "rejected", reviewNote: note });
+      }
     }
     return new Response(null, { status: 200 });
   }),

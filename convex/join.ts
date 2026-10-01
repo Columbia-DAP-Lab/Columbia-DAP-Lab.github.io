@@ -1,7 +1,7 @@
 import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import type { Id } from "./_generated/dataModel";
-import { checkPerson, personSubmission, record } from "./admin";
+import { checkPerson, notifyReviewers, personSubmission, record } from "./admin";
 import { accessFor, currentEmail } from "./authz";
 
 /**
@@ -95,6 +95,7 @@ export const submit = mutation({
       submittedAt: Date.now(),
     });
     await record(ctx, { table: "people", documentId: personId, action: "create", actor: email, affectsSite: false });
+    await notifyReviewers(ctx, "people", personId);
     return personId;
   },
 });

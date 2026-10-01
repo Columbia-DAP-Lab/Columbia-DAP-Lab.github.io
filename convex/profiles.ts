@@ -1,8 +1,8 @@
 import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import type { MutationCtx, QueryCtx } from "./_generated/server";
-import type { Doc } from "./_generated/dataModel";
-import { checkImage, record } from "./admin";
+import type { Doc, Id } from "./_generated/dataModel";
+import { checkImage, notifyReviewers, record, refreshReviewMessages } from "./admin";
 import { accessFor, profileFor, requireCapability, requireSubmitter } from "./authz";
 
 /**
@@ -139,8 +139,14 @@ export const submitProfileEdit = mutation({
       .withIndex("by_personId_and_status", (q) => q.eq("personId", person._id).eq("status", "pending"))
       .first();
     const edit = { changes, submittedBy: email, submittedAt: Date.now() };
+    let editId = existing?._id;
     if (existing !== null) await ctx.db.patch("profileEdits", existing._id, edit);
-    else await ctx.db.insert("profileEdits", { personId: person._id, status: "pending", ...edit });
+    else editId = await ctx.db.insert("profileEdits", { personId: person._id, status: "pending", ...edit });
+    if (editId !== undefined) {
+      // A replaced edit updates the messages already sent; a new one sends them.
+      if (existing !== null) await refreshReviewMessages(ctx, "profileEdits", editId);
+      else await notifyReviewers(ctx, "profileEdits", editId);
+    }
     return { applied: false };
   },
 });
@@ -188,6 +194,43 @@ export const pendingEdits = query({
   },
 });
 
+/**
+ * Approve or reject a pending profile edit as `email`, who has been checked.
+ * Shared by reviewEdit and the Slack review buttons (convex/slackReview.ts).
+ */
+export const applyProfileDecision = async (
+  ctx: MutationCtx,
+  email: string,
+  id: Id<"profileEdits">,
+  decision: "published" | "rejected",
+  reviewNote: string | undefined,
+  revised?: { title?: string | null; affiliation?: string | null; homepage?: string | null; bio?: string | null },
+) => {
+  const edit = await ctx.db.get("profileEdits", id);
+  if (edit === null || edit.status !== "pending") throw new ConvexError("That edit is no longer waiting for review.");
+
+  const changes = { ...edit.changes };
+  if (decision === "published" && revised !== undefined) {
+    for (const key of TEXT_FIELDS) {
+      if (key in changes && key in revised) changes[key] = revised[key]?.trim() || null;
+    }
+  }
+  if (decision === "published") {
+    const person = await ctx.db.get("people", edit.personId);
+    if (person === null) throw new ConvexError("That profile no longer exists.");
+    await apply(ctx, person, changes, email);
+  }
+  await ctx.db.patch("profileEdits", edit._id, {
+    // What was applied, so the record shows the reviewer's corrections.
+    changes,
+    status: decision,
+    reviewedBy: email,
+    reviewedAt: Date.now(),
+    reviewNote,
+  });
+  await refreshReviewMessages(ctx, "profileEdits", edit._id, email);
+};
+
 /** Approve or reject a proposed profile edit. */
 export const reviewEdit = mutation({
   args: {
@@ -210,28 +253,7 @@ export const reviewEdit = mutation({
   returns: v.null(),
   handler: async (ctx, args) => {
     const email = await requireCapability(ctx, "people");
-    const edit = await ctx.db.get("profileEdits", args.id);
-    if (edit === null || edit.status !== "pending") throw new ConvexError("That edit is no longer waiting for review.");
-
-    const changes = { ...edit.changes };
-    if (args.decision === "published" && args.revised !== undefined) {
-      for (const key of TEXT_FIELDS) {
-        if (key in changes && key in args.revised) changes[key] = args.revised[key]?.trim() || null;
-      }
-    }
-    if (args.decision === "published") {
-      const person = await ctx.db.get("people", edit.personId);
-      if (person === null) throw new ConvexError("That profile no longer exists.");
-      await apply(ctx, person, changes, email);
-    }
-    await ctx.db.patch("profileEdits", edit._id, {
-      // What was applied, so the record shows the reviewer's corrections.
-      changes,
-      status: args.decision,
-      reviewedBy: email,
-      reviewedAt: Date.now(),
-      reviewNote: args.reviewNote,
-    });
+    await applyProfileDecision(ctx, email, args.id, args.decision, args.reviewNote, args.revised);
     return null;
   },
 });

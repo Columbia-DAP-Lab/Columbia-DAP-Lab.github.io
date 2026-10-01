@@ -19,14 +19,14 @@ import { slugify } from "./vocabulary";
  */
 
 /** Tables this module manages, and the capability that governs each. */
-const GOVERNS = {
+export const GOVERNS = {
   events: "events",
   publications: "publications",
   people: "people",
   news: "events",
 } as const;
 
-type ContentTable = keyof typeof GOVERNS;
+export type ContentTable = keyof typeof GOVERNS;
 
 const contentTableValidator = v.union(
   v.literal("events"),
@@ -61,6 +61,20 @@ export const record = async (
     snapshot: args.snapshot,
   });
   if (args.affectsSite) await ctx.scheduler.runAfter(0, internal.deployHook.requestRebuild, {});
+};
+
+/** Tell reviewers on Slack that something is waiting (convex/slackReview.ts). */
+export const notifyReviewers = async (
+  ctx: MutationCtx,
+  table: "events" | "publications" | "people" | "news" | "profileEdits",
+  id: string,
+) => {
+  await ctx.scheduler.runAfter(0, internal.slackReview.announce, { table, id });
+};
+
+/** Bring the reviewers' Slack messages up to date after a decision or an edit. */
+export const refreshReviewMessages = async (ctx: MutationCtx, table: string, id: string, decidedBy?: string) => {
+  await ctx.scheduler.runAfter(0, internal.slackReview.refresh, { table, id, decidedBy });
 };
 
 const submissionFields = (submittedBy: string) => ({
@@ -176,6 +190,7 @@ export const insertEvent = async (
     actor: email,
     affectsSite: false,
   });
+  await notifyReviewers(ctx, "events", eventId);
   return eventId;
 };
 
@@ -254,6 +269,7 @@ export const insertPublication = async (
     ...submissionFields(email),
   });
   await linkAuthors(ctx, publicationId, authors);
+  await notifyReviewers(ctx, "publications", publicationId);
 
   await record(ctx, {
     table: "publications",
@@ -378,6 +394,7 @@ export const insertNews = async (
     ...submissionFields(email),
   });
   await record(ctx, { table: "news", documentId: newsId, action: "create", actor: email, affectsSite: false });
+  await notifyReviewers(ctx, "news", newsId);
   return newsId;
 };
 
@@ -423,6 +440,7 @@ export const submitPerson = mutation({
       actor: submitter,
       affectsSite: false,
     });
+    await notifyReviewers(ctx, "people", personId);
     return personId;
   },
 });
@@ -472,6 +490,7 @@ export const updatePendingEvent = mutation({
     await insertSpeakers(ctx, id, args.speakers);
 
     await record(ctx, { table: "events", documentId: id, action: "update", actor: email, affectsSite: false });
+    await refreshReviewMessages(ctx, "events", id);
     return null;
   },
 });
@@ -506,6 +525,7 @@ export const updatePendingPublication = mutation({
     await linkAuthors(ctx, id, args.authors);
 
     await record(ctx, { table: "publications", documentId: id, action: "update", actor: email, affectsSite: false });
+    await refreshReviewMessages(ctx, "publications", id);
     return null;
   },
 });
@@ -525,6 +545,7 @@ export const updatePendingNews = mutation({
       featured: args.featured,
     });
     await record(ctx, { table: "news", documentId: id, action: "update", actor: email, affectsSite: false });
+    await refreshReviewMessages(ctx, "news", id);
     return null;
   },
 });
@@ -553,6 +574,7 @@ export const updatePendingPerson = mutation({
     });
 
     await record(ctx, { table: "people", documentId: id, action: "update", actor: email, affectsSite: false });
+    await refreshReviewMessages(ctx, "people", id);
     return null;
   },
 });
@@ -701,6 +723,51 @@ export const mySubmissions = query({
  * Rejecting keeps the row with a note rather than deleting it, so a submitter can
  * see what happened to their entry and an editor can reconsider.
  */
+/**
+ * Publish, reject or archive a submission as `email`, who has been checked.
+ * Shared by setStatus and the Slack review buttons (convex/slackReview.ts).
+ */
+export const applyStatus = async (
+  ctx: MutationCtx,
+  email: string,
+  table: ContentTable,
+  rawId: string,
+  status: "published" | "rejected" | "archived",
+  reviewNote: string | undefined,
+) => {
+  const id = ctx.db.normalizeId(table, rawId);
+  if (id === null) throw new ConvexError("No such record.");
+
+  const before = await ctx.db.get(table, id as Id<ContentTable>);
+  if (before === null) throw new ConvexError("No such record.");
+
+  if (table === "publications") {
+    const wasPublished = before.status === "published";
+    const nowPublished = status === "published";
+    if (wasPublished !== nowPublished) {
+      await adjustAuthorCounts(ctx, id as Id<"publications">, nowPublished ? 1 : -1);
+    }
+  }
+
+  await ctx.db.patch(table, id as Id<ContentTable>, {
+    status,
+    reviewNote,
+    ...(status === "published" ? { publishedBy: email, publishedAt: Date.now() } : {}),
+  });
+
+  await record(ctx, {
+    table,
+    documentId: id,
+    action: status === "published" ? "publish" : "reject",
+    actor: email,
+    snapshot: await ctx.db.get(table, id as Id<ContentTable>),
+    // Publishing adds it to the site; un-publishing something that was live
+    // removes it. Either way the built pages change.
+    affectsSite: status === "published" || before.status === "published",
+  });
+  await refreshReviewMessages(ctx, table, id, email);
+};
+
 export const setStatus = mutation({
   args: {
     table: contentTableValidator,
@@ -711,36 +778,7 @@ export const setStatus = mutation({
   returns: v.null(),
   handler: async (ctx, args) => {
     const email = await requireCapability(ctx, GOVERNS[args.table]);
-    const id = ctx.db.normalizeId(args.table, args.id);
-    if (id === null) throw new ConvexError("No such record.");
-
-    const before = await ctx.db.get(args.table, id as Id<ContentTable>);
-    if (before === null) throw new ConvexError("No such record.");
-
-    if (args.table === "publications") {
-      const wasPublished = before.status === "published";
-      const nowPublished = args.status === "published";
-      if (wasPublished !== nowPublished) {
-        await adjustAuthorCounts(ctx, id as Id<"publications">, nowPublished ? 1 : -1);
-      }
-    }
-
-    await ctx.db.patch(args.table, id as Id<ContentTable>, {
-      status: args.status,
-      reviewNote: args.reviewNote,
-      ...(args.status === "published" ? { publishedBy: email, publishedAt: Date.now() } : {}),
-    });
-
-    await record(ctx, {
-      table: args.table,
-      documentId: id,
-      action: args.status === "published" ? "publish" : "reject",
-      actor: email,
-      snapshot: await ctx.db.get(args.table, id as Id<ContentTable>),
-      // Publishing adds it to the site; un-publishing something that was live
-      // removes it. Either way the built pages change.
-      affectsSite: args.status === "published" || before.status === "published",
-    });
+    await applyStatus(ctx, email, args.table, args.id, args.status, args.reviewNote);
     return null;
   },
 });
