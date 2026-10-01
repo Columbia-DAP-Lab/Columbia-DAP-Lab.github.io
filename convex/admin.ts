@@ -124,6 +124,27 @@ export const eventSubmission = {
   ),
 };
 
+/** What a new or edited event must satisfy before anything is written. */
+const checkEvent = async (ctx: MutationCtx, args: ObjectType<typeof eventSubmission>) => {
+  const series = await ctx.db
+    .query("eventSeries")
+    .withIndex("by_slug", (q) => q.eq("slug", args.series))
+    .unique();
+  if (series === null) throw new ConvexError(`Unknown series: ${args.series}`);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(args.startDate)) throw new ConvexError("Date must be YYYY-MM-DD.");
+  if (args.image !== undefined) await checkImage(ctx, args.image);
+};
+
+const insertSpeakers = async (
+  ctx: MutationCtx,
+  eventId: Id<"events">,
+  speakers: ObjectType<typeof eventSubmission>["speakers"],
+) => {
+  for (const [position, speaker] of speakers.entries()) {
+    await ctx.db.insert("eventSpeakers", { eventId, position, ...speaker });
+  }
+};
+
 /**
  * Insert a pending event for `email`, who has already been checked: by
  * requireSubmitter here, or by extractSupport:beginForSlack for the Slack bot.
@@ -134,14 +155,7 @@ export const insertEvent = async (
   email: string,
   args: ObjectType<typeof eventSubmission>,
 ): Promise<Id<"events">> => {
-  const series = await ctx.db
-    .query("eventSeries")
-    .withIndex("by_slug", (q) => q.eq("slug", args.series))
-    .unique();
-  if (series === null) throw new ConvexError(`Unknown series: ${args.series}`);
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(args.startDate)) throw new ConvexError("Date must be YYYY-MM-DD.");
-
-  if (args.image !== undefined) await checkImage(ctx, args.image);
+  await checkEvent(ctx, args);
 
   const { speakers, image, ...event } = args;
   const eventId = await ctx.db.insert("events", {
@@ -149,9 +163,7 @@ export const insertEvent = async (
     image: image === undefined ? undefined : { kind: "storage", storageId: image },
     ...submissionFields(email),
   });
-  for (const [position, speaker] of speakers.entries()) {
-    await ctx.db.insert("eventSpeakers", { eventId, position, ...speaker });
-  }
+  await insertSpeakers(ctx, eventId, speakers);
 
   // Pending content is invisible to the site, so no rebuild.
   await record(ctx, {
@@ -184,12 +196,8 @@ export const publicationSubmission = {
   comment: v.optional(v.string()),
 };
 
-/** Insert a pending publication for an already-checked `email`; see insertEvent. */
-export const insertPublication = async (
-  ctx: MutationCtx,
-  email: string,
-  args: ObjectType<typeof publicationSubmission>,
-): Promise<Id<"publications">> => {
+/** What a new or edited publication must satisfy before anything is written. */
+const checkPublication = async (ctx: MutationCtx, args: ObjectType<typeof publicationSubmission>) => {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(args.pubDate)) throw new ConvexError("Date must be YYYY-MM-DD.");
 
   // The vocabulary is closed: a typo here would create a filter nothing matches.
@@ -200,21 +208,11 @@ export const insertPublication = async (
       .unique();
     if (topic === null) throw new ConvexError(`Unknown topic: ${slug}`);
   }
+};
 
+/** One publicationAuthors row per printed name, in order, for a pending publication. */
+const linkAuthors = async (ctx: MutationCtx, publicationId: Id<"publications">, authors: string[]) => {
   const people = await peopleByMatchKey(ctx);
-
-  const { authors, ...publication } = args;
-  const publicationId = await ctx.db.insert("publications", {
-    ...publication,
-    year: Number(args.pubDate.slice(0, 4)),
-    awards: [],
-    selected: false,
-    short: false,
-    future: false,
-    hidden: false,
-    authorCount: authors.length,
-    ...submissionFields(email),
-  });
   for (const [position, printed] of authors.entries()) {
     // "Weiliang Zhao*" is equal contribution on this paper, not a different
     // person — the same split the migration makes, so the two paths agree.
@@ -230,6 +228,29 @@ export const insertPublication = async (
       equalContribution: equalContribution ? true : undefined,
     });
   }
+};
+
+/** Insert a pending publication for an already-checked `email`; see insertEvent. */
+export const insertPublication = async (
+  ctx: MutationCtx,
+  email: string,
+  args: ObjectType<typeof publicationSubmission>,
+): Promise<Id<"publications">> => {
+  await checkPublication(ctx, args);
+
+  const { authors, ...publication } = args;
+  const publicationId = await ctx.db.insert("publications", {
+    ...publication,
+    year: Number(args.pubDate.slice(0, 4)),
+    awards: [],
+    selected: false,
+    short: false,
+    future: false,
+    hidden: false,
+    authorCount: authors.length,
+    ...submissionFields(email),
+  });
+  await linkAuthors(ctx, publicationId, authors);
 
   await record(ctx, {
     table: "publications",
@@ -248,6 +269,68 @@ export const submitPublication = mutation({
   handler: async (ctx, args) => insertPublication(ctx, await requireSubmitter(ctx), args),
 });
 
+/** A profile as the form submits it. */
+const personSubmission = {
+  name: v.string(),
+  category: schema.tables.people.validator.fields.category,
+  title: v.optional(v.string()),
+  affiliation: v.optional(v.string()),
+  homepage: v.optional(v.string()),
+  email: v.optional(v.string()),
+  bio: v.optional(v.string()),
+  /** Slugs into `fields`. */
+  fields: v.array(v.string()),
+  advisors: v.array(v.string()),
+  /** From generateUploadUrl. */
+  image: v.optional(v.id("_storage")),
+};
+
+/**
+ * Check a new or edited profile, and work out what is stored: the trimmed name,
+ * its slug, and the advisors split into directory profiles and outside names.
+ * `self` is the profile being edited, which may keep its own slug.
+ */
+const checkPerson = async (ctx: MutationCtx, args: ObjectType<typeof personSubmission>, self?: Id<"people">) => {
+  const name = args.name.trim();
+  if (!name) throw new ConvexError("A profile needs a name.");
+
+  // The slug is the profile's identity; a second row for the same name would
+  // split the person the way a misspelled author splits an author.
+  const slug = slugify(name);
+  const existing = await ctx.db
+    .query("people")
+    .withIndex("by_slug", (q) => q.eq("slug", slug))
+    .first();
+  if (existing !== null && existing._id !== self) {
+    throw new ConvexError(
+      existing.status === "pending"
+        ? `${name} already has a profile waiting for review.`
+        : `${name} already has a profile. Ask an editor to update it.`,
+    );
+  }
+
+  for (const field of args.fields) {
+    const row = await ctx.db
+      .query("fields")
+      .withIndex("by_slug", (q) => q.eq("slug", field))
+      .unique();
+    if (row === null) throw new ConvexError(`Unknown research area: ${field}`);
+  }
+  if (args.image !== undefined) await checkImage(ctx, args.image);
+
+  const people = await peopleByMatchKey(ctx);
+  const advisorIds: Id<"people">[] = [];
+  const externalAdvisors: string[] = [];
+  for (const printed of args.advisors) {
+    const advisor = printed.trim();
+    if (!advisor) continue;
+    const id = people.get(matchKey(advisor));
+    if (id !== undefined) advisorIds.push(id);
+    else externalAdvisors.push(advisor);
+  }
+  return { name, slug, advisorIds, externalAdvisors };
+};
+
 /**
  * Propose a profile for the People page.
  *
@@ -256,61 +339,12 @@ export const submitPublication = mutation({
  * is kept as an external advisor rather than fabricating a profile for them.
  */
 export const submitPerson = mutation({
-  args: {
-    name: v.string(),
-    category: schema.tables.people.validator.fields.category,
-    title: v.optional(v.string()),
-    affiliation: v.optional(v.string()),
-    homepage: v.optional(v.string()),
-    email: v.optional(v.string()),
-    bio: v.optional(v.string()),
-    /** Slugs into `fields`. */
-    fields: v.array(v.string()),
-    advisors: v.array(v.string()),
-    /** From generateUploadUrl. */
-    image: v.optional(v.id("_storage")),
-  },
+  args: personSubmission,
   returns: v.id("people"),
   handler: async (ctx, args) => {
     // Profiles are the People page itself, so adding one is an admin's call.
     const submitter = await requireCapability(ctx, "people");
-    const name = args.name.trim();
-    if (!name) throw new ConvexError("A profile needs a name.");
-
-    // The slug is the profile's identity; a second row for the same name would
-    // split the person the way a misspelled author splits an author.
-    const slug = slugify(name);
-    const existing = await ctx.db
-      .query("people")
-      .withIndex("by_slug", (q) => q.eq("slug", slug))
-      .first();
-    if (existing !== null) {
-      throw new ConvexError(
-        existing.status === "pending"
-          ? `${name} already has a profile waiting for review.`
-          : `${name} already has a profile. Ask an editor to update it.`,
-      );
-    }
-
-    for (const field of args.fields) {
-      const row = await ctx.db
-        .query("fields")
-        .withIndex("by_slug", (q) => q.eq("slug", field))
-        .unique();
-      if (row === null) throw new ConvexError(`Unknown research area: ${field}`);
-    }
-    if (args.image !== undefined) await checkImage(ctx, args.image);
-
-    const people = await peopleByMatchKey(ctx);
-    const advisorIds: Id<"people">[] = [];
-    const externalAdvisors: string[] = [];
-    for (const printed of args.advisors) {
-      const advisor = printed.trim();
-      if (!advisor) continue;
-      const id = people.get(matchKey(advisor));
-      if (id !== undefined) advisorIds.push(id);
-      else externalAdvisors.push(advisor);
-    }
+    const { name, slug, advisorIds, externalAdvisors } = await checkPerson(ctx, args);
 
     const { advisors, image, email, ...person } = args;
     const personId = await ctx.db.insert("people", {
@@ -333,6 +367,117 @@ export const submitPerson = mutation({
       affectsSite: false,
     });
     return personId;
+  },
+});
+
+// ------------------------------------------------- editing before publishing
+//
+// A reviewer can correct a pending submission before publishing it: a typo in a
+// title, a wrong series, a missing author. Each takes the whole form, as the
+// submit mutations do, and replaces the row's fields, its speakers or authors,
+// and its image if a new one is given. It stays pending; publishing is still
+// setStatus. Only pending rows, so nothing live changes without a rebuild.
+
+/** The pending row a reviewer is editing, or a refusal if it was reviewed meanwhile. */
+const pendingRow = async <T extends "events" | "publications" | "people">(ctx: MutationCtx, table: T, id: Id<T>) => {
+  const row = await ctx.db.get(table, id);
+  if (row === null || row.status !== "pending") {
+    throw new ConvexError("That submission is no longer waiting for review.");
+  }
+  return row;
+};
+
+export const updatePendingEvent = mutation({
+  args: { id: v.id("events"), ...eventSubmission },
+  returns: v.null(),
+  handler: async (ctx, { id, ...args }) => {
+    const email = await requireCapability(ctx, "events");
+    const before = await pendingRow(ctx, "events", id);
+    await checkEvent(ctx, args);
+
+    // Every field named, so one cleared in the form is cleared here too.
+    await ctx.db.patch("events", id, {
+      title: args.title,
+      series: args.series,
+      startDate: args.startDate,
+      endDate: args.endDate,
+      timeLabel: args.timeLabel,
+      location: args.location,
+      link: args.link,
+      description: args.description,
+      image: args.image === undefined ? before.image : { kind: "storage", storageId: args.image },
+    });
+    const old = await ctx.db
+      .query("eventSpeakers")
+      .withIndex("by_eventId_and_position", (q) => q.eq("eventId", id))
+      .take(100);
+    for (const speaker of old) await ctx.db.delete("eventSpeakers", speaker._id);
+    await insertSpeakers(ctx, id, args.speakers);
+
+    await record(ctx, { table: "events", documentId: id, action: "update", actor: email, affectsSite: false });
+    return null;
+  },
+});
+
+export const updatePendingPublication = mutation({
+  args: { id: v.id("publications"), ...publicationSubmission },
+  returns: v.null(),
+  handler: async (ctx, { id, ...args }) => {
+    const email = await requireCapability(ctx, "publications");
+    await pendingRow(ctx, "publications", id);
+    await checkPublication(ctx, args);
+
+    await ctx.db.patch("publications", id, {
+      title: args.title,
+      venue: args.venue,
+      pubDate: args.pubDate,
+      year: Number(args.pubDate.slice(0, 4)),
+      topics: args.topics,
+      url: args.url,
+      slidesUrl: args.slidesUrl,
+      codeUrl: args.codeUrl,
+      comment: args.comment,
+      authorCount: args.authors.length,
+    });
+    // Pending authorships were never counted (see linkAuthors), so dropping the
+    // old rows needs no count adjustment.
+    const old = await ctx.db
+      .query("publicationAuthors")
+      .withIndex("by_publicationId_and_position", (q) => q.eq("publicationId", id))
+      .take(500);
+    for (const row of old) await ctx.db.delete("publicationAuthors", row._id);
+    await linkAuthors(ctx, id, args.authors);
+
+    await record(ctx, { table: "publications", documentId: id, action: "update", actor: email, affectsSite: false });
+    return null;
+  },
+});
+
+export const updatePendingPerson = mutation({
+  args: { id: v.id("people"), ...personSubmission },
+  returns: v.null(),
+  handler: async (ctx, { id, ...args }) => {
+    const email = await requireCapability(ctx, "people");
+    const before = await pendingRow(ctx, "people", id);
+    const { name, slug, advisorIds, externalAdvisors } = await checkPerson(ctx, args, id);
+
+    await ctx.db.patch("people", id, {
+      name,
+      slug,
+      category: args.category,
+      title: args.title,
+      affiliation: args.affiliation,
+      homepage: args.homepage,
+      email: args.email?.trim().toLowerCase() || undefined,
+      bio: args.bio,
+      fields: args.fields,
+      advisorIds,
+      externalAdvisors,
+      image: args.image === undefined ? before.image : { kind: "storage", storageId: args.image },
+    });
+
+    await record(ctx, { table: "people", documentId: id, action: "update", actor: email, affectsSite: false });
+    return null;
   },
 });
 

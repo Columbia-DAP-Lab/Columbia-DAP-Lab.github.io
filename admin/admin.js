@@ -215,7 +215,7 @@ const uploadImage = async (original, maxSide = IMAGE_SIDE) => {
 };
 
 const eventForm = $("#event-form");
-handleSubmit(eventForm, async () => {
+handleSubmit(eventForm, async (submit) => {
   const event = values(eventForm, [
     "title",
     "series",
@@ -241,6 +241,7 @@ handleSubmit(eventForm, async () => {
   const file = eventForm.elements.image.files[0];
   if (file) event.image = await uploadImage(file);
 
+  if (editing.has(eventForm)) return await saveEdit(eventForm, submit.submitter, { ...event, speakers });
   await client.mutation(api.admin.submitEvent, { ...event, speakers });
   eventForm.reset();
   $("#speakers").replaceChildren();
@@ -251,7 +252,7 @@ handleSubmit(eventForm, async () => {
 // --------------------------------------------------------- publication form
 
 const publicationForm = $("#publication-form");
-handleSubmit(publicationForm, async () => {
+handleSubmit(publicationForm, async (submit) => {
   const publication = values(publicationForm, [
     "title",
     "venue",
@@ -267,6 +268,9 @@ handleSubmit(publicationForm, async () => {
     .filter(Boolean);
   const topics = checkedValues($("#topics"));
 
+  if (editing.has(publicationForm)) {
+    return await saveEdit(publicationForm, submit.submitter, { ...publication, authors, topics });
+  }
   await client.mutation(api.admin.submitPublication, { ...publication, authors, topics });
   publicationForm.reset();
   return "Submitted. An admin will review it; follow it under Submissions.";
@@ -282,7 +286,7 @@ const lines = (textarea) =>
     .filter(Boolean);
 
 const personForm = $("#person-form");
-handleSubmit(personForm, async () => {
+handleSubmit(personForm, async (submit) => {
   const person = values(personForm, [
     "name",
     "category",
@@ -298,10 +302,94 @@ handleSubmit(personForm, async () => {
   const file = personForm.elements.image.files[0];
   if (file) person.image = await uploadImage(file, PHOTO_SIDE);
 
+  if (editing.has(personForm)) return await saveEdit(personForm, submit.submitter, { ...person, advisors, fields });
   await client.mutation(api.admin.submitPerson, { ...person, advisors, fields });
   personForm.reset();
   return "Submitted. An admin will review it; follow it under Submissions.";
 });
+
+// --------------------------------------------- editing a pending submission
+//
+// A reviewer's Edit button opens a waiting submission in the same form that adds
+// one, filled in the way paste-to-fill fills it. Saving replaces the submission
+// (admin:updatePending*), which stays pending; "Save and publish" also publishes it.
+
+const EDITABLE = {
+  events: { form: eventForm, tab: "event", kind: "event", update: api.admin.updatePendingEvent },
+  publications: { form: publicationForm, tab: "publication", kind: "publication", update: api.admin.updatePendingPublication },
+  people: { form: personForm, tab: "people", kind: "person", update: api.admin.updatePendingPerson },
+};
+
+/** form → { table, id } while it holds a pending submission rather than a new one. */
+const editing = new Map();
+
+const setEditing = (form, table, row) => {
+  if (row) editing.set(form, { table, id: row._id });
+  else editing.delete(form);
+  const banner = $("[data-editing]", form);
+  banner.hidden = !row;
+  if (row) {
+    banner.textContent =
+      // A person's `title` is their role ("PhD Student"); their name is what to show.
+      `Editing “${table === "people" ? row.name : row.title}”, submitted by ${row.submittedBy}. It stays pending until you publish it.` +
+      (row.imageUrl ? " Its image is kept unless you choose a new one." : "");
+  }
+  $("[data-submit-label]", form).textContent = row ? "Save changes" : "Submit for review";
+  for (const node of $$("[data-edit-only]", form)) node.hidden = !row;
+  // Quick add would fill the form over the submission being edited.
+  const quickAdd = $(`[data-quick-add="${EDITABLE[table].kind}"]`);
+  if (quickAdd) quickAdd.hidden = Boolean(row);
+};
+
+const clearForm = (form) => {
+  form.reset();
+  setResult(form, "", true);
+  if (form === eventForm) {
+    $("#speakers").replaceChildren();
+    addSpeaker();
+  }
+};
+
+const startEditing = (table, row) => {
+  const { form, tab, kind } = EDITABLE[table];
+  clearForm(form);
+  FILL[kind](form, row);
+  setEditing(form, table, row);
+  showTab(tab);
+  form.scrollIntoView({ behavior: "smooth", block: "start" });
+};
+
+const stopEditing = (form) => {
+  const edit = editing.get(form);
+  if (!edit) return;
+  clearForm(form);
+  setEditing(form, edit.table, null);
+};
+
+const reviewNote = (text) => {
+  const note = $("[data-review-note]");
+  note.textContent = text;
+  note.hidden = !text;
+};
+
+/** Save the form over the submission it holds, then go back to the queue. */
+const saveEdit = async (form, submitter, payload) => {
+  const { table, id } = editing.get(form);
+  await client.mutation(EDITABLE[table].update, { id, ...payload });
+  const publish = submitter?.dataset.save === "publish";
+  if (publish) await client.mutation(api.admin.setStatus, { table, id, status: "published" });
+  stopEditing(form);
+  showTab("submissions");
+  reviewNote(publish ? "Saved and published." : "Saved. It is still waiting for review.");
+  return "";
+};
+
+for (const { form } of Object.values(EDITABLE)) {
+  $("[data-cancel-edit]", form).addEventListener("click", () => {
+    stopEditing(form);
+    showTab("submissions");
+  });
+}
 
 // ----------------------------------------------------------- paste to fill
 //
@@ -493,6 +581,7 @@ const reviewActions = (table, row) => {
     "div",
     { class: "mt-2" },
     note,
+    el("button", { type: "button", class: "btn btn-sm dap-btn-quiet me-2", onclick: () => startEditing(table, row) }, "Edit"),
     el("button", { type: "button", class: "btn btn-sm dap-btn-primary me-2", onclick: act("published") }, "Publish"),
     el("button", { type: "button", class: "btn btn-sm dap-remove", onclick: act("rejected") }, "Reject"),
   );
@@ -604,12 +693,18 @@ const renderProfileEdit = (row) =>
         el(
           "table",
           { class: "table table-sm mb-2" },
-          el("thead", {}, el("tr", {}, el("th", {}, "Field"), el("th", {}, "Now"), el("th", {}, "Proposed"))),
+          el("thead", {}, el("tr", {}, el("th", {}, "Field"), el("th", {}, "Now"), el("th", {}, "Proposed (you can edit)"))),
           el(
             "tbody",
             {},
             row.rows.map((r) =>
-              el("tr", {}, el("td", {}, r.field), el("td", { class: "dap-muted" }, r.before || "—"), el("td", {}, r.after || "(cleared)")),
+              el(
+                "tr",
+                {},
+                el("td", {}, r.field),
+                el("td", { class: "dap-muted" }, r.before || "—"),
+                el("td", {}, proposedCell(r)),
+              ),
             ),
             row.imageUrl && el("tr", {}, el("td", {}, "photo"), el("td", { class: "dap-muted" }, "current"), el("td", {}, "new (shown left)")),
           ),
@@ -620,6 +715,17 @@ const renderProfileEdit = (row) =>
     profileEditActions(row),
   );
 
+/** Text fields are editable in place, so a reviewer can fix a typo before approving. */
+const REVISABLE = new Set(["title", "affiliation", "homepage", "bio"]);
+const proposedCell = (r) => {
+  if (!REVISABLE.has(r.field)) return r.after || "(cleared)";
+  const attrs = { class: "form-control form-control-sm", "data-revise": r.field, placeholder: "(cleared)", "aria-label": `Proposed ${r.field}` };
+  if (r.field === "bio") return el("textarea", { ...attrs, rows: "4" }, r.after);
+  const input = el("input", attrs);
+  input.value = r.after;
+  return input;
+};
+
 const profileEditActions = (row) => {
   const note = el("input", {
     class: "form-control form-control-sm d-inline-block w-auto me-2",
@@ -629,7 +735,16 @@ const profileEditActions = (row) => {
     const buttons = $$("button", event.target.parentElement);
     buttons.forEach((b) => (b.disabled = true));
     try {
-      await client.mutation(api.profiles.reviewEdit, { id: row._id, decision, reviewNote: note.value.trim() || undefined });
+      // Whatever is in the editable cells when Approve is pressed is what applies.
+      const card = event.target.closest(".queue-item");
+      const inputs = $$("[data-revise]", card);
+      const revised = Object.fromEntries(inputs.map((input) => [input.dataset.revise, input.value.trim() || null]));
+      await client.mutation(api.profiles.reviewEdit, {
+        id: row._id,
+        decision,
+        reviewNote: note.value.trim() || undefined,
+        revised: decision === "published" && inputs.length > 0 ? revised : undefined,
+      });
     } catch (error) {
       showStatus(message(error));
       buttons.forEach((b) => (b.disabled = false));

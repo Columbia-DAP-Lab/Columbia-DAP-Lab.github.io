@@ -194,18 +194,39 @@ export const reviewEdit = mutation({
     id: v.id("profileEdits"),
     decision: v.union(v.literal("published"), v.literal("rejected")),
     reviewNote: v.optional(v.string()),
+    /**
+     * The reviewer's corrections to the proposed text, applied in its place.
+     * Only fields the edit proposes are taken; null clears the field.
+     */
+    revised: v.optional(
+      v.object({
+        title: v.optional(v.union(v.string(), v.null())),
+        affiliation: v.optional(v.union(v.string(), v.null())),
+        homepage: v.optional(v.union(v.string(), v.null())),
+        bio: v.optional(v.union(v.string(), v.null())),
+      }),
+    ),
   },
   returns: v.null(),
   handler: async (ctx, args) => {
     const email = await requireCapability(ctx, "people");
     const edit = await ctx.db.get("profileEdits", args.id);
     if (edit === null || edit.status !== "pending") throw new ConvexError("That edit is no longer waiting for review.");
+
+    const changes = { ...edit.changes };
+    if (args.decision === "published" && args.revised !== undefined) {
+      for (const key of TEXT_FIELDS) {
+        if (key in changes && key in args.revised) changes[key] = args.revised[key]?.trim() || null;
+      }
+    }
     if (args.decision === "published") {
       const person = await ctx.db.get("people", edit.personId);
       if (person === null) throw new ConvexError("That profile no longer exists.");
-      await apply(ctx, person, edit.changes, email);
+      await apply(ctx, person, changes, email);
     }
     await ctx.db.patch("profileEdits", edit._id, {
+      // What was applied, so the record shows the reviewer's corrections.
+      changes,
       status: args.decision,
       reviewedBy: email,
       reviewedAt: Date.now(),
