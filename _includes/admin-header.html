@@ -20,7 +20,8 @@ hidden until someone on the lab's list signs in.
       <div class="navbar-nav me-auto" data-admin-tabs hidden>
         <button class="nav-link dap-tab active" data-tab="event" type="button">Events</button>
         <button class="nav-link dap-tab" data-tab="publication" type="button">Papers</button>
-        <button class="nav-link dap-tab" data-tab="people" type="button" hidden data-needs="people">People</button>
+        <button class="nav-link dap-tab" data-tab="people" type="button" hidden data-needs="people profile">People</button>
+        <button class="nav-link dap-tab" data-tab="users" type="button" hidden data-needs="admin">Users</button>
         <button class="nav-link dap-tab" data-tab="projects" type="button" hidden data-needs="admin">Projects</button>
         <button class="nav-link dap-tab" data-tab="submissions" type="button">
           Submissions <span class="dap-count" data-pending-count></span>
@@ -35,7 +36,7 @@ hidden until someone on the lab's list signs in.
           </button>
           <ul class="dropdown-menu dropdown-menu-end">
             <li hidden data-needs="profile">
-              <button class="dropdown-item" data-tab="profile" type="button">Edit profile</button>
+              <button class="dropdown-item" data-tab="people" data-scroll-to="your-profile" type="button">Edit profile</button>
             </li>
             <li hidden data-view-as="on">
               <button class="dropdown-item" type="button">View as member</button>
