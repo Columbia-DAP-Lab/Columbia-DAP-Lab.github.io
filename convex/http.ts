@@ -63,7 +63,8 @@ http.route({
   path: "/slack/events",
   method: "POST",
   handler: httpAction(async (ctx, request) => {
-    const secret = env.SLACK_SIGNING_SECRET;
+    // Trimmed: a secret pasted with a trailing newline would never match.
+    const secret = env.SLACK_SIGNING_SECRET?.trim();
     if (!secret) return new Response("Slack is not set up on this deployment", { status: 503 });
 
     // The signature covers the raw body, so read it as text before parsing.
@@ -107,6 +108,14 @@ http.route({
         user: event.user,
         text: event.text ?? "",
         botUserId: payload.authorizations?.[0]?.user_id,
+      });
+    } else {
+      // Only shapes, no message text: enough to tell a wrong subscription from a bot's own post.
+      console.log("Slack request ignored", {
+        type: payload.type,
+        event: event?.type,
+        subtype: event?.subtype,
+        fromBot: Boolean(event?.bot_id),
       });
     }
     return new Response(null, { status: 200 });
