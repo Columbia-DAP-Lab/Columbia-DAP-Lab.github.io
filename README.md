@@ -68,7 +68,11 @@ your Columbia Google account (`uni@columbia.edu`). Other Google accounts are ref
 
 - **Who can sign in.** Current lab members on the People page get in automatically:
   the name on their Columbia account is matched to their profile. Anyone else has to
-  be added by an admin under **People → Users**.
+  be added by an admin under **People → Users**, or adds themselves (below).
+- **New students add themselves.** A Columbia account that is not on the list can
+  sign in and submit its own People-page profile (Ph.D., M.S./undergraduate, postdoc
+  or staff; faculty are added by an admin). It waits under **Submissions → People**
+  like any other; once it is published, that account signs in as a lab member.
 - **Members** can add events and publications, and edit their own profile.
 - **Admins** can also add people, review submissions, and manage users.
 - **Everything is reviewed.** A member's submission, including a profile edit, is

@@ -231,11 +231,15 @@ export const me = query({
     person: v.union(v.string(), v.null()),
     /** Name on the People-page profile this account may edit, if any. */
     profile: v.union(v.string(), v.null()),
+    /** The name on the Google account, to start the add-yourself form with. */
+    name: v.union(v.string(), v.null()),
     /** Previewing as a member; `capabilities` is then just `member`. */
     viewingAsMember: v.boolean(),
   }),
   handler: async (ctx) => {
     const access = await accessFor(ctx);
+    const identity = await ctx.auth.getUserIdentity();
+    const name = typeof identity?.name === "string" ? identity.name : null;
     if (access === null) {
       return {
         email: null,
@@ -246,6 +250,7 @@ export const me = query({
         person: null,
         profile: null,
         viewingAsMember: false,
+        name,
       };
     }
     if (access.capabilities.length === 0) {
@@ -258,10 +263,11 @@ export const me = query({
         person: null,
         profile: null,
         viewingAsMember: false,
+        name,
       };
     }
     const profile = await profileFor(ctx);
-    return { ...access, refused: null, notOnList: null, profile: profile?.name ?? null };
+    return { ...access, refused: null, notOnList: null, profile: profile?.name ?? null, name };
   },
 });
 

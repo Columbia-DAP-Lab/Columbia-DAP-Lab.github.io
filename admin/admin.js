@@ -770,6 +770,38 @@ const renderQueue = (table, rows, render) => {
   );
 };
 
+// ------------------------------------------------------------ add yourself
+
+const joinForm = $("#join-form");
+
+/** Where the account's own request stands; the form is for when there is none waiting. */
+const renderJoinState = (request) => {
+  const state = $("[data-join-state]");
+  const waiting = request?.status === "pending";
+  const approved = request?.status === "published";
+  joinForm.hidden = waiting || approved;
+  state.hidden = request === null;
+  if (request === null) return;
+  state.className = `alert ${waiting ? "alert-info" : approved ? "alert-success" : "alert-warning"}`;
+  state.textContent = waiting
+    ? `Your profile (${request.name}) is waiting for a lab admin to review it, since ${when(request.submittedAt)}.`
+    : approved
+      ? "Your profile is approved. Sign out and sign in again to continue as a lab member."
+      : `Your last request was not approved${request.reviewNote ? `: ${request.reviewNote}` : "."} You can correct it and submit again.`;
+};
+
+handleSubmit(joinForm, async () => {
+  const person = values(joinForm, ["name", "category", "title", "homepage", "affiliation", "bio"]);
+  const advisors = lines(joinForm.elements.advisors);
+  const file = joinForm.elements.image.files[0];
+  if (file) person.image = await uploadImage(file, PHOTO_SIDE);
+  await client.mutation(api.join.submit, { ...person, advisors });
+  joinForm.reset();
+  return "Submitted. A lab admin will review it.";
+});
+
+$("[data-join-sign-out]").addEventListener("click", () => auth?.signOut());
+
 // ------------------------------------------------------------ edit profile
 
 /** The signed-in person's profile as last loaded; the badge list reads it too. */
@@ -1121,15 +1153,19 @@ const renderMe = (me) => {
     auth?.signOut();
   }
 
-  // A Columbia account that is not on the list: say who to ask, and sign it out
-  // so the next person at this browser starts clean.
-  if (me.notOnList) {
-    showStatus(`${me.notOnList} is not on the DAPLab list yet. Ask a lab admin to add you.`);
-    auth?.signOut();
+  // A Columbia account that is not on the list may add itself (convex/join.ts);
+  // it stays signed in for that, with its own Sign out on the page.
+  const joining = Boolean(me.notOnList);
+  $("#join").hidden = !joining;
+  if (joining) {
+    $("[data-join-email]").textContent = me.notOnList;
+    const nameInput = joinForm.elements.name;
+    if (!nameInput.value && me.name) nameInput.value = me.name;
+    subscribe(api.join.myRequest, {}, renderJoinState);
   }
 
   const signedIn = me.email !== null;
-  $("#signed-out").hidden = signedIn;
+  $("#signed-out").hidden = signedIn || joining;
   $("#signed-in").hidden = !signedIn;
   $("[data-admin-tabs]").hidden = !signedIn;
   $("[data-admin-account]").hidden = !signedIn;

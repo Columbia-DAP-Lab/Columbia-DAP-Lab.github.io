@@ -82,7 +82,9 @@ export const generateUploadUrl = mutation({
   args: {},
   returns: v.string(),
   handler: async (ctx) => {
-    await requireSubmitter(ctx);
+    // Anyone on the list, or a Columbia account adding itself to the lab
+    // (convex/join.ts), which needs a photo before it is on the list.
+    if ((await currentEmail(ctx)) === null) await requireSubmitter(ctx);
     return await ctx.storage.generateUploadUrl();
   },
 });
@@ -270,7 +272,7 @@ export const submitPublication = mutation({
 });
 
 /** A profile as the form submits it. */
-const personSubmission = {
+export const personSubmission = {
   name: v.string(),
   category: schema.tables.people.validator.fields.category,
   title: v.optional(v.string()),
@@ -290,18 +292,20 @@ const personSubmission = {
  * its slug, and the advisors split into directory profiles and outside names.
  * `self` is the profile being edited, which may keep its own slug.
  */
-const checkPerson = async (ctx: MutationCtx, args: ObjectType<typeof personSubmission>, self?: Id<"people">) => {
+export const checkPerson = async (ctx: MutationCtx, args: ObjectType<typeof personSubmission>, self?: Id<"people">) => {
   const name = args.name.trim();
   if (!name) throw new ConvexError("A profile needs a name.");
 
   // The slug is the profile's identity; a second row for the same name would
   // split the person the way a misspelled author splits an author.
+  // A rejected profile does not hold the name: its person may try again.
   const slug = slugify(name);
-  const existing = await ctx.db
+  const sameSlug = await ctx.db
     .query("people")
     .withIndex("by_slug", (q) => q.eq("slug", slug))
-    .first();
-  if (existing !== null && existing._id !== self) {
+    .take(20);
+  const existing = sameSlug.find((p) => p._id !== self && p.status !== "rejected") ?? null;
+  if (existing !== null) {
     throw new ConvexError(
       existing.status === "pending"
         ? `${name} already has a profile waiting for review.`
