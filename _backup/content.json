@@ -1986,6 +1986,10 @@
     },
     {
       "category": "PhD",
+      "field": [
+        "AI",
+        "Systems"
+      ],
       "homepage": "https://alex-xjk.github.io/",
       "image": "https://dutiful-turtle-748.convex.cloud/api/storage/7ce0fd2c-2854-4c60-a0b5-a3bff157f458",
       "name": "Jiakai Xu"
@@ -2309,10 +2313,10 @@
         "Eugene Wu",
         "Charlie Summers"
       ],
-      "bio": "Prajwal (Praj) is a researcher at Columbia University's DAP Lab, working with Professor Eugene Wu on reliable, deterministic, and efficient agentic systems. His research covers multi-agent latent communication and deterministic agent guard railing, with work at ICML (AdaptFM), VLDB (NOVAS), and EMNLP (REALM). He is currently doing an M.S. in Data Science at Columbia.",
+      "bio": "Multi-agent latent communication and deterministic guard railing",
       "category": "Student",
       "homepage": "https://www.linkedin.com/in/prajwal-raghunath/",
-      "image": "https://dutiful-turtle-748.convex.cloud/api/storage/df549b8f-f7e9-4e33-b350-1c93590a37b4",
+      "image": "https://dutiful-turtle-748.convex.cloud/api/storage/a1fcee04-757a-4dfe-8df3-c977472f459e",
       "name": "Prajwal Raghunath"
     },
     {
@@ -2334,9 +2338,38 @@
       "homepage": "https://www.linkedin.com/in/maxr0ssi/",
       "image": "https://dutiful-turtle-748.convex.cloud/api/storage/da5e74da-b016-4828-887b-375be608b703",
       "name": "Max Rossi"
+    },
+    {
+      "advisor": [
+        "Yusen Zhang"
+      ],
+      "bio": "Long-Horizon Multi-Agent RL",
+      "category": "Student",
+      "homepage": "https://hassamgani.com/",
+      "image": "https://dutiful-turtle-748.convex.cloud/api/storage/5460fb52-9ce9-4538-9953-1b34216b873b",
+      "name": "Hassam Abdul Gani"
+    },
+    {
+      "advisor": [
+        "Eugene Wu"
+      ],
+      "category": "Student",
+      "homepage": "https://hchenhao.github.io",
+      "image": "https://dutiful-turtle-748.convex.cloud/api/storage/843366ae-a908-4411-b6ed-1f20977b737e",
+      "name": "Chenhao Hong"
     }
   ],
   "news": [
+    {
+      "content": "Huge congrats to DAPLab faculty Yunzhu Li and Changxi Zheng, whose robotics startup, [SceniX](https://www.worldlabs.ai/blog/scenix), was acquired by World Labs in July 2026. In September a few months later, AMD [announced an agreement to acquire World Labs](https://www.worldlabs.ai/blog/amd-announcement), bringing the SceniX team’s work on robotics, simulation, and spatial intelligence into AMD.",
+      "featured": true,
+      "title": "SceniX acquired by World Labs; AMD to acquire World Labs"
+    },
+    {
+      "content": "The paper [“It’s the Kernel’s Fault! Custom Page Fault Handling With bpf_fault”](https://dl.acm.org/doi/10.1145/3830418.3843896) by Tal Zussman, Riju Dey, Hasan Zengin, Yiming Fang, David Hildenbrand, and Asaf Cidon received the SOSP 2026 Best Paper and Distinguished Artifact awards.",
+      "featured": true,
+      "title": "Asaf Cidon and coauthors win SOSP 2026 Best Paper and Distinguished Artifact"
+    },
     {
       "content": "The DAPLab's Tuesday 12PM research seminar continues in CSB 453 (CS Conference Room). We invite internal and external speakers that can share cutting-edge agent-systems research or can talk about processes in their organizations and how they are trying to automate them.",
       "date": "2026-09-02",
@@ -2741,6 +2774,12 @@
             "url": "https://arxiv.org/abs/2510.05556",
             "venue": "Systems for Agentic AI Workshop at SOSP'25",
             "year": 2025
+          },
+          {
+            "title": "StateFork: Branchable Infrastructure for Agent Exploration",
+            "url": "https://arxiv.org/abs/2609.38648",
+            "venue": "arXiv",
+            "year": 2026
           }
         ],
         "subtitle": "Fast checkpoint/restore for branchable terminal environments.",
