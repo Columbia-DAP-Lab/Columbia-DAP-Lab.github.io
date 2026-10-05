@@ -642,6 +642,20 @@
   ],
   "publications": [
     {
+      "authors": "Yun-Yun Tsai, Yuning Mao, Shiqi Wang, Junfeng Yang, Sinong Wang",
+      "comment": "Generated web UIs can compile and look right while breaking under actual interaction; this harness drives them with a UI agent so correctness is measured by use rather than by screenshots.",
+      "conf": "arXiv",
+      "pub_date": "2026-10-01",
+      "tags": [
+        "ai",
+        "bench",
+        "hci",
+        "automation"
+      ],
+      "title": "WebUIProof: Benchmarking WebUI Code Generators with UI-Agent Execution Harness",
+      "url": "https://arxiv.org/abs/2610.02617"
+    },
+    {
       "authors": "Jiakai Xu, Tianle Zhou, Georgios Liargkovas, Danielle Gillai, Ruizhe Fu, Patrick Shen, Eugene Wu, Kostis Kaffes",
       "conf": "arXiv",
       "pub_date": "2026-09-29",
@@ -667,6 +681,46 @@
       ],
       "title": "SANA: What Matters for QA Agents over Massive Data Lakes?",
       "url": "https://arxiv.org/abs/2606.13904"
+    },
+    {
+      "authors": "Yunan Lu, Shuang Xie, Meghna Allamudi, Mingyu Zhao, Han Li, Lingyun Wang, Zhou Yu",
+      "comment": "Generates realistic user interaction traces, so A/B tests, recommenders, and interfaces can be evaluated against simulated users instead of waiting on real traffic.",
+      "conf": "arXiv",
+      "pub_date": "2026-09-01",
+      "tags": [
+        "ai",
+        "multimodal",
+        "simulation",
+        "hci"
+      ],
+      "title": "SimTrace: Grounded Multimodal User Trajectories Generation for Online User Modeling",
+      "url": "https://arxiv.org/abs/2609.38397"
+    },
+    {
+      "authors": "Maximillian Rossi, Prajwal Raghunath, Haoqing Xuan, Yusen Zhang, Eugene Wu",
+      "comment": "When agents pass KV caches instead of text, conditioning the transfer on the receiving agent recovers 94% of the benefit — making latent communication practical for multi-agent systems that split large contexts.",
+      "conf": "arXiv",
+      "pub_date": "2026-09-01",
+      "tags": [
+        "ai",
+        "sys",
+        "llm"
+      ],
+      "title": "Receiver-Conditioned Latent Communication gives 94% CacheBack",
+      "url": "https://arxiv.org/abs/2609.32046"
+    },
+    {
+      "authors": "Jianxing Chen, Xiao Yu, Shipra Agrawal, Zhou Yu",
+      "comment": "Computer-use agents can cause real harm even from benign instructions, and SCOUT pairs reasoning with tool-use to detect it before the damage lands.",
+      "conf": "arXiv",
+      "pub_date": "2026-09-01",
+      "tags": [
+        "ai",
+        "safety",
+        "automation"
+      ],
+      "title": "SCOUT: Synergizing Reasoning and Tool-Use for Computer-Use Safety",
+      "url": "https://arxiv.org/abs/2609.36201"
     },
     {
       "authors": "Shuze Chen, Kunal Marwaha, Xiaoyang Lu, Henry Yuen, Tianyi Peng",
@@ -1193,6 +1247,20 @@
       ],
       "title": "Please Don't Kill My Vibe: Empowering Agents with Data Flow Control",
       "url": "https://www.dropbox.com/scl/fi/iz50niican9apygkpx5en/dfc-cidr26-submitted.pdf?rlkey=24fc47k659xixlevtkkrp4nx0&dl=0"
+    },
+    {
+      "authors": "Raphael Shu, Yusen Zhang, Young Min Cho, Jin Mo Yang, Yuan Yuan, Wenliang Zheng, Sharath Chandra Guntuku, Lyle Ungar, Zhou Yu, Rui Zhang",
+      "comment": "Most multi-agent benchmarks test short, competitive episodes; AgentWorld isolates genuine long-horizon collaboration instead of summing up individual performance.",
+      "conf": "COLM 2026",
+      "pub_date": "2026-01-01",
+      "tags": [
+        "ai",
+        "bench",
+        "llm",
+        "multi-group"
+      ],
+      "title": "AgentWorld: Benchmarking Long-Horizon Collaboration of Multi-agent LLMs",
+      "url": "https://arxiv.org/abs/2609.31590"
     },
     {
       "authors": "Wenxin Zhang, Yueying Li, Ciamac C. Moallemi, Tianyi Peng",
