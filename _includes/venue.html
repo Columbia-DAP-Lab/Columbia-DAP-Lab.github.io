@@ -1,0 +1,20 @@
+{%- comment -%}
+A paper's venue with its year: as written when it ends with one ("SIGMOD 2026",
+"NeurIPS 2025 (Spotlight)" with a note after the year, "Agentic AI (SAA 2025)"
+with the year closing the parentheses), otherwise followed by the publication
+year ("IUI, 2025"). Parameters: venue, year.
+{%- endcomment -%}
+{%- assign venue_text = include.venue | strip -%}
+{%- assign before_note = venue_text | split: " (" | first | strip -%}
+{%- assign last_word = before_note | split: " " | last -%}
+{%- assign last_number = last_word | plus: 0 -%}
+{%- comment -%} Or the year closes the parentheses, as in "Agentic AI (SAA 2025)". {%- endcomment -%}
+{%- assign closing_word = venue_text | split: " " | last | remove: ")" -%}
+{%- assign closing_number = closing_word | plus: 0 -%}
+{%- if last_word.size == 4 and last_number >= 1900 and last_number <= 2100 -%}
+{{ venue_text }}
+{%- elsif closing_word.size == 4 and closing_number >= 1900 and closing_number <= 2100 -%}
+{{ venue_text }}
+{%- else -%}
+{{ venue_text }}{% if include.year and include.year != "" %}{% if venue_text != "" %}, {% endif %}{{ include.year }}{% endif %}
+{%- endif -%}
