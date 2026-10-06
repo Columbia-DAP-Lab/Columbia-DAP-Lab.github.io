@@ -530,6 +530,94 @@ export const updatePendingPublication = mutation({
   },
 });
 
+// -------------------------------------------- editing a published paper
+//
+// The Papers tab lists every published paper with an Edit button: a wrong date,
+// a missing author or a new slides link can be fixed after publishing. Saving
+// replaces the paper's fields and authors and rebuilds the site.
+
+const publishedPaper = v.object({
+  _id: v.id("publications"),
+  title: v.string(),
+  venue: v.string(),
+  pubDate: v.string(),
+  authors: v.array(v.string()),
+  topics: v.array(v.string()),
+  url: v.optional(v.string()),
+  slidesUrl: v.optional(v.string()),
+  codeUrl: v.optional(v.string()),
+  comment: v.optional(v.string()),
+});
+
+/** Every published paper, newest first, as the form loads it. */
+export const listPublications = query({
+  args: {},
+  returns: v.array(publishedPaper),
+  handler: async (ctx) => {
+    await requireCapability(ctx, "publications");
+    const rows = await ctx.db
+      .query("publications")
+      .withIndex("by_status_and_pubDate", (q) => q.eq("status", "published"))
+      .order("desc")
+      .take(1000);
+    const out = [];
+    for (const row of rows) {
+      const { authors } = await withAuthors(ctx, row);
+      out.push({
+        _id: row._id,
+        title: row.title,
+        venue: row.venue,
+        pubDate: row.pubDate,
+        authors,
+        topics: row.topics,
+        url: row.url,
+        slidesUrl: row.slidesUrl,
+        codeUrl: row.codeUrl,
+        comment: row.comment,
+      });
+    }
+    return out;
+  },
+});
+
+export const updatePublication = mutation({
+  args: { id: v.id("publications"), ...publicationSubmission },
+  returns: v.null(),
+  handler: async (ctx, { id, ...args }) => {
+    const email = await requireCapability(ctx, "publications");
+    const row = await ctx.db.get("publications", id);
+    if (row === null) throw new ConvexError("No such publication.");
+    if (row.status !== "published") throw new ConvexError("That paper is not published; edit it from the review queue.");
+    await checkPublication(ctx, args);
+
+    // A published paper counts toward its authors' paper counts: take the old
+    // authors' counts back, relink, and count the new ones.
+    await adjustAuthorCounts(ctx, id, -1);
+    await ctx.db.patch("publications", id, {
+      title: args.title,
+      venue: args.venue,
+      pubDate: args.pubDate,
+      year: Number(args.pubDate.slice(0, 4)),
+      topics: args.topics,
+      url: args.url,
+      slidesUrl: args.slidesUrl,
+      codeUrl: args.codeUrl,
+      comment: args.comment,
+      authorCount: args.authors.length,
+    });
+    const old = await ctx.db
+      .query("publicationAuthors")
+      .withIndex("by_publicationId_and_position", (q) => q.eq("publicationId", id))
+      .take(500);
+    for (const link of old) await ctx.db.delete("publicationAuthors", link._id);
+    await linkAuthors(ctx, id, args.authors);
+    await adjustAuthorCounts(ctx, id, 1);
+
+    await record(ctx, { table: "publications", documentId: id, action: "update", actor: email, affectsSite: true });
+    return null;
+  },
+});
+
 export const updatePendingNews = mutation({
   args: { id: v.id("news"), ...newsSubmission },
   returns: v.null(),
