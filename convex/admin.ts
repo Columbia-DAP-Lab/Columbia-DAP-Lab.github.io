@@ -281,6 +281,32 @@ export const insertPublication = async (
   return publicationId;
 };
 
+/**
+ * Set a publication's date from the command line, for papers that came over
+ * from pubs.yml without one (they sort under "Other" on /publications):
+ *
+ *   npx convex run --prod admin:setPublicationDate '{"id":"...","pubDate":"2026-10-09"}'
+ */
+export const setPublicationDate = internalMutation({
+  args: { id: v.id("publications"), pubDate: v.string() },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(args.pubDate)) throw new ConvexError("Date must be YYYY-MM-DD.");
+    const pub = await ctx.db.get("publications", args.id);
+    if (pub === null) throw new ConvexError("No such publication.");
+    await ctx.db.patch("publications", args.id, { pubDate: args.pubDate, year: Number(args.pubDate.slice(0, 4)) });
+    await record(ctx, {
+      table: "publications",
+      documentId: args.id,
+      action: "update",
+      actor: "cli",
+      snapshot: { pubDate: args.pubDate },
+      affectsSite: pub.status === "published",
+    });
+    return null;
+  },
+});
+
 /** Propose a publication. Lands as `pending`, like an event. */
 export const submitPublication = mutation({
   args: publicationSubmission,
