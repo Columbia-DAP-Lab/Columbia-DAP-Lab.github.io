@@ -21,6 +21,7 @@ import type * as join from "../join.js";
 import type * as llm from "../llm.js";
 import type * as profiles from "../profiles.js";
 import type * as projectAdmin from "../projectAdmin.js";
+import type * as pubDates from "../pubDates.js";
 import type * as slack from "../slack.js";
 import type * as slackReview from "../slackReview.js";
 import type * as vocabulary from "../vocabulary.js";
@@ -45,6 +46,7 @@ declare const fullApi: ApiFromModules<{
   llm: typeof llm;
   profiles: typeof profiles;
   projectAdmin: typeof projectAdmin;
+  pubDates: typeof pubDates;
   slack: typeof slack;
   slackReview: typeof slackReview;
   vocabulary: typeof vocabulary;
