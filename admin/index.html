@@ -277,6 +277,16 @@ docs/admin-service-design.md.
           <span data-result></span>
         </div>
       </form>
+
+      <div class="dap-card" id="published-papers" data-needs="publications">
+        <h2 class="dap-card-title">Published papers <span class="dap-count" data-paper-count></span></h2>
+        <p class="dap-muted small mb-2">Fix a date, an author or a link after publishing. Saving updates the site in
+          about a minute. Papers with no date are listed first.</p>
+        <input class="form-control form-control-sm mb-2" type="search" placeholder="Search titles, authors, venues"
+               aria-label="Search published papers" data-paper-search>
+        <p class="text-success small mb-2" role="status" data-paper-note hidden></p>
+        <div id="paper-list"></div>
+      </div>
     </div>
 
     <!-- ------------------------------------------------------------- news -->

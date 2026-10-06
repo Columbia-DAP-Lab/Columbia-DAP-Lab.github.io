@@ -377,3 +377,11 @@ pre.body { white-space: pre-wrap; font-family: inherit; margin: 0.5rem 0 0; }
 
 /* The banner while an admin previews the page as a member (authz:setViewingAsMember). */
 .dap-preview { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem 1rem; }
+
+/* The Papers tab's list of published papers: a year heading, then one line each. */
+.dap-paper-year { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--dap-muted); margin: 1rem 0 0.25rem; }
+.dap-paper-row { display: flex; align-items: baseline; gap: 0.6rem; padding: 0.35rem 0; border-bottom: 1px solid var(--dap-border, #e3e7ed); font-size: 0.9rem; }
+.dap-paper-row .dap-paper-title { flex: 1; min-width: 0; }
+.dap-paper-row .dap-muted { font-size: 0.8rem; }
+#admin .dap-paper-edit { border: 0; background: none; color: var(--dap-link, #1d4f91); font-weight: 600; font-size: 0.82rem; padding: 0 0.2rem; }
+#admin .dap-paper-edit:hover { text-decoration: underline; }

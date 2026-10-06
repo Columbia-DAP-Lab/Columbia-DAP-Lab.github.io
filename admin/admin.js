@@ -339,12 +339,15 @@ const EDITABLE = {
 /** form → { table, id } while it holds a pending submission rather than a new one. */
 const reviewEdits = new Map();
 
-const setEditing = (form, table, row) => {
-  if (row) reviewEdits.set(form, { table, id: row._id });
+/** `published` marks a live paper from the Papers list rather than a waiting submission. */
+const setEditing = (form, table, row, published = false) => {
+  if (row) reviewEdits.set(form, { table, id: row._id, published });
   else reviewEdits.delete(form);
   const banner = $("[data-editing]", form);
   banner.hidden = !row;
-  if (row) {
+  if (row && published) {
+    banner.textContent = `Editing the published paper “${row.title}”. Saving updates the site in about a minute.`;
+  } else if (row) {
     banner.textContent =
       // A person's `title` is their role ("PhD Student"); their name is what to show.
       `Editing “${table === "people" ? row.name : row.title}”, submitted by ${row.submittedBy}. It stays pending until you publish it.` +
@@ -352,6 +355,8 @@ const setEditing = (form, table, row) => {
   }
   $("[data-submit-label]", form).textContent = row ? "Save changes" : "Submit for review";
   for (const node of $$("[data-edit-only]", form)) node.hidden = !row;
+  // Already live: there is nothing to publish.
+  if (published) $('[data-save="publish"]', form).hidden = true;
   // Quick add would fill the form over the submission being edited.
   const quickAdd = $(`[data-quick-add="${EDITABLE[table].kind}"]`);
   if (quickAdd) quickAdd.hidden = Boolean(row);
@@ -366,11 +371,11 @@ const clearForm = (form) => {
   }
 };
 
-const startEditing = (table, row) => {
+const startEditing = (table, row, published = false) => {
   const { form, tab, kind } = EDITABLE[table];
   clearForm(form);
   FILL[kind](form, row);
-  setEditing(form, table, row);
+  setEditing(form, table, row, published);
   showTab(tab);
   form.scrollIntoView({ behavior: "smooth", block: "start" });
 };
@@ -390,7 +395,14 @@ const reviewNote = (text) => {
 
 /** Save the form over the submission it holds, then go back to the queue. */
 const saveEdit = async (form, submitter, payload) => {
-  const { table, id } = reviewEdits.get(form);
+  const { table, id, published } = reviewEdits.get(form);
+  if (published) {
+    await client.mutation(api.admin.updatePublication, { id, ...payload });
+    stopEditing(form);
+    paperNote("Saved. The site updates in about a minute.");
+    $("#published-papers").scrollIntoView({ behavior: "smooth", block: "start" });
+    return "";
+  }
   await client.mutation(EDITABLE[table].update, { id, ...payload });
   const publish = submitter?.dataset.save === "publish";
   if (publish) await client.mutation(api.admin.setStatus, { table, id, status: "published" });
@@ -402,10 +414,72 @@ const saveEdit = async (form, submitter, payload) => {
 
 for (const { form } of Object.values(EDITABLE)) {
   $("[data-cancel-edit]", form).addEventListener("click", () => {
+    // A published paper came from the Papers list; anything else from the queue.
+    const fromList = reviewEdits.get(form)?.published;
     stopEditing(form);
-    showTab("submissions");
+    if (!fromList) showTab("submissions");
   });
 }
+
+// --------------------------------------------------------- published papers
+//
+// Every published paper on the Papers tab, undated ones first, then by year,
+// each with Edit (admin:updatePublication). Search filters as you type.
+
+let publishedPapers = [];
+
+const paperNote = (text) => {
+  const note = $("[data-paper-note]");
+  note.textContent = text;
+  note.hidden = !text;
+};
+
+const renderPaperList = () => {
+  const query = $("[data-paper-search]").value.trim().toLowerCase();
+  const shown = publishedPapers.filter(
+    (p) => !query || [p.title, p.venue, ...p.authors].some((text) => text.toLowerCase().includes(query)),
+  );
+  $("[data-paper-count]").textContent = publishedPapers.length || "";
+  const groups = new Map();
+  for (const paper of shown) {
+    const year = paper.pubDate ? paper.pubDate.slice(0, 4) : "No date";
+    if (!groups.has(year)) groups.set(year, []);
+    groups.get(year).push(paper);
+  }
+  const order = [...groups.keys()].sort((a, b) => (a === "No date" ? -1 : b === "No date" ? 1 : b.localeCompare(a)));
+  $("#paper-list").replaceChildren(
+    ...(shown.length === 0 ? [el("p", { class: "dap-muted small" }, query ? "No papers match." : "No published papers yet.")] : []),
+    ...order.flatMap((year) => [
+      el("h3", { class: "dap-paper-year" }, `${year} · ${groups.get(year).length}`),
+      ...groups.get(year).map((paper) =>
+        el(
+          "div",
+          { class: "dap-paper-row" },
+          el(
+            "span",
+            { class: "dap-paper-title" },
+            paper.title,
+            el("span", { class: "dap-muted" }, ` · ${paper.venue}${paper.pubDate ? `, ${paper.pubDate}` : ""}`),
+          ),
+          el(
+            "button",
+            {
+              type: "button",
+              class: "dap-paper-edit",
+              onclick: () => {
+                paperNote("");
+                startEditing("publications", paper, true);
+              },
+            },
+            "Edit",
+          ),
+        ),
+      ),
+    ]),
+  );
+};
+
+$("[data-paper-search]").addEventListener("input", renderPaperList);
 
 // ----------------------------------------------------------- paste to fill
 //
@@ -1459,6 +1533,10 @@ const renderMe = (me) => {
     subscribe(api.profiles.pendingEdits, {}, (rows) => renderQueue("profiles", rows, renderProfileEdit));
   }
   if (can(me.capabilities, "publications")) {
+    subscribe(api.admin.listPublications, {}, (rows) => {
+      publishedPapers = rows;
+      renderPaperList();
+    });
     subscribe(api.admin.pending, { table: "publications" }, (rows) =>
       renderQueue("publications", rows, renderPublication),
     );
