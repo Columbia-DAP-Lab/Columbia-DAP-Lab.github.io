@@ -344,6 +344,8 @@ pre.body { white-space: pre-wrap; font-family: inherit; margin: 0.5rem 0 0; }
 #admin .dap-roster-remove:hover { color: #a4262c; }
 #admin .dap-roster-merge { border: 0; background: none; color: var(--dap-muted); padding: 0 0.3rem; font-size: 0.8rem; }
 #admin .dap-roster-merge:hover { color: var(--dap-columbia-dark, #012169); text-decoration: underline; }
+.dap-roster-editor { display: flex; flex: 1; flex-wrap: wrap; align-items: center; gap: 0.35rem; }
+.dap-roster-editor .form-control { flex: 1 1 9rem; width: auto; font-size: 0.85rem; padding: 0.15rem 0.45rem; }
 .dap-merge-photo { display: flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; }
 .dap-merge-photo img { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; background: #f6f8fb; }
 
