@@ -40,7 +40,7 @@ description clamped with "See more".
     {%- if has_description or event.bio %}
     <div class="event-body{% if include.is_past %} clamped{% endif %}">
       {%- if has_description %}<div class="markdown-content">{{ event.description | markdownify }}</div>{% endif -%}
-      {%- if event.bio %}<div class="markdown-content event-bio">{{ event.bio | markdownify }}</div>{% endif -%}
+      {%- if event.bio %}<div class="markdown-content event-bio"><p class="event-bio-label">About the speaker</p>{{ event.bio | markdownify }}</div>{% endif -%}
     </div>
     {%- if include.is_past %}<button type="button" class="expand-btn">See more</button>{% endif -%}
     {%- endif %}
