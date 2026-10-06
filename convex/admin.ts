@@ -1012,6 +1012,102 @@ export const setPersonCategory = mutation({
   },
 });
 
+/** Rename a lab member; their People-page address (slug) follows the name. */
+export const renamePerson = mutation({
+  args: { personId: v.id("people"), name: v.string() },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const actor = await requireCapability(ctx, "admin");
+    const person = await currentMember(ctx, args.personId);
+    const name = args.name.trim();
+    if (!name) throw new ConvexError("A profile needs a name.");
+    if (name === person.name) return null;
+    const slug = slugify(name);
+    const sameSlug = await ctx.db
+      .query("people")
+      .withIndex("by_slug", (q) => q.eq("slug", slug))
+      .take(20);
+    const clash = sameSlug.find((p) => p._id !== person._id && p.status !== "rejected" && p.status !== "archived");
+    if (clash) throw new ConvexError(`${clash.name} already has that name. To combine the two, use Merge.`);
+    await ctx.db.patch("people", person._id, { name, slug });
+    await record(ctx, { table: "people", documentId: person._id, action: "update", actor, snapshot: { name }, affectsSite: true });
+    return null;
+  },
+});
+
+/**
+ * Move an added role from one email to another, keeping the stronger role if
+ * the new address already had one. Refuses to move the acting admin's own.
+ */
+const moveRole = async (ctx: MutationCtx, actor: string, from: string, to: string) => {
+  if (from === to) return;
+  const roleAt = (email: string) =>
+    ctx.db
+      .query("roles")
+      .withIndex("by_email", (q) => q.eq("email", email))
+      .unique();
+  const [old, existing] = await Promise.all([roleAt(from), roleAt(to)]);
+  if (old === null) return;
+  if (from === actor) throw new ConvexError("You cannot change your own email here; ask another admin.");
+  const admin = old.capabilities.includes("admin") || (existing?.capabilities.includes("admin") ?? false);
+  await writeRole(ctx, actor, to, [admin ? "admin" : "member"]);
+  await writeRole(ctx, actor, from, []);
+};
+
+/** Change or clear a lab member's Columbia email; any role added for the old one moves with it. */
+export const setPersonEmail = mutation({
+  args: { personId: v.id("people"), email: v.optional(v.string()) },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const actor = await requireCapability(ctx, "admin");
+    const person = await currentMember(ctx, args.personId);
+    const email = args.email?.trim().toLowerCase() || undefined;
+    if (email === person.email) return null;
+    if (email && !isColumbiaAddress(email)) throw new ConvexError("Only @columbia.edu addresses can sign in.");
+    if (person.email === actor) throw new ConvexError("You cannot change your own email here; ask another admin.");
+    if (email) {
+      const others = await ctx.db
+        .query("people")
+        .withIndex("by_email", (q) => q.eq("email", email))
+        .take(10);
+      const taken = others.find((p) => p._id !== person._id && (p.status === "published" || p.status === "pending"));
+      if (taken) throw new ConvexError(`${taken.name} already has ${email}. To combine the two, use Merge.`);
+    }
+    if (person.email) {
+      const grant = await ctx.db
+        .query("roles")
+        .withIndex("by_email", (q) => q.eq("email", person.email!))
+        .unique();
+      if (grant !== null && !email) {
+        throw new ConvexError(`${person.name} signs in with ${person.email} as ${grant.capabilities.includes("admin") ? "an admin" : "a member"}; give them another email instead of clearing it.`);
+      }
+      if (grant !== null && email) await moveRole(ctx, actor, person.email, email);
+    }
+    await ctx.db.patch("people", person._id, { email });
+    await record(ctx, { table: "people", documentId: person._id, action: "update", actor, snapshot: { email: email ?? null }, affectsSite: false });
+    return null;
+  },
+});
+
+/** Change the email of an account added by email that is not on the People page. */
+export const changeUserEmail = mutation({
+  args: { from: v.string(), to: v.string() },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const actor = await requireCapability(ctx, "admin");
+    const from = args.from.trim().toLowerCase();
+    const to = args.to.trim().toLowerCase();
+    if (!isColumbiaAddress(to)) throw new ConvexError("Only @columbia.edu addresses can sign in.");
+    const grant = await ctx.db
+      .query("roles")
+      .withIndex("by_email", (q) => q.eq("email", from))
+      .unique();
+    if (grant === null) throw new ConvexError(`${from} has not been added.`);
+    await moveRole(ctx, actor, from, to);
+    return null;
+  },
+});
+
 /**
  * Take someone out of the lab: their profile comes off the People page (it is
  * archived, not deleted) and any role added for them is removed.

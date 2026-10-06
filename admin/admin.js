@@ -1201,6 +1201,51 @@ const pickList = (label, options, value) => {
   return node;
 };
 
+/**
+ * Swap a roster row's name cell for inputs, Save and Cancel. `fields` are
+ * { name, label, value, type }; `save(values)` runs the change. The roster
+ * redraws itself when the change lands, which closes the editor.
+ */
+const editInline = (row, fields, save) => {
+  const inputs = fields.map((f) => {
+    const input = el("input", {
+      class: "form-control form-control-sm",
+      type: f.type ?? "text",
+      "aria-label": f.label,
+      placeholder: f.label,
+    });
+    input.value = f.value ?? "";
+    return input;
+  });
+  const done = el("button", { type: "submit", class: "btn btn-sm dap-btn-primary" }, "Save");
+  const cancel = el("button", { type: "button", class: "btn btn-sm btn-link" }, "Cancel");
+  const editor = el("form", { class: "dap-roster-editor" }, ...inputs, done, cancel);
+  const original = [...row.childNodes];
+  const close = () => row.replaceChildren(...original);
+  const submit = async (event) => {
+    event?.preventDefault();
+    done.disabled = true;
+    const values = Object.fromEntries(fields.map((f, i) => [f.name, inputs[i].value.trim()]));
+    try {
+      await save(values);
+      showStatus(null);
+    } catch (error) {
+      showStatus(message(error));
+      done.disabled = false;
+      return;
+    }
+    close();
+  };
+  editor.addEventListener("submit", submit);
+  cancel.addEventListener("click", close);
+  editor.addEventListener("keydown", (event) => event.key === "Escape" && close());
+  row.replaceChildren(editor);
+  inputs[0].focus();
+};
+
+const editButton = (label, onclick) =>
+  el("button", { type: "button", class: "dap-roster-merge", title: label, "aria-label": label, onclick }, "edit");
+
 const memberRow = (person) => {
   const role = pickList(`Role for ${person.name}`, ROLE_LABELS, person.role);
   role.addEventListener("change", () => {
@@ -1239,14 +1284,28 @@ const memberRow = (person) => {
     "×",
   );
 
-  return el(
+  const row = el(
     "div",
     { class: "dap-roster-row" },
     el("span", { class: "dap-roster-who", title: person.email ?? "" }, person.name, person.email && el("span", { class: "dap-muted" }, person.email)),
-    role,
-    group,
-    remove,
   );
+  const edit = editButton(`Edit ${person.name}'s name and email`, () =>
+    editInline(
+      row,
+      [
+        { name: "name", label: "Name", value: person.name },
+        { name: "email", label: "uni@columbia.edu", value: person.email, type: "email" },
+      ],
+      async ({ name, email }) => {
+        if (name !== person.name) await client.mutation(api.admin.renamePerson, { personId: person.id, name });
+        if (email !== (person.email ?? "")) {
+          await client.mutation(api.admin.setPersonEmail, { personId: person.id, email: email || undefined });
+        }
+      },
+    ),
+  );
+  row.append(edit, role, group, remove);
+  return row;
 };
 
 const otherRow = (user) => {
@@ -1283,14 +1342,14 @@ const otherRow = (user) => {
     },
     "merge…",
   );
-  return el(
-    "div",
-    { class: "dap-roster-row" },
-    el("span", { class: "dap-roster-who", title: `Added by ${user.grantedBy}` }, user.email),
-    merge,
-    role,
-    remove,
+  const row = el("div", { class: "dap-roster-row" }, el("span", { class: "dap-roster-who", title: `Added by ${user.grantedBy}` }, user.email));
+  const edit = editButton(`Change ${user.email}`, () =>
+    editInline(row, [{ name: "email", label: "uni@columbia.edu", value: user.email, type: "email" }], async ({ email }) => {
+      if (email && email !== user.email) await client.mutation(api.admin.changeUserEmail, { from: user.email, to: email });
+    }),
   );
+  row.append(edit, merge, role, remove);
+  return row;
 };
 
 const rosterGroup = (title, rows) =>
