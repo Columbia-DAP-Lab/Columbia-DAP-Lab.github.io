@@ -488,6 +488,27 @@ const pendingRow = async <T extends "events" | "publications" | "people" | "news
   return row;
 };
 
+/**
+ * Replace an event's speakers with the form's. A speaker whose name is unchanged
+ * keeps the link to their People-page profile, which the form does not carry.
+ */
+const replaceSpeakers = async (
+  ctx: MutationCtx,
+  eventId: Id<"events">,
+  speakers: ObjectType<typeof eventSubmission>["speakers"],
+) => {
+  const old = await ctx.db
+    .query("eventSpeakers")
+    .withIndex("by_eventId_and_position", (q) => q.eq("eventId", eventId))
+    .take(100);
+  const profileOf = new Map(old.filter((s) => s.personId).map((s) => [s.name.trim().toLowerCase(), s.personId]));
+  for (const speaker of old) await ctx.db.delete("eventSpeakers", speaker._id);
+  for (const [position, speaker] of speakers.entries()) {
+    const personId = profileOf.get(speaker.name.trim().toLowerCase());
+    await ctx.db.insert("eventSpeakers", { eventId, position, ...speaker, ...(personId ? { personId } : {}) });
+  }
+};
+
 export const updatePendingEvent = mutation({
   args: { id: v.id("events"), ...eventSubmission },
   returns: v.null(),
@@ -508,12 +529,7 @@ export const updatePendingEvent = mutation({
       description: args.description,
       image: args.image === undefined ? before.image : { kind: "storage", storageId: args.image },
     });
-    const old = await ctx.db
-      .query("eventSpeakers")
-      .withIndex("by_eventId_and_position", (q) => q.eq("eventId", id))
-      .take(100);
-    for (const speaker of old) await ctx.db.delete("eventSpeakers", speaker._id);
-    await insertSpeakers(ctx, id, args.speakers);
+    await replaceSpeakers(ctx, id, args.speakers);
 
     await record(ctx, { table: "events", documentId: id, action: "update", actor: email, affectsSite: false });
     await refreshReviewMessages(ctx, "events", id);
@@ -640,6 +656,93 @@ export const updatePublication = mutation({
     await adjustAuthorCounts(ctx, id, 1);
 
     await record(ctx, { table: "publications", documentId: id, action: "update", actor: email, affectsSite: true });
+    return null;
+  },
+});
+
+// -------------------------------------------- editing a published event
+//
+// The Events tab lists every published event with Edit and Remove, as the
+// Papers tab does for papers. Remove archives (setStatus), which takes it off
+// the site but keeps it.
+
+const publishedEvent = v.object({
+  _id: v.id("events"),
+  title: v.string(),
+  series: v.string(),
+  startDate: v.string(),
+  endDate: v.optional(v.string()),
+  timeLabel: v.optional(v.string()),
+  location: v.optional(v.string()),
+  link: v.optional(v.string()),
+  description: v.optional(v.string()),
+  imageUrl: v.union(v.string(), v.null()),
+  speakers: v.array(
+    v.object({
+      name: v.string(),
+      affiliation: v.optional(v.string()),
+      role: v.optional(v.string()),
+      url: v.optional(v.string()),
+      bio: v.optional(v.string()),
+    }),
+  ),
+});
+
+/** Every published event, newest first, as the form loads it. */
+export const listEvents = query({
+  args: {},
+  returns: v.array(publishedEvent),
+  handler: async (ctx) => {
+    await requireCapability(ctx, "events");
+    const rows = await ctx.db
+      .query("events")
+      .withIndex("by_status_and_startDate", (q) => q.eq("status", "published"))
+      .order("desc")
+      .take(1000);
+    const out = [];
+    for (const row of rows) {
+      const full = await withSpeakers(ctx, row);
+      out.push({
+        _id: row._id,
+        title: row.title,
+        series: row.series,
+        startDate: row.startDate,
+        endDate: row.endDate,
+        timeLabel: row.timeLabel,
+        location: row.location,
+        link: row.link,
+        description: row.description,
+        imageUrl: full.imageUrl,
+        speakers: full.speakers.map((s) => ({ name: s.name, affiliation: s.affiliation, role: s.role, url: s.url, bio: s.bio })),
+      });
+    }
+    return out;
+  },
+});
+
+export const updateEvent = mutation({
+  args: { id: v.id("events"), ...eventSubmission },
+  returns: v.null(),
+  handler: async (ctx, { id, ...args }) => {
+    const email = await requireCapability(ctx, "events");
+    const before = await ctx.db.get("events", id);
+    if (before === null) throw new ConvexError("No such event.");
+    if (before.status !== "published") throw new ConvexError("That event is not published; edit it from the review queue.");
+    await checkEvent(ctx, args);
+    // Only the form's fields: video, slides, Zoom and map links stay as they are.
+    await ctx.db.patch("events", id, {
+      title: args.title,
+      series: args.series,
+      startDate: args.startDate,
+      endDate: args.endDate,
+      timeLabel: args.timeLabel,
+      location: args.location,
+      link: args.link,
+      description: args.description,
+      image: args.image === undefined ? before.image : { kind: "storage", storageId: args.image },
+    });
+    await replaceSpeakers(ctx, id, args.speakers);
+    await record(ctx, { table: "events", documentId: id, action: "update", actor: email, affectsSite: true });
     return null;
   },
 });
