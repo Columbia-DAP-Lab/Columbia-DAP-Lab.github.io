@@ -2,7 +2,7 @@
 A paper's venue with its year: as written when it ends with one ("SIGMOD 2026",
 "NeurIPS 2025 (Spotlight)" with a note after the year, "Agentic AI (SAA 2025)"
 with the year closing the parentheses), otherwise followed by the publication
-year ("IUI, 2025"). Parameters: venue, year.
+year ("IUI 2025"). Parameters: venue, year.
 {%- endcomment -%}
 {%- assign venue_text = include.venue | strip -%}
 {%- assign before_note = venue_text | split: " (" | first | strip -%}
@@ -16,5 +16,6 @@ year ("IUI, 2025"). Parameters: venue, year.
 {%- elsif closing_word.size == 4 and closing_number >= 1900 and closing_number <= 2100 -%}
 {{ venue_text }}
 {%- else -%}
-{{ venue_text }}{% if include.year and include.year != "" %}{% if venue_text != "" %}, {% endif %}{{ include.year }}{% endif %}
+{%- assign year_text = include.year | append: "" | strip -%}
+{%- if year_text == "" -%}{{ venue_text }}{%- elsif venue_text == "" -%}{{ year_text }}{%- else -%}{{ venue_text | append: " " | append: year_text }}{%- endif -%}
 {%- endif -%}
