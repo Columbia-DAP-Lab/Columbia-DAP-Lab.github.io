@@ -2,7 +2,8 @@ import { v } from "convex/values";
 import { internal } from "./_generated/api";
 import { env, internalAction, internalMutation, internalQuery } from "./_generated/server";
 import type { Id } from "./_generated/dataModel";
-import { escape, slackApi } from "./slack";
+import { grantedCapabilities } from "./authz";
+import { ADMIN_URL, escape, slackApi } from "./slack";
 
 /**
  * Upcoming events, announced in Slack.
@@ -14,11 +15,15 @@ import { escape, slackApi } from "./slack";
  *   - two days before: a reminder in the announcement's thread;
  *   - two hours before: a last reminder in the thread, also sent to the channel.
  *
+ * An event whose start time cannot be read from its time label ("TBD") is not
+ * announced at all; instead everyone who manages events gets a Slack DM, once
+ * per label, saying which event and to set its time on the Events tab. Once the
+ * time can be read, the next tick announces it.
+ *
  * An event published less than a week out is announced at once, and a stage
  * whose moment has already passed is skipped, never sent late. Editing the
  * event updates the announcement; moving it to another day starts the
- * reminders over; removing it says so in the thread. Without a start time that
- * can be read from its time label there is no two-hour reminder.
+ * reminders over; removing it says so in the thread.
  *
  * Nothing is posted without SLACK_ANNOUNCE_CHANNEL, which is set on production
  * only: dev shares the bot, and must not announce its copy of the events.
@@ -80,7 +85,10 @@ const newYorkInstant = (isoDate: string, hours: number, minutes: number) => {
   return asIfUtc - offsetAt(asIfUtc - offsetAt(asIfUtc));
 };
 
-/** When an event starts; without a readable time, 9 AM that day, for the earlier stages only. */
+/**
+ * When an event starts, or null when its time label has no time to read. For
+ * the one-week check alone, an unreadable event is taken to start at 9 AM.
+ */
 const startOf = (event: { startDate: string; timeLabel?: string }) => {
   const time = parseStartTime(event.timeLabel);
   return { at: newYorkInstant(event.startDate, ...(time ?? [9, 0])), hasTime: time !== null };
@@ -151,6 +159,13 @@ const reminderText = (e: Upcoming) =>
 const finalText = (e: Upcoming) =>
   `:hourglass_flowing_sand: Starting in two hours: *${escape(e.title)}*` +
   `${speakerLine(e) ? ` with ${escape(speakerLine(e))}` : ""}${e.location ? `, in ${escape(e.location)}` : ""}.`;
+
+/** The DM to the admins about an event that cannot be announced. */
+const issueText = (e: Upcoming) =>
+  `:warning: I couldn't announce *${escape(e.title)}* (${dayOf(e.startDate, { weekday: "long", month: "long", day: "numeric" })}) ` +
+  `in Slack: its time ${e.timeLabel ? `"${escape(e.timeLabel)}"` : "is empty and"} isn't one I can read. ` +
+  `Set the time on the Events tab of the <${ADMIN_URL}|admin page> (Published events → Edit), like "3PM-4PM" or "12:30PM", ` +
+  `and I'll announce it within 15 minutes.`;
 
 // -------------------------------------------------------------------- data
 
@@ -227,6 +242,48 @@ export const withdrawn = internalQuery({
   },
 });
 
+/** Who manages events, by email: they hear about events that cannot be announced. */
+export const eventManagers = internalQuery({
+  args: {},
+  returns: v.array(v.string()),
+  handler: async (ctx) => {
+    const roles = await ctx.db.query("roles").take(500);
+    const out = [];
+    for (const role of roles) {
+      const caps = await grantedCapabilities(ctx, role.email);
+      if (caps.includes("admin") || caps.includes("events")) out.push(role.email);
+    }
+    return out;
+  },
+});
+
+/** Whether the admins have already been told about this event with this time label. */
+export const issueNotified = internalQuery({
+  args: { eventId: v.id("events"), timeLabel: v.optional(v.string()) },
+  returns: v.boolean(),
+  handler: async (ctx, args) => {
+    const issue = await ctx.db
+      .query("announcementIssues")
+      .withIndex("by_eventId", (q) => q.eq("eventId", args.eventId))
+      .unique();
+    return issue !== null && issue.timeLabel === args.timeLabel;
+  },
+});
+
+export const saveIssue = internalMutation({
+  args: { eventId: v.id("events"), timeLabel: v.optional(v.string()) },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const issue = await ctx.db
+      .query("announcementIssues")
+      .withIndex("by_eventId", (q) => q.eq("eventId", args.eventId))
+      .unique();
+    if (issue === null) await ctx.db.insert("announcementIssues", { ...args, notifiedAt: Date.now() });
+    else await ctx.db.patch("announcementIssues", issue._id, { timeLabel: args.timeLabel, notifiedAt: Date.now() });
+    return null;
+  },
+});
+
 export const saveAnnouncement = internalMutation({
   args: {
     eventId: v.id("events"),
@@ -290,6 +347,31 @@ export const tick = internalAction({
       try {
         const { at, hasTime } = startOf(e);
         const left = at - now;
+        const finalDue = left <= TWO_HOURS;
+
+        // No time to read: nothing is posted; the people who manage events hear why.
+        if (!hasTime) {
+          if (left > WEEK) continue;
+          const told: boolean = await ctx.runQuery(internal.announcements.issueNotified, {
+            eventId: e.eventId,
+            timeLabel: e.timeLabel,
+          });
+          if (told) continue;
+          const managers: string[] = await ctx.runQuery(internal.announcements.eventManagers, {});
+          for (const email of managers) {
+            try {
+              const found = (await slackApi(token, "users.lookupByEmail", { email })) as { user?: { id?: string } };
+              if (!found.user?.id) continue;
+              const dm = (await slackApi(token, "conversations.open", { users: found.user.id })) as { channel?: { id?: string } };
+              if (dm.channel?.id) await post({ channel: dm.channel.id, text: issueText(e) });
+            } catch (error) {
+              const reason = error instanceof Error ? error.message : String(error);
+              if (!reason.includes("users_not_found")) console.warn("Could not DM an event manager", { email, reason });
+            }
+          }
+          await ctx.runMutation(internal.announcements.saveIssue, { eventId: e.eventId, timeLabel: e.timeLabel });
+          continue;
+        }
         if (left <= 0) continue;
         const text = announcementText(e);
         const a = e.announcement;
@@ -305,7 +387,7 @@ export const tick = internalAction({
             startsAt: at,
             text,
             reminderAt: left <= TWO_DAYS ? now : undefined,
-            finalAt: left <= TWO_HOURS ? now : undefined,
+            finalAt: finalDue ? now : undefined,
           });
           continue;
         }
@@ -314,7 +396,7 @@ export const tick = internalAction({
         let { reminderAt, finalAt } = a;
         if (a.startsAt !== at) {
           reminderAt = left <= TWO_DAYS ? now : undefined;
-          finalAt = left <= TWO_HOURS ? now : undefined;
+          finalAt = finalDue ? now : undefined;
           await ctx.runMutation(internal.announcements.updateAnnouncement, {
             id: a._id,
             startsAt: at,
@@ -327,11 +409,11 @@ export const tick = internalAction({
           await ctx.runMutation(internal.announcements.updateAnnouncement, { id: a._id, text });
         }
         if (reminderAt === undefined && left <= TWO_DAYS) {
-          // Inside two hours the last reminder covers it.
-          if (left > TWO_HOURS) await post({ channel: a.channel, thread_ts: a.ts, text: reminderText(e) });
+          // Once the last reminder is due, it covers this one.
+          if (!finalDue) await post({ channel: a.channel, thread_ts: a.ts, text: reminderText(e) });
           await ctx.runMutation(internal.announcements.updateAnnouncement, { id: a._id, reminderAt: now });
         }
-        if (finalAt === undefined && hasTime && left <= TWO_HOURS) {
+        if (finalAt === undefined && finalDue) {
           await post({ channel: a.channel, thread_ts: a.ts, reply_broadcast: "true", text: finalText(e) });
           await ctx.runMutation(internal.announcements.updateAnnouncement, { id: a._id, finalAt: now });
         }
@@ -384,15 +466,24 @@ export const preview = internalAction({
       }).format(instant);
     return events.map((e) => {
       const { at, hasTime } = startOf(e);
-      const stage = (offset: number) => (at - offset <= now ? "now (or already)" : show(at - offset));
+      const when = (instant: number) => (instant <= now ? "now (or already)" : show(instant));
+      if (!hasTime) {
+        return {
+          title: e.title,
+          timeLabel: e.timeLabel ?? null,
+          starts: `${e.startDate}: no time I can read`,
+          skipped: "not announced; event managers get a DM to set the time",
+          messages: { dm: issueText(e) },
+        };
+      }
       return {
         title: e.title,
         timeLabel: e.timeLabel ?? null,
-        starts: hasTime ? show(at) : `${e.startDate} (no time read; no two-hour reminder)`,
-        announce: e.announcement ? "done" : stage(WEEK),
-        reminder: e.announcement?.reminderAt ? "done" : stage(TWO_DAYS),
-        final: !hasTime ? "none" : e.announcement?.finalAt ? "done" : stage(TWO_HOURS),
-        messages: { announcement: announcementText(e), reminder: reminderText(e), final: hasTime ? finalText(e) : null },
+        starts: show(at),
+        announce: e.announcement ? "done" : when(at - WEEK),
+        reminder: e.announcement?.reminderAt ? "done" : when(at - TWO_DAYS),
+        final: e.announcement?.finalAt ? "done" : when(at - TWO_HOURS),
+        messages: { announcement: announcementText(e), reminder: reminderText(e), final: finalText(e) },
       };
     });
   },

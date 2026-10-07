@@ -433,6 +433,16 @@ export default defineSchema({
     text: v.string(),
   }).index("by_eventId", ["eventId"]),
 
+  /**
+   * Events that could not be announced because their time could not be read,
+   * and when the admins were told; told again only if the time label changes.
+   */
+  announcementIssues: defineTable({
+    eventId: v.id("events"),
+    timeLabel: v.optional(v.string()),
+    notifiedAt: v.number(),
+  }).index("by_eventId", ["eventId"]),
+
   slackEvents: defineTable({
     eventId: v.string(),
     receivedAt: v.number(),

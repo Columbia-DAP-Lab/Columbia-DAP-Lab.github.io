@@ -373,8 +373,9 @@ with the request URL `https://dutiful-turtle-748.convex.site/slack/interactions`
 named by `SLACK_ANNOUNCE_CHANNEL` (a channel ID, `C…`): a post a week before, a
 reminder in its thread two days before, and a last reminder two hours before, in the
 thread and also sent to the channel. Editing the event updates the post; removing it
-posts a cancellation in the thread. Set the variable on production only, and invite
-the bot to the channel. To see what would be posted, and when, without posting:
+posts a cancellation in the thread. An event whose time can't be read from its time
+field ("TBD") isn't announced; instead the admins get a Slack DM saying to set its
+time. Set the variable on production only, and invite the bot to the channel. To see what would be posted, and when, without posting:
 `npx convex run --prod announcements:preview`.
 
 To try it on dev first, use a second app pointed at
