@@ -2,7 +2,7 @@ import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import type { MutationCtx, QueryCtx } from "./_generated/server";
 import type { Doc, Id } from "./_generated/dataModel";
-import { checkImage, record } from "./admin";
+import { checkImage, record, snapshotOf } from "./admin";
 import { peopleByMatchKey, upsertAuthor } from "./authors";
 import { requireCapability } from "./authz";
 
@@ -235,6 +235,7 @@ export const save = mutation({
           ? { image: undefined }
           : {};
 
+    const before = existing === null ? undefined : await snapshotOf(ctx, "projects", existing._id);
     let projectId: Id<"projects">;
     if (existing === null) {
       projectId = await ctx.db.insert("projects", {
@@ -251,6 +252,7 @@ export const save = mutation({
     await writeRows(ctx, projectId, args.authors, args.publications);
 
     await record(ctx, {
+      before,
       table: "projects",
       documentId: projectId,
       action: existing === null ? "create" : "update",
@@ -272,11 +274,12 @@ export const setStatus = mutation({
     if (project === null) throw new ConvexError("That project no longer exists.");
     const status = args.published ? "published" : "pending";
     if (project.status === status) return null;
+    const before = await snapshotOf(ctx, "projects", project._id);
     await ctx.db.patch("projects", project._id, {
       status,
       ...(args.published ? { publishedBy: actor, publishedAt: Date.now() } : {}),
     });
-    await record(ctx, {
+    await record(ctx, { before,
       table: "projects",
       documentId: project._id,
       action: args.published ? "publish" : "update",

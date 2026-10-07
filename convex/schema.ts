@@ -570,12 +570,17 @@ export default defineSchema({
       v.literal("update"),
       v.literal("publish"),
       v.literal("reject"),
+      v.literal("archive"),
       v.literal("delete"),
     ),
     actor: v.string(), // email, or "slack:<user id>", or "migration"
     at: v.number(),
-    /** The document after the change; absent on delete. */
+    /** The item before the change, with its speakers or authors; absent on create. */
+    before: v.optional(v.any()),
+    /** The item after the change, with its speakers or authors; absent on delete. */
     snapshot: v.optional(v.any()),
+    /** Anything else about the change, e.g. which entry a merge folded in. */
+    details: v.optional(v.any()),
   })
     .index("by_table_and_documentId", ["table", "documentId"])
     .index("by_at", ["at"]),
