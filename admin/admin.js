@@ -346,7 +346,7 @@ const setEditing = (form, table, row, published = false) => {
   const banner = $("[data-editing]", form);
   banner.hidden = !row;
   if (row && published) {
-    banner.textContent = `Editing the published paper “${row.title}”. Saving updates the site in about a minute.`;
+    banner.textContent = `Editing the published ${PUBLISHED[table].noun} “${row.title}”. Saving updates the site in about a minute.`;
   } else if (row) {
     banner.textContent =
       // A person's `title` is their role ("PhD Student"); their name is what to show.
@@ -397,10 +397,10 @@ const reviewNote = (text) => {
 const saveEdit = async (form, submitter, payload) => {
   const { table, id, published } = reviewEdits.get(form);
   if (published) {
-    await client.mutation(api.admin.updatePublication, { id, ...payload });
+    await client.mutation(PUBLISHED[table].update, { id, ...payload });
     stopEditing(form);
-    paperNote("Saved. The site updates in about a minute.");
-    $("#published-papers").scrollIntoView({ behavior: "smooth", block: "start" });
+    listNote(table, "Saved. The site updates in about a minute.");
+    listCard(table).scrollIntoView({ behavior: "smooth", block: "start" });
     return "";
   }
   await client.mutation(EDITABLE[table].update, { id, ...payload });
@@ -421,65 +421,116 @@ for (const { form } of Object.values(EDITABLE)) {
   });
 }
 
-// --------------------------------------------------------- published papers
+// ------------------------------------------------- published papers and events
 //
-// Every published paper on the Papers tab, undated ones first, then by year,
-// each with Edit (admin:updatePublication). Search filters as you type.
+// Below the Papers and Events forms, everything already on the site, grouped
+// (papers by year, undated first; events upcoming first, then by year), with
+// search, Edit (the same form, admin:updatePublication / updateEvent) and
+// Remove (archived with setStatus: off the site, but kept).
 
-let publishedPapers = [];
+/** Today in this browser's time zone, as YYYY-MM-DD. */
+const todayISO = () => new Date().toLocaleDateString("en-CA");
 
-const paperNote = (text) => {
-  const note = $("[data-paper-note]");
+const PUBLISHED = {
+  publications: {
+    noun: "paper",
+    update: api.admin.updatePublication,
+    rows: [],
+    text: (p) => [p.title, p.venue, ...p.authors],
+    group: (p) => (p.pubDate ? p.pubDate.slice(0, 4) : "No date"),
+    first: "No date",
+    within: () => 0,
+    detail: (p) => ` · ${p.venue}${p.pubDate ? `, ${p.pubDate}` : ""}`,
+  },
+  events: {
+    noun: "event",
+    update: api.admin.updateEvent,
+    rows: [],
+    text: (e) => [e.title, e.series, e.location ?? "", ...e.speakers.map((s) => s.name)],
+    group: (e) => (e.startDate >= todayISO() ? "Upcoming" : e.startDate.slice(0, 4)),
+    first: "Upcoming",
+    // Upcoming soonest first; past newest first, as the rows arrive.
+    within: (a, b, group) => (group === "Upcoming" ? a.startDate.localeCompare(b.startDate) : 0),
+    detail: (e) => ` · ${e.startDate}${e.speakers[0] ? ` · ${e.speakers.map((s) => s.name).join(", ")}` : ""}`,
+  },
+};
+
+const listCard = (table) => $(`[data-published-list="${table}"]`);
+
+const listNote = (table, text) => {
+  const note = $("[data-list-note]", listCard(table));
   note.textContent = text;
   note.hidden = !text;
 };
 
-const renderPaperList = () => {
-  const query = $("[data-paper-search]").value.trim().toLowerCase();
-  const shown = publishedPapers.filter(
-    (p) => !query || [p.title, p.venue, ...p.authors].some((text) => text.toLowerCase().includes(query)),
-  );
-  $("[data-paper-count]").textContent = publishedPapers.length || "";
-  const groups = new Map();
-  for (const paper of shown) {
-    const year = paper.pubDate ? paper.pubDate.slice(0, 4) : "No date";
-    if (!groups.has(year)) groups.set(year, []);
-    groups.get(year).push(paper);
+const removePublished = async (table, row) => {
+  const noun = PUBLISHED[table].noun;
+  if (!confirm(`Remove the ${noun} “${row.title}” from the site? It is archived, not deleted, so it can be restored.`)) return;
+  try {
+    await client.mutation(api.admin.setStatus, { table, id: row._id, status: "archived" });
+    listNote(table, `Removed “${row.title}”. The site updates in about a minute.`);
+    showStatus(null);
+  } catch (error) {
+    showStatus(message(error));
   }
-  const order = [...groups.keys()].sort((a, b) => (a === "No date" ? -1 : b === "No date" ? 1 : b.localeCompare(a)));
-  $("#paper-list").replaceChildren(
-    ...(shown.length === 0 ? [el("p", { class: "dap-muted small" }, query ? "No papers match." : "No published papers yet.")] : []),
-    ...order.flatMap((year) => [
-      el("h3", { class: "dap-paper-year" }, `${year} · ${groups.get(year).length}`),
-      ...groups.get(year).map((paper) =>
-        el(
-          "div",
-          { class: "dap-paper-row" },
+};
+
+const renderPublished = (table) => {
+  const config = PUBLISHED[table];
+  const card = listCard(table);
+  const query = $("[data-list-search]", card).value.trim().toLowerCase();
+  const shown = config.rows.filter((row) => !query || config.text(row).some((text) => text.toLowerCase().includes(query)));
+  $("[data-list-count]", card).textContent = config.rows.length || "";
+  const groups = new Map();
+  for (const row of shown) {
+    const group = config.group(row);
+    if (!groups.has(group)) groups.set(group, []);
+    groups.get(group).push(row);
+  }
+  const order = [...groups.keys()].sort((a, b) => (a === config.first ? -1 : b === config.first ? 1 : b.localeCompare(a)));
+  $("[data-list-rows]", card).replaceChildren(
+    ...(shown.length === 0 ? [el("p", { class: "dap-muted small" }, query ? "Nothing matches." : "Nothing published yet.")] : []),
+    ...order.flatMap((group) => [
+      el("h3", { class: "dap-paper-year" }, `${group} · ${groups.get(group).length}`),
+      ...[...groups.get(group)]
+        .sort((a, b) => config.within(a, b, group))
+        .map((row) =>
           el(
-            "span",
-            { class: "dap-paper-title" },
-            paper.title,
-            el("span", { class: "dap-muted" }, ` · ${paper.venue}${paper.pubDate ? `, ${paper.pubDate}` : ""}`),
-          ),
-          el(
-            "button",
-            {
-              type: "button",
-              class: "dap-paper-edit",
-              onclick: () => {
-                paperNote("");
-                startEditing("publications", paper, true);
+            "div",
+            { class: "dap-paper-row" },
+            el("span", { class: "dap-paper-title" }, row.title, el("span", { class: "dap-muted" }, config.detail(row))),
+            el(
+              "button",
+              {
+                type: "button",
+                class: "dap-paper-edit",
+                onclick: () => {
+                  listNote(table, "");
+                  startEditing(table, row, true);
+                },
               },
-            },
-            "Edit",
+              "Edit",
+            ),
+            el(
+              "button",
+              {
+                type: "button",
+                class: "dap-roster-remove",
+                title: `Remove “${row.title}”`,
+                "aria-label": `Remove “${row.title}”`,
+                onclick: () => removePublished(table, row),
+              },
+              "×",
+            ),
           ),
         ),
-      ),
     ]),
   );
 };
 
-$("[data-paper-search]").addEventListener("input", renderPaperList);
+for (const table of Object.keys(PUBLISHED)) {
+  $("[data-list-search]", listCard(table)).addEventListener("input", () => renderPublished(table));
+}
 
 // ----------------------------------------------------------- paste to fill
 //
@@ -1584,6 +1635,10 @@ const renderMe = (me) => {
   if (me.profile !== null) subscribe(api.profiles.myProfile, {}, renderProfile);
   if (can(me.capabilities, "events")) {
     subscribe(api.admin.pending, { table: "events" }, (rows) => renderQueue("events", rows, renderEvent));
+    subscribe(api.admin.listEvents, {}, (rows) => {
+      PUBLISHED.events.rows = rows;
+      renderPublished("events");
+    });
     // News is reviewed by whoever reviews events (GOVERNS in convex/admin.ts).
     subscribe(api.admin.pending, { table: "news" }, (rows) => renderQueue("news", rows, renderNews));
   }
@@ -1593,8 +1648,8 @@ const renderMe = (me) => {
   }
   if (can(me.capabilities, "publications")) {
     subscribe(api.admin.listPublications, {}, (rows) => {
-      publishedPapers = rows;
-      renderPaperList();
+      PUBLISHED.publications.rows = rows;
+      renderPublished("publications");
     });
     subscribe(api.admin.pending, { table: "publications" }, (rows) =>
       renderQueue("publications", rows, renderPublication),
