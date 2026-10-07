@@ -40,13 +40,14 @@
       "wholink": "https://www.silviasellan.com/"
     },
     {
-      "bio": "Hannah Li is an assistant professor at Columbia Business School in the Decision, Risk, and Operations division and a Data Science Institute member. She studies how to implement and assess algorithmic interventions in settings such as online platforms, education, and healthcare, where limited capacity and interactions among users complicate conventional methods. Her work draws on operations research, statistics, and causal inference. She earned her doctorate in operations research at Stanford, held a postdoctoral appointment at MIT, and studied mathematics at Pomona College.",
+      "bio": "Hannah Li is an Assistant Professor in the Decision, Risk, and Operations division at Columbia Business School. Her research focuses on developing data science methods for social settings—online platforms, education, and healthcare. Her research combines techniques from operations research, statistics, and economics to develop theoretical insights for practically motivated problems. Her work has been recognized by the INFORMS Dantzig Dissertation Award, MSOM Service Management SIG Best Paper Award, INFORMS DEI Best Student Paper Award, and the ACM Equity and Access in Algorithms, Mechanisms, and Optimization (EAAMO) Best Student Paper Award. She holds a BA in mathematics from Pomona College and a Ph.D. in operations research from Stanford, and was previously a postdoctoral associate at MIT.",
       "date": "2026-10-22",
+      "description": "Randomized controlled trials are the gold standard for evaluating interventions — yet a broad class of trials systematically violates a core assumption of standard experimental design. When interventions are delivered by capacity-constrained resources — teachers, healthcare providers, social workers, and countless others — participants compete for finite service capacity, creating hidden variation in the treatment itself. We call this operational dosage. Using queueing-theoretic methods, we show that in such settings, treatment effects are both capacity- and sample-size-dependent, and that statistical power is non-monotone in sample size: adding participants beyond a critical threshold reduces power, directly contradicting conventional power calculations. We validate these insights through simulations calibrated to a real-world tuberculosis intervention trial in Kenya. Our results reveal a fundamental design lever — capacity selection — that has been largely ignored in experimental practice, and offer a unifying explanation for why promising interventions so often fail to replicate or scale.\n\nJoint work with Justin Boutilier, Jonas Jonasson, and Erez Yoeli.",
       "tag": "AI in the Public Interest",
       "time": "3PM-4PM",
-      "title": "TBA",
+      "title": "Operational Dosage: Implications of Capacity Constraints for Experimentation",
       "where": "CSB 453",
-      "who": "Hannah Li",
+      "who": "Hannah Li, Columbia DRO",
       "wholink": "https://hannahql.github.io/"
     },
     {
@@ -58,6 +59,18 @@
       "title": "What would it cost to end extreme poverty?",
       "where": "CSB 453",
       "who": "Roshni Sahoo"
+    },
+    {
+      "bio": "Vyas Sekar is the Tan Family Chair Professor at Carnegie Mellon University, co-founder at Rockfish Data, and Chief Scientist at Conviva. He received his B.Tech from IIT Madras (President's Gold Medal) and his Ph.D. from CMU. His work has received several honors, including an NSF CAREER Award, the SIGCOMM Rising Star Award, best paper awards at SIGCOMM/CoNEXT/Multimedia, the NSA Science of Security Prize, and SIGCOMM Test of Time Awards.",
+      "date": "2026-10-07",
+      "description": "We are entering an era where our ability to develop, deploy, and evolve AI-based systems and systems-for-AI has never been better. At the same time, our capacity to observe, manage, and secure these systems has never been worse. Rather than blindly drink the \"AI kool-aid,\" we ask whether there is a more principled way to harness the power of AI in networked systems design. In this talk, we discuss high-level design requirements and design principles to inform our future efforts in AI-for-systems and systems-for-AI.",
+      "role": "Tan Family Chair Professor",
+      "tag": "Seminar",
+      "time": "11:50AM",
+      "title": "Design Principles for Systems-meets-AI",
+      "where": "CSB 451",
+      "who": "Vyas Sekar, Carnegie Mellon University",
+      "wholink": "https://users.ece.cmu.edu/~vsekar/"
     },
     {
       "bio": "Haonan Wang is a PhD student in Computer Science at Columbia University, advised by Eugene Wu. His research spans language model post-training and data systems, with a recent focus on recursive self-improvement.",
@@ -133,6 +146,18 @@
       "title": "Fall 2026 Personal Health Assistant Course",
       "where": "825 MUDD",
       "who": "Xuhai \"Orson\" Xu, Eugene Wu"
+    },
+    {
+      "date": "2026-09-01",
+      "description": "AI is transforming computing in two directions: emerging AI workloads demand new hardware and system architectures, while AI is becoming a powerful tool for designing computing systems themselves.",
+      "link": "https://wan-research-group.github.io/coms6998-f26/",
+      "role": "Instructor",
+      "tag": "Course",
+      "time": "Fridays 10:10 AM - 12:00 PM",
+      "title": "COMS 6998 AI-Native Computing",
+      "where": "MUDD Building 825",
+      "who": "Zishen Wan, Columbia University",
+      "wholink": "https://zishenwan.github.io/"
     },
     {
       "date": "2026-08-04",
@@ -691,7 +716,7 @@
     },
     {
       "authors": "Charlie Summers, Prajwal Raghunath, Aaditya Pai, Mayur Kulkarni, Zhuo Zhang, Oliver Kennedy, Eugene Wu",
-      "conf": "arXiv 2026",
+      "conf": "REALM at EMNLP 2026",
       "pub_date": "2026-09-19",
       "tags": [
         "ai",
@@ -2076,6 +2101,29 @@
       "name": "Michael Franklin"
     },
     {
+      "bio": "Lily Xu is Sun-Wu Assistant Professor at Columbia and directs the caPP Lab which advances computation and algorithms for People and the Planet. Her group develops new methods across machine learning and optimization to enable practitioners to make effective decisions in the face of limited data, taking actions that are robust to uncertainty, effective at scale, and future-looking.",
+      "category": "Faculty",
+      "field": [
+        "ML",
+        "Reinforcement learning",
+        "IEOR"
+      ],
+      "homepage": "https://lily-x.github.io/",
+      "image": "https://dutiful-turtle-748.convex.cloud/api/storage/e163ce2f-440a-41d9-b197-50613d48914b",
+      "name": "Lily Xu"
+    },
+    {
+      "bio": "Develop efficient and reliable systems, architectures, and chips for AI, and use AI for computing system design. Recipient of the ACM SIGDA Outstanding PhD Dissertation Award, best paper awards at DAC and IEEE CAL, IEEE Micro Top Picks, and ML and Systems Rising Star",
+      "category": "Faculty",
+      "field": [
+        "Systems",
+        "CS"
+      ],
+      "homepage": "https://zishenwan.github.io/",
+      "image": "https://dutiful-turtle-748.convex.cloud/api/storage/0e5c407e-a447-4636-8c98-244738b546be",
+      "name": "Zishen Wan"
+    },
+    {
       "category": "PhD",
       "field": [
         "AI",
@@ -2448,6 +2496,16 @@
       "homepage": "https://hchenhao.github.io",
       "image": "https://dutiful-turtle-748.convex.cloud/api/storage/843366ae-a908-4411-b6ed-1f20977b737e",
       "name": "Chenhao Hong"
+    },
+    {
+      "advisor": [
+        "Yusen Zhang"
+      ],
+      "bio": "Multi-agent systems and agent benchmarks",
+      "category": "Student",
+      "homepage": "https://www.selinkaraca.com/",
+      "image": "https://dutiful-turtle-748.convex.cloud/api/storage/b0d1a019-dd34-4f8a-b9bc-06f9438bacde",
+      "name": "Selin Karaca"
     }
   ],
   "news": [
