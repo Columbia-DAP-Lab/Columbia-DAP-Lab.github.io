@@ -7,7 +7,8 @@
 // Submitted text is shown to reviewers, so nothing user-supplied goes through
 // innerHTML: `el()` sets textContent.
 
-import { initAuth } from "./auth.js";
+// auth.js carries the same ?v= build stamp as this file, so the two always match.
+const { initAuth } = await import(new URL(`./auth.js${new URL(import.meta.url).search}`, import.meta.url).href);
 
 const { ConvexClient, anyApi: api } = window.convex;
 

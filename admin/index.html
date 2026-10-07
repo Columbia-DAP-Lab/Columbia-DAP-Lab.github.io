@@ -13,7 +13,13 @@ browser, and every permission is checked there, not here. See
 docs/admin-service-design.md.
 {%- endcomment -%}
 
-<link rel="stylesheet" href="{{ '/admin/admin.css' | relative_url }}">
+{%- comment -%}
+The build time on admin.css and admin.js, so a browser holding a copy from the
+last deploy (Pages lets it keep one for 10 minutes) fetches this one instead of
+running an old script against a new page.
+{%- endcomment -%}
+{%- assign build = site.time | date: "%s" -%}
+<link rel="stylesheet" href="{{ '/admin/admin.css' | relative_url }}?v={{ build }}">
 
 <div id="admin"
      data-convex-url="{{ site.convex.url }}"
@@ -770,4 +776,4 @@ docs/admin-service-design.md.
 <script src="https://cdn.jsdelivr.net/npm/convex@1.46.0/dist/browser.bundle.js"
         integrity="sha384-YNc7767fowceX6PDv5ZiwoWOkzKK4WvGm4rfXHCBsghW2Y2S3susFrnDG0+0JAWe"
         crossorigin="anonymous"></script>
-<script type="module" src="{{ '/admin/admin.js' | relative_url }}"></script>
+<script type="module" src="{{ '/admin/admin.js' | relative_url }}?v={{ build }}"></script>
