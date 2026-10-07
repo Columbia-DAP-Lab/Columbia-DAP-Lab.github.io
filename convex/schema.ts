@@ -415,6 +415,36 @@ export default defineSchema({
     ts: v.string(),
   }).index("by_table_and_docId", ["table", "docId"]),
 
+  /**
+   * An event's announcement in Slack (convex/announcements.ts): the message in
+   * the channel, and when each stage went out, so none is sent twice.
+   */
+  eventAnnouncements: defineTable({
+    eventId: v.id("events"),
+    channel: v.string(),
+    ts: v.string(),
+    /** When the event starts, as announced; a different time restarts the reminders. */
+    startsAt: v.number(),
+    announcedAt: v.number(),
+    reminderAt: v.optional(v.number()),
+    finalAt: v.optional(v.number()),
+    cancelledAt: v.optional(v.number()),
+    /** What the announcement said, so an edit to the event updates it. */
+    text: v.string(),
+    /** The thread reply holding the full abstract and bio, when there is more than the post shows. */
+    detailsTs: v.optional(v.string()),
+  }).index("by_eventId", ["eventId"]),
+
+  /**
+   * Events that could not be announced because their time could not be read,
+   * and when the admins were told; told again only if the time label changes.
+   */
+  announcementIssues: defineTable({
+    eventId: v.id("events"),
+    timeLabel: v.optional(v.string()),
+    notifiedAt: v.number(),
+  }).index("by_eventId", ["eventId"]),
+
   slackEvents: defineTable({
     eventId: v.string(),
     receivedAt: v.number(),
