@@ -431,6 +431,8 @@ export default defineSchema({
     cancelledAt: v.optional(v.number()),
     /** What the announcement said, so an edit to the event updates it. */
     text: v.string(),
+    /** The thread reply holding the full abstract and bio, when there is more than the post shows. */
+    detailsTs: v.optional(v.string()),
   }).index("by_eventId", ["eventId"]),
 
   /**

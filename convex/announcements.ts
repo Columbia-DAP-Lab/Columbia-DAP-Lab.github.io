@@ -11,7 +11,9 @@ import { ADMIN_URL, escape, slackApi } from "./slack";
  * A cron (convex/crons.ts) runs `tick` every 15 minutes. For each published
  * event coming up (courses excepted: they meet all semester), it posts:
  *
- *   - a week before: the announcement, in SLACK_ANNOUNCE_CHANNEL;
+ *   - a week before: the announcement, in SLACK_ANNOUNCE_CHANNEL, with the
+ *     abstract's first two sentences; the full abstract and the speaker's bio
+ *     follow as the first reply in its thread, for whoever wants to read on;
  *   - two days before: a reminder in the announcement's thread;
  *   - two hours before: a last reminder in the thread, also sent to the channel.
  *
@@ -112,7 +114,7 @@ type Upcoming = {
   description?: string;
   link?: string;
   series: string;
-  speakers: { name: string; affiliation?: string }[];
+  speakers: { name: string; affiliation?: string; bio?: string }[];
   announcement: {
     _id: Id<"eventAnnouncements">;
     channel: string;
@@ -121,6 +123,7 @@ type Upcoming = {
     finalAt?: number;
     startsAt: number;
     text: string;
+    detailsTs?: string;
   } | null;
 };
 
@@ -133,10 +136,35 @@ const whenLine = (e: Upcoming) =>
 const speakerLine = (e: Upcoming) =>
   e.speakers.map((s) => (s.affiliation ? `${s.name} (${s.affiliation})` : s.name)).join(", ");
 
-/** The first paragraph of the abstract, kept short. */
+/** Markdown as Slack writes it: [text](url) as <url|text>, **bold** as *bold*. */
+const slackMarkdown = (markdown: string) =>
+  escape(markdown)
+    .replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g, "<$2|$1>")
+    .replace(/\*\*([^*]+)\*\*/g, "*$1*");
+
+const plain = (markdown: string) => markdown.replace(/\[([^\]]+)\]\([^)]+\)/g, "$1").replace(/[*_`#>]/g, "").replace(/\s+/g, " ").trim();
+
+/** The abstract's first two sentences, short enough to skim; "…" when more follows. */
 const teaser = (description: string | undefined) => {
-  const first = (description ?? "").split(/\n\s*\n/)[0].replace(/\s+/g, " ").trim();
-  return first.length > 400 ? `${first.slice(0, 400).replace(/\s+\S*$/, "")}…` : first;
+  const text = plain(description ?? "");
+  const sentences = text.match(/[^.!?]+[.!?]+(?=\s|$)/g) ?? [text];
+  let out = sentences.slice(0, 2).map((x) => x.trim()).join(" ");
+  if (out.length > 280) out = out.slice(0, 280).replace(/\s+\S*$/, "");
+  return out.length < text.length ? `${out.replace(/[.!?]?$/, "")}…` : out;
+};
+
+/** The full abstract and the speakers' bios, for the first reply in the thread; empty when the post already says it all. */
+const detailsText = (e: Upcoming) => {
+  const bios = e.speakers.filter((s) => s.bio?.trim());
+  const abstract = (e.description ?? "").trim();
+  const more = plain(abstract).length > teaser(abstract).replace(/…$/, "").length;
+  if (!more && bios.length === 0) return "";
+  return [
+    abstract && `*Abstract*\n${slackMarkdown(abstract)}`,
+    ...bios.map((s) => `*About ${escape(s.name)}*\n${slackMarkdown(s.bio!.trim())}`),
+  ]
+    .filter(Boolean)
+    .join("\n\n");
 };
 
 const announcementText = (e: Upcoming) => {
@@ -146,7 +174,7 @@ const announcementText = (e: Upcoming) => {
     speakerLine(e) && escape(speakerLine(e)),
     escape(whenLine(e)),
     teaser(e.description) && `>${escape(teaser(e.description))}`,
-    `<${details}|Details on the DAPLab site>`,
+    `<${details}|Details on the DAPLab site>${detailsText(e) ? " · full abstract in the thread :thread:" : ""}`,
   ]
     .filter(Boolean)
     .join("\n");
@@ -206,7 +234,7 @@ export const upcoming = internalQuery({
         description: e.description,
         link: e.link,
         series: series?.label && series.slug !== "other" ? series.label : "",
-        speakers: speakers.map((s) => ({ name: s.name, affiliation: s.affiliation })),
+        speakers: speakers.map((s) => ({ name: s.name, affiliation: s.affiliation, bio: s.bio })),
         announcement: announcement && {
           _id: announcement._id,
           channel: announcement.channel,
@@ -215,6 +243,7 @@ export const upcoming = internalQuery({
           finalAt: announcement.finalAt,
           startsAt: announcement.startsAt,
           text: announcement.text,
+          detailsTs: announcement.detailsTs,
         },
       });
     }
@@ -293,6 +322,7 @@ export const saveAnnouncement = internalMutation({
     text: v.string(),
     reminderAt: v.optional(v.number()),
     finalAt: v.optional(v.number()),
+    detailsTs: v.optional(v.string()),
   },
   returns: v.null(),
   handler: async (ctx, args) => {
@@ -309,6 +339,7 @@ export const updateAnnouncement = internalMutation({
     reminderAt: v.optional(v.union(v.number(), v.null())),
     finalAt: v.optional(v.union(v.number(), v.null())),
     cancelledAt: v.optional(v.number()),
+    detailsTs: v.optional(v.string()),
   },
   returns: v.null(),
   handler: async (ctx, { id, ...changes }) => {
@@ -379,6 +410,11 @@ export const tick = internalAction({
         if (a === null) {
           if (left > WEEK) continue;
           const sent = await post({ channel, text, unfurl_links: "false" });
+          // The rest of the abstract, and the bio, as the thread's first reply.
+          const details = detailsText(e);
+          const detailsSent = details
+            ? await post({ channel, thread_ts: String(sent.ts), text: details, unfurl_links: "false" })
+            : null;
           // Stages already due are folded into this announcement, not sent after it.
           await ctx.runMutation(internal.announcements.saveAnnouncement, {
             eventId: e.eventId,
@@ -388,6 +424,7 @@ export const tick = internalAction({
             text,
             reminderAt: left <= TWO_DAYS ? now : undefined,
             finalAt: finalDue ? now : undefined,
+            detailsTs: detailsSent ? String(detailsSent.ts) : undefined,
           });
           continue;
         }
@@ -406,7 +443,12 @@ export const tick = internalAction({
         }
         if (a.text !== text) {
           await slackApi(token, "chat.update", { channel: a.channel, ts: a.ts, text });
-          await ctx.runMutation(internal.announcements.updateAnnouncement, { id: a._id, text });
+          // Keep the thread's full abstract in step: edit it, or add it if there is now more to say.
+          const details = detailsText(e);
+          let detailsTs = a.detailsTs;
+          if (details && detailsTs) await slackApi(token, "chat.update", { channel: a.channel, ts: detailsTs, text: details });
+          else if (details) detailsTs = String((await post({ channel: a.channel, thread_ts: a.ts, text: details, unfurl_links: "false" })).ts);
+          await ctx.runMutation(internal.announcements.updateAnnouncement, { id: a._id, text, detailsTs });
         }
         if (reminderAt === undefined && left <= TWO_DAYS) {
           // Once the last reminder is due, it covers this one.
@@ -483,7 +525,12 @@ export const preview = internalAction({
         announce: e.announcement ? "done" : when(at - WEEK),
         reminder: e.announcement?.reminderAt ? "done" : when(at - TWO_DAYS),
         final: e.announcement?.finalAt ? "done" : when(at - TWO_HOURS),
-        messages: { announcement: announcementText(e), reminder: reminderText(e), final: finalText(e) },
+        messages: {
+          announcement: announcementText(e),
+          details: detailsText(e) || null,
+          reminder: reminderText(e),
+          final: finalText(e),
+        },
       };
     });
   },
