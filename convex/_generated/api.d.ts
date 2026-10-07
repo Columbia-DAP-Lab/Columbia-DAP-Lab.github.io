@@ -9,9 +9,11 @@
  */
 
 import type * as admin from "../admin.js";
+import type * as announcements from "../announcements.js";
 import type * as authors from "../authors.js";
 import type * as authz from "../authz.js";
 import type * as content from "../content.js";
+import type * as crons from "../crons.js";
 import type * as deployHook from "../deployHook.js";
 import type * as extract from "../extract.js";
 import type * as extractSupport from "../extractSupport.js";
@@ -34,9 +36,11 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   admin: typeof admin;
+  announcements: typeof announcements;
   authors: typeof authors;
   authz: typeof authz;
   content: typeof content;
+  crons: typeof crons;
   deployHook: typeof deployHook;
   extract: typeof extract;
   extractSupport: typeof extractSupport;

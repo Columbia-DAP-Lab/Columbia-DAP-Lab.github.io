@@ -33,6 +33,11 @@ const app = defineApp({
     SLACK_SIGNING_SECRET: v.optional(v.string()),
     /** The bot's token, for reading the sender's profile and replying in the thread. */
     SLACK_BOT_TOKEN: v.optional(v.string()),
+    /**
+     * The channel ID (C…) to announce upcoming events in, e.g. #general's
+     * (convex/announcements.ts). Set on production only: unset, nothing is posted.
+     */
+    SLACK_ANNOUNCE_CHANNEL: v.optional(v.string()),
   },
 });
 
