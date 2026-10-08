@@ -17,7 +17,7 @@
       "tag": "Workshop",
       "time": "9AM-6PM ET (tentative)",
       "title": "Agent Evaluation Science Fall 2026",
-      "where": "Jane Street, New York City"
+      "where": "Downtown Manhattan, New York City"
     },
     {
       "bio": "Wajeeha Ahmad is an assistant professor of management at Columbia Business School and a Digital Fellow with Stanford's Digital Economy Lab. She studies how AI and digital technologies affect business and society, including how organizations can adopt and govern these technologies to support both competitiveness and societal benefits. She earned her doctorate at Stanford in Management Science and Engineering. At MIT, she completed a master's in Technology and Policy and an undergraduate degree in Mathematics with Computer Science.",
@@ -49,6 +49,27 @@
       "where": "CSB 453",
       "who": "Hannah Li, Columbia DRO",
       "wholink": "https://hannahql.github.io/"
+    },
+    {
+      "bio": "Brian A. Smith is an Associate Professor of Computer Science at Columbia University and the director of the Computer-Enabled Abilities Laboratory (CEAL). His research goal is to develop computers that act as true partners in human ability, augmenting rather than replacing it. Instead of developing more intelligent systems alone, he focuses on the experiences they create and how to make them more meaningful. He has been recognized as a National Academy of Sciences Kavli Fellow and is the recipient of several honors including the NSF CAREER Award, Columbia Engineering's Distinguished Faculty Teaching Award, and awards for advancing undergraduate engineering programs.",
+      "date": "2026-10-20",
+      "description": "Much of computing's progress has come from learning how to help with new kinds of problems. Computers can now help us draft essays, navigate unfamiliar places, and stay connected with friends and family. But our deeper goals often require more: becoming confident writers, truly knowing a place, or feeling closer to other people. We still lack a framework for making these deeper forms of help computational.\n\nIn this talk, I will introduce _computing for experience_, a new approach inspired by accessibility and psychology. Rather than focusing on tasks or outcomes alone, it asks what meaningful experiences people lack access to and how computing can help make those experiences possible. I will present two examples of this approach in action, from making digital media and games accessible to blind players to designing tools that foster more genuine human connection. Together, they suggest new roles for computers: not as replacements for human ability, but as partners in helping us realize the experiences we want to have.",
+      "role": "Associate Professor of Computer Science",
+      "tag": "Seminar",
+      "time": "12PM",
+      "title": "Computers as Partners in Human Experience",
+      "who": "Brian A. Smith, Columbia University",
+      "wholink": "https://ceal.cs.columbia.edu/people/"
+    },
+    {
+      "bio": "BinBin He is the founder of smol machines, building open source microVMs for branchable compute. He worked at AWS for 4 years, helped launch serverless services, and worked closely with Firecracker and containers.",
+      "date": "2026-10-13",
+      "description": "Many workloads need to explore many paths from the same state: testing, search, debugging, and training agents. Most systems handle this by restarting from scratch or restoring a snapshot, which is slow, so state is rebuilt over and over. We built microVMs that fork a running machine's memory, disk, and processes in milliseconds, while the original keeps running. I'll cover how it works, what it costs, and the open questions: tracking lineage across many branches, and what a fork means for side effects outside the machine.",
+      "role": "Founder",
+      "tag": "Seminar",
+      "time": "12PM",
+      "title": "Branchable Compute: git for Running Machines",
+      "who": "BinBin He, smol machines"
     },
     {
       "bio": "Roshni Sahoo is assistant professor in the Decision, Risk, and Operations Division at Columbia Business School. She works on data-driven decision making for social impact. Her research develops statistical methodology to address challenges in public health and economic development, combining tools from machine learning, causal inference, and optimization. Her work has appeared in leading operations research journals (such as Operations Research) and machine learning conferences (such as NeurIPS and ICLR), and has been featured by media outlets including The Economist and Vox. Roshni completed her PhD in Computer Science at Stanford University in 2026. She also received Bachelor of Science degrees in Computer Science and Mathematics at MIT in 2020.",
@@ -2339,6 +2360,12 @@
       "homepage": "https://zhihanjiang.com",
       "image": "https://dutiful-turtle-748.convex.cloud/api/storage/6686812c-f39e-4d15-a1aa-77c77f0fa759",
       "name": "Zhihan Jiang"
+    },
+    {
+      "category": "Postdoc",
+      "homepage": "https://jennyxfu.github.io/",
+      "image": "https://dutiful-turtle-748.convex.cloud/api/storage/5ef23782-3045-4258-a4c4-336162daabb6",
+      "name": "Jenny Fu"
     },
     {
       "advisor": [
