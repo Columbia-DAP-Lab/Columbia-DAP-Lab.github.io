@@ -58,6 +58,7 @@
       "tag": "Seminar",
       "time": "12PM",
       "title": "Computers as Partners in Human Experience",
+      "where": "453 Mudd",
       "who": "Brian A. Smith, Columbia University",
       "wholink": "https://ceal.cs.columbia.edu/people/"
     },
@@ -69,6 +70,7 @@
       "tag": "Seminar",
       "time": "12PM",
       "title": "Branchable Compute: git for Running Machines",
+      "where": "453 Mudd",
       "who": "BinBin He, smol machines"
     },
     {
