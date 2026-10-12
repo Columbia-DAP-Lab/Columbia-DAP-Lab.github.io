@@ -13,7 +13,13 @@ browser, and every permission is checked there, not here. See
 docs/admin-service-design.md.
 {%- endcomment -%}
 
-<link rel="stylesheet" href="{{ '/admin/admin.css' | relative_url }}">
+{%- comment -%}
+The build time on admin.css and admin.js, so a browser holding a copy from the
+last deploy (Pages lets it keep one for 10 minutes) fetches this one instead of
+running an old script against a new page.
+{%- endcomment -%}
+{%- assign build = site.time | date: "%s" -%}
+<link rel="stylesheet" href="{{ '/admin/admin.css' | relative_url }}?v={{ build }}">
 
 <div id="admin"
      data-convex-url="{{ site.convex.url }}"
@@ -179,6 +185,16 @@ docs/admin-service-design.md.
         </div>
       </form>
 
+      <div class="dap-card" data-published-list="events" data-needs="events">
+        <h2 class="dap-card-title">Published events <span class="dap-count" data-list-count></span></h2>
+        <p class="dap-muted small mb-2">Fix a time, a room or a speaker after publishing, or remove an event. Changes
+          reach the site in about a minute. Upcoming events are listed first.</p>
+        <input class="form-control form-control-sm mb-2" type="search" placeholder="Search titles, speakers, series, rooms"
+               aria-label="Search published events" data-list-search>
+        <p class="text-success small mb-2" role="status" data-list-note hidden></p>
+        <div data-list-rows></div>
+      </div>
+
       <template id="speaker-template">
         <div class="speaker dap-subcard">
           <div class="row g-3">
@@ -277,6 +293,16 @@ docs/admin-service-design.md.
           <span data-result></span>
         </div>
       </form>
+
+      <div class="dap-card" data-published-list="publications" data-needs="publications">
+        <h2 class="dap-card-title">Published papers <span class="dap-count" data-list-count></span></h2>
+        <p class="dap-muted small mb-2">Fix a date, an author or a link after publishing, or remove a paper. Changes
+          reach the site in about a minute. Papers with no date are listed first.</p>
+        <input class="form-control form-control-sm mb-2" type="search" placeholder="Search titles, authors, venues"
+               aria-label="Search published papers" data-list-search>
+        <p class="text-success small mb-2" role="status" data-list-note hidden></p>
+        <div data-list-rows></div>
+      </div>
     </div>
 
     <!-- ------------------------------------------------------------- news -->
@@ -750,4 +776,4 @@ docs/admin-service-design.md.
 <script src="https://cdn.jsdelivr.net/npm/convex@1.46.0/dist/browser.bundle.js"
         integrity="sha384-YNc7767fowceX6PDv5ZiwoWOkzKK4WvGm4rfXHCBsghW2Y2S3susFrnDG0+0JAWe"
         crossorigin="anonymous"></script>
-<script type="module" src="{{ '/admin/admin.js' | relative_url }}"></script>
+<script type="module" src="{{ '/admin/admin.js' | relative_url }}?v={{ build }}"></script>

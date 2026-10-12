@@ -12,6 +12,7 @@ People page are shown in bold. Filtered by the chips on /publications
   {%- for p in sorted_pubs -%}
     {%- if p.hide == true -%}{%- continue -%}{%- endif -%}
     {%- assign year = p.pub_date | date: "%Y" -%}
+    {%- assign year_of_paper = year -%}
     {%- comment -%} A handful of papers have no date yet; they sort last, under "Other". {%- endcomment -%}
     {%- if year == "" -%}{%- assign year = "Other" -%}{%- endif -%}
     {%- if year != current_year -%}
@@ -36,7 +37,7 @@ People page are shown in bold. Filtered by the chips on /publications
               {%- endfor -%}
             </div>
             <div class="pub-meta">
-              <span class="pub-venue">{{ p.conf }}</span>
+              <span class="pub-venue">{% include venue.html venue=p.conf year=year_of_paper %}</span>
               {%- if p.comments %}<span class="pub-note">{{ p.comments }}</span>{% endif -%}
               {%- if p.video %}<a href="{{ p.video }}">Talk</a>{% endif -%}
               {%- if p.blog %}<a href="{{ p.blog }}">Blog post</a>{% endif -%}

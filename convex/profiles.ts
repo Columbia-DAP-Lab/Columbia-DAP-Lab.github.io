@@ -2,7 +2,7 @@ import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import type { MutationCtx, QueryCtx } from "./_generated/server";
 import type { Doc, Id } from "./_generated/dataModel";
-import { checkImage, notifyReviewers, record, refreshReviewMessages } from "./admin";
+import { checkImage, notifyReviewers, record, refreshReviewMessages, snapshotOf } from "./admin";
 import { accessFor, profileFor, requireCapability, requireSubmitter } from "./authz";
 
 /**
@@ -41,8 +41,9 @@ const apply = async (ctx: MutationCtx, person: Doc<"people">, changes: Changes, 
   }
   if (changes.fields !== undefined) patch.fields = changes.fields;
   if (changes.image !== undefined) patch.image = { kind: "storage", storageId: changes.image };
+  const before = await snapshotOf(ctx, "people", person._id);
   await ctx.db.patch("people", person._id, patch);
-  await record(ctx, {
+  await record(ctx, { before,
     table: "people",
     documentId: person._id,
     action: "update",

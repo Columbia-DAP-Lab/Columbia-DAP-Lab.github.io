@@ -2,6 +2,7 @@ import { ConvexError, v } from "convex/values";
 import { internal } from "./_generated/api";
 import { action } from "./_generated/server";
 import { generateStructured, isConfigured } from "./llm";
+import { fillPublicationDates } from "./pubDates";
 
 /**
  * Paste text, get the form filled in.
@@ -104,7 +105,7 @@ const eventItem = (vocab: Vocabularies) => ({
 const publicationFields = (vocab: Vocabularies) => `- title: the paper title.
 - authors: full names in printed order. Keep a trailing * where the text marks equal contribution.
 - venue: short and as printed, e.g. "SIGMOD 2026", "NeurIPS 2025", "arXiv".
-- pubDate: if only the month is known use its first day, if only the year use January 1, and say so in warnings.
+- pubDate: if only the month is known use its first day, if only the year use January 1, and say so in warnings. If the text gives no year at all, use null; the date is then looked up from the paper's arXiv or DOI link.
 - url: the paper's page (arXiv abstract, DOI link, or PDF).
 - slidesUrl, codeUrl: only if given.
 - comment: a short note printed under the paper, such as "Best Paper Award"; usually null.
@@ -115,7 +116,7 @@ const publicationItem = (vocab: Vocabularies) => ({
   title: text,
   authors: list(text),
   venue: text,
-  pubDate: date,
+  pubDate: nullable(date),
   url: optionalText,
   slidesUrl: optionalText,
   codeUrl: optionalText,
@@ -301,6 +302,8 @@ export const fromText = action({
     const { data } = await generateStructured({ system, schema, text: pasted, maxTokens: 16_000 });
 
     const items = toDrafts(data, vocab);
+    // A link without a date: ask arXiv or the publisher (convex/pubDates.ts).
+    if (args.kind === "publication") await fillPublicationDates(items);
     return { items };
   },
 });

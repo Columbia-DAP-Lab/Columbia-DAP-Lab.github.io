@@ -4,6 +4,7 @@ import { env, internalAction, internalMutation } from "./_generated/server";
 import { eventSubmission, insertEvent, insertNews, insertPublication, newsSubmission, publicationSubmission } from "./admin";
 import { MAX_TEXT, requestEventsAndPublications, toDrafts, todayInNewYork } from "./extract";
 import { generateStructured, isConfigured } from "./llm";
+import { fillPublicationDates } from "./pubDates";
 
 /**
  * The Slack bot: mention @DAPLab in a message about a talk or a paper, and it
@@ -346,6 +347,8 @@ export const handleMention = internalAction({
       const found = data as { events?: unknown; publications?: unknown; news?: unknown };
       const events = toDrafts(found.events ?? { items: [] }, gate.vocab);
       const publications = toDrafts(found.publications ?? { items: [] }, gate.vocab);
+      // A link without a date: ask arXiv or the publisher (convex/pubDates.ts).
+      await fillPublicationDates(publications);
       const news = toDrafts(found.news ?? { items: [] }, gate.vocab);
 
       if (events.length === 0 && publications.length === 0 && news.length === 0) {

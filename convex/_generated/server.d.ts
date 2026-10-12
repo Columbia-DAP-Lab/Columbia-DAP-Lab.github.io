@@ -35,6 +35,7 @@ type Env = {
   readonly LLM_API_KEY: string | undefined;
   readonly LLM_BASE_URL: string | undefined;
   readonly LLM_MODEL: string | undefined;
+  readonly SLACK_ANNOUNCE_CHANNEL: string | undefined;
   readonly SLACK_BOT_TOKEN: string | undefined;
   readonly SLACK_SIGNING_SECRET: string | undefined;
 };

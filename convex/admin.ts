@@ -36,6 +36,60 @@ const contentTableValidator = v.union(
 );
 
 /**
+ * An item as the log keeps it: the document, plus the rows that are part of
+ * it (an event's speakers, a paper's authors, a project's authors and papers),
+ * without their bookkeeping fields. Undefined when it does not exist.
+ */
+export const snapshotOf = async (ctx: MutationCtx, table: Doc<"revisions">["table"], rawId: string): Promise<unknown> => {
+  if (table === "roles") return undefined; // logged by email, in writeRole
+  const id = ctx.db.normalizeId(table, rawId);
+  if (id === null) return undefined;
+  const doc = await ctx.db.get(id);
+  if (doc === null) return undefined;
+  const strip = <T extends Record<string, unknown>>(row: T) => {
+    const { _id, _creationTime, ...rest } = row;
+    return rest;
+  };
+  if (table === "events") {
+    const speakers = await ctx.db
+      .query("eventSpeakers")
+      .withIndex("by_eventId_and_position", (q) => q.eq("eventId", id as Id<"events">))
+      .take(100);
+    return { ...doc, speakers: speakers.map(({ eventId, ...s }) => strip(s)) };
+  }
+  if (table === "publications") {
+    const links = await ctx.db
+      .query("publicationAuthors")
+      .withIndex("by_publicationId_and_position", (q) => q.eq("publicationId", id as Id<"publications">))
+      .take(500);
+    const authors = [];
+    for (const link of links) {
+      const author = await ctx.db.get("authors", link.authorId);
+      authors.push(`${author?.name ?? "?"}${link.equalContribution ? "*" : ""}`);
+    }
+    return { ...doc, authors };
+  }
+  if (table === "projects") {
+    const [authors, papers] = await Promise.all([
+      ctx.db
+        .query("projectAuthors")
+        .withIndex("by_projectId_and_position", (q) => q.eq("projectId", id as Id<"projects">))
+        .take(200),
+      ctx.db
+        .query("projectPublications")
+        .withIndex("by_projectId_and_position", (q) => q.eq("projectId", id as Id<"projects">))
+        .take(200),
+    ]);
+    return {
+      ...doc,
+      authors: authors.map(({ projectId, ...a }) => strip(a)),
+      publications: papers.map(({ projectId, ...pp }) => strip(pp)),
+    };
+  }
+  return doc;
+};
+
+/**
  * Record what changed, and rebuild if the public site would differ.
  *
  * The rebuild is debounced in deployHook, so publishing several items in a row
@@ -48,6 +102,9 @@ export const record = async (
     documentId: string;
     action: Doc<"revisions">["action"];
     actor: string;
+    /** The item before the change (snapshotOf, taken before writing); absent on create. */
+    before?: unknown;
+    /** What else to note, e.g. which entry a merge folded in. */
     snapshot?: unknown;
     affectsSite: boolean;
   },
@@ -58,7 +115,10 @@ export const record = async (
     action: args.action,
     actor: args.actor,
     at: Date.now(),
-    snapshot: args.snapshot,
+    before: args.before ?? undefined,
+    // The item as it now stands, read back rather than trusted from the caller.
+    snapshot: await snapshotOf(ctx, args.table, args.documentId),
+    details: args.snapshot,
   });
   if (args.affectsSite) await ctx.scheduler.runAfter(0, internal.deployHook.requestRebuild, {});
 };
@@ -281,6 +341,33 @@ export const insertPublication = async (
   return publicationId;
 };
 
+/**
+ * Set a publication's date from the command line, for papers that came over
+ * from pubs.yml without one (they sort under "Other" on /publications):
+ *
+ *   npx convex run --prod admin:setPublicationDate '{"id":"...","pubDate":"2026-10-09"}'
+ */
+export const setPublicationDate = internalMutation({
+  args: { id: v.id("publications"), pubDate: v.string() },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(args.pubDate)) throw new ConvexError("Date must be YYYY-MM-DD.");
+    const pub = await ctx.db.get("publications", args.id);
+    if (pub === null) throw new ConvexError("No such publication.");
+    const before = await snapshotOf(ctx, "publications", args.id);
+    await ctx.db.patch("publications", args.id, { pubDate: args.pubDate, year: Number(args.pubDate.slice(0, 4)) });
+    await record(ctx, { before,
+      table: "publications",
+      documentId: args.id,
+      action: "update",
+      actor: "cli",
+      snapshot: { pubDate: args.pubDate },
+      affectsSite: pub.status === "published",
+    });
+    return null;
+  },
+});
+
 /** Propose a publication. Lands as `pending`, like an event. */
 export const submitPublication = mutation({
   args: publicationSubmission,
@@ -462,6 +549,27 @@ const pendingRow = async <T extends "events" | "publications" | "people" | "news
   return row;
 };
 
+/**
+ * Replace an event's speakers with the form's. A speaker whose name is unchanged
+ * keeps the link to their People-page profile, which the form does not carry.
+ */
+const replaceSpeakers = async (
+  ctx: MutationCtx,
+  eventId: Id<"events">,
+  speakers: ObjectType<typeof eventSubmission>["speakers"],
+) => {
+  const old = await ctx.db
+    .query("eventSpeakers")
+    .withIndex("by_eventId_and_position", (q) => q.eq("eventId", eventId))
+    .take(100);
+  const profileOf = new Map(old.filter((s) => s.personId).map((s) => [s.name.trim().toLowerCase(), s.personId]));
+  for (const speaker of old) await ctx.db.delete("eventSpeakers", speaker._id);
+  for (const [position, speaker] of speakers.entries()) {
+    const personId = profileOf.get(speaker.name.trim().toLowerCase());
+    await ctx.db.insert("eventSpeakers", { eventId, position, ...speaker, ...(personId ? { personId } : {}) });
+  }
+};
+
 export const updatePendingEvent = mutation({
   args: { id: v.id("events"), ...eventSubmission },
   returns: v.null(),
@@ -471,6 +579,7 @@ export const updatePendingEvent = mutation({
     await checkEvent(ctx, args);
 
     // Every field named, so one cleared in the form is cleared here too.
+    const logBefore = await snapshotOf(ctx, "events", id);
     await ctx.db.patch("events", id, {
       title: args.title,
       series: args.series,
@@ -482,14 +591,9 @@ export const updatePendingEvent = mutation({
       description: args.description,
       image: args.image === undefined ? before.image : { kind: "storage", storageId: args.image },
     });
-    const old = await ctx.db
-      .query("eventSpeakers")
-      .withIndex("by_eventId_and_position", (q) => q.eq("eventId", id))
-      .take(100);
-    for (const speaker of old) await ctx.db.delete("eventSpeakers", speaker._id);
-    await insertSpeakers(ctx, id, args.speakers);
+    await replaceSpeakers(ctx, id, args.speakers);
 
-    await record(ctx, { table: "events", documentId: id, action: "update", actor: email, affectsSite: false });
+    await record(ctx, { before: logBefore, table: "events", documentId: id, action: "update", actor: email, affectsSite: false });
     await refreshReviewMessages(ctx, "events", id);
     return null;
   },
@@ -503,6 +607,7 @@ export const updatePendingPublication = mutation({
     await pendingRow(ctx, "publications", id);
     await checkPublication(ctx, args);
 
+    const before = await snapshotOf(ctx, "publications", id);
     await ctx.db.patch("publications", id, {
       title: args.title,
       venue: args.venue,
@@ -524,8 +629,185 @@ export const updatePendingPublication = mutation({
     for (const row of old) await ctx.db.delete("publicationAuthors", row._id);
     await linkAuthors(ctx, id, args.authors);
 
-    await record(ctx, { table: "publications", documentId: id, action: "update", actor: email, affectsSite: false });
+    await record(ctx, { before, table: "publications", documentId: id, action: "update", actor: email, affectsSite: false });
     await refreshReviewMessages(ctx, "publications", id);
+    return null;
+  },
+});
+
+// -------------------------------------------- editing a published paper
+//
+// The Papers tab lists every published paper with an Edit button: a wrong date,
+// a missing author or a new slides link can be fixed after publishing. Saving
+// replaces the paper's fields and authors and rebuilds the site.
+
+const publishedPaper = v.object({
+  _id: v.id("publications"),
+  title: v.string(),
+  venue: v.string(),
+  pubDate: v.string(),
+  authors: v.array(v.string()),
+  topics: v.array(v.string()),
+  url: v.optional(v.string()),
+  slidesUrl: v.optional(v.string()),
+  codeUrl: v.optional(v.string()),
+  comment: v.optional(v.string()),
+});
+
+/** Every published paper, newest first, as the form loads it. */
+export const listPublications = query({
+  args: {},
+  returns: v.array(publishedPaper),
+  handler: async (ctx) => {
+    await requireCapability(ctx, "publications");
+    const rows = await ctx.db
+      .query("publications")
+      .withIndex("by_status_and_pubDate", (q) => q.eq("status", "published"))
+      .order("desc")
+      .take(1000);
+    const out = [];
+    for (const row of rows) {
+      const { authors } = await withAuthors(ctx, row);
+      out.push({
+        _id: row._id,
+        title: row.title,
+        venue: row.venue,
+        pubDate: row.pubDate,
+        authors,
+        topics: row.topics,
+        url: row.url,
+        slidesUrl: row.slidesUrl,
+        codeUrl: row.codeUrl,
+        comment: row.comment,
+      });
+    }
+    return out;
+  },
+});
+
+export const updatePublication = mutation({
+  args: { id: v.id("publications"), ...publicationSubmission },
+  returns: v.null(),
+  handler: async (ctx, { id, ...args }) => {
+    const email = await requireCapability(ctx, "publications");
+    const row = await ctx.db.get("publications", id);
+    if (row === null) throw new ConvexError("No such publication.");
+    if (row.status !== "published") throw new ConvexError("That paper is not published; edit it from the review queue.");
+    await checkPublication(ctx, args);
+
+    // A published paper counts toward its authors' paper counts: take the old
+    // authors' counts back, relink, and count the new ones.
+    const before = await snapshotOf(ctx, "publications", id);
+    await adjustAuthorCounts(ctx, id, -1);
+    await ctx.db.patch("publications", id, {
+      title: args.title,
+      venue: args.venue,
+      pubDate: args.pubDate,
+      year: Number(args.pubDate.slice(0, 4)),
+      topics: args.topics,
+      url: args.url,
+      slidesUrl: args.slidesUrl,
+      codeUrl: args.codeUrl,
+      comment: args.comment,
+      authorCount: args.authors.length,
+    });
+    const old = await ctx.db
+      .query("publicationAuthors")
+      .withIndex("by_publicationId_and_position", (q) => q.eq("publicationId", id))
+      .take(500);
+    for (const link of old) await ctx.db.delete("publicationAuthors", link._id);
+    await linkAuthors(ctx, id, args.authors);
+    await adjustAuthorCounts(ctx, id, 1);
+
+    await record(ctx, { before, table: "publications", documentId: id, action: "update", actor: email, affectsSite: true });
+    return null;
+  },
+});
+
+// -------------------------------------------- editing a published event
+//
+// The Events tab lists every published event with Edit and Remove, as the
+// Papers tab does for papers. Remove archives (setStatus), which takes it off
+// the site but keeps it.
+
+const publishedEvent = v.object({
+  _id: v.id("events"),
+  title: v.string(),
+  series: v.string(),
+  startDate: v.string(),
+  endDate: v.optional(v.string()),
+  timeLabel: v.optional(v.string()),
+  location: v.optional(v.string()),
+  link: v.optional(v.string()),
+  description: v.optional(v.string()),
+  imageUrl: v.union(v.string(), v.null()),
+  speakers: v.array(
+    v.object({
+      name: v.string(),
+      affiliation: v.optional(v.string()),
+      role: v.optional(v.string()),
+      url: v.optional(v.string()),
+      bio: v.optional(v.string()),
+    }),
+  ),
+});
+
+/** Every published event, newest first, as the form loads it. */
+export const listEvents = query({
+  args: {},
+  returns: v.array(publishedEvent),
+  handler: async (ctx) => {
+    await requireCapability(ctx, "events");
+    const rows = await ctx.db
+      .query("events")
+      .withIndex("by_status_and_startDate", (q) => q.eq("status", "published"))
+      .order("desc")
+      .take(1000);
+    const out = [];
+    for (const row of rows) {
+      const full = await withSpeakers(ctx, row);
+      out.push({
+        _id: row._id,
+        title: row.title,
+        series: row.series,
+        startDate: row.startDate,
+        endDate: row.endDate,
+        timeLabel: row.timeLabel,
+        location: row.location,
+        link: row.link,
+        description: row.description,
+        imageUrl: full.imageUrl,
+        speakers: full.speakers.map((s) => ({ name: s.name, affiliation: s.affiliation, role: s.role, url: s.url, bio: s.bio })),
+      });
+    }
+    return out;
+  },
+});
+
+export const updateEvent = mutation({
+  args: { id: v.id("events"), ...eventSubmission },
+  returns: v.null(),
+  handler: async (ctx, { id, ...args }) => {
+    const email = await requireCapability(ctx, "events");
+    const before = await ctx.db.get("events", id);
+    if (before === null) throw new ConvexError("No such event.");
+    if (before.status !== "published") throw new ConvexError("That event is not published; edit it from the review queue.");
+    await checkEvent(ctx, args);
+    // Only the form's fields: video, slides, Zoom and map links stay as they are.
+    const logBefore = await snapshotOf(ctx, "events", id);
+    await ctx.db.patch("events", id, {
+      title: args.title,
+      series: args.series,
+      startDate: args.startDate,
+      endDate: args.endDate,
+      timeLabel: args.timeLabel,
+      location: args.location,
+      link: args.link,
+      description: args.description,
+      image: args.image === undefined ? before.image : { kind: "storage", storageId: args.image },
+    });
+    await replaceSpeakers(ctx, id, args.speakers);
+    await record(ctx, { before: logBefore, table: "events", documentId: id, action: "update", actor: email, affectsSite: true });
     return null;
   },
 });
@@ -537,6 +819,7 @@ export const updatePendingNews = mutation({
     const email = await requireCapability(ctx, GOVERNS.news);
     await pendingRow(ctx, "news", id);
     checkNews(args);
+    const before = await snapshotOf(ctx, "news", id);
     await ctx.db.patch("news", id, {
       title: args.title.trim(),
       content: args.content.trim(),
@@ -544,7 +827,7 @@ export const updatePendingNews = mutation({
       date: args.date,
       featured: args.featured,
     });
-    await record(ctx, { table: "news", documentId: id, action: "update", actor: email, affectsSite: false });
+    await record(ctx, { before, table: "news", documentId: id, action: "update", actor: email, affectsSite: false });
     await refreshReviewMessages(ctx, "news", id);
     return null;
   },
@@ -558,6 +841,7 @@ export const updatePendingPerson = mutation({
     const before = await pendingRow(ctx, "people", id);
     const { name, slug, advisorIds, externalAdvisors } = await checkPerson(ctx, args, id);
 
+    const logBefore = await snapshotOf(ctx, "people", id);
     await ctx.db.patch("people", id, {
       name,
       slug,
@@ -573,7 +857,7 @@ export const updatePendingPerson = mutation({
       image: args.image === undefined ? before.image : { kind: "storage", storageId: args.image },
     });
 
-    await record(ctx, { table: "people", documentId: id, action: "update", actor: email, affectsSite: false });
+    await record(ctx, { before: logBefore, table: "people", documentId: id, action: "update", actor: email, affectsSite: false });
     await refreshReviewMessages(ctx, "people", id);
     return null;
   },
@@ -749,16 +1033,17 @@ export const applyStatus = async (
     }
   }
 
+  const logBefore = await snapshotOf(ctx, table, id);
   await ctx.db.patch(table, id as Id<ContentTable>, {
     status,
     reviewNote,
     ...(status === "published" ? { publishedBy: email, publishedAt: Date.now() } : {}),
   });
 
-  await record(ctx, {
+  await record(ctx, { before: logBefore,
     table,
     documentId: id,
-    action: status === "published" ? "publish" : "reject",
+    action: status === "published" ? "publish" : status === "archived" ? "archive" : "reject",
     actor: email,
     snapshot: await ctx.db.get(table, id as Id<ContentTable>),
     // Publishing adds it to the site; un-publishing something that was live
@@ -864,8 +1149,9 @@ export const setMemberRole = mutation({
       if (!email) throw new ConvexError(`Add ${person.name}'s Columbia email to make them an admin.`);
       if (!isColumbiaAddress(email)) throw new ConvexError("Only @columbia.edu accounts can sign in.");
       if (person.email !== email) {
+        const before = await snapshotOf(ctx, "people", person._id);
         await ctx.db.patch("people", person._id, { email });
-        await record(ctx, { table: "people", documentId: person._id, action: "update", actor, snapshot: { email }, affectsSite: false });
+        await record(ctx, { before, table: "people", documentId: person._id, action: "update", actor, snapshot: { email }, affectsSite: false });
       }
       await writeRole(ctx, actor, email, ["admin"]);
     } else if (email) {
@@ -885,8 +1171,9 @@ export const setPersonCategory = mutation({
     const person = await currentMember(ctx, args.personId);
     if (person.category === args.category) return null;
     if (args.category === "alum" && person.email === actor) throw new ConvexError("You cannot make yourself an alum here.");
+    const before = await snapshotOf(ctx, "people", person._id);
     await ctx.db.patch("people", person._id, { category: args.category });
-    await record(ctx, {
+    await record(ctx, { before,
       table: "people",
       documentId: person._id,
       action: "update",
@@ -894,6 +1181,104 @@ export const setPersonCategory = mutation({
       snapshot: { category: args.category },
       affectsSite: true,
     });
+    return null;
+  },
+});
+
+/** Rename a lab member; their People-page address (slug) follows the name. */
+export const renamePerson = mutation({
+  args: { personId: v.id("people"), name: v.string() },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const actor = await requireCapability(ctx, "admin");
+    const person = await currentMember(ctx, args.personId);
+    const name = args.name.trim();
+    if (!name) throw new ConvexError("A profile needs a name.");
+    if (name === person.name) return null;
+    const slug = slugify(name);
+    const sameSlug = await ctx.db
+      .query("people")
+      .withIndex("by_slug", (q) => q.eq("slug", slug))
+      .take(20);
+    const clash = sameSlug.find((p) => p._id !== person._id && p.status !== "rejected" && p.status !== "archived");
+    if (clash) throw new ConvexError(`${clash.name} already has that name. To combine the two, use Merge.`);
+    const before = await snapshotOf(ctx, "people", person._id);
+    await ctx.db.patch("people", person._id, { name, slug });
+    await record(ctx, { before, table: "people", documentId: person._id, action: "update", actor, snapshot: { name }, affectsSite: true });
+    return null;
+  },
+});
+
+/**
+ * Move an added role from one email to another, keeping the stronger role if
+ * the new address already had one. Refuses to move the acting admin's own.
+ */
+const moveRole = async (ctx: MutationCtx, actor: string, from: string, to: string) => {
+  if (from === to) return;
+  const roleAt = (email: string) =>
+    ctx.db
+      .query("roles")
+      .withIndex("by_email", (q) => q.eq("email", email))
+      .unique();
+  const [old, existing] = await Promise.all([roleAt(from), roleAt(to)]);
+  if (old === null) return;
+  if (from === actor) throw new ConvexError("You cannot change your own email here; ask another admin.");
+  const admin = old.capabilities.includes("admin") || (existing?.capabilities.includes("admin") ?? false);
+  await writeRole(ctx, actor, to, [admin ? "admin" : "member"]);
+  await writeRole(ctx, actor, from, []);
+};
+
+/** Change or clear a lab member's Columbia email; any role added for the old one moves with it. */
+export const setPersonEmail = mutation({
+  args: { personId: v.id("people"), email: v.optional(v.string()) },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const actor = await requireCapability(ctx, "admin");
+    const person = await currentMember(ctx, args.personId);
+    const email = args.email?.trim().toLowerCase() || undefined;
+    if (email === person.email) return null;
+    if (email && !isColumbiaAddress(email)) throw new ConvexError("Only @columbia.edu addresses can sign in.");
+    if (person.email === actor) throw new ConvexError("You cannot change your own email here; ask another admin.");
+    if (email) {
+      const others = await ctx.db
+        .query("people")
+        .withIndex("by_email", (q) => q.eq("email", email))
+        .take(10);
+      const taken = others.find((p) => p._id !== person._id && (p.status === "published" || p.status === "pending"));
+      if (taken) throw new ConvexError(`${taken.name} already has ${email}. To combine the two, use Merge.`);
+    }
+    if (person.email) {
+      const grant = await ctx.db
+        .query("roles")
+        .withIndex("by_email", (q) => q.eq("email", person.email!))
+        .unique();
+      if (grant !== null && !email) {
+        throw new ConvexError(`${person.name} signs in with ${person.email} as ${grant.capabilities.includes("admin") ? "an admin" : "a member"}; give them another email instead of clearing it.`);
+      }
+      if (grant !== null && email) await moveRole(ctx, actor, person.email, email);
+    }
+    const before = await snapshotOf(ctx, "people", person._id);
+    await ctx.db.patch("people", person._id, { email });
+    await record(ctx, { before, table: "people", documentId: person._id, action: "update", actor, snapshot: { email: email ?? null }, affectsSite: false });
+    return null;
+  },
+});
+
+/** Change the email of an account added by email that is not on the People page. */
+export const changeUserEmail = mutation({
+  args: { from: v.string(), to: v.string() },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const actor = await requireCapability(ctx, "admin");
+    const from = args.from.trim().toLowerCase();
+    const to = args.to.trim().toLowerCase();
+    if (!isColumbiaAddress(to)) throw new ConvexError("Only @columbia.edu addresses can sign in.");
+    const grant = await ctx.db
+      .query("roles")
+      .withIndex("by_email", (q) => q.eq("email", from))
+      .unique();
+    if (grant === null) throw new ConvexError(`${from} has not been added.`);
+    await moveRole(ctx, actor, from, to);
     return null;
   },
 });
@@ -909,12 +1294,13 @@ export const removeFromLab = mutation({
     const actor = await requireCapability(ctx, "admin");
     const person = await currentMember(ctx, args.personId);
     if (person.email === actor) throw new ConvexError("You cannot remove yourself. Ask another admin.");
+    const before = await snapshotOf(ctx, "people", person._id);
     await ctx.db.patch("people", person._id, { status: "archived" });
     if (person.email) await writeRole(ctx, actor, person.email, []);
-    await record(ctx, {
+    await record(ctx, { before,
       table: "people",
       documentId: person._id,
-      action: "reject",
+      action: "archive",
       actor,
       snapshot: { status: "archived" },
       affectsSite: true,
@@ -1041,6 +1427,8 @@ export const mergeUsers = mutation({
       throw new ConvexError(`Keep your own email (${actor}) on the profile, or you would lose your admin role.`);
     }
 
+    const keptBefore = await snapshotOf(ctx, "people", kept._id);
+    const otherBefore = other === null ? undefined : await snapshotOf(ctx, "people", other._id);
     if (other !== null) {
       const otherId = other._id;
 
@@ -1073,9 +1461,10 @@ export const mergeUsers = mutation({
       // Archived, not deleted, and without its email, so sign-in never finds it.
       await ctx.db.patch("people", otherId, { status: "archived", email: undefined });
       await record(ctx, {
+        before: otherBefore,
         table: "people",
         documentId: otherId,
-        action: "reject",
+        action: "archive",
         actor,
         snapshot: { mergedInto: kept._id },
         affectsSite: other.status === "published",
@@ -1112,6 +1501,7 @@ export const mergeUsers = mutation({
     }
 
     await record(ctx, {
+      before: keptBefore,
       table: "people",
       documentId: kept._id,
       action: "update",
@@ -1155,10 +1545,11 @@ const writeRole = async (ctx: MutationCtx, actor: string, rawEmail: string, capa
   await ctx.db.insert("revisions", {
     table: "roles",
     documentId: email,
-    action: capabilities.length === 0 ? "delete" : "update",
+    action: capabilities.length === 0 ? "delete" : existing === null ? "create" : "update",
     actor,
     at: Date.now(),
-    snapshot: { email, capabilities },
+    before: existing === null ? undefined : { email, capabilities: existing.capabilities },
+    snapshot: capabilities.length === 0 ? undefined : { email, capabilities },
   });
 };
 
@@ -1231,6 +1622,7 @@ export const addUsers = mutation({
         action: existing === null ? "create" : "update",
         actor,
         at: Date.now(),
+        before: existing === null ? undefined : { email, capabilities: existing.capabilities },
         snapshot: { email, capabilities: [args.role] },
       });
     }

@@ -7,7 +7,8 @@
 // Submitted text is shown to reviewers, so nothing user-supplied goes through
 // innerHTML: `el()` sets textContent.
 
-import { initAuth } from "./auth.js";
+// auth.js carries the same ?v= build stamp as this file, so the two always match.
+const { initAuth } = await import(new URL(`./auth.js${new URL(import.meta.url).search}`, import.meta.url).href);
 
 const { ConvexClient, anyApi: api } = window.convex;
 
@@ -339,12 +340,15 @@ const EDITABLE = {
 /** form → { table, id } while it holds a pending submission rather than a new one. */
 const reviewEdits = new Map();
 
-const setEditing = (form, table, row) => {
-  if (row) reviewEdits.set(form, { table, id: row._id });
+/** `published` marks a live paper from the Papers list rather than a waiting submission. */
+const setEditing = (form, table, row, published = false) => {
+  if (row) reviewEdits.set(form, { table, id: row._id, published });
   else reviewEdits.delete(form);
   const banner = $("[data-editing]", form);
   banner.hidden = !row;
-  if (row) {
+  if (row && published) {
+    banner.textContent = `Editing the published ${PUBLISHED[table].noun} “${row.title}”. Saving updates the site in about a minute.`;
+  } else if (row) {
     banner.textContent =
       // A person's `title` is their role ("PhD Student"); their name is what to show.
       `Editing “${table === "people" ? row.name : row.title}”, submitted by ${row.submittedBy}. It stays pending until you publish it.` +
@@ -352,6 +356,8 @@ const setEditing = (form, table, row) => {
   }
   $("[data-submit-label]", form).textContent = row ? "Save changes" : "Submit for review";
   for (const node of $$("[data-edit-only]", form)) node.hidden = !row;
+  // Already live: there is nothing to publish.
+  if (published) $('[data-save="publish"]', form).hidden = true;
   // Quick add would fill the form over the submission being edited.
   const quickAdd = $(`[data-quick-add="${EDITABLE[table].kind}"]`);
   if (quickAdd) quickAdd.hidden = Boolean(row);
@@ -366,11 +372,11 @@ const clearForm = (form) => {
   }
 };
 
-const startEditing = (table, row) => {
+const startEditing = (table, row, published = false) => {
   const { form, tab, kind } = EDITABLE[table];
   clearForm(form);
   FILL[kind](form, row);
-  setEditing(form, table, row);
+  setEditing(form, table, row, published);
   showTab(tab);
   form.scrollIntoView({ behavior: "smooth", block: "start" });
 };
@@ -390,7 +396,14 @@ const reviewNote = (text) => {
 
 /** Save the form over the submission it holds, then go back to the queue. */
 const saveEdit = async (form, submitter, payload) => {
-  const { table, id } = reviewEdits.get(form);
+  const { table, id, published } = reviewEdits.get(form);
+  if (published) {
+    await client.mutation(PUBLISHED[table].update, { id, ...payload });
+    stopEditing(form);
+    listNote(table, "Saved. The site updates in about a minute.");
+    listCard(table).scrollIntoView({ behavior: "smooth", block: "start" });
+    return "";
+  }
   await client.mutation(EDITABLE[table].update, { id, ...payload });
   const publish = submitter?.dataset.save === "publish";
   if (publish) await client.mutation(api.admin.setStatus, { table, id, status: "published" });
@@ -402,9 +415,122 @@ const saveEdit = async (form, submitter, payload) => {
 
 for (const { form } of Object.values(EDITABLE)) {
   $("[data-cancel-edit]", form).addEventListener("click", () => {
+    // A published paper came from the Papers list; anything else from the queue.
+    const fromList = reviewEdits.get(form)?.published;
     stopEditing(form);
-    showTab("submissions");
+    if (!fromList) showTab("submissions");
   });
+}
+
+// ------------------------------------------------- published papers and events
+//
+// Below the Papers and Events forms, everything already on the site, grouped
+// (papers by year, undated first; events upcoming first, then by year), with
+// search, Edit (the same form, admin:updatePublication / updateEvent) and
+// Remove (archived with setStatus: off the site, but kept).
+
+/** Today in this browser's time zone, as YYYY-MM-DD. */
+const todayISO = () => new Date().toLocaleDateString("en-CA");
+
+const PUBLISHED = {
+  publications: {
+    noun: "paper",
+    update: api.admin.updatePublication,
+    rows: [],
+    text: (p) => [p.title, p.venue, ...p.authors],
+    group: (p) => (p.pubDate ? p.pubDate.slice(0, 4) : "No date"),
+    first: "No date",
+    within: () => 0,
+    detail: (p) => ` · ${p.venue}${p.pubDate ? `, ${p.pubDate}` : ""}`,
+  },
+  events: {
+    noun: "event",
+    update: api.admin.updateEvent,
+    rows: [],
+    text: (e) => [e.title, e.series, e.location ?? "", ...e.speakers.map((s) => s.name)],
+    group: (e) => (e.startDate >= todayISO() ? "Upcoming" : e.startDate.slice(0, 4)),
+    first: "Upcoming",
+    // Upcoming soonest first; past newest first, as the rows arrive.
+    within: (a, b, group) => (group === "Upcoming" ? a.startDate.localeCompare(b.startDate) : 0),
+    detail: (e) => ` · ${e.startDate}${e.speakers[0] ? ` · ${e.speakers.map((s) => s.name).join(", ")}` : ""}`,
+  },
+};
+
+const listCard = (table) => $(`[data-published-list="${table}"]`);
+
+const listNote = (table, text) => {
+  const note = $("[data-list-note]", listCard(table));
+  note.textContent = text;
+  note.hidden = !text;
+};
+
+const removePublished = async (table, row) => {
+  const noun = PUBLISHED[table].noun;
+  if (!confirm(`Remove the ${noun} “${row.title}” from the site? It is archived, not deleted, so it can be restored.`)) return;
+  try {
+    await client.mutation(api.admin.setStatus, { table, id: row._id, status: "archived" });
+    listNote(table, `Removed “${row.title}”. The site updates in about a minute.`);
+    showStatus(null);
+  } catch (error) {
+    showStatus(message(error));
+  }
+};
+
+const renderPublished = (table) => {
+  const config = PUBLISHED[table];
+  const card = listCard(table);
+  const query = $("[data-list-search]", card).value.trim().toLowerCase();
+  const shown = config.rows.filter((row) => !query || config.text(row).some((text) => text.toLowerCase().includes(query)));
+  $("[data-list-count]", card).textContent = config.rows.length || "";
+  const groups = new Map();
+  for (const row of shown) {
+    const group = config.group(row);
+    if (!groups.has(group)) groups.set(group, []);
+    groups.get(group).push(row);
+  }
+  const order = [...groups.keys()].sort((a, b) => (a === config.first ? -1 : b === config.first ? 1 : b.localeCompare(a)));
+  $("[data-list-rows]", card).replaceChildren(
+    ...(shown.length === 0 ? [el("p", { class: "dap-muted small" }, query ? "Nothing matches." : "Nothing published yet.")] : []),
+    ...order.flatMap((group) => [
+      el("h3", { class: "dap-paper-year" }, `${group} · ${groups.get(group).length}`),
+      ...[...groups.get(group)]
+        .sort((a, b) => config.within(a, b, group))
+        .map((row) =>
+          el(
+            "div",
+            { class: "dap-paper-row" },
+            el("span", { class: "dap-paper-title" }, row.title, el("span", { class: "dap-muted" }, config.detail(row))),
+            el(
+              "button",
+              {
+                type: "button",
+                class: "dap-paper-edit",
+                onclick: () => {
+                  listNote(table, "");
+                  startEditing(table, row, true);
+                },
+              },
+              "Edit",
+            ),
+            el(
+              "button",
+              {
+                type: "button",
+                class: "dap-roster-remove",
+                title: `Remove “${row.title}”`,
+                "aria-label": `Remove “${row.title}”`,
+                onclick: () => removePublished(table, row),
+              },
+              "×",
+            ),
+          ),
+        ),
+    ]),
+  );
+};
+
+for (const table of Object.keys(PUBLISHED)) {
+  $("[data-list-search]", listCard(table)).addEventListener("input", () => renderPublished(table));
 }
 
 // ----------------------------------------------------------- paste to fill
@@ -1127,6 +1253,51 @@ const pickList = (label, options, value) => {
   return node;
 };
 
+/**
+ * Swap a roster row's name cell for inputs, Save and Cancel. `fields` are
+ * { name, label, value, type }; `save(values)` runs the change. The roster
+ * redraws itself when the change lands, which closes the editor.
+ */
+const editInline = (row, fields, save) => {
+  const inputs = fields.map((f) => {
+    const input = el("input", {
+      class: "form-control form-control-sm",
+      type: f.type ?? "text",
+      "aria-label": f.label,
+      placeholder: f.label,
+    });
+    input.value = f.value ?? "";
+    return input;
+  });
+  const done = el("button", { type: "submit", class: "btn btn-sm dap-btn-primary" }, "Save");
+  const cancel = el("button", { type: "button", class: "btn btn-sm btn-link" }, "Cancel");
+  const editor = el("form", { class: "dap-roster-editor" }, ...inputs, done, cancel);
+  const original = [...row.childNodes];
+  const close = () => row.replaceChildren(...original);
+  const submit = async (event) => {
+    event?.preventDefault();
+    done.disabled = true;
+    const values = Object.fromEntries(fields.map((f, i) => [f.name, inputs[i].value.trim()]));
+    try {
+      await save(values);
+      showStatus(null);
+    } catch (error) {
+      showStatus(message(error));
+      done.disabled = false;
+      return;
+    }
+    close();
+  };
+  editor.addEventListener("submit", submit);
+  cancel.addEventListener("click", close);
+  editor.addEventListener("keydown", (event) => event.key === "Escape" && close());
+  row.replaceChildren(editor);
+  inputs[0].focus();
+};
+
+const editButton = (label, onclick) =>
+  el("button", { type: "button", class: "dap-roster-merge", title: label, "aria-label": label, onclick }, "edit");
+
 const memberRow = (person) => {
   const role = pickList(`Role for ${person.name}`, ROLE_LABELS, person.role);
   role.addEventListener("change", () => {
@@ -1165,14 +1336,28 @@ const memberRow = (person) => {
     "×",
   );
 
-  return el(
+  const row = el(
     "div",
     { class: "dap-roster-row" },
     el("span", { class: "dap-roster-who", title: person.email ?? "" }, person.name, person.email && el("span", { class: "dap-muted" }, person.email)),
-    role,
-    group,
-    remove,
   );
+  const edit = editButton(`Edit ${person.name}'s name and email`, () =>
+    editInline(
+      row,
+      [
+        { name: "name", label: "Name", value: person.name },
+        { name: "email", label: "uni@columbia.edu", value: person.email, type: "email" },
+      ],
+      async ({ name, email }) => {
+        if (name !== person.name) await client.mutation(api.admin.renamePerson, { personId: person.id, name });
+        if (email !== (person.email ?? "")) {
+          await client.mutation(api.admin.setPersonEmail, { personId: person.id, email: email || undefined });
+        }
+      },
+    ),
+  );
+  row.append(edit, role, group, remove);
+  return row;
 };
 
 const otherRow = (user) => {
@@ -1209,14 +1394,14 @@ const otherRow = (user) => {
     },
     "merge…",
   );
-  return el(
-    "div",
-    { class: "dap-roster-row" },
-    el("span", { class: "dap-roster-who", title: `Added by ${user.grantedBy}` }, user.email),
-    merge,
-    role,
-    remove,
+  const row = el("div", { class: "dap-roster-row" }, el("span", { class: "dap-roster-who", title: `Added by ${user.grantedBy}` }, user.email));
+  const edit = editButton(`Change ${user.email}`, () =>
+    editInline(row, [{ name: "email", label: "uni@columbia.edu", value: user.email, type: "email" }], async ({ email }) => {
+      if (email && email !== user.email) await client.mutation(api.admin.changeUserEmail, { from: user.email, to: email });
+    }),
   );
+  row.append(edit, merge, role, remove);
+  return row;
 };
 
 const rosterGroup = (title, rows) =>
@@ -1451,6 +1636,10 @@ const renderMe = (me) => {
   if (me.profile !== null) subscribe(api.profiles.myProfile, {}, renderProfile);
   if (can(me.capabilities, "events")) {
     subscribe(api.admin.pending, { table: "events" }, (rows) => renderQueue("events", rows, renderEvent));
+    subscribe(api.admin.listEvents, {}, (rows) => {
+      PUBLISHED.events.rows = rows;
+      renderPublished("events");
+    });
     // News is reviewed by whoever reviews events (GOVERNS in convex/admin.ts).
     subscribe(api.admin.pending, { table: "news" }, (rows) => renderQueue("news", rows, renderNews));
   }
@@ -1459,6 +1648,10 @@ const renderMe = (me) => {
     subscribe(api.profiles.pendingEdits, {}, (rows) => renderQueue("profiles", rows, renderProfileEdit));
   }
   if (can(me.capabilities, "publications")) {
+    subscribe(api.admin.listPublications, {}, (rows) => {
+      PUBLISHED.publications.rows = rows;
+      renderPublished("publications");
+    });
     subscribe(api.admin.pending, { table: "publications" }, (rows) =>
       renderQueue("publications", rows, renderPublication),
     );
