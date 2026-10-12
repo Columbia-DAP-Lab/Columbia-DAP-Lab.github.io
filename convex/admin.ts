@@ -368,6 +368,28 @@ export const setPublicationDate = internalMutation({
   },
 });
 
+/**
+ * Replace an event series' description (the Markdown blurb above its events on
+ * /events) from the command line:
+ *
+ *   npx convex run --prod admin:setSeriesDescription '{"slug":"seminar","description":"…"}'
+ */
+export const setSeriesDescription = internalMutation({
+  args: { slug: v.string(), description: v.string() },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const series = await ctx.db
+      .query("eventSeries")
+      .withIndex("by_slug", (q) => q.eq("slug", args.slug))
+      .unique();
+    if (series === null) throw new ConvexError(`Unknown series: ${args.slug}`);
+    const before = await snapshotOf(ctx, "eventSeries", series._id);
+    await ctx.db.patch("eventSeries", series._id, { description: args.description.trim() || undefined });
+    await record(ctx, { before, table: "eventSeries", documentId: series._id, action: "update", actor: "cli", affectsSite: true });
+    return null;
+  },
+});
+
 /** Propose a publication. Lands as `pending`, like an event. */
 export const submitPublication = mutation({
   args: publicationSubmission,
