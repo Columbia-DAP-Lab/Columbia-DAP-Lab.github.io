@@ -63,7 +63,10 @@
 - title: "FlowCheck: Helping End-users Specify and Verify Intent in Vibe-Coded Web Apps"
   authors: Reya Vir, Lydia Chilton, Zhuo Zhang, Eugene Wu
   conf: LMPL Workshop at SPLASH 2026
-  url: https://www.dropbox.com/scl/fi/b5ur6pu7m59ktorrza8hu/flowcheck-lmpl26-submitted.pdf?rlkey=96bk53yfnk4mmk44ujs2dq0f0&dl=0
+  pub_date: "2026-08-28"
+  url: https://arxiv.org/abs/2608.28880
+  blog: /general/2026/09/18/flowcheck-catching-silent-failures.html
+  code: https://github.com/reyavir/flowcheck
   tags:
     - sys
     - hac
