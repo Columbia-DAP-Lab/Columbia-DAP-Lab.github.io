@@ -53,6 +53,14 @@ description: DAPLab develops the infrastructure needed to make AI agents safe, r
   <div class="projects-grid" id="projects-grid">
     {% assign sorted_projects = site.projects | sort: 'date' | reverse %}
     {% for project in sorted_projects %}
+    {% comment %} A benchmark page with `project:` set to this slug and `share_with_project: true`
+       supplies the card's title, subtitle, image and search text. {% endcomment %}
+    {% assign shared = site.benchmarks | where: "project", project.slug | where: "share_with_project", true | first %}
+    {% assign card_title = project.title %}{% assign card_subtitle = project.subtitle %}{% assign card_image = project.avatar_url %}{% assign card_content = project.content %}
+    {% if shared %}
+      {% assign card_title = shared.title %}{% assign card_subtitle = shared.tagline %}{% assign card_content = shared.content %}
+      {% if shared.card_image %}{% assign card_image = shared.card_image %}{% endif %}
+    {% endif %}
     <div
       class="project-card"
       data-is-software="{% if project.is_software %}true{% else %}false{% endif %}"
@@ -60,8 +68,8 @@ description: DAPLab develops the infrastructure needed to make AI agents safe, r
       data-is-benchmark="{% if project.is_benchmark %}true{% else %}false{% endif %}"
     >
       <a href="{{ project.url }}" class="project-avatar-wrap" tabindex="-1" aria-hidden="true">
-        {% if project.avatar_url %}
-        <img src="{{ project.avatar_url | relative_url }}" alt="" class="project-avatar" loading="lazy">
+        {% if card_image %}
+        <img src="{{ card_image | relative_url }}" alt="" class="project-avatar" loading="lazy">
         {% else %}
         <span class="project-avatar-placeholder">🔬</span>
         {% endif %}
@@ -69,11 +77,11 @@ description: DAPLab develops the infrastructure needed to make AI agents safe, r
 
       <div class="project-main">
         <div class="project-title-line">
-          <a href="{{ project.url }}" class="project-title">{{ project.title }}</a>
+          <a href="{{ project.url }}" class="project-title">{{ card_title }}</a>
           {% if project.is_software %}<span class="project-badge">Software</span>{% endif %}
         </div>
-        {% if project.subtitle %}
-        <p class="project-subtitle">{{ project.subtitle }}</p>
+        {% if card_subtitle %}
+        <p class="project-subtitle">{{ card_subtitle }}</p>
         {% endif %}
       </div>
 
@@ -93,7 +101,7 @@ description: DAPLab develops the infrastructure needed to make AI agents safe, r
         {% endif %}
       </div>
 
-      <div class="project-content">{{ project.content | strip_html }}</div>
+      <div class="project-content">{{ card_content | strip_html }}</div>
     </div>
     {% endfor %}
   </div>

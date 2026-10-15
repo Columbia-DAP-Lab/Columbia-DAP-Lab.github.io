@@ -17,6 +17,9 @@ evaluation_unit: A taxpayer scenario and its CPA-reviewed gold return
 verification: Field-by-field comparison against rule-derived gold returns
 availability: Paper under review; open-source release planned
 languages: U.S. federal individual income tax, tax year 2025
+project: taxbench
+share_with_project: true
+card_image: /files/images/benchmarks/taxlab/card.png
 ---
 
 <style>
@@ -33,7 +36,7 @@ AI agents are increasingly capable of completing complex, multi-step tasks. This
 We introduce **TaxLab**, a benchmark for interactive U.S. federal individual tax filing. TaxLab is built on *field-level operationalization of tax law*. This representation provides a common foundation for constructing gold returns, measuring benchmark coverage and diversity, and tracing filing errors back to the rules and sources involved.
 
 <figure class="taxlab-figure">
-  <img src="{{ '/files/images/benchmarks/taxlab/benchmark-pipeline.png' | relative_url }}" alt="TaxLab pipeline: rule-system development, scenario generation, and agent evaluation">
+  <img src="/files/images/benchmarks/taxlab/benchmark-pipeline.png" alt="TaxLab pipeline: rule-system development, scenario generation, and agent evaluation">
   <figcaption>TaxLab's end-to-end pipeline for benchmark construction and evaluation.</figcaption>
 </figure>
 
@@ -47,7 +50,7 @@ We construct **TaxLab-Rule**, an executable, source-grounded rule system. It com
 Each rule declares the taxpayer facts and computed fields it depends on, the condition under which it applies, its effect on a single target field, and its supporting source. Rules compose through explicit field dependencies. Executing them over a scenario produces the completed return, together with the path from taxpayer facts to reported fields and their sources. A CPA validated every rule against its cited authority.
 
 <figure class="taxlab-figure">
-  <img src="{{ '/files/images/benchmarks/taxlab/rule-example.png' | relative_url }}" alt="Two TaxLab-Rule rules for the Schedule A medical expense deduction, linked to IRC section 213(a) and the form lines">
+  <img src="/files/images/benchmarks/taxlab/rule-example.png" alt="Two TaxLab-Rule rules for the Schedule A medical expense deduction, linked to IRC section 213(a) and the form lines">
   <figcaption>Two source-grounded rules for Schedule A medical and dental expenses.</figcaption>
 </figure>
 
@@ -63,7 +66,7 @@ We construct 55 tax-year-2025 scenarios through a CPA-guided, coverage-driven pr
 All scenarios are synthetic and contain no real taxpayer data. Because each case has a rule trace, coverage and diversity are measured rather than assumed. All 63 tax issues are covered. A typical pair of cases overlaps on only about one fifth of the issues or rules in their combined traces.
 
 <figure class="taxlab-figure taxlab-figure-narrow">
-  <img src="{{ '/files/images/benchmarks/taxlab/case-issue-map.png' | relative_url }}" alt="Matrix of 55 cases by 63 tax issues showing which issues each case exercises">
+  <img src="/files/images/benchmarks/taxlab/case-issue-map.png" alt="Matrix of 55 cases by 63 tax issues showing which issues each case exercises">
   <figcaption>Tax-issue coverage of TaxLab. Each column is a case; each row is a tax issue.</figcaption>
 </figure>
 
@@ -89,14 +92,14 @@ We report three accuracy metrics:
 We evaluate nine models. Tax filing remains challenging even for the strongest models. Claude Opus 5.5 achieves the highest PFA (64.0%). Fable 5.1 achieves the highest FRA (81.8%) and CFA (91.9%).
 
 <figure class="taxlab-figure">
-  <img src="{{ '/files/images/benchmarks/taxlab/results-table.png' | relative_url }}" alt="Results table for nine models with accuracy and efficiency metrics">
+  <img src="/files/images/benchmarks/taxlab/results-table.png" alt="Results table for nine models with accuracy and efficiency metrics">
   <figcaption>Tax-filing agent evaluation results, ranked by PFA.</figcaption>
 </figure>
 
 Each anchor field is linked to the tax issue and rules that produce it. This lets us diagnose *where* errors surface. Stronger models concentrate their remaining errors in a few issues. For example, Claude Opus 5.5 reaches 5.2× its average error rate on the medical and dental deduction. Weaker models fail more broadly. Access to IRS documents also helps: it improves GPT-6 Astra's PFA by 7.3 percentage points.
 
 <figure class="taxlab-figure">
-  <img src="{{ '/files/images/benchmarks/taxlab/issue-heatmap.png' | relative_url }}" alt="Heatmap of issue-level error rates per model relative to each model's average">
+  <img src="/files/images/benchmarks/taxlab/issue-heatmap.png" alt="Heatmap of issue-level error rates per model relative to each model's average">
   <figcaption>Issue-level error diagnosis across models, normalized by each model's average.</figcaption>
 </figure>
 
