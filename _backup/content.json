@@ -690,6 +690,17 @@
   ],
   "publications": [
     {
+      "authors": "Jiakai Xu, Tiancheng Ge, Tujie Guan, Yusheng Li, Rohan Timmaraju, Eugene Wu, Kostis Kaffes",
+      "conf": "arXiv",
+      "pub_date": "2026-10-15",
+      "tags": [
+        "sys",
+        "agent-debug"
+      ],
+      "title": "Probe-and-Resume: When and How to Evaluate Agent Execution",
+      "url": "https://arxiv.org/abs/2610.21088"
+    },
+    {
       "authors": "Haocheng Xia, Eugene Wu, Yongjoo Park",
       "conf": "SPLASH EXPRESS Workshop 2026",
       "pub_date": "2026-10-04",
@@ -2962,6 +2973,12 @@
           {
             "title": "StateFork: Branchable Infrastructure for Agent Exploration",
             "url": "https://arxiv.org/abs/2609.38648",
+            "venue": "arXiv",
+            "year": 2026
+          },
+          {
+            "title": "Probe-and-Resume: When and How to Evaluate Agent Execution",
+            "url": "https://arxiv.org/abs/2610.21088",
             "venue": "arXiv",
             "year": 2026
           }
