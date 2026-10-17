@@ -2552,6 +2552,16 @@
       "homepage": "https://www.selinkaraca.com/",
       "image": "https://dutiful-turtle-748.convex.cloud/api/storage/b0d1a019-dd34-4f8a-b9bc-06f9438bacde",
       "name": "Selin Karaca"
+    },
+    {
+      "advisor": [
+        "Yusen Zhang"
+      ],
+      "bio": "Multi-agent collaboration, Agent Memory",
+      "category": "Student",
+      "homepage": "https://akaaaafk.github.io/zhongzhengsun.github.io/",
+      "image": "https://dutiful-turtle-748.convex.cloud/api/storage/f395941b-2ffd-48b9-a24e-90e3bc880e24",
+      "name": "Zhongzheng Sun"
     }
   ],
   "news": [
