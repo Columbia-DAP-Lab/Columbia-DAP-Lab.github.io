@@ -299,7 +299,9 @@
     }
     if (!on || client) return;
     api = window.convex.anyApi.presence;
-    client = new window.convex.ConvexClient(CONVEX_URL);
+    // Cursor updates are always in flight while the mouse moves; without this,
+    // Convex asks "Changes you made may not be saved" on every reload or exit.
+    client = new window.convex.ConvexClient(CONVEX_URL, { unsavedChangesWarning: false });
     document.body.append(layer);
     unsubscribe = client.onUpdate(api.here, { page }, (result) => {
       latest = result;
