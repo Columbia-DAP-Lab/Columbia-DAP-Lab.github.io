@@ -318,8 +318,9 @@ docker compose up --build --no-cache
 
 ### Live mode
 
-Public pages show the other visitors on the same page: their cursors (with an
-anonymous name like "Teal Otter"), their clicks as a small pop, and a faint trail.
+Public pages show the other visitors on the same page: a cursor with a random emoji
+for each, a light trail that fades after a moment, and a pop (the cursor bounces, a
+ring spreads) where they click.
 A **Live** pill in the upper right turns it off, and the browser remembers. It is
 `files/js/presence.js` on the page and `convex/presence.ts` behind it; the page only
 loads Convex's browser library once it is idle and Live is on. Touch and narrow

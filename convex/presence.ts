@@ -6,7 +6,7 @@ import { internalMutation, mutation, query } from "./_generated/server";
  * mouse is, and where they click (files/js/presence.js draws them).
  *
  * Unauthenticated on purpose: visitors are anonymous. A tab makes up a random
- * session id; its name and color come from that id, here, so nothing a visitor
+ * session id; its emoji and color come from that id, here, so nothing a visitor
  * types reaches anyone else. The cost of an open, public mutation is bounded
  * here rather than trusted to the page: positions are clamped, a tab's updates
  * are dropped when they come faster than MIN_INTERVAL_MS, and a page takes
@@ -19,12 +19,11 @@ const MAX_PER_PAGE = 40;
 /** A cursor not heard from in this long is gone; the page also hides it sooner. */
 const STALE_MS = 60_000;
 
-const ADJECTIVES = ["Amber", "Azure", "Coral", "Jade", "Indigo", "Teal", "Plum", "Saffron", "Slate", "Rose", "Olive", "Cobalt"];
-const ANIMALS = ["Otter", "Heron", "Fox", "Lynx", "Owl", "Ibex", "Wren", "Seal", "Hare", "Koi", "Moth", "Finch"];
+const EMOJI = ["🦊", "🐙", "🦉", "🐢", "🦄", "🐝", "🦋", "🐳", "🦔", "🐸", "🌵", "🍄", "🌻", "🚀", "🛸", "🎈", "🍩", "🧩", "🪐", "🐧"];
 /** Readable on white, distinct from one another. */
 const COLORS = ["#1d4f91", "#c2410c", "#047857", "#7c3aed", "#be185d", "#0e7490", "#a16207", "#4d7c0f", "#b91c1c", "#4338ca"];
 
-/** A stable small number from the session id, for its name and color. */
+/** A stable small number from the session id, for its emoji and color. */
 const hash = (text: string) => {
   let h = 2166136261;
   for (let i = 0; i < text.length; i++) h = Math.imul(h ^ text.charCodeAt(i), 16777619);
@@ -32,10 +31,7 @@ const hash = (text: string) => {
 };
 export const identityOf = (sessionId: string) => {
   const h = hash(sessionId);
-  return {
-    name: `${ADJECTIVES[h % ADJECTIVES.length]} ${ANIMALS[(h >>> 8) % ANIMALS.length]}`,
-    color: COLORS[(h >>> 16) % COLORS.length],
-  };
+  return { emoji: EMOJI[h % EMOJI.length], color: COLORS[(h >>> 8) % COLORS.length] };
 };
 
 const SESSION = /^[a-z0-9]{8,40}$/;
@@ -116,7 +112,7 @@ export const here = query({
   args: { page: v.string() },
   returns: v.object({
     cursors: v.array(
-      v.object({ sessionId: v.string(), name: v.string(), color: v.string(), x: v.number(), y: v.number(), updatedAt: v.number() }),
+      v.object({ sessionId: v.string(), emoji: v.string(), color: v.string(), x: v.number(), y: v.number(), updatedAt: v.number() }),
     ),
     clicks: v.array(v.object({ id: v.string(), sessionId: v.string(), color: v.string(), x: v.number(), y: v.number(), at: v.number() })),
   }),

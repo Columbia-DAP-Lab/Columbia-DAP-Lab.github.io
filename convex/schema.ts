@@ -447,7 +447,7 @@ export default defineSchema({
 
   /**
    * Live cursors on the public site (convex/presence.ts): one row per open
-   * tab, keyed by a random id the tab makes up. Anonymous: the name and color
+   * tab, keyed by a random id the tab makes up. Anonymous: the emoji and color
    * are derived from that id. Rows older than a minute are swept by a cron.
    */
   cursors: defineTable({

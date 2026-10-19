@@ -1,9 +1,9 @@
-// Live mode on the public site: the other visitors on this page, their cursors,
-// their clicks as a pop, and a faint trail behind each cursor that fades like a
-// wisp. A pill in the upper right turns it off (remembered in this browser).
+// Live mode on the public site: the other visitors on this page, each a cursor
+// with an emoji, a light trail behind it that fades after a moment, and a pop
+// (a ring, and the cursor itself bouncing) where they click. A pill in the upper right turns it off (remembered in this browser).
 //
 // Backed by Convex (convex/presence.ts). Visitors are anonymous: each tab makes
-// up a random id, and the server names and colors it from that. Positions are
+// up a random id, and the server picks its emoji and color from that. Positions are
 // pixels from the page's horizontal center and from the top of the document, so
 // a cursor lands on the same content in a wider or narrower window. Touch and
 // narrow screens show the count only. Nothing here runs on the admin page.
@@ -42,16 +42,19 @@
     .live-toggle .live-dot { width: 0.5rem; height: 0.5rem; border-radius: 50%; background: #b8c0cc; }
     .live-toggle[aria-pressed="true"] .live-dot { background: #16a34a; box-shadow: 0 0 0 3px rgba(22,163,74,0.18); }
     .live-layer { position: absolute; left: 0; top: 0; width: 100%; pointer-events: none; z-index: 1030; overflow: hidden; }
+    .live-trails { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; }
     .live-cursor { position: absolute; left: 0; top: 0; transition: transform 140ms linear; will-change: transform; }
-    .live-cursor svg { display: block; filter: drop-shadow(0 1px 1px rgba(0,0,0,0.25)); }
-    .live-name { position: absolute; left: 14px; top: 16px; padding: 2px 7px; border-radius: 999px; color: #fff;
-      font: 600 11px/1.4 system-ui, sans-serif; white-space: nowrap; }
-    .live-wisp { position: absolute; width: 6px; height: 6px; margin: -3px 0 0 -3px; border-radius: 50%;
-      filter: blur(1.5px); opacity: 0.22; animation: live-wisp 900ms ease-out forwards; }
-    @keyframes live-wisp { to { opacity: 0; transform: translateY(-6px) scale(2.2); } }
+    .live-body { transform-origin: 2px 2px; }
+    .live-body svg { display: block; filter: drop-shadow(0 1px 1px rgba(0,0,0,0.25)); }
+    .live-emoji { position: absolute; left: 13px; top: 13px; font-size: 16px; line-height: 1; }
+    .live-act { animation: live-act 520ms cubic-bezier(.3,1.6,.5,1); }
+    @keyframes live-act {
+      0% { transform: scale(1) rotate(0); } 25% { transform: scale(1.45) rotate(-14deg); }
+      55% { transform: scale(0.92) rotate(10deg); } 80% { transform: scale(1.06) rotate(-4deg); } 100% { transform: scale(1) rotate(0); } }
     .live-pop { position: absolute; width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 50%; border: 2px solid;
       animation: live-pop 650ms ease-out forwards; }
     @keyframes live-pop { from { opacity: 0.9; transform: scale(0.6); } to { opacity: 0; transform: scale(4); } }
+    @media (prefers-reduced-motion: reduce) { .live-act { animation: none; } }
     @media print { .live-toggle, .live-layer { display: none; } }
   `;
   document.head.append(style);
@@ -76,6 +79,10 @@
   const layer = document.createElement("div");
   layer.className = "live-layer";
   layer.setAttribute("aria-hidden", "true");
+  const SVG_NS = "http://www.w3.org/2000/svg";
+  const trails = document.createElementNS(SVG_NS, "svg");
+  trails.setAttribute("class", "live-trails");
+  layer.append(trails);
   const sizeLayer = () => (layer.style.height = `${document.documentElement.scrollHeight}px`);
   const center = () => document.documentElement.clientWidth / 2;
   const toPage = (x, y) => [center() + x, y];
@@ -87,20 +94,66 @@
   const popped = new Set(); // click ids already shown
   let clockOffset = 0; // server time minus this browser's time
 
-  const wisps = (from, to, color) => {
+  // A light trail: the last moments of each cursor's path, a thin line in its
+  // color that thins and fades out over TRAIL_MS. Points are added when the
+  // cursor arrives (after its 140 ms glide), so the line never runs ahead of it.
+  const TRAIL_MS = 1100;
+  const trailOf = new Map(); // sessionId -> { color, points: [{ x, y, t }], group }
+  let drawing = false;
+  const addTrailPoint = (id, x, y, color) => {
     if (reduceMotion) return;
-    const steps = Math.min(4, Math.max(1, Math.round(Math.hypot(to[0] - from[0], to[1] - from[1]) / 40)));
-    for (let i = 0; i < steps; i++) {
-      const t = (i + 0.5) / steps;
-      const dot = document.createElement("div");
-      dot.className = "live-wisp";
-      dot.style.background = color;
-      dot.style.left = `${from[0] + (to[0] - from[0]) * t + 2}px`;
-      dot.style.top = `${from[1] + (to[1] - from[1]) * t + 2}px`;
-      dot.style.animationDelay = `${Math.round(t * 120)}ms`;
-      layer.append(dot);
-      dot.addEventListener("animationend", () => dot.remove());
+    let trail = trailOf.get(id);
+    if (!trail) {
+      trail = { color, points: [], group: document.createElementNS(SVG_NS, "g") };
+      trails.append(trail.group);
+      trailOf.set(id, trail);
     }
+    setTimeout(() => {
+      trail.points.push({ x, y, t: performance.now() });
+      if (!drawing) {
+        drawing = true;
+        requestAnimationFrame(drawTrails);
+      }
+    }, 140);
+  };
+  const drawTrails = () => {
+    const now = performance.now();
+    let any = false;
+    for (const [id, trail] of trailOf) {
+      trail.points = trail.points.filter((p) => now - p.t < TRAIL_MS);
+      trail.group.replaceChildren();
+      for (let i = 1; i < trail.points.length; i++) {
+        const a = trail.points[i - 1];
+        const b = trail.points[i];
+        const life = 1 - (now - b.t) / TRAIL_MS; // 1 when fresh, 0 when gone
+        const line = document.createElementNS(SVG_NS, "line");
+        line.setAttribute("x1", a.x + 2);
+        line.setAttribute("y1", a.y + 2);
+        line.setAttribute("x2", b.x + 2);
+        line.setAttribute("y2", b.y + 2);
+        line.setAttribute("stroke", trail.color);
+        line.setAttribute("stroke-width", (0.8 + 2.2 * life).toFixed(2));
+        line.setAttribute("stroke-linecap", "round");
+        line.setAttribute("stroke-opacity", (0.38 * life).toFixed(3));
+        trail.group.append(line);
+      }
+      if (trail.points.length > 0) any = true;
+      else if (!shown.has(id)) {
+        trail.group.remove();
+        trailOf.delete(id);
+      }
+    }
+    if (any) requestAnimationFrame(drawTrails);
+    else drawing = false;
+  };
+
+  /** The cursor itself bounces when its visitor clicks. */
+  const act = (id) => {
+    const body = shown.get(id)?.node.querySelector(".live-body");
+    if (!body || reduceMotion) return;
+    body.classList.remove("live-act");
+    void body.offsetWidth; // restart the animation on a quick second click
+    body.classList.add("live-act");
   };
 
   const pop = (x, y, color) => {
@@ -133,12 +186,13 @@
       if (!entry) {
         const node = document.createElement("div");
         node.className = "live-cursor";
-        node.innerHTML = `${arrow(c.color)}<span class="live-name" style="background:${c.color}">${c.name}</span>`;
+        node.innerHTML = `<div class="live-body">${arrow(c.color)}<span class="live-emoji">${c.emoji}</span></div>`;
         layer.append(node);
         entry = { node, x, y };
         shown.set(c.sessionId, entry);
+        addTrailPoint(c.sessionId, x, y, c.color);
       } else if (entry.x !== x || entry.y !== y) {
-        wisps([entry.x, entry.y], [x, y], c.color);
+        addTrailPoint(c.sessionId, x, y, c.color);
       }
       entry.x = x;
       entry.y = y;
@@ -156,6 +210,7 @@
       if (click.sessionId === sessionId || now - click.at > CLICK_FRESH_MS) continue;
       const [x, y] = toPage(click.x, click.y);
       pop(x, y, click.color);
+      act(click.sessionId);
     }
   };
 
@@ -256,6 +311,8 @@
     }
     for (const { node } of shown.values()) node.remove();
     shown.clear();
+    for (const trail of trailOf.values()) trail.group.remove();
+    trailOf.clear();
     layer.remove();
     setLabel(0);
   };
