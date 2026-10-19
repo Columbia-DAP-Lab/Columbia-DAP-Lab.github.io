@@ -30,14 +30,14 @@ description: DAPLab develops the infrastructure needed to make AI agents safe, r
 
 <section class="section">
   <div class="section-header">
-    <h2 class="section-title" id="projects-page-title">Software</h2>
+    <h2 class="section-title" id="projects-page-title">All Projects and Software</h2>
   </div>
 
   <div class="projects-controls">
     <div class="chips" role="tablist" aria-label="Project categories">
-      <a href="{{ '/projects/' | relative_url }}?view=all"        class="chip view-toggle-btn" data-view="all"        role="tab" aria-selected="false">All</a>
+      <a href="{{ '/projects/' | relative_url }}?view=all"        class="chip view-toggle-btn active" data-view="all"        role="tab" aria-selected="true">All</a>
       <a href="{{ '/projects/' | relative_url }}?view=projects"   class="chip view-toggle-btn" data-view="projects"   role="tab" aria-selected="false">Projects</a>
-      <a href="{{ '/projects/' | relative_url }}?view=software"   class="chip view-toggle-btn active" data-view="software" role="tab" aria-selected="true">Software</a>
+      <a href="{{ '/projects/' | relative_url }}?view=software"   class="chip view-toggle-btn" data-view="software" role="tab" aria-selected="false">Software</a>
       <a href="{{ '/projects/' | relative_url }}?view=benchmarks" class="chip view-toggle-btn" data-view="benchmarks" role="tab" aria-selected="false">Benchmarks</a>
     </div>
     <div class="layout-toggle" role="group" aria-label="Layout">
@@ -232,7 +232,7 @@ const VIEW_ALL = 'all';
 const VIEW_PROJECTS = 'projects';
 const VIEW_SOFTWARE = 'software';
 const VIEW_BENCHMARKS = 'benchmarks';
-const DEFAULT_VIEW = VIEW_SOFTWARE;
+const DEFAULT_VIEW = VIEW_ALL;
 
 const VIEW_CONFIG = {
   [VIEW_ALL]:      { heading: 'All Projects and Software', docTitle: 'Projects and Software', metaDescription: 'Browse all DAPLab projects and software releases.',    noResultsTitle: 'No entries found',   noResultsEmpty: 'No projects or software in this category yet' },
