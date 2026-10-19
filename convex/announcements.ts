@@ -11,9 +11,9 @@ import { ADMIN_URL, escape, slackApi } from "./slack";
  * A cron (convex/crons.ts) runs `tick` every 15 minutes. For each published
  * event coming up (courses excepted: they meet all semester), it posts:
  *
- *   - a week before: the announcement, in SLACK_ANNOUNCE_CHANNEL, with the
- *     abstract's first two sentences; the full abstract and the speaker's bio
- *     follow as the first reply in its thread, for whoever wants to read on;
+ *   - a week before: the announcement, in SLACK_ANNOUNCE_CHANNEL: the abstract's
+ *     first paragraph in full, then the rest of it and the speakers' bios in the
+ *     same message, which Slack folds behind "See more" when long;
  *   - two days before: a reminder in the announcement's thread;
  *   - two hours before: a last reminder in the thread, also sent to the channel.
  *
@@ -142,42 +142,55 @@ const slackMarkdown = (markdown: string) =>
     .replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g, "<$2|$1>")
     .replace(/\*\*([^*]+)\*\*/g, "*$1*");
 
-const plain = (markdown: string) => markdown.replace(/\[([^\]]+)\]\([^)]+\)/g, "$1").replace(/[*_`#>]/g, "").replace(/\s+/g, " ").trim();
 
-/** The abstract's first two sentences, short enough to skim; "…" when more follows. */
-const teaser = (description: string | undefined) => {
-  const text = plain(description ?? "");
-  const sentences = text.match(/[^.!?]+[.!?]+(?=\s|$)/g) ?? [text];
-  let out = sentences.slice(0, 2).map((x) => x.trim()).join(" ");
-  if (out.length > 280) out = out.slice(0, 280).replace(/\s+\S*$/, "");
-  return out.length < text.length ? `${out.replace(/[.!?]?$/, "")}…` : out;
+/** Slack's limit is 3000 characters of text per section; split longer text at paragraphs. */
+const SECTION_LIMIT = 2900;
+const sections = (text: string): string[] => {
+  const out: string[] = [];
+  let current = "";
+  for (const paragraph of text.split("\n\n")) {
+    const piece = paragraph.length > SECTION_LIMIT ? `${paragraph.slice(0, SECTION_LIMIT - 1)}…` : paragraph;
+    if (current && current.length + piece.length + 2 > SECTION_LIMIT) {
+      out.push(current);
+      current = piece;
+    } else current = current ? `${current}\n\n${piece}` : piece;
+  }
+  if (current) out.push(current);
+  return out;
 };
 
-/** The full abstract and the speakers' bios, for the first reply in the thread; empty when the post already says it all. */
-const detailsText = (e: Upcoming) => {
-  const bios = e.speakers.filter((s) => s.bio?.trim());
-  const abstract = (e.description ?? "").trim();
-  const more = plain(abstract).length > teaser(abstract).replace(/…$/, "").length;
-  if (!more && bios.length === 0) return "";
-  return [
-    abstract && `*Abstract*\n${slackMarkdown(abstract)}`,
-    ...bios.map((s) => `*About ${escape(s.name)}*\n${slackMarkdown(s.bio!.trim())}`),
-  ]
-    .filter(Boolean)
-    .join("\n\n");
-};
-
-const announcementText = (e: Upcoming) => {
-  const details = `${EVENTS_URL}#${eventAnchor(e.startDate, e.title)}`;
-  return [
+/**
+ * The announcement, as Block Kit. The first section (title, speakers, when and
+ * where, and the abstract's first paragraph) is always shown in full; the rest
+ * of the abstract and the speakers' bios follow in sections of their own, which
+ * Slack folds behind "See more" when they are long. `text` is what
+ * notifications and screen readers get; `blocks` is the JSON chat.postMessage takes.
+ */
+const announcementMessage = (e: Upcoming) => {
+  const paragraphs = (e.description ?? "")
+    .trim()
+    .split(/\n\s*\n/)
+    .map((p) => p.trim())
+    .filter(Boolean);
+  const head = [
     `:mega: *${escape(e.title)}*${e.series ? ` · ${escape(e.series)}` : ""}`,
     speakerLine(e) && escape(speakerLine(e)),
     escape(whenLine(e)),
-    teaser(e.description) && `>${escape(teaser(e.description))}`,
-    `<${details}|Details on the DAPLab site>${detailsText(e) ? " · full abstract in the thread :thread:" : ""}`,
   ]
     .filter(Boolean)
     .join("\n");
+  const first = paragraphs[0] ? `\n\n${slackMarkdown(paragraphs[0])}` : "";
+  const rest = [
+    ...paragraphs.slice(1).map(slackMarkdown),
+    ...e.speakers.filter((s) => s.bio?.trim()).map((s) => `*About ${escape(s.name)}*\n${slackMarkdown(s.bio!.trim())}`),
+  ].join("\n\n");
+  const details = `${EVENTS_URL}#${eventAnchor(e.startDate, e.title)}`;
+  const blocks = [
+    { type: "section", expand: true, text: { type: "mrkdwn", text: sections(head + first)[0] } },
+    ...sections(rest).map((text) => ({ type: "section", text: { type: "mrkdwn", text } })),
+    { type: "context", elements: [{ type: "mrkdwn", text: `<${details}|Details on the DAPLab site>` }] },
+  ];
+  return { text: `${e.title}: ${whenLine(e)}`, blocks: JSON.stringify(blocks) };
 };
 
 const reminderText = (e: Upcoming) =>
@@ -404,17 +417,14 @@ export const tick = internalAction({
           continue;
         }
         if (left <= 0) continue;
-        const text = announcementText(e);
+        const message = announcementMessage(e);
+        // What was posted is remembered as its blocks, so any change to them shows as an edit.
+        const text = message.blocks;
         const a = e.announcement;
 
         if (a === null) {
           if (left > WEEK) continue;
-          const sent = await post({ channel, text, unfurl_links: "false" });
-          // The rest of the abstract, and the bio, as the thread's first reply.
-          const details = detailsText(e);
-          const detailsSent = details
-            ? await post({ channel, thread_ts: String(sent.ts), text: details, unfurl_links: "false" })
-            : null;
+          const sent = await post({ channel, ...message, unfurl_links: "false" });
           // Stages already due are folded into this announcement, not sent after it.
           await ctx.runMutation(internal.announcements.saveAnnouncement, {
             eventId: e.eventId,
@@ -424,7 +434,6 @@ export const tick = internalAction({
             text,
             reminderAt: left <= TWO_DAYS ? now : undefined,
             finalAt: finalDue ? now : undefined,
-            detailsTs: detailsSent ? String(detailsSent.ts) : undefined,
           });
           continue;
         }
@@ -442,13 +451,8 @@ export const tick = internalAction({
           });
         }
         if (a.text !== text) {
-          await slackApi(token, "chat.update", { channel: a.channel, ts: a.ts, text });
-          // Keep the thread's full abstract in step: edit it, or add it if there is now more to say.
-          const details = detailsText(e);
-          let detailsTs = a.detailsTs;
-          if (details && detailsTs) await slackApi(token, "chat.update", { channel: a.channel, ts: detailsTs, text: details });
-          else if (details) detailsTs = String((await post({ channel: a.channel, thread_ts: a.ts, text: details, unfurl_links: "false" })).ts);
-          await ctx.runMutation(internal.announcements.updateAnnouncement, { id: a._id, text, detailsTs });
+          await slackApi(token, "chat.update", { channel: a.channel, ts: a.ts, ...message });
+          await ctx.runMutation(internal.announcements.updateAnnouncement, { id: a._id, text });
         }
         if (reminderAt === undefined && left <= TWO_DAYS) {
           // Once the last reminder is due, it covers this one.
@@ -472,7 +476,28 @@ export const tick = internalAction({
     for (const a of gone) {
       try {
         await post({ channel: a.channel, thread_ts: a.ts, text: ":no_entry: This event has been cancelled." });
-        await slackApi(token, "chat.update", { channel: a.channel, ts: a.ts, text: `~Cancelled~\n${a.text}` });
+        // Announcements are remembered as their blocks; the oldest ones as plain text.
+        let blocks: unknown[] | null = null;
+        try {
+          blocks = JSON.parse(a.text) as unknown[];
+        } catch {
+          blocks = null;
+        }
+        await slackApi(
+          token,
+          "chat.update",
+          blocks
+            ? {
+                channel: a.channel,
+                ts: a.ts,
+                text: "Cancelled",
+                blocks: JSON.stringify([
+                  { type: "section", text: { type: "mrkdwn", text: ":no_entry: *Cancelled.*" } },
+                  ...blocks,
+                ]),
+              }
+            : { channel: a.channel, ts: a.ts, text: `~Cancelled~\n${a.text}` },
+        );
         await ctx.runMutation(internal.announcements.updateAnnouncement, { id: a._id, cancelledAt: now });
       } catch (error) {
         console.error("Event cancellation notice failed", error instanceof Error ? error.message : error);
@@ -526,12 +551,52 @@ export const preview = internalAction({
         reminder: e.announcement?.reminderAt ? "done" : when(at - TWO_DAYS),
         final: e.announcement?.finalAt ? "done" : when(at - TWO_HOURS),
         messages: {
-          announcement: announcementText(e),
-          details: detailsText(e) || null,
+          announcement: (JSON.parse(announcementMessage(e).blocks) as { type: string; text?: { text: string }; elements?: { text: string }[] }[])
+            .map((b, i) => (i === 1 ? "── Slack may fold below here (See more) ──\n" : "") + (b.text?.text ?? b.elements?.map((x) => x.text).join(" ") ?? ""))
+            .join("\n\n"),
           reminder: reminderText(e),
           final: finalText(e),
         },
       };
     });
+  },
+});
+
+/**
+ * DM someone an event's announcement exactly as it would be posted, to see how
+ * Slack shows it (where it folds) without announcing. The next upcoming event,
+ * or the most recent one whose title contains `title`:
+ *
+ *   npx convex run --prod announcements:sendPreview '{"email":"uni@columbia.edu"}'
+ */
+export const sendPreview = internalAction({
+  args: { email: v.string(), title: v.optional(v.string()) },
+  returns: v.string(),
+  handler: async (ctx, args): Promise<string> => {
+    const token = env.SLACK_BOT_TOKEN?.trim();
+    if (!token) return "No SLACK_BOT_TOKEN on this deployment.";
+    const now = Date.now();
+    const wanted = args.title?.toLowerCase();
+    const events: Upcoming[] = await ctx.runQuery(internal.announcements.upcoming, {
+      from: isoDay(wanted ? now - 365 * 24 * HOUR : now),
+      to: isoDay(now + 60 * 24 * HOUR),
+    });
+    const next = wanted
+      ? events.filter((e) => e.title.toLowerCase().includes(wanted)).sort((a, b) => b.startDate.localeCompare(a.startDate))[0]
+      : events
+          .filter((e) => startOf(e).hasTime && startOf(e).at > now)
+          .sort((a, b) => startOf(a).at - startOf(b).at)[0];
+    if (!next) return "No upcoming event with a readable time to preview.";
+    const found = (await slackApi(token, "users.lookupByEmail", { email: args.email })) as { user?: { id?: string } };
+    if (!found.user?.id) return `No Slack user with ${args.email}.`;
+    const dm = (await slackApi(token, "conversations.open", { users: found.user.id })) as { channel?: { id?: string } };
+    if (!dm.channel?.id) return "Could not open a DM.";
+    await slackApi(token, "chat.postMessage", {
+      channel: dm.channel.id,
+      text: `Preview of the announcement for ${next.title}`,
+      unfurl_links: "false",
+    });
+    await slackApi(token, "chat.postMessage", { channel: dm.channel.id, ...announcementMessage(next), unfurl_links: "false" });
+    return `Sent the announcement for "${next.title}" to ${args.email}.`;
   },
 });
