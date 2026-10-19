@@ -453,10 +453,13 @@ export default defineSchema({
   cursors: defineTable({
     page: v.string(),
     sessionId: v.string(),
-    /** Pixels from the page's horizontal center, so wide and narrow windows line up. */
-    x: v.number(),
+    /** Pixels from the page's horizontal center, so wide and narrow windows line up; absent until the mouse moves. */
+    x: v.optional(v.number()),
     /** Pixels from the top of the document. */
-    y: v.number(),
+    y: v.optional(v.number()),
+    /** When the mouse last moved; the page dims a cursor that has gone still. */
+    movedAt: v.optional(v.number()),
+    /** Last heard from: a move, or the heartbeat every page sends while open. */
     updatedAt: v.number(),
   })
     .index("by_sessionId", ["sessionId"])

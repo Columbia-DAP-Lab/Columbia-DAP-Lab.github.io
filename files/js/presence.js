@@ -5,8 +5,10 @@
 // Backed by Convex (convex/presence.ts). Visitors are anonymous: each tab makes
 // up a random id, and the server picks its emoji and color from that. Positions are
 // pixels from the page's horizontal center and from the top of the document, so
-// a cursor lands on the same content in a wider or narrower window. Touch and
-// narrow screens show the count only. Nothing here runs on the admin page.
+// a cursor lands on the same content in a wider or narrower window. Every open
+// page checks in every few seconds, so still readers, phones and narrow windows
+// are counted; cursors are drawn in windows at least 600px wide, and a cursor
+// gone still is dimmed. Nothing here runs on the admin page.
 (() => {
   const root = document.currentScript;
   const CONVEX_URL = root?.dataset.convexUrl;
@@ -16,11 +18,16 @@
 
   const STORAGE_KEY = "daplab-live";
   const SEND_EVERY_MS = 120;
-  const QUIET_MS = 15_000; // a cursor not heard from in this long is hidden
+  const HEARTBEAT_MS = 10_000; // an open page checks in this often, moving or not
+  const PRESENT_MS = 30_000; // a visitor not heard from in this long has left
+  const STILL_MS = 15_000; // a cursor that has not moved in this long is dimmed
   const CLICK_FRESH_MS = 2500; // only clicks this recent pop
   const page = location.pathname;
   const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const canPoint = () => matchMedia("(pointer: fine)").matches && innerWidth >= 900;
+  /** This visitor has a mouse to share. */
+  const canPoint = () => matchMedia("(pointer: fine)").matches;
+  /** This window is wide enough to draw the others' cursors usefully. */
+  const canDraw = () => innerWidth >= 600;
 
   const sessionId = (() => {
     const existing = sessionStorage.getItem("daplab-live-session");
@@ -170,9 +177,9 @@
   let latest = { cursors: [], clicks: [] };
   const render = () => {
     const now = Date.now() + clockOffset;
-    const others = latest.cursors.filter((c) => c.sessionId !== sessionId && now - c.updatedAt < QUIET_MS);
+    const others = latest.cursors.filter((c) => c.sessionId !== sessionId && now - c.updatedAt < PRESENT_MS);
     setLabel(others.length + 1);
-    if (!canPoint()) {
+    if (!canDraw()) {
       for (const { node } of shown.values()) node.remove();
       shown.clear();
       return;
@@ -180,6 +187,7 @@
     sizeLayer();
     const seen = new Set();
     for (const c of others) {
+      if (c.x === undefined || c.y === undefined) continue; // here, but no mouse yet
       seen.add(c.sessionId);
       const [x, y] = toPage(c.x, c.y);
       let entry = shown.get(c.sessionId);
@@ -197,6 +205,7 @@
       entry.x = x;
       entry.y = y;
       entry.node.style.transform = `translate(${x}px, ${y}px)`;
+      entry.node.style.opacity = c.movedAt !== undefined && now - c.movedAt > STILL_MS ? "0.35" : "1";
     }
     for (const [id, entry] of shown) {
       if (!seen.has(id)) {
@@ -224,6 +233,7 @@
   let lastSent = 0;
   let timer = null;
   let ticker = null;
+  let heartbeatTimer = null;
 
   const loadBundle = () =>
     window.convex
@@ -268,8 +278,18 @@
     if (!client || !canPoint()) return;
     client.mutation(api.click, { page, sessionId, x: event.pageX - center(), y: event.pageY }).catch(() => {});
   };
+  /** Check in, with no position: counts this visitor even when the mouse is still. */
+  const heartbeat = () => {
+    if (!client || document.visibilityState !== "visible") return;
+    client
+      .mutation(api.move, { page, sessionId })
+      .then((serverNow) => (clockOffset = serverNow - Date.now()))
+      .catch(() => {});
+  };
   const onHide = () => {
-    if (client && document.visibilityState === "hidden") client.mutation(api.leave, { sessionId }).catch(() => {});
+    if (!client) return;
+    if (document.visibilityState === "hidden") client.mutation(api.leave, { sessionId }).catch(() => {});
+    else heartbeat();
   };
 
   const start = async () => {
@@ -290,7 +310,9 @@
     addEventListener("pointerdown", onDown, { passive: true });
     addEventListener("pagehide", onHide);
     document.addEventListener("visibilitychange", onHide);
-    ticker = setInterval(render, 2000); // hide cursors that go quiet between updates
+    heartbeat();
+    heartbeatTimer = setInterval(heartbeat, HEARTBEAT_MS);
+    ticker = setInterval(render, 2000); // dim and drop cursors that go quiet between updates
   };
 
   const stop = () => {
@@ -299,6 +321,7 @@
     removeEventListener("pagehide", onHide);
     document.removeEventListener("visibilitychange", onHide);
     clearInterval(ticker);
+    clearInterval(heartbeatTimer);
     clearTimeout(timer);
     timer = null;
     pending = null;

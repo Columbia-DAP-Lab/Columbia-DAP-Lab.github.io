@@ -41,23 +41,33 @@ const clampY = (y: number) => Math.max(0, Math.min(200_000, Math.round(y)));
 
 const point = { page: v.string(), sessionId: v.string(), x: v.number(), y: v.number() };
 
-/** Where this tab's mouse is. Returns the server's clock, so the page can tell how fresh others are. */
+/**
+ * This tab is here, and (with x and y) where its mouse is. The page calls it as
+ * the mouse moves, and every few seconds while open as a heartbeat (without
+ * a position when there is no mouse), so still and touch visitors count too.
+ * Returns the server's clock, so the page can tell how fresh others are.
+ */
 export const move = mutation({
-  args: point,
+  args: { page: v.string(), sessionId: v.string(), x: v.optional(v.number()), y: v.optional(v.number()) },
   returns: v.number(),
   handler: async (ctx, args) => {
     const now = Date.now();
-    if (!SESSION.test(args.sessionId) || !validPage(args.page) || !Number.isFinite(args.x) || !Number.isFinite(args.y)) {
-      return now;
-    }
+    if (!SESSION.test(args.sessionId) || !validPage(args.page)) return now;
+    const moved = args.x !== undefined && args.y !== undefined && Number.isFinite(args.x) && Number.isFinite(args.y);
     const existing = await ctx.db
       .query("cursors")
       .withIndex("by_sessionId", (q) => q.eq("sessionId", args.sessionId))
       .unique();
-    const fields = { page: args.page, x: clampX(args.x), y: clampY(args.y), updatedAt: now };
+    const fields = {
+      page: args.page,
+      updatedAt: now,
+      ...(moved ? { x: clampX(args.x!), y: clampY(args.y!), movedAt: now } : {}),
+    };
     if (existing !== null) {
       if (existing.page === args.page && now - existing.updatedAt < MIN_INTERVAL_MS) return now;
-      await ctx.db.patch("cursors", existing._id, fields);
+      // A heartbeat from a new page drops the position from the old one.
+      const leftPage = existing.page !== args.page && !moved ? { x: undefined, y: undefined, movedAt: undefined } : {};
+      await ctx.db.patch("cursors", existing._id, { ...leftPage, ...fields });
       return now;
     }
     const onPage = await ctx.db
@@ -112,7 +122,15 @@ export const here = query({
   args: { page: v.string() },
   returns: v.object({
     cursors: v.array(
-      v.object({ sessionId: v.string(), emoji: v.string(), color: v.string(), x: v.number(), y: v.number(), updatedAt: v.number() }),
+      v.object({
+        sessionId: v.string(),
+        emoji: v.string(),
+        color: v.string(),
+        x: v.optional(v.number()),
+        y: v.optional(v.number()),
+        movedAt: v.optional(v.number()),
+        updatedAt: v.number(),
+      }),
     ),
     clicks: v.array(v.object({ id: v.string(), sessionId: v.string(), color: v.string(), x: v.number(), y: v.number(), at: v.number() })),
   }),
@@ -129,7 +147,14 @@ export const here = query({
       .order("desc")
       .take(20);
     return {
-      cursors: cursors.map((c) => ({ sessionId: c.sessionId, ...identityOf(c.sessionId), x: c.x, y: c.y, updatedAt: c.updatedAt })),
+      cursors: cursors.map((c) => ({
+        sessionId: c.sessionId,
+        ...identityOf(c.sessionId),
+        x: c.x,
+        y: c.y,
+        movedAt: c.movedAt,
+        updatedAt: c.updatedAt,
+      })),
       clicks: clicks.map((c) => ({ id: c._id, sessionId: c.sessionId, color: identityOf(c.sessionId).color, x: c.x, y: c.y, at: c.at })),
     };
   },
