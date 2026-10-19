@@ -186,24 +186,33 @@ const announcementMessage = (e: Upcoming) => {
     .split(/\n\s*\n/)
     .map((p) => p.trim())
     .filter(Boolean);
+  // The title links to the event on /events.
+  const details = `${EVENTS_URL}#${eventAnchor(e.startDate, e.title)}`;
   const head = [
-    `:mega: *${escape(e.title)}*${e.series ? ` · ${escape(e.series)}` : ""}`,
+    `:mega: *<${details}|${escape(e.title)}>*${e.series ? ` · ${escape(e.series)}` : ""}`,
     speakerLine(e) && escape(speakerLine(e)),
     escape(whenLine(e)),
   ]
     .filter(Boolean)
     .join("\n");
   const first = paragraphs[0] ? `\n\n${slackMarkdown(paragraphs[0])}` : "";
-  const details = `${EVENTS_URL}#${eventAnchor(e.startDate, e.title)}`;
+  // Say what Show more holds, so the button is not missed.
+  const hasRest = paragraphs.length > 1;
+  const bios = e.speakers.filter((s) => s.bio?.trim()).length;
+  const holds = [hasRest && "the full abstract", bios > 0 && (bios === 1 ? "the speaker's bio" : "the speakers' bios")]
+    .filter(Boolean)
+    .join(" and ");
   const blocks = [
     { type: "section", expand: true, text: { type: "mrkdwn", text: sections(head + first)[0] } },
     ...(moreText(e)
       ? [
+          { type: "section", text: { type: "mrkdwn", text: `:point_down: Click *Show more* for ${holds}.` } },
           {
             type: "actions",
             elements: [
               {
                 type: "button",
+                style: "primary",
                 action_id: "announce_more",
                 text: { type: "plain_text", text: "Show more" },
                 value: e.eventId,
@@ -212,7 +221,6 @@ const announcementMessage = (e: Upcoming) => {
           },
         ]
       : []),
-    { type: "context", elements: [{ type: "mrkdwn", text: `<${details}|Details on the DAPLab site>` }] },
   ];
   return { text: `${e.title}: ${whenLine(e)}`, blocks: JSON.stringify(blocks) };
 };
