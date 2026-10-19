@@ -1,9 +1,8 @@
 // Live mode on the public site: the other visitors on this page, each a cursor
-// with an emoji, a light trail behind it that fades after a moment, and a pop
-// (a ring, and the cursor itself bouncing) where they click. While someone holds
-// the button, their cursor shows pressed and a dashed line runs from where the
-// drag began. With reduced motion there is no trail or bounce: a click briefly
-// shows the pressed cursor and a still ring instead. A pill in the upper right turns it off (remembered in this browser).
+// with an emoji, and a circle that clicks where they click (a press, then a
+// release). While someone holds the button, their cursor shows pressed and a
+// dashed line runs from where the drag began. With reduced motion the cursors
+// do not glide, and the click is its press and release in two still steps. A pill in the upper right turns it off (remembered in this browser).
 //
 // Backed by Convex (convex/presence.ts). Visitors are anonymous: each tab makes
 // up a random id, and the server picks its emoji and color from that. Positions are
@@ -52,15 +51,11 @@
     .live-toggle .live-dot { width: 0.5rem; height: 0.5rem; border-radius: 50%; background: #b8c0cc; }
     .live-toggle[aria-pressed="true"] .live-dot { background: #16a34a; box-shadow: 0 0 0 3px rgba(22,163,74,0.18); }
     .live-layer { position: absolute; left: 0; top: 0; width: 100%; pointer-events: none; z-index: 1030; overflow: hidden; }
-    .live-trails { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; }
+    .live-lines { position: absolute; left: 0; top: 0; width: 100%; height: 100%; overflow: visible; }
     .live-cursor { position: absolute; left: 0; top: 0; transition: transform 140ms linear; will-change: transform; }
     .live-body { transform-origin: 2px 2px; }
     .live-body svg { display: block; filter: drop-shadow(0 1px 1px rgba(0,0,0,0.25)); }
     .live-emoji { position: absolute; left: 13px; top: 13px; font-size: 16px; line-height: 1; }
-    .live-act { animation: live-act 520ms cubic-bezier(.3,1.6,.5,1); }
-    @keyframes live-act {
-      0% { transform: scale(1) rotate(0); } 25% { transform: scale(1.45) rotate(-14deg); }
-      55% { transform: scale(0.92) rotate(10deg); } 80% { transform: scale(1.06) rotate(-4deg); } 100% { transform: scale(1) rotate(0); } }
     .live-pop { position: absolute; width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 50%; border: 2px solid var(--c);
       animation: live-pop 560ms cubic-bezier(.2,.7,.3,1) forwards; }
     /* A press (a small filled dot), then the release spreading out as a ring. */
@@ -72,7 +67,7 @@
     .live-press-dot { display: none; }
     .live-pressed .live-press-dot { display: inline; }
     .live-pressed path { transform: scale(0.86); transform-origin: 1px 1px; }
-    @media (prefers-reduced-motion: reduce) { .live-act { animation: none; } .live-cursor { transition: none; } }
+    @media (prefers-reduced-motion: reduce) { .live-cursor { transition: none; } }
     @media print { .live-toggle, .live-layer { display: none; } }
   `;
   document.head.append(style);
@@ -98,9 +93,10 @@
   layer.className = "live-layer";
   layer.setAttribute("aria-hidden", "true");
   const SVG_NS = "http://www.w3.org/2000/svg";
-  const trails = document.createElementNS(SVG_NS, "svg");
-  trails.setAttribute("class", "live-trails");
-  layer.append(trails);
+  // Drag lines are drawn here, under the cursors.
+  const lines = document.createElementNS(SVG_NS, "svg");
+  lines.setAttribute("class", "live-lines");
+  layer.append(lines);
   const sizeLayer = () => (layer.style.height = `${document.documentElement.scrollHeight}px`);
   const center = () => document.documentElement.clientWidth / 2;
   const toPage = (x, y) => [center() + x, y];
@@ -114,79 +110,6 @@
   const shown = new Map(); // sessionId -> { node, x, y }
   const popped = new Set(); // click ids already shown
   let clockOffset = 0; // server time minus this browser's time
-
-  // A light trail: the last moments of each cursor's path, a thin line in its
-  // color that thins and fades out over TRAIL_MS. Points are added when the
-  // cursor arrives (after its 140 ms glide), so the line never runs ahead of it.
-  const TRAIL_MS = 1100;
-  const trailOf = new Map(); // sessionId -> { color, points: [{ x, y, t }], group }
-  let drawing = false;
-  const addTrailPoint = (id, x, y, color) => {
-    if (reduceMotion) return;
-    let trail = trailOf.get(id);
-    if (!trail) {
-      trail = { color, points: [], group: document.createElementNS(SVG_NS, "g") };
-      trails.append(trail.group);
-      trailOf.set(id, trail);
-    }
-    setTimeout(() => {
-      trail.points.push({ x, y, t: performance.now() });
-      if (!drawing) {
-        drawing = true;
-        requestAnimationFrame(drawTrails);
-      }
-    }, 140);
-  };
-  const drawTrails = () => {
-    const now = performance.now();
-    let any = false;
-    for (const [id, trail] of trailOf) {
-      trail.points = trail.points.filter((p) => now - p.t < TRAIL_MS);
-      trail.group.replaceChildren();
-      for (let i = 1; i < trail.points.length; i++) {
-        const a = trail.points[i - 1];
-        const b = trail.points[i];
-        const life = 1 - (now - b.t) / TRAIL_MS; // 1 when fresh, 0 when gone
-        const line = document.createElementNS(SVG_NS, "line");
-        line.setAttribute("x1", a.x + 2);
-        line.setAttribute("y1", a.y + 2);
-        line.setAttribute("x2", b.x + 2);
-        line.setAttribute("y2", b.y + 2);
-        line.setAttribute("stroke", trail.color);
-        // Bolder while the button is held, so a drag reads as one.
-        const boost = trail.pressed ? 1.7 : 1;
-        line.setAttribute("stroke-width", ((0.8 + 2.2 * life) * boost).toFixed(2));
-        line.setAttribute("stroke-linecap", "round");
-        line.setAttribute("stroke-opacity", Math.min(0.75, 0.38 * life * boost).toFixed(3));
-        trail.group.append(line);
-      }
-      if (trail.points.length > 0) any = true;
-      else if (!shown.has(id)) {
-        trail.group.remove();
-        trailOf.delete(id);
-      }
-    }
-    if (any) requestAnimationFrame(drawTrails);
-    else drawing = false;
-  };
-
-  /** The cursor itself bounces when its visitor clicks. */
-  const act = (id) => {
-    const entry = shown.get(id);
-    const body = entry?.node.querySelector(".live-body");
-    if (!body) return;
-    if (reduceMotion) {
-      // No motion: show the pressed cursor for a moment instead.
-      body.classList.add("live-pressed");
-      clearTimeout(entry.flash);
-      // Down with the press, up with the release (pop's two steps).
-      entry.flash = setTimeout(() => body.classList.toggle("live-pressed", Boolean(entry.pressed)), 120);
-      return;
-    }
-    body.classList.remove("live-act");
-    void body.offsetWidth; // restart the animation on a quick second click
-    body.classList.add("live-act");
-  };
 
   const pop = (x, y, color) => {
     const ring = document.createElement("div");
@@ -233,9 +156,6 @@
         layer.append(node);
         entry = { node, x, y };
         shown.set(c.sessionId, entry);
-        addTrailPoint(c.sessionId, x, y, c.color);
-      } else if (entry.x !== x || entry.y !== y) {
-        addTrailPoint(c.sessionId, x, y, c.color);
       }
       entry.x = x;
       entry.y = y;
@@ -245,8 +165,6 @@
       if (pressed && !entry.pressed) entry.dragStart = [x, y];
       entry.pressed = pressed;
       entry.node.querySelector(".live-body").classList.toggle("live-pressed", pressed);
-      const trail = trailOf.get(c.sessionId);
-      if (trail) trail.pressed = pressed;
       if (pressed) {
         if (!entry.dragLine) {
           entry.dragLine = document.createElementNS(SVG_NS, "line");
@@ -254,7 +172,7 @@
           entry.dragLine.setAttribute("stroke-width", "1.5");
           entry.dragLine.setAttribute("stroke-dasharray", "4 4");
           entry.dragLine.setAttribute("stroke-opacity", "0.55");
-          trails.append(entry.dragLine);
+          lines.append(entry.dragLine);
         }
         entry.dragLine.setAttribute("x1", entry.dragStart[0] + 1);
         entry.dragLine.setAttribute("y1", entry.dragStart[1] + 1);
@@ -279,7 +197,6 @@
       if (click.sessionId === sessionId || now - click.at > CLICK_FRESH_MS) continue;
       const [x, y] = toPage(click.x, click.y);
       pop(x, y, click.color);
-      act(click.sessionId);
     }
   };
 
@@ -416,8 +333,6 @@
       dragLine?.remove();
     }
     shown.clear();
-    for (const trail of trailOf.values()) trail.group.remove();
-    trailOf.clear();
     layer.remove();
     setLabel(0);
   };
