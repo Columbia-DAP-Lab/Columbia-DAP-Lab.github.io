@@ -1,7 +1,8 @@
 import { v } from "convex/values";
 import { internal } from "./_generated/api";
 import { env, internalAction, internalMutation, internalQuery } from "./_generated/server";
-import type { Id } from "./_generated/dataModel";
+import type { Doc, Id } from "./_generated/dataModel";
+import type { QueryCtx } from "./_generated/server";
 import { grantedCapabilities } from "./authz";
 import { ADMIN_URL, escape, slackApi } from "./slack";
 
@@ -11,9 +12,9 @@ import { ADMIN_URL, escape, slackApi } from "./slack";
  * A cron (convex/crons.ts) runs `tick` every 15 minutes. For each published
  * event coming up (courses excepted: they meet all semester), it posts:
  *
- *   - a week before: the announcement, in SLACK_ANNOUNCE_CHANNEL: the abstract's
- *     first paragraph in full, then the rest of it and the speakers' bios in the
- *     same message, which Slack folds behind "See more" when long;
+ *   - a week before: the announcement, in SLACK_ANNOUNCE_CHANNEL, with the
+ *     abstract's first paragraph and a Show more button that shows the rest of
+ *     it and the speakers' bios to whoever clicks, privately;
  *   - two days before: a reminder in the announcement's thread;
  *   - two hours before: a last reminder in the thread, also sent to the channel.
  *
@@ -159,12 +160,25 @@ const sections = (text: string): string[] => {
   return out;
 };
 
+/** The rest of the abstract after its first paragraph, and the speakers' bios, as Slack text. */
+const moreText = (e: Upcoming) => {
+  const paragraphs = (e.description ?? "")
+    .trim()
+    .split(/\n\s*\n/)
+    .map((p) => p.trim())
+    .filter(Boolean);
+  return [
+    ...paragraphs.slice(1).map(slackMarkdown),
+    ...e.speakers.filter((s) => s.bio?.trim()).map((s) => `*About ${escape(s.name)}*\n${slackMarkdown(s.bio!.trim())}`),
+  ].join("\n\n");
+};
+
 /**
- * The announcement, as Block Kit. The first section (title, speakers, when and
- * where, and the abstract's first paragraph) is always shown in full; the rest
- * of the abstract and the speakers' bios follow in sections of their own, which
- * Slack folds behind "See more" when they are long. `text` is what
- * notifications and screen readers get; `blocks` is the JSON chat.postMessage takes.
+ * The announcement, as Block Kit: title, speakers, when and where, and the
+ * abstract's first paragraph; then, when there is more (the rest of the
+ * abstract, the speakers' bios), a Show more button that shows it to whoever
+ * clicks, privately (showMore). Slack does not fold a long message by itself.
+ * `text` is what notifications and screen readers get.
  */
 const announcementMessage = (e: Upcoming) => {
   const paragraphs = (e.description ?? "")
@@ -180,14 +194,24 @@ const announcementMessage = (e: Upcoming) => {
     .filter(Boolean)
     .join("\n");
   const first = paragraphs[0] ? `\n\n${slackMarkdown(paragraphs[0])}` : "";
-  const rest = [
-    ...paragraphs.slice(1).map(slackMarkdown),
-    ...e.speakers.filter((s) => s.bio?.trim()).map((s) => `*About ${escape(s.name)}*\n${slackMarkdown(s.bio!.trim())}`),
-  ].join("\n\n");
   const details = `${EVENTS_URL}#${eventAnchor(e.startDate, e.title)}`;
   const blocks = [
     { type: "section", expand: true, text: { type: "mrkdwn", text: sections(head + first)[0] } },
-    ...sections(rest).map((text) => ({ type: "section", text: { type: "mrkdwn", text } })),
+    ...(moreText(e)
+      ? [
+          {
+            type: "actions",
+            elements: [
+              {
+                type: "button",
+                action_id: "announce_more",
+                text: { type: "plain_text", text: "Show more" },
+                value: e.eventId,
+              },
+            ],
+          },
+        ]
+      : []),
     { type: "context", elements: [{ type: "mrkdwn", text: `<${details}|Details on the DAPLab site>` }] },
   ];
   return { text: `${e.title}: ${whenLine(e)}`, blocks: JSON.stringify(blocks) };
@@ -210,6 +234,57 @@ const issueText = (e: Upcoming) =>
 
 // -------------------------------------------------------------------- data
 
+/** An event with what an announcement needs: speakers, series label, any announcement. */
+const loadUpcoming = async (ctx: QueryCtx, e: Doc<"events">): Promise<Upcoming> => {
+  const [speakers, series, announcement] = await Promise.all([
+    ctx.db
+      .query("eventSpeakers")
+      .withIndex("by_eventId_and_position", (q) => q.eq("eventId", e._id))
+      .take(20),
+    ctx.db
+      .query("eventSeries")
+      .withIndex("by_slug", (q) => q.eq("slug", e.series))
+      .unique(),
+    ctx.db
+      .query("eventAnnouncements")
+      .withIndex("by_eventId", (q) => q.eq("eventId", e._id))
+      .unique(),
+  ]);
+  return {
+    eventId: e._id,
+    title: e.title,
+    startDate: e.startDate,
+    timeLabel: e.timeLabel,
+    location: e.location,
+    description: e.description,
+    link: e.link,
+    series: series?.label && series.slug !== "other" ? series.label : "",
+    speakers: speakers.map((s) => ({ name: s.name, affiliation: s.affiliation, bio: s.bio })),
+    announcement: announcement && {
+      _id: announcement._id,
+      channel: announcement.channel,
+      ts: announcement.ts,
+      reminderAt: announcement.reminderAt,
+      finalAt: announcement.finalAt,
+      startsAt: announcement.startsAt,
+      text: announcement.text,
+      detailsTs: announcement.detailsTs,
+    },
+  };
+};
+
+/** One published event, for the Show more button; its id comes back from Slack, so it is checked. */
+export const forEvent = internalQuery({
+  args: { eventId: v.string() },
+  returns: v.any(),
+  handler: async (ctx, args): Promise<Upcoming | null> => {
+    const id = ctx.db.normalizeId("events", args.eventId);
+    const e = id === null ? null : await ctx.db.get("events", id);
+    if (e === null || e.status !== "published") return null;
+    return await loadUpcoming(ctx, e);
+  },
+});
+
 /** Published events between two dates, with their speakers and any announcement. */
 export const upcoming = internalQuery({
   args: { from: v.string(), to: v.string() },
@@ -224,41 +299,7 @@ export const upcoming = internalQuery({
     const out: Upcoming[] = [];
     for (const e of events) {
       if (e.series === "course") continue;
-      const [speakers, series, announcement] = await Promise.all([
-        ctx.db
-          .query("eventSpeakers")
-          .withIndex("by_eventId_and_position", (q) => q.eq("eventId", e._id))
-          .take(20),
-        ctx.db
-          .query("eventSeries")
-          .withIndex("by_slug", (q) => q.eq("slug", e.series))
-          .unique(),
-        ctx.db
-          .query("eventAnnouncements")
-          .withIndex("by_eventId", (q) => q.eq("eventId", e._id))
-          .unique(),
-      ]);
-      out.push({
-        eventId: e._id,
-        title: e.title,
-        startDate: e.startDate,
-        timeLabel: e.timeLabel,
-        location: e.location,
-        description: e.description,
-        link: e.link,
-        series: series?.label && series.slug !== "other" ? series.label : "",
-        speakers: speakers.map((s) => ({ name: s.name, affiliation: s.affiliation, bio: s.bio })),
-        announcement: announcement && {
-          _id: announcement._id,
-          channel: announcement.channel,
-          ts: announcement.ts,
-          reminderAt: announcement.reminderAt,
-          finalAt: announcement.finalAt,
-          startsAt: announcement.startsAt,
-          text: announcement.text,
-          detailsTs: announcement.detailsTs,
-        },
-      });
+      out.push(await loadUpcoming(ctx, e));
     }
     return out;
   },
@@ -551,9 +592,14 @@ export const preview = internalAction({
         reminder: e.announcement?.reminderAt ? "done" : when(at - TWO_DAYS),
         final: e.announcement?.finalAt ? "done" : when(at - TWO_HOURS),
         messages: {
-          announcement: (JSON.parse(announcementMessage(e).blocks) as { type: string; text?: { text: string }; elements?: { text: string }[] }[])
-            .map((b, i) => (i === 1 ? "── Slack may fold below here (See more) ──\n" : "") + (b.text?.text ?? b.elements?.map((x) => x.text).join(" ") ?? ""))
+          announcement: (JSON.parse(announcementMessage(e).blocks) as { type: string; text?: { text: string }; elements?: { text: { text?: string } | string }[] }[])
+            .map((b) =>
+              b.type === "actions"
+                ? "[Show more]"
+                : (b.text?.text ?? b.elements?.map((x) => (typeof x.text === "string" ? x.text : x.text.text)).join(" ") ?? ""),
+            )
             .join("\n\n"),
+          showMore: moreText(e) || null,
           reminder: reminderText(e),
           final: finalText(e),
         },
@@ -598,5 +644,37 @@ export const sendPreview = internalAction({
     });
     await slackApi(token, "chat.postMessage", { channel: dm.channel.id, ...announcementMessage(next), unfurl_links: "false" });
     return `Sent the announcement for "${next.title}" to ${args.email}.`;
+  },
+});
+
+/**
+ * The Show more button (/slack/interactions): the rest of the abstract and the
+ * speakers' bios, posted for the clicker alone ("Only visible to you").
+ */
+export const showMore = internalAction({
+  args: { eventId: v.string(), channel: v.string(), user: v.string(), threadTs: v.optional(v.string()) },
+  returns: v.null(),
+  handler: async (ctx, args): Promise<null> => {
+    const token = env.SLACK_BOT_TOKEN?.trim();
+    if (!token) return null;
+    const e: Upcoming | null = await ctx.runQuery(internal.announcements.forEvent, { eventId: args.eventId });
+    const more = e ? moreText(e) : "";
+    const blocks = e
+      ? [
+          { type: "section", text: { type: "mrkdwn", text: `*${escape(e.title)}*` } },
+          ...sections(more || "There is nothing more about this event.").map((text) => ({
+            type: "section",
+            text: { type: "mrkdwn", text },
+          })),
+        ]
+      : [{ type: "section", text: { type: "mrkdwn", text: "That event is no longer on the site." } }];
+    await slackApi(token, "chat.postEphemeral", {
+      channel: args.channel,
+      user: args.user,
+      thread_ts: args.threadTs,
+      text: e ? `More about ${e.title}` : "That event is no longer on the site.",
+      blocks: JSON.stringify(blocks),
+    });
+    return null;
   },
 });
