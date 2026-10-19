@@ -12,9 +12,8 @@ import { ADMIN_URL, escape, slackApi } from "./slack";
  * A cron (convex/crons.ts) runs `tick` every 15 minutes. For each published
  * event coming up (courses excepted: they meet all semester), it posts:
  *
- *   - a week before: the announcement, in SLACK_ANNOUNCE_CHANNEL, with the
- *     abstract's first paragraph and a Show more button that shows the rest of
- *     it and the speakers' bios to whoever clicks, privately;
+ *   - a week before: the announcement, in SLACK_ANNOUNCE_CHANNEL, as a card
+ *     that Slack folds after about five lines behind its own "Show more";
  *   - two days before: a reminder in the announcement's thread;
  *   - two hours before: a last reminder in the thread, also sent to the channel.
  *
@@ -174,19 +173,15 @@ const moreText = (e: Upcoming) => {
 };
 
 /**
- * The announcement, as Block Kit: title, speakers, when and where, and the
- * abstract's first paragraph; then, when there is more (the rest of the
- * abstract, the speakers' bios), a Show more button that shows it to whoever
- * clicks, privately (showMore). Slack does not fold a long message by itself.
- * `text` is what notifications and screen readers get.
+ * The announcement, as a message attachment: a card with the title (linked to
+ * the event on /events), series, speakers, when and where, then the whole
+ * abstract and the speakers' bios. Slack folds a long attachment by itself
+ * after about five lines, behind its own "Show more", which expands in place
+ * for whoever clicks; Block Kit sections are never folded. The fields are the
+ * chat.postMessage / chat.update parameters; `text` stays empty so nothing
+ * repeats above the card, and `fallback` is what notifications show.
  */
 const announcementMessage = (e: Upcoming) => {
-  const paragraphs = (e.description ?? "")
-    .trim()
-    .split(/\n\s*\n/)
-    .map((p) => p.trim())
-    .filter(Boolean);
-  // The title links to the event on /events.
   const details = `${EVENTS_URL}#${eventAnchor(e.startDate, e.title)}`;
   const head = [
     `:mega: *<${details}|${escape(e.title)}>*${e.series ? ` · ${escape(e.series)}` : ""}`,
@@ -195,34 +190,20 @@ const announcementMessage = (e: Upcoming) => {
   ]
     .filter(Boolean)
     .join("\n");
-  const first = paragraphs[0] ? `\n\n${slackMarkdown(paragraphs[0])}` : "";
-  // Say what Show more holds, so the button is not missed.
-  const hasRest = paragraphs.length > 1;
-  const bios = e.speakers.filter((s) => s.bio?.trim()).length;
-  const holds = [hasRest && "the full abstract", bios > 0 && (bios === 1 ? "the speaker's bio" : "the speakers' bios")]
+  const abstract = (e.description ?? "")
+    .trim()
+    .split(/\n\s*\n/)
+    .map((p) => p.trim())
     .filter(Boolean)
-    .join(" and ");
-  const blocks = [
-    { type: "section", expand: true, text: { type: "mrkdwn", text: sections(head + first)[0] } },
-    ...(moreText(e)
-      ? [
-          { type: "section", text: { type: "mrkdwn", text: `:point_down: Click *Show more* for ${holds}.` } },
-          {
-            type: "actions",
-            elements: [
-              {
-                type: "button",
-                style: "primary",
-                action_id: "announce_more",
-                text: { type: "plain_text", text: "Show more" },
-                value: e.eventId,
-              },
-            ],
-          },
-        ]
-      : []),
-  ];
-  return { text: `${e.title}: ${whenLine(e)}`, blocks: JSON.stringify(blocks) };
+    .map(slackMarkdown);
+  const bios = e.speakers.filter((s) => s.bio?.trim()).map((s) => `*About ${escape(s.name)}*\n${slackMarkdown(s.bio!.trim())}`);
+  const card = {
+    color: "#1d4f91",
+    fallback: `${e.title}: ${whenLine(e)}`,
+    text: [head, ...abstract, ...bios].join("\n\n").slice(0, 7900),
+    mrkdwn_in: ["text"],
+  };
+  return { text: "", attachments: JSON.stringify([card]) };
 };
 
 const reminderText = (e: Upcoming) =>
@@ -467,8 +448,8 @@ export const tick = internalAction({
         }
         if (left <= 0) continue;
         const message = announcementMessage(e);
-        // What was posted is remembered as its blocks, so any change to them shows as an edit.
-        const text = message.blocks;
+        // What was posted is remembered as its card, so any change to it shows as an edit.
+        const text = message.attachments;
         const a = e.announcement;
 
         if (a === null) {
@@ -500,7 +481,8 @@ export const tick = internalAction({
           });
         }
         if (a.text !== text) {
-          await slackApi(token, "chat.update", { channel: a.channel, ts: a.ts, ...message });
+          // blocks: "[]" clears the Show more button an older announcement carried.
+          await slackApi(token, "chat.update", { channel: a.channel, ts: a.ts, ...message, blocks: "[]" });
           await ctx.runMutation(internal.announcements.updateAnnouncement, { id: a._id, text });
         }
         if (reminderAt === undefined && left <= TWO_DAYS) {
@@ -525,27 +507,31 @@ export const tick = internalAction({
     for (const a of gone) {
       try {
         await post({ channel: a.channel, thread_ts: a.ts, text: ":no_entry: This event has been cancelled." });
-        // Announcements are remembered as their blocks; the oldest ones as plain text.
-        let blocks: unknown[] | null = null;
+        // Announcements are remembered as their card (an attachments array); some
+        // older ones as Block Kit blocks, the oldest as plain text.
+        let saved: { title?: string; type?: string }[] | null = null;
         try {
-          blocks = JSON.parse(a.text) as unknown[];
+          saved = JSON.parse(a.text) as { title?: string; type?: string }[];
         } catch {
-          blocks = null;
+          saved = null;
         }
+        const isBlocks = saved !== null && saved.some((b) => typeof b.type === "string");
         await slackApi(
           token,
           "chat.update",
-          blocks
-            ? {
-                channel: a.channel,
-                ts: a.ts,
-                text: "Cancelled",
-                blocks: JSON.stringify([
-                  { type: "section", text: { type: "mrkdwn", text: ":no_entry: *Cancelled.*" } },
-                  ...blocks,
-                ]),
-              }
-            : { channel: a.channel, ts: a.ts, text: `~Cancelled~\n${a.text}` },
+          saved === null
+            ? { channel: a.channel, ts: a.ts, text: `~Cancelled~\n${a.text}` }
+            : isBlocks
+              ? {
+                  channel: a.channel,
+                  ts: a.ts,
+                  text: "Cancelled",
+                  blocks: JSON.stringify([
+                    { type: "section", text: { type: "mrkdwn", text: ":no_entry: *Cancelled.*" } },
+                    ...saved,
+                  ]),
+                }
+              : { channel: a.channel, ts: a.ts, text: ":no_entry: *Cancelled.*", attachments: a.text },
         );
         await ctx.runMutation(internal.announcements.updateAnnouncement, { id: a._id, cancelledAt: now });
       } catch (error) {
@@ -600,14 +586,7 @@ export const preview = internalAction({
         reminder: e.announcement?.reminderAt ? "done" : when(at - TWO_DAYS),
         final: e.announcement?.finalAt ? "done" : when(at - TWO_HOURS),
         messages: {
-          announcement: (JSON.parse(announcementMessage(e).blocks) as { type: string; text?: { text: string }; elements?: { text: { text?: string } | string }[] }[])
-            .map((b) =>
-              b.type === "actions"
-                ? "[Show more]"
-                : (b.text?.text ?? b.elements?.map((x) => (typeof x.text === "string" ? x.text : x.text.text)).join(" ") ?? ""),
-            )
-            .join("\n\n"),
-          showMore: moreText(e) || null,
+          announcement: (JSON.parse(announcementMessage(e).attachments) as { text: string }[])[0].text,
           reminder: reminderText(e),
           final: finalText(e),
         },
