@@ -12,8 +12,9 @@ import { ADMIN_URL, escape, slackApi } from "./slack";
  * A cron (convex/crons.ts) runs `tick` every 15 minutes. For each published
  * event coming up (courses excepted: they meet all semester), it posts:
  *
- *   - a week before: the announcement, in SLACK_ANNOUNCE_CHANNEL, as a card
- *     that Slack folds after about five lines behind its own "Show more";
+ *   - a week before: the announcement, in SLACK_ANNOUNCE_CHANNEL: the talk
+ *     (title, speakers, when and where), with the abstract and bios in a card
+ *     under it that Slack folds after about five lines behind its own "Show more";
  *   - two days before: a reminder in the announcement's thread;
  *   - two hours before: a last reminder in the thread, also sent to the channel.
  *
@@ -173,17 +174,16 @@ const moreText = (e: Upcoming) => {
 };
 
 /**
- * The announcement, as a message attachment: a card with the title (linked to
- * the event on /events), series, speakers, when and where, then the whole
- * abstract and the speakers' bios. Slack folds a long attachment by itself
- * after about five lines, behind its own "Show more", which expands in place
- * for whoever clicks; Block Kit sections are never folded. The fields are the
- * chat.postMessage / chat.update parameters; `text` stays empty so nothing
- * repeats above the card, and `fallback` is what notifications show.
+ * The announcement. The message itself is the talk: the title (linked to the
+ * event on /events), series, speakers, when and where. Under it, an attachment
+ * card holds the details, the whole abstract and the speakers' bios, which
+ * Slack folds by itself after about five lines behind its own "Show more"
+ * (it never folds Block Kit sections). No details, no card. The fields are the
+ * chat.postMessage / chat.update parameters.
  */
 const announcementMessage = (e: Upcoming) => {
   const details = `${EVENTS_URL}#${eventAnchor(e.startDate, e.title)}`;
-  const head = [
+  const text = [
     `:mega: *<${details}|${escape(e.title)}>*${e.series ? ` · ${escape(e.series)}` : ""}`,
     speakerLine(e) && escape(speakerLine(e)),
     escape(whenLine(e)),
@@ -197,13 +197,10 @@ const announcementMessage = (e: Upcoming) => {
     .filter(Boolean)
     .map(slackMarkdown);
   const bios = e.speakers.filter((s) => s.bio?.trim()).map((s) => `*About ${escape(s.name)}*\n${slackMarkdown(s.bio!.trim())}`);
-  const card = {
-    color: "#1d4f91",
-    fallback: `${e.title}: ${whenLine(e)}`,
-    text: [head, ...abstract, ...bios].join("\n\n").slice(0, 7900),
-    mrkdwn_in: ["text"],
-  };
-  return { text: "", attachments: JSON.stringify([card]) };
+  const body = [...abstract, ...bios].join("\n\n").slice(0, 7900);
+  const cards = body ? [{ color: "#1d4f91", fallback: "Abstract and speaker bio", text: body, mrkdwn_in: ["text"] }] : [];
+  // "[]" on an edit clears a card the event no longer needs.
+  return { text, attachments: JSON.stringify(cards) };
 };
 
 const reminderText = (e: Upcoming) =>
@@ -448,8 +445,8 @@ export const tick = internalAction({
         }
         if (left <= 0) continue;
         const message = announcementMessage(e);
-        // What was posted is remembered as its card, so any change to it shows as an edit.
-        const text = message.attachments;
+        // What was posted is remembered whole (talk line and card), so any change shows as an edit.
+        const text = JSON.stringify(message);
         const a = e.announcement;
 
         if (a === null) {
@@ -507,19 +504,22 @@ export const tick = internalAction({
     for (const a of gone) {
       try {
         await post({ channel: a.channel, thread_ts: a.ts, text: ":no_entry: This event has been cancelled." });
-        // Announcements are remembered as their card (an attachments array); some
-        // older ones as Block Kit blocks, the oldest as plain text.
-        let saved: { title?: string; type?: string }[] | null = null;
+        // Announcements are remembered as the message they posted ({ text, attachments });
+        // earlier ones as Block Kit blocks or a lone card, the earliest as plain text.
+        let saved: unknown = null;
         try {
-          saved = JSON.parse(a.text) as { title?: string; type?: string }[];
+          saved = JSON.parse(a.text);
         } catch {
           saved = null;
         }
-        const isBlocks = saved !== null && saved.some((b) => typeof b.type === "string");
+        const posted = saved !== null && !Array.isArray(saved) ? (saved as { text: string; attachments: string }) : null;
+        const isBlocks = Array.isArray(saved) && (saved as { type?: string }[]).some((b) => typeof b.type === "string");
         await slackApi(
           token,
           "chat.update",
-          saved === null
+          posted
+            ? { channel: a.channel, ts: a.ts, text: `:no_entry: *Cancelled.*\n~${posted.text}~`, attachments: posted.attachments }
+            : saved === null
             ? { channel: a.channel, ts: a.ts, text: `~Cancelled~\n${a.text}` }
             : isBlocks
               ? {
@@ -528,7 +528,7 @@ export const tick = internalAction({
                   text: "Cancelled",
                   blocks: JSON.stringify([
                     { type: "section", text: { type: "mrkdwn", text: ":no_entry: *Cancelled.*" } },
-                    ...saved,
+                    ...(saved as unknown[]),
                   ]),
                 }
               : { channel: a.channel, ts: a.ts, text: ":no_entry: *Cancelled.*", attachments: a.text },
@@ -586,7 +586,10 @@ export const preview = internalAction({
         reminder: e.announcement?.reminderAt ? "done" : when(at - TWO_DAYS),
         final: e.announcement?.finalAt ? "done" : when(at - TWO_HOURS),
         messages: {
-          announcement: (JSON.parse(announcementMessage(e).attachments) as { text: string }[])[0].text,
+          announcement: [
+            announcementMessage(e).text,
+            ...(JSON.parse(announcementMessage(e).attachments) as { text: string }[]).map((c) => `┃ ${c.text.replace(/\n/g, "\n┃ ")}`),
+          ].join("\n"),
           reminder: reminderText(e),
           final: finalText(e),
         },
