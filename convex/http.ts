@@ -143,6 +143,8 @@ http.route({
       type?: string;
       trigger_id?: string;
       user?: { id?: string };
+      channel?: { id?: string };
+      container?: { thread_ts?: string };
       actions?: { action_id?: string; value?: string }[];
       view?: { callback_id?: string; private_metadata?: string; state?: { values?: Record<string, Record<string, { value?: string | null }>> } };
     };
@@ -155,7 +157,19 @@ http.route({
       return table && parsed.id ? { table, id: parsed.id } : null;
     };
 
-    if (payload.type === "block_actions") {
+    if (payload.type === "block_actions" && payload.actions?.[0]?.action_id === "announce_more") {
+      // An event announcement's Show more: its value is the event's id.
+      const eventId = payload.actions[0].value;
+      const channel = payload.channel?.id;
+      if (eventId && channel) {
+        await ctx.scheduler.runAfter(0, internal.announcements.showMore, {
+          eventId,
+          channel,
+          user: slackUser,
+          threadTs: payload.container?.thread_ts,
+        });
+      }
+    } else if (payload.type === "block_actions") {
       const action = payload.actions?.[0];
       const which = target(action?.value);
       if (which && action?.action_id === "review_approve") {

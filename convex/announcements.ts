@@ -1,7 +1,8 @@
 import { v } from "convex/values";
 import { internal } from "./_generated/api";
 import { env, internalAction, internalMutation, internalQuery } from "./_generated/server";
-import type { Id } from "./_generated/dataModel";
+import type { Doc, Id } from "./_generated/dataModel";
+import type { QueryCtx } from "./_generated/server";
 import { grantedCapabilities } from "./authz";
 import { ADMIN_URL, escape, slackApi } from "./slack";
 
@@ -12,8 +13,8 @@ import { ADMIN_URL, escape, slackApi } from "./slack";
  * event coming up (courses excepted: they meet all semester), it posts:
  *
  *   - a week before: the announcement, in SLACK_ANNOUNCE_CHANNEL, with the
- *     abstract's first two sentences; the full abstract and the speaker's bio
- *     follow as the first reply in its thread, for whoever wants to read on;
+ *     abstract's first paragraph and a Show more button that shows the rest of
+ *     it and the speakers' bios to whoever clicks, privately;
  *   - two days before: a reminder in the announcement's thread;
  *   - two hours before: a last reminder in the thread, also sent to the channel.
  *
@@ -142,42 +143,86 @@ const slackMarkdown = (markdown: string) =>
     .replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g, "<$2|$1>")
     .replace(/\*\*([^*]+)\*\*/g, "*$1*");
 
-const plain = (markdown: string) => markdown.replace(/\[([^\]]+)\]\([^)]+\)/g, "$1").replace(/[*_`#>]/g, "").replace(/\s+/g, " ").trim();
 
-/** The abstract's first two sentences, short enough to skim; "…" when more follows. */
-const teaser = (description: string | undefined) => {
-  const text = plain(description ?? "");
-  const sentences = text.match(/[^.!?]+[.!?]+(?=\s|$)/g) ?? [text];
-  let out = sentences.slice(0, 2).map((x) => x.trim()).join(" ");
-  if (out.length > 280) out = out.slice(0, 280).replace(/\s+\S*$/, "");
-  return out.length < text.length ? `${out.replace(/[.!?]?$/, "")}…` : out;
+/** Slack's limit is 3000 characters of text per section; split longer text at paragraphs. */
+const SECTION_LIMIT = 2900;
+const sections = (text: string): string[] => {
+  const out: string[] = [];
+  let current = "";
+  for (const paragraph of text.split("\n\n")) {
+    const piece = paragraph.length > SECTION_LIMIT ? `${paragraph.slice(0, SECTION_LIMIT - 1)}…` : paragraph;
+    if (current && current.length + piece.length + 2 > SECTION_LIMIT) {
+      out.push(current);
+      current = piece;
+    } else current = current ? `${current}\n\n${piece}` : piece;
+  }
+  if (current) out.push(current);
+  return out;
 };
 
-/** The full abstract and the speakers' bios, for the first reply in the thread; empty when the post already says it all. */
-const detailsText = (e: Upcoming) => {
-  const bios = e.speakers.filter((s) => s.bio?.trim());
-  const abstract = (e.description ?? "").trim();
-  const more = plain(abstract).length > teaser(abstract).replace(/…$/, "").length;
-  if (!more && bios.length === 0) return "";
+/** The rest of the abstract after its first paragraph, and the speakers' bios, as Slack text. */
+const moreText = (e: Upcoming) => {
+  const paragraphs = (e.description ?? "")
+    .trim()
+    .split(/\n\s*\n/)
+    .map((p) => p.trim())
+    .filter(Boolean);
   return [
-    abstract && `*Abstract*\n${slackMarkdown(abstract)}`,
-    ...bios.map((s) => `*About ${escape(s.name)}*\n${slackMarkdown(s.bio!.trim())}`),
-  ]
-    .filter(Boolean)
-    .join("\n\n");
+    ...paragraphs.slice(1).map(slackMarkdown),
+    ...e.speakers.filter((s) => s.bio?.trim()).map((s) => `*About ${escape(s.name)}*\n${slackMarkdown(s.bio!.trim())}`),
+  ].join("\n\n");
 };
 
-const announcementText = (e: Upcoming) => {
+/**
+ * The announcement, as Block Kit: title, speakers, when and where, and the
+ * abstract's first paragraph; then, when there is more (the rest of the
+ * abstract, the speakers' bios), a Show more button that shows it to whoever
+ * clicks, privately (showMore). Slack does not fold a long message by itself.
+ * `text` is what notifications and screen readers get.
+ */
+const announcementMessage = (e: Upcoming) => {
+  const paragraphs = (e.description ?? "")
+    .trim()
+    .split(/\n\s*\n/)
+    .map((p) => p.trim())
+    .filter(Boolean);
+  // The title links to the event on /events.
   const details = `${EVENTS_URL}#${eventAnchor(e.startDate, e.title)}`;
-  return [
-    `:mega: *${escape(e.title)}*${e.series ? ` · ${escape(e.series)}` : ""}`,
+  const head = [
+    `:mega: *<${details}|${escape(e.title)}>*${e.series ? ` · ${escape(e.series)}` : ""}`,
     speakerLine(e) && escape(speakerLine(e)),
     escape(whenLine(e)),
-    teaser(e.description) && `>${escape(teaser(e.description))}`,
-    `<${details}|Details on the DAPLab site>${detailsText(e) ? " · full abstract in the thread :thread:" : ""}`,
   ]
     .filter(Boolean)
     .join("\n");
+  const first = paragraphs[0] ? `\n\n${slackMarkdown(paragraphs[0])}` : "";
+  // Say what Show more holds, so the button is not missed.
+  const hasRest = paragraphs.length > 1;
+  const bios = e.speakers.filter((s) => s.bio?.trim()).length;
+  const holds = [hasRest && "the full abstract", bios > 0 && (bios === 1 ? "the speaker's bio" : "the speakers' bios")]
+    .filter(Boolean)
+    .join(" and ");
+  const blocks = [
+    { type: "section", expand: true, text: { type: "mrkdwn", text: sections(head + first)[0] } },
+    ...(moreText(e)
+      ? [
+          { type: "section", text: { type: "mrkdwn", text: `:point_down: Click *Show more* for ${holds}.` } },
+          {
+            type: "actions",
+            elements: [
+              {
+                type: "button",
+                style: "primary",
+                action_id: "announce_more",
+                text: { type: "plain_text", text: "Show more" },
+                value: e.eventId,
+              },
+            ],
+          },
+        ]
+      : []),
+  ];
+  return { text: `${e.title}: ${whenLine(e)}`, blocks: JSON.stringify(blocks) };
 };
 
 const reminderText = (e: Upcoming) =>
@@ -197,6 +242,57 @@ const issueText = (e: Upcoming) =>
 
 // -------------------------------------------------------------------- data
 
+/** An event with what an announcement needs: speakers, series label, any announcement. */
+const loadUpcoming = async (ctx: QueryCtx, e: Doc<"events">): Promise<Upcoming> => {
+  const [speakers, series, announcement] = await Promise.all([
+    ctx.db
+      .query("eventSpeakers")
+      .withIndex("by_eventId_and_position", (q) => q.eq("eventId", e._id))
+      .take(20),
+    ctx.db
+      .query("eventSeries")
+      .withIndex("by_slug", (q) => q.eq("slug", e.series))
+      .unique(),
+    ctx.db
+      .query("eventAnnouncements")
+      .withIndex("by_eventId", (q) => q.eq("eventId", e._id))
+      .unique(),
+  ]);
+  return {
+    eventId: e._id,
+    title: e.title,
+    startDate: e.startDate,
+    timeLabel: e.timeLabel,
+    location: e.location,
+    description: e.description,
+    link: e.link,
+    series: series?.label && series.slug !== "other" ? series.label : "",
+    speakers: speakers.map((s) => ({ name: s.name, affiliation: s.affiliation, bio: s.bio })),
+    announcement: announcement && {
+      _id: announcement._id,
+      channel: announcement.channel,
+      ts: announcement.ts,
+      reminderAt: announcement.reminderAt,
+      finalAt: announcement.finalAt,
+      startsAt: announcement.startsAt,
+      text: announcement.text,
+      detailsTs: announcement.detailsTs,
+    },
+  };
+};
+
+/** One published event, for the Show more button; its id comes back from Slack, so it is checked. */
+export const forEvent = internalQuery({
+  args: { eventId: v.string() },
+  returns: v.any(),
+  handler: async (ctx, args): Promise<Upcoming | null> => {
+    const id = ctx.db.normalizeId("events", args.eventId);
+    const e = id === null ? null : await ctx.db.get("events", id);
+    if (e === null || e.status !== "published") return null;
+    return await loadUpcoming(ctx, e);
+  },
+});
+
 /** Published events between two dates, with their speakers and any announcement. */
 export const upcoming = internalQuery({
   args: { from: v.string(), to: v.string() },
@@ -211,41 +307,7 @@ export const upcoming = internalQuery({
     const out: Upcoming[] = [];
     for (const e of events) {
       if (e.series === "course") continue;
-      const [speakers, series, announcement] = await Promise.all([
-        ctx.db
-          .query("eventSpeakers")
-          .withIndex("by_eventId_and_position", (q) => q.eq("eventId", e._id))
-          .take(20),
-        ctx.db
-          .query("eventSeries")
-          .withIndex("by_slug", (q) => q.eq("slug", e.series))
-          .unique(),
-        ctx.db
-          .query("eventAnnouncements")
-          .withIndex("by_eventId", (q) => q.eq("eventId", e._id))
-          .unique(),
-      ]);
-      out.push({
-        eventId: e._id,
-        title: e.title,
-        startDate: e.startDate,
-        timeLabel: e.timeLabel,
-        location: e.location,
-        description: e.description,
-        link: e.link,
-        series: series?.label && series.slug !== "other" ? series.label : "",
-        speakers: speakers.map((s) => ({ name: s.name, affiliation: s.affiliation, bio: s.bio })),
-        announcement: announcement && {
-          _id: announcement._id,
-          channel: announcement.channel,
-          ts: announcement.ts,
-          reminderAt: announcement.reminderAt,
-          finalAt: announcement.finalAt,
-          startsAt: announcement.startsAt,
-          text: announcement.text,
-          detailsTs: announcement.detailsTs,
-        },
-      });
+      out.push(await loadUpcoming(ctx, e));
     }
     return out;
   },
@@ -404,17 +466,14 @@ export const tick = internalAction({
           continue;
         }
         if (left <= 0) continue;
-        const text = announcementText(e);
+        const message = announcementMessage(e);
+        // What was posted is remembered as its blocks, so any change to them shows as an edit.
+        const text = message.blocks;
         const a = e.announcement;
 
         if (a === null) {
           if (left > WEEK) continue;
-          const sent = await post({ channel, text, unfurl_links: "false" });
-          // The rest of the abstract, and the bio, as the thread's first reply.
-          const details = detailsText(e);
-          const detailsSent = details
-            ? await post({ channel, thread_ts: String(sent.ts), text: details, unfurl_links: "false" })
-            : null;
+          const sent = await post({ channel, ...message, unfurl_links: "false" });
           // Stages already due are folded into this announcement, not sent after it.
           await ctx.runMutation(internal.announcements.saveAnnouncement, {
             eventId: e.eventId,
@@ -424,7 +483,6 @@ export const tick = internalAction({
             text,
             reminderAt: left <= TWO_DAYS ? now : undefined,
             finalAt: finalDue ? now : undefined,
-            detailsTs: detailsSent ? String(detailsSent.ts) : undefined,
           });
           continue;
         }
@@ -442,13 +500,8 @@ export const tick = internalAction({
           });
         }
         if (a.text !== text) {
-          await slackApi(token, "chat.update", { channel: a.channel, ts: a.ts, text });
-          // Keep the thread's full abstract in step: edit it, or add it if there is now more to say.
-          const details = detailsText(e);
-          let detailsTs = a.detailsTs;
-          if (details && detailsTs) await slackApi(token, "chat.update", { channel: a.channel, ts: detailsTs, text: details });
-          else if (details) detailsTs = String((await post({ channel: a.channel, thread_ts: a.ts, text: details, unfurl_links: "false" })).ts);
-          await ctx.runMutation(internal.announcements.updateAnnouncement, { id: a._id, text, detailsTs });
+          await slackApi(token, "chat.update", { channel: a.channel, ts: a.ts, ...message });
+          await ctx.runMutation(internal.announcements.updateAnnouncement, { id: a._id, text });
         }
         if (reminderAt === undefined && left <= TWO_DAYS) {
           // Once the last reminder is due, it covers this one.
@@ -472,7 +525,28 @@ export const tick = internalAction({
     for (const a of gone) {
       try {
         await post({ channel: a.channel, thread_ts: a.ts, text: ":no_entry: This event has been cancelled." });
-        await slackApi(token, "chat.update", { channel: a.channel, ts: a.ts, text: `~Cancelled~\n${a.text}` });
+        // Announcements are remembered as their blocks; the oldest ones as plain text.
+        let blocks: unknown[] | null = null;
+        try {
+          blocks = JSON.parse(a.text) as unknown[];
+        } catch {
+          blocks = null;
+        }
+        await slackApi(
+          token,
+          "chat.update",
+          blocks
+            ? {
+                channel: a.channel,
+                ts: a.ts,
+                text: "Cancelled",
+                blocks: JSON.stringify([
+                  { type: "section", text: { type: "mrkdwn", text: ":no_entry: *Cancelled.*" } },
+                  ...blocks,
+                ]),
+              }
+            : { channel: a.channel, ts: a.ts, text: `~Cancelled~\n${a.text}` },
+        );
         await ctx.runMutation(internal.announcements.updateAnnouncement, { id: a._id, cancelledAt: now });
       } catch (error) {
         console.error("Event cancellation notice failed", error instanceof Error ? error.message : error);
@@ -526,12 +600,89 @@ export const preview = internalAction({
         reminder: e.announcement?.reminderAt ? "done" : when(at - TWO_DAYS),
         final: e.announcement?.finalAt ? "done" : when(at - TWO_HOURS),
         messages: {
-          announcement: announcementText(e),
-          details: detailsText(e) || null,
+          announcement: (JSON.parse(announcementMessage(e).blocks) as { type: string; text?: { text: string }; elements?: { text: { text?: string } | string }[] }[])
+            .map((b) =>
+              b.type === "actions"
+                ? "[Show more]"
+                : (b.text?.text ?? b.elements?.map((x) => (typeof x.text === "string" ? x.text : x.text.text)).join(" ") ?? ""),
+            )
+            .join("\n\n"),
+          showMore: moreText(e) || null,
           reminder: reminderText(e),
           final: finalText(e),
         },
       };
     });
+  },
+});
+
+/**
+ * DM someone an event's announcement exactly as it would be posted, to see how
+ * Slack shows it (where it folds) without announcing. The next upcoming event,
+ * or the most recent one whose title contains `title`:
+ *
+ *   npx convex run --prod announcements:sendPreview '{"email":"uni@columbia.edu"}'
+ */
+export const sendPreview = internalAction({
+  args: { email: v.string(), title: v.optional(v.string()) },
+  returns: v.string(),
+  handler: async (ctx, args): Promise<string> => {
+    const token = env.SLACK_BOT_TOKEN?.trim();
+    if (!token) return "No SLACK_BOT_TOKEN on this deployment.";
+    const now = Date.now();
+    const wanted = args.title?.toLowerCase();
+    const events: Upcoming[] = await ctx.runQuery(internal.announcements.upcoming, {
+      from: isoDay(wanted ? now - 365 * 24 * HOUR : now),
+      to: isoDay(now + 60 * 24 * HOUR),
+    });
+    const next = wanted
+      ? events.filter((e) => e.title.toLowerCase().includes(wanted)).sort((a, b) => b.startDate.localeCompare(a.startDate))[0]
+      : events
+          .filter((e) => startOf(e).hasTime && startOf(e).at > now)
+          .sort((a, b) => startOf(a).at - startOf(b).at)[0];
+    if (!next) return "No upcoming event with a readable time to preview.";
+    const found = (await slackApi(token, "users.lookupByEmail", { email: args.email })) as { user?: { id?: string } };
+    if (!found.user?.id) return `No Slack user with ${args.email}.`;
+    const dm = (await slackApi(token, "conversations.open", { users: found.user.id })) as { channel?: { id?: string } };
+    if (!dm.channel?.id) return "Could not open a DM.";
+    await slackApi(token, "chat.postMessage", {
+      channel: dm.channel.id,
+      text: `Preview of the announcement for ${next.title}`,
+      unfurl_links: "false",
+    });
+    await slackApi(token, "chat.postMessage", { channel: dm.channel.id, ...announcementMessage(next), unfurl_links: "false" });
+    return `Sent the announcement for "${next.title}" to ${args.email}.`;
+  },
+});
+
+/**
+ * The Show more button (/slack/interactions): the rest of the abstract and the
+ * speakers' bios, posted for the clicker alone ("Only visible to you").
+ */
+export const showMore = internalAction({
+  args: { eventId: v.string(), channel: v.string(), user: v.string(), threadTs: v.optional(v.string()) },
+  returns: v.null(),
+  handler: async (ctx, args): Promise<null> => {
+    const token = env.SLACK_BOT_TOKEN?.trim();
+    if (!token) return null;
+    const e: Upcoming | null = await ctx.runQuery(internal.announcements.forEvent, { eventId: args.eventId });
+    const more = e ? moreText(e) : "";
+    const blocks = e
+      ? [
+          { type: "section", text: { type: "mrkdwn", text: `*${escape(e.title)}*` } },
+          ...sections(more || "There is nothing more about this event.").map((text) => ({
+            type: "section",
+            text: { type: "mrkdwn", text },
+          })),
+        ]
+      : [{ type: "section", text: { type: "mrkdwn", text: "That event is no longer on the site." } }];
+    await slackApi(token, "chat.postEphemeral", {
+      channel: args.channel,
+      user: args.user,
+      thread_ts: args.threadTs,
+      text: e ? `More about ${e.title}` : "That event is no longer on the site.",
+      blocks: JSON.stringify(blocks),
+    });
+    return null;
   },
 });
