@@ -61,9 +61,14 @@
     @keyframes live-act {
       0% { transform: scale(1) rotate(0); } 25% { transform: scale(1.45) rotate(-14deg); }
       55% { transform: scale(0.92) rotate(10deg); } 80% { transform: scale(1.06) rotate(-4deg); } 100% { transform: scale(1) rotate(0); } }
-    .live-pop { position: absolute; width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 50%; border: 2px solid;
-      animation: live-pop 650ms ease-out forwards; }
-    @keyframes live-pop { from { opacity: 0.9; transform: scale(0.6); } to { opacity: 0; transform: scale(4); } }
+    .live-pop { position: absolute; width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 50%; border: 2px solid var(--c);
+      animation: live-pop 560ms cubic-bezier(.2,.7,.3,1) forwards; }
+    /* A press (a small filled dot), then the release spreading out as a ring. */
+    @keyframes live-pop {
+      0% { opacity: 1; transform: scale(0.5); background: color-mix(in srgb, var(--c) 55%, transparent); }
+      18% { opacity: 1; transform: scale(0.8); background: color-mix(in srgb, var(--c) 35%, transparent); }
+      35% { background: transparent; }
+      100% { opacity: 0; transform: scale(3.6); background: transparent; } }
     .live-press-dot { display: none; }
     .live-pressed .live-press-dot { display: inline; }
     .live-pressed path { transform: scale(0.86); transform-origin: 1px 1px; }
@@ -174,7 +179,8 @@
       // No motion: show the pressed cursor for a moment instead.
       body.classList.add("live-pressed");
       clearTimeout(entry.flash);
-      entry.flash = setTimeout(() => body.classList.toggle("live-pressed", Boolean(entry.pressed)), 450);
+      // Down with the press, up with the release (pop's two steps).
+      entry.flash = setTimeout(() => body.classList.toggle("live-pressed", Boolean(entry.pressed)), 120);
       return;
     }
     body.classList.remove("live-act");
@@ -185,16 +191,21 @@
   const pop = (x, y, color) => {
     const ring = document.createElement("div");
     ring.className = "live-pop";
-    ring.style.borderColor = color;
+    ring.style.setProperty("--c", color);
     ring.style.left = `${x}px`;
     ring.style.top = `${y}px`;
     layer.append(ring);
     if (reduceMotion) {
-      // A still ring for half a second, no animation.
+      // A click in two still steps, no motion: the press (a filled dot), then
+      // the release (an outline, a little larger), then gone.
       ring.style.animation = "none";
-      ring.style.opacity = "0.7";
-      ring.style.transform = "scale(2.2)";
-      setTimeout(() => ring.remove(), 500);
+      ring.style.transform = "scale(0.9)";
+      ring.style.background = `${color}88`;
+      setTimeout(() => {
+        ring.style.transform = "scale(1.7)";
+        ring.style.background = "transparent";
+      }, 120);
+      setTimeout(() => ring.remove(), 300);
     } else ring.addEventListener("animationend", () => ring.remove());
   };
 
