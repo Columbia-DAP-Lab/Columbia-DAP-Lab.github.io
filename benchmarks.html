@@ -255,6 +255,46 @@ description: Explore benchmarks from DAPLab for evaluating AI agents in real-wor
   <div class="benchmark-grid">
     <article class="benchmark-card">
       <div class="benchmark-card-topline">
+        <h3>SRE-Bench</h3>
+        <span class="benchmark-status">Released</span>
+        <span class="benchmark-updated">Updated Oct 2026</span>
+      </div>
+      <div class="benchmark-kicker">Software reverse engineering</div>
+      <p>A realistic, contamination-free benchmark for agentic reverse engineering. Programs are built from scratch by RE experts and hardened with in-house anti-analysis protections. Frontier agents fully solve only about a third of instances or fewer.</p>
+      <div class="benchmark-facts">
+        <span class="benchmark-fact">19 private programs</span>
+        <span class="benchmark-fact">262 binaries</span>
+        <span class="benchmark-fact">1,572 graded tasks</span>
+        <span class="benchmark-fact">44 anti-analysis mechanisms</span>
+      </div>
+      <div class="benchmark-links">
+        <a class="benchmark-link" href="{{ '/benchmarks/sre-bench/' | relative_url }}">View Details →</a>
+        <a class="benchmark-link" href="https://sre-bench.lol/">Website ↗</a>
+        <a class="benchmark-link" href="https://arxiv.org/abs/2608.11469">Paper ↗</a>
+      </div>
+    </article>
+
+    <article class="benchmark-card">
+      <div class="benchmark-card-topline">
+        <h3>TaxLab</h3>
+        <span class="benchmark-status">Under review</span>
+        <span class="benchmark-updated">Updated Oct 2026</span>
+      </div>
+      <div class="benchmark-kicker">Interactive U.S. federal tax filing</div>
+      <p>A benchmark for interactive U.S. federal individual tax filing, built on field-level operationalization of tax law. Agents must identify missing taxpayer information, query a simulated taxpayer, consult IRS guidance, and complete the required forms. Filing errors are traced back to the rules and sources involved.</p>
+      <div class="benchmark-facts">
+        <span class="benchmark-fact">3,142 rules</span>
+        <span class="benchmark-fact">63 tax issues</span>
+        <span class="benchmark-fact">55 CPA-reviewed scenarios</span>
+        <span class="benchmark-fact">Best perfect filing: 64.0%</span>
+      </div>
+      <div class="benchmark-links">
+        <a class="benchmark-link" href="{{ '/benchmarks/taxlab/' | relative_url }}">View Details →</a>
+      </div>
+    </article>
+
+    <article class="benchmark-card">
+      <div class="benchmark-card-topline">
         <h3>LAKEQA</h3>
         <span class="benchmark-status">Released</span>
         <span class="benchmark-updated">Updated Jun 2026</span>
@@ -438,25 +478,6 @@ description: Explore benchmarks from DAPLab for evaluating AI agents in real-wor
   <div class="benchmark-grid">
     <article class="benchmark-card">
       <div class="benchmark-card-topline">
-        <h3>SRE-Bench</h3>
-        <span class="benchmark-status in-progress">In progress</span>
-        <span class="benchmark-updated">Updated Jul 2026</span>
-      </div>
-      <div class="benchmark-kicker">Software reverse engineering</div>
-      <p>Tests whether AI agents can understand software without source code—a common reality in malware, firmware, and proprietary-software analysis. Every program is built from scratch to prevent data contamination and hardened with modern anti-analysis protections.</p>
-      <div class="benchmark-facts">
-        <span class="benchmark-fact">262 binaries</span>
-        <span class="benchmark-fact">1,572 verifiable tasks</span>
-        <span class="benchmark-fact">5 real-world scenarios</span>
-        <span class="benchmark-fact">18K average lines of code</span>
-      </div>
-      <div class="benchmark-links">
-        <a class="benchmark-link" href="{{ '/benchmarks/sre-bench/' | relative_url }}">View Details →</a>
-      </div>
-    </article>
-
-    <article class="benchmark-card">
-      <div class="benchmark-card-topline">
         <h3>ConcurBugBench</h3>
         <span class="benchmark-status in-progress">In progress</span>
         <span class="benchmark-updated">Updated Jul 2026</span>
@@ -473,24 +494,6 @@ description: Explore benchmarks from DAPLab for evaluating AI agents in real-wor
       </div>
     </article>
 
-    <article class="benchmark-card">
-      <div class="benchmark-card-topline">
-        <h3>TaxBench</h3>
-        <span class="benchmark-status in-progress">In progress</span>
-        <span class="benchmark-updated">Updated Jul 2026</span>
-      </div>
-      <div class="benchmark-kicker">Faithful tax preparation</div>
-      <p>Evaluates whether agents can prepare 2025 tax returns accurately, request missing taxpayer information, and apply the correct rule when multiple provisions govern the same field. The benchmark is built from a structured, deterministic tax-rule system and realistic taxpayer scenarios.</p>
-      <div class="benchmark-facts">
-        <span class="benchmark-fact">500+ rules (target)</span>
-        <span class="benchmark-fact">50+ scenarios (target)</span>
-        <span class="benchmark-fact">Reference returns</span>
-        <span class="benchmark-fact">Expert review in progress</span>
-      </div>
-      <div class="benchmark-links">
-        <a class="benchmark-link" href="{{ '/benchmarks/taxbench/' | relative_url }}">View Details →</a>
-      </div>
-    </article>
   </div>
 
   <div class="benchmark-note">Counts and specifications for in-progress benchmarks may change before release.</div>

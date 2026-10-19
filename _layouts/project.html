@@ -18,10 +18,13 @@ layout: default
   <a href="{{ '/projects/?view=projects' | relative_url }}" class="back-link">← Projects</a>
   {%- endif %}
 
+  {%- assign linked_benchmark = site.benchmarks | where: "project", page.slug | first %}
+  {%- assign shown_title = page.title %}{% assign shown_subtitle = page.subtitle %}
+  {%- if linked_benchmark.share_with_project %}{% assign shown_title = linked_benchmark.title %}{% assign shown_subtitle = linked_benchmark.tagline %}{% endif %}
   <header class="project-header">
-    <h1 class="project-title">{{ page.title }}</h1>
-    {%- if page.subtitle %}
-    <p class="project-subtitle">{{ page.subtitle }}</p>
+    <h1 class="project-title">{{ shown_title }}</h1>
+    {%- if shown_subtitle %}
+    <p class="project-subtitle">{{ shown_subtitle }}</p>
     {%- endif %}
 
     <div class="project-byline">
@@ -29,8 +32,11 @@ layout: default
       {%- for tag in page.tags %}<span class="project-tag">{{ tag }}</span>{% endfor %}
     </div>
 
-    {%- if page.links %}
+    {%- comment %} A benchmark page whose `project:` is this slug links back here; with
+        `share_with_project: true` its content also replaces this page's body. {% endcomment %}
+    {%- if page.links or linked_benchmark %}
     <div class="project-links">
+      {%- if linked_benchmark %}<a href="{{ linked_benchmark.url | relative_url }}" class="btn btn-sm btn-dap-outline">Benchmark details</a>{% endif %}
       {%- if page.links.github %}<a href="{{ page.links.github }}" class="btn btn-sm btn-dap-outline" target="_blank" rel="noopener">GitHub</a>{% endif %}
       {%- if page.links.website %}<a href="{{ page.links.website }}" class="btn btn-sm btn-dap-outline" target="_blank" rel="noopener">Website</a>{% endif %}
       {%- if page.links.pypi %}<a href="{{ page.links.pypi }}" class="btn btn-sm btn-dap-outline" target="_blank" rel="noopener">PyPI</a>{% endif %}
@@ -48,14 +54,20 @@ layout: default
   {%- endif %}
 
   <div class="project-body">
+    {%- if linked_benchmark and linked_benchmark.share_with_project %}
+    {{ linked_benchmark.content | markdownify }}
+    {%- else %}
     {{ content }}
+    {%- endif %}
   </div>
 
-  {%- if page.authors %}
+  {%- assign shown_authors = page.authors %}
+  {%- if linked_benchmark.share_with_project and linked_benchmark.authors %}{% assign shown_authors = linked_benchmark.authors %}{% endif %}
+  {%- if shown_authors %}
   <section class="project-section">
     <h2>Contributors</h2>
     <p class="contributors">
-      {%- for author in page.authors -%}
+      {%- for author in shown_authors -%}
         {%- if author.url %}<a href="{{ author.url }}">{{ author.name }}</a>{% else %}{{ author.name }}{% endif -%}
         {%- unless forloop.last %}, {% endunless -%}
       {%- endfor -%}
