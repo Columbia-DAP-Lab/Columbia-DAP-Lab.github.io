@@ -1,6 +1,9 @@
 // Live mode on the public site: the other visitors on this page, each a cursor
 // with an emoji, a light trail behind it that fades after a moment, and a pop
-// (a ring, and the cursor itself bouncing) where they click. A pill in the upper right turns it off (remembered in this browser).
+// (a ring, and the cursor itself bouncing) where they click. While someone holds
+// the button, their cursor shows pressed and a dashed line runs from where the
+// drag began. With reduced motion there is no trail or bounce: a click briefly
+// shows the pressed cursor and a still ring instead. A pill in the upper right turns it off (remembered in this browser).
 //
 // Backed by Convex (convex/presence.ts). Visitors are anonymous: each tab makes
 // up a random id, and the server picks its emoji and color from that. Positions are
@@ -61,7 +64,10 @@
     .live-pop { position: absolute; width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 50%; border: 2px solid;
       animation: live-pop 650ms ease-out forwards; }
     @keyframes live-pop { from { opacity: 0.9; transform: scale(0.6); } to { opacity: 0; transform: scale(4); } }
-    @media (prefers-reduced-motion: reduce) { .live-act { animation: none; } }
+    .live-press-dot { display: none; }
+    .live-pressed .live-press-dot { display: inline; }
+    .live-pressed path { transform: scale(0.86); transform-origin: 1px 1px; }
+    @media (prefers-reduced-motion: reduce) { .live-act { animation: none; } .live-cursor { transition: none; } }
     @media print { .live-toggle, .live-layer { display: none; } }
   `;
   document.head.append(style);
@@ -94,8 +100,11 @@
   const center = () => document.documentElement.clientWidth / 2;
   const toPage = (x, y) => [center() + x, y];
 
+  // The arrow, and a dot at its tip shown while the button is held (.live-pressed).
   const arrow = (color) =>
-    `<svg width="18" height="20" viewBox="0 0 18 20"><path d="M1 1 L1 16 L5 12 L8 19 L11 18 L8 11 L14 11 Z" fill="${color}" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/></svg>`;
+    `<svg width="18" height="20" viewBox="-4 -4 22 24" style="margin:-4px 0 0 -4px">` +
+    `<circle class="live-press-dot" cx="1" cy="1" r="5" fill="${color}" fill-opacity="0.3" stroke="${color}" stroke-width="1.5"/>` +
+    `<path d="M1 1 L1 16 L5 12 L8 19 L11 18 L8 11 L14 11 Z" fill="${color}" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/></svg>`;
 
   const shown = new Map(); // sessionId -> { node, x, y }
   const popped = new Set(); // click ids already shown
@@ -139,9 +148,11 @@
         line.setAttribute("x2", b.x + 2);
         line.setAttribute("y2", b.y + 2);
         line.setAttribute("stroke", trail.color);
-        line.setAttribute("stroke-width", (0.8 + 2.2 * life).toFixed(2));
+        // Bolder while the button is held, so a drag reads as one.
+        const boost = trail.pressed ? 1.7 : 1;
+        line.setAttribute("stroke-width", ((0.8 + 2.2 * life) * boost).toFixed(2));
         line.setAttribute("stroke-linecap", "round");
-        line.setAttribute("stroke-opacity", (0.38 * life).toFixed(3));
+        line.setAttribute("stroke-opacity", Math.min(0.75, 0.38 * life * boost).toFixed(3));
         trail.group.append(line);
       }
       if (trail.points.length > 0) any = true;
@@ -156,8 +167,16 @@
 
   /** The cursor itself bounces when its visitor clicks. */
   const act = (id) => {
-    const body = shown.get(id)?.node.querySelector(".live-body");
-    if (!body || reduceMotion) return;
+    const entry = shown.get(id);
+    const body = entry?.node.querySelector(".live-body");
+    if (!body) return;
+    if (reduceMotion) {
+      // No motion: show the pressed cursor for a moment instead.
+      body.classList.add("live-pressed");
+      clearTimeout(entry.flash);
+      entry.flash = setTimeout(() => body.classList.toggle("live-pressed", Boolean(entry.pressed)), 450);
+      return;
+    }
     body.classList.remove("live-act");
     void body.offsetWidth; // restart the animation on a quick second click
     body.classList.add("live-act");
@@ -169,9 +188,14 @@
     ring.style.borderColor = color;
     ring.style.left = `${x}px`;
     ring.style.top = `${y}px`;
-    if (reduceMotion) ring.style.animationDuration = "1ms";
     layer.append(ring);
-    ring.addEventListener("animationend", () => ring.remove());
+    if (reduceMotion) {
+      // A still ring for half a second, no animation.
+      ring.style.animation = "none";
+      ring.style.opacity = "0.7";
+      ring.style.transform = "scale(2.2)";
+      setTimeout(() => ring.remove(), 500);
+    } else ring.addEventListener("animationend", () => ring.remove());
   };
 
   let latest = { cursors: [], clicks: [] };
@@ -205,11 +229,36 @@
       entry.x = x;
       entry.y = y;
       entry.node.style.transform = `translate(${x}px, ${y}px)`;
+      // A drag: the pressed cursor, and a dashed line from where it began.
+      const pressed = c.pressed === true;
+      if (pressed && !entry.pressed) entry.dragStart = [x, y];
+      entry.pressed = pressed;
+      entry.node.querySelector(".live-body").classList.toggle("live-pressed", pressed);
+      const trail = trailOf.get(c.sessionId);
+      if (trail) trail.pressed = pressed;
+      if (pressed) {
+        if (!entry.dragLine) {
+          entry.dragLine = document.createElementNS(SVG_NS, "line");
+          entry.dragLine.setAttribute("stroke", c.color);
+          entry.dragLine.setAttribute("stroke-width", "1.5");
+          entry.dragLine.setAttribute("stroke-dasharray", "4 4");
+          entry.dragLine.setAttribute("stroke-opacity", "0.55");
+          trails.append(entry.dragLine);
+        }
+        entry.dragLine.setAttribute("x1", entry.dragStart[0] + 1);
+        entry.dragLine.setAttribute("y1", entry.dragStart[1] + 1);
+        entry.dragLine.setAttribute("x2", x + 1);
+        entry.dragLine.setAttribute("y2", y + 1);
+      } else if (entry.dragLine) {
+        entry.dragLine.remove();
+        entry.dragLine = null;
+      }
       entry.node.style.opacity = c.movedAt !== undefined && now - c.movedAt > STILL_MS ? "0.35" : "1";
     }
     for (const [id, entry] of shown) {
       if (!seen.has(id)) {
         entry.node.remove();
+        entry.dragLine?.remove();
         shown.delete(id);
       }
     }
@@ -251,12 +300,12 @@
   const flush = async () => {
     timer = null;
     if (!client || !pending || sending) return;
-    const [x, y] = pending;
+    const [x, y, held] = pending;
     pending = null;
     sending = true;
     lastSent = Date.now();
     try {
-      const serverNow = await client.mutation(api.move, { page, sessionId, x, y });
+      const serverNow = await client.mutation(api.move, { page, sessionId, x, y, pressed: held });
       clockOffset = serverNow - Date.now();
     } catch {
       // A dropped update is fine; the next move sends again.
@@ -269,14 +318,29 @@
     if (!timer) timer = setTimeout(flush, Math.max(0, SEND_EVERY_MS - (Date.now() - lastSent)));
   };
 
+  let held = false; // this visitor's button is down
+  let lastAt = null; // where this visitor's mouse last was
   const onMove = (event) => {
     if (!canPoint()) return;
-    pending = [event.pageX - center(), event.pageY];
+    lastAt = [event.pageX - center(), event.pageY];
+    pending = [...lastAt, held];
     schedule();
   };
   const onDown = (event) => {
-    if (!client || !canPoint()) return;
-    client.mutation(api.click, { page, sessionId, x: event.pageX - center(), y: event.pageY }).catch(() => {});
+    if (!client || !canPoint() || event.button !== 0) return;
+    held = true;
+    lastAt = [event.pageX - center(), event.pageY];
+    pending = [...lastAt, true];
+    schedule();
+    client.mutation(api.click, { page, sessionId, x: lastAt[0], y: lastAt[1] }).catch(() => {});
+  };
+  const onUp = () => {
+    if (!held) return;
+    held = false;
+    if (client && lastAt) {
+      pending = [...lastAt, false];
+      schedule();
+    }
   };
   /** Check in, with no position: counts this visitor even when the mouse is still. */
   const heartbeat = () => {
@@ -308,6 +372,8 @@
     });
     addEventListener("pointermove", onMove, { passive: true });
     addEventListener("pointerdown", onDown, { passive: true });
+    addEventListener("pointerup", onUp, { passive: true });
+    addEventListener("pointercancel", onUp, { passive: true });
     addEventListener("pagehide", onHide);
     document.addEventListener("visibilitychange", onHide);
     heartbeat();
@@ -318,6 +384,8 @@
   const stop = () => {
     removeEventListener("pointermove", onMove);
     removeEventListener("pointerdown", onDown);
+    removeEventListener("pointerup", onUp);
+    removeEventListener("pointercancel", onUp);
     removeEventListener("pagehide", onHide);
     document.removeEventListener("visibilitychange", onHide);
     clearInterval(ticker);
@@ -332,7 +400,10 @@
       client = null;
       closing.mutation(api.leave, { sessionId }).catch(() => {}).finally(() => closing.close());
     }
-    for (const { node } of shown.values()) node.remove();
+    for (const { node, dragLine } of shown.values()) {
+      node.remove();
+      dragLine?.remove();
+    }
     shown.clear();
     for (const trail of trailOf.values()) trail.group.remove();
     trailOf.clear();

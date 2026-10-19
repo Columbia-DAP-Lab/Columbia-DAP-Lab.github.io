@@ -459,6 +459,8 @@ export default defineSchema({
     y: v.optional(v.number()),
     /** When the mouse last moved; the page dims a cursor that has gone still. */
     movedAt: v.optional(v.number()),
+    /** The button is held: a drag, shown with a pressed cursor and a line from where it began. */
+    pressed: v.optional(v.boolean()),
     /** Last heard from: a move, or the heartbeat every page sends while open. */
     updatedAt: v.number(),
   })

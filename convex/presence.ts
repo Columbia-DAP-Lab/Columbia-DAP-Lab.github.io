@@ -48,7 +48,14 @@ const point = { page: v.string(), sessionId: v.string(), x: v.number(), y: v.num
  * Returns the server's clock, so the page can tell how fresh others are.
  */
 export const move = mutation({
-  args: { page: v.string(), sessionId: v.string(), x: v.optional(v.number()), y: v.optional(v.number()) },
+  args: {
+    page: v.string(),
+    sessionId: v.string(),
+    x: v.optional(v.number()),
+    y: v.optional(v.number()),
+    /** Whether the button is held, sent with each move. */
+    pressed: v.optional(v.boolean()),
+  },
   returns: v.number(),
   handler: async (ctx, args) => {
     const now = Date.now();
@@ -61,12 +68,14 @@ export const move = mutation({
     const fields = {
       page: args.page,
       updatedAt: now,
-      ...(moved ? { x: clampX(args.x!), y: clampY(args.y!), movedAt: now } : {}),
+      ...(moved ? { x: clampX(args.x!), y: clampY(args.y!), movedAt: now, pressed: args.pressed === true } : {}),
     };
     if (existing !== null) {
-      if (existing.page === args.page && now - existing.updatedAt < MIN_INTERVAL_MS) return now;
+      // Pressing or letting go is never dropped, or a drag could look stuck.
+      const pressChanged = moved && (existing.pressed === true) !== (args.pressed === true);
+      if (existing.page === args.page && now - existing.updatedAt < MIN_INTERVAL_MS && !pressChanged) return now;
       // A heartbeat from a new page drops the position from the old one.
-      const leftPage = existing.page !== args.page && !moved ? { x: undefined, y: undefined, movedAt: undefined } : {};
+      const leftPage = existing.page !== args.page && !moved ? { x: undefined, y: undefined, movedAt: undefined, pressed: undefined } : {};
       await ctx.db.patch("cursors", existing._id, { ...leftPage, ...fields });
       return now;
     }
@@ -129,6 +138,7 @@ export const here = query({
         x: v.optional(v.number()),
         y: v.optional(v.number()),
         movedAt: v.optional(v.number()),
+        pressed: v.optional(v.boolean()),
         updatedAt: v.number(),
       }),
     ),
@@ -153,6 +163,7 @@ export const here = query({
         x: c.x,
         y: c.y,
         movedAt: c.movedAt,
+        pressed: c.pressed,
         updatedAt: c.updatedAt,
       })),
       clicks: clicks.map((c) => ({ id: c._id, sessionId: c.sessionId, color: identityOf(c.sessionId).color, x: c.x, y: c.y, at: c.at })),
