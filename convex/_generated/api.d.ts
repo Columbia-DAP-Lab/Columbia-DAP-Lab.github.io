@@ -21,6 +21,7 @@ import type * as http from "../http.js";
 import type * as imageMigration from "../imageMigration.js";
 import type * as join from "../join.js";
 import type * as llm from "../llm.js";
+import type * as presence from "../presence.js";
 import type * as profiles from "../profiles.js";
 import type * as projectAdmin from "../projectAdmin.js";
 import type * as pubDates from "../pubDates.js";
@@ -48,6 +49,7 @@ declare const fullApi: ApiFromModules<{
   imageMigration: typeof imageMigration;
   join: typeof join;
   llm: typeof llm;
+  presence: typeof presence;
   profiles: typeof profiles;
   projectAdmin: typeof projectAdmin;
   pubDates: typeof pubDates;

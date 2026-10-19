@@ -445,6 +445,40 @@ export default defineSchema({
     notifiedAt: v.number(),
   }).index("by_eventId", ["eventId"]),
 
+  /**
+   * Live cursors on the public site (convex/presence.ts): one row per open
+   * tab, keyed by a random id the tab makes up. Anonymous: the emoji and color
+   * are derived from that id. Rows older than a minute are swept by a cron.
+   */
+  cursors: defineTable({
+    page: v.string(),
+    sessionId: v.string(),
+    /** Pixels from the page's horizontal center, so wide and narrow windows line up; absent until the mouse moves. */
+    x: v.optional(v.number()),
+    /** Pixels from the top of the document. */
+    y: v.optional(v.number()),
+    /** When the mouse last moved; the page dims a cursor that has gone still. */
+    movedAt: v.optional(v.number()),
+    /** The button is held: a drag, shown with a pressed cursor and a line from where it began. */
+    pressed: v.optional(v.boolean()),
+    /** Last heard from: a move, or the heartbeat every page sends while open. */
+    updatedAt: v.number(),
+  })
+    .index("by_sessionId", ["sessionId"])
+    .index("by_page_and_updatedAt", ["page", "updatedAt"])
+    .index("by_updatedAt", ["updatedAt"]),
+
+  /** Clicks on the public site, shown as a pop to the others on the page; swept after a minute. */
+  cursorClicks: defineTable({
+    page: v.string(),
+    sessionId: v.string(),
+    x: v.number(),
+    y: v.number(),
+    at: v.number(),
+  })
+    .index("by_page_and_at", ["page", "at"])
+    .index("by_at", ["at"]),
+
   slackEvents: defineTable({
     eventId: v.string(),
     receivedAt: v.number(),

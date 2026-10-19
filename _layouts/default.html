@@ -98,6 +98,14 @@
 
     {%- include footer.html -%}
 
+    {%- unless page.admin_header %}
+    {%- comment -%} Live mode: other visitors' cursors on this page (files/js/presence.js, convex/presence.ts). {%- endcomment %}
+    <script defer src="{{ '/files/js/presence.js' | relative_url }}?v={{ site.time | date: '%s' }}"
+            data-convex-url="{{ site.convex.url }}"
+            data-convex-bundle="https://cdn.jsdelivr.net/npm/convex@1.46.0/dist/browser.bundle.js"
+            data-convex-integrity="sha384-YNc7767fowceX6PDv5ZiwoWOkzKK4WvGm4rfXHCBsghW2Y2S3susFrnDG0+0JAWe"></script>
+    {%- endunless %}
+
   </body>
 
 </html>

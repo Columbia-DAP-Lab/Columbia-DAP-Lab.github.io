@@ -316,6 +316,17 @@ docker compose up --build --no-cache
 ```
 
 
+### Live mode
+
+Public pages show the other visitors on the same page: a cursor with a random emoji
+for each, a circle that clicks where they click, and, while they drag, a pressed cursor
+with a dashed line from where the drag began.
+A **Multiplayer on · N** pill in the upper right turns it off ("Multiplayer off"), and
+the browser remembers. It is
+`files/js/presence.js` on the page and `convex/presence.ts` behind it; the page only
+loads Convex's browser library once it is idle and multiplayer is on. Phones and
+touch-only devices are left out (no pill, not counted). Not on the admin page.
+
 ## The Convex backend
 
 The backend is in `convex/`. It holds the schema, the queries and mutations behind
