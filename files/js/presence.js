@@ -1,8 +1,10 @@
-// Live mode on the public site: the other visitors on this page, each a cursor
-// with an emoji, and a circle that clicks where they click (a press, then a
-// release). While someone holds the button, their cursor shows pressed and a
-// dashed line runs from where the drag began. With reduced motion the cursors
-// do not glide, and the click is its press and release in two still steps. A pill in the upper right turns it off (remembered in this browser).
+// Multiplayer mode on the public site: the other visitors on this page, each a
+// cursor with an emoji, and a circle that clicks where they click (a press,
+// then a release). While someone holds the button, their cursor shows pressed
+// and a dashed line runs from where the drag began. With reduced motion the
+// cursors do not glide, and the click is its press and release in two still
+// steps. A "Multiplayer on · N" pill in the upper right turns it off, and the
+// browser remembers.
 //
 // Backed by Convex (convex/presence.ts). Visitors are anonymous: each tab makes
 // up a random id, and the server picks its emoji and color from that. Positions are
@@ -75,15 +77,16 @@
   const toggle = document.createElement("button");
   toggle.type = "button";
   toggle.className = "live-toggle";
-  toggle.title = "See who else is on this page";
-  toggle.innerHTML = '<span class="live-dot" aria-hidden="true"></span><span class="live-label">Live</span>';
+  toggle.title = "See the other visitors on this page, and their cursors";
+  toggle.innerHTML = '<span class="live-dot" aria-hidden="true"></span><span class="live-label">Multiplayer on</span>';
   const label = toggle.querySelector(".live-label");
   document.body.append(toggle);
 
   let on = localStorage.getItem(STORAGE_KEY) !== "off";
   const setLabel = (count) => {
     toggle.setAttribute("aria-pressed", String(on));
-    label.textContent = on ? (count > 0 ? `Live · ${count} here` : "Live") : "Live off";
+    // How many are on this page, counting this visitor, once it is known.
+    label.textContent = on ? (count > 0 ? `Multiplayer on · ${count}` : "Multiplayer on") : "Multiplayer off";
   };
   setLabel(0);
 
