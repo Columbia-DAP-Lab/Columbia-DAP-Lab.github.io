@@ -10,15 +10,19 @@
 // up a random id, and the server picks its emoji and color from that. Positions are
 // pixels from the page's horizontal center and from the top of the document, so
 // a cursor lands on the same content in a wider or narrower window. Every open
-// page checks in every few seconds, so still readers, phones and narrow windows
-// are counted; cursors are drawn in windows at least 600px wide, and a cursor
-// gone still is dimmed. Nothing here runs on the admin page.
+// page checks in every few seconds, so still readers and narrow windows are
+// counted; cursors are drawn in windows at least 600px wide, and a cursor gone
+// still is dimmed. Phones and touch-only devices are left out entirely, and
+// nothing here runs on the admin page.
 (() => {
   const root = document.currentScript;
   const CONVEX_URL = root?.dataset.convexUrl;
   const BUNDLE = root?.dataset.convexBundle;
   const INTEGRITY = root?.dataset.convexIntegrity;
   if (!CONVEX_URL || !BUNDLE) return;
+  // Not on phones and other touch-only devices: no pill, no connection, not counted.
+  // A laptop with a touchscreen still has a mouse, and takes part.
+  if (!matchMedia("(any-hover: hover) and (any-pointer: fine)").matches) return;
 
   const STORAGE_KEY = "daplab-live";
   const SEND_EVERY_MS = 120;
