@@ -316,6 +316,15 @@ docker compose up --build --no-cache
 ```
 
 
+### Live mode
+
+Public pages show the other visitors on the same page: their cursors (with an
+anonymous name like "Teal Otter"), their clicks as a small pop, and a faint trail.
+A **Live** pill in the upper right turns it off, and the browser remembers. It is
+`files/js/presence.js` on the page and `convex/presence.ts` behind it; the page only
+loads Convex's browser library once it is idle and Live is on. Touch and narrow
+screens show the count only. Not on the admin page.
+
 ## The Convex backend
 
 The backend is in `convex/`. It holds the schema, the queries and mutations behind
