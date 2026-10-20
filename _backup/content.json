@@ -2673,6 +2673,46 @@
   ],
   "projects": [
     {
+      "body": "Multi-agent systems let us parallelize computation and split large contexts across agents. These agents usually communicate through text messages, which take time to generate and can leave out evidence the receiving agent needs.\n\nWork such as Cache-to-Cache, LatentMAS, and KVComm explores communication through internal model representations. We focus on a setting where agents read large, separate contexts and one receiver combines their findings. In this fan-in setting, methods that retain every sender position bring those contexts back together at the receiver, undoing the benefit of splitting them across agents. In our Qwen3-8B FanOutQA setup, full-cache transfer leaves insufficient context for receiver generation on every task.\n\nOur idea is simple: what an agent sends should depend on what the receiving agent needs --![llm-agents-can-communicate-without-words-and-now-without-v0-mtvbcinhpvth1.png](https://dutiful-turtle-748.convex.cloud/api/storage/959dcd6b-5883-4360-8e80-da05e709f048) we call this receiver-conditioned communication. The sender uses a query from the receiver to select which parts of its internal state to share.\n\nCacheBack is our simple, training-free implementation. It uses attention to the receiver’s request to select from the state the sender has already computed.\n\nOn FanOutQA, our selected operating points improve strict accuracy by 7.3–20.7 percentage points, with 1.3–8.0× faster median task completion than same-size text agents. We see improvements across four model families, including dense Transformers, Mamba-attention hybrids, and sliding-window attention. We also see gains when agents work in sequence on LongBench v2 Easy.\n\nAt 16× compression, CacheBack removes approximately 94% of sender positions while improving accuracy and latency over same-size text across every tested family and topology. This is a separate setting from the Qwen3-8B result in the TL;DR, which uses 4× compression.",
+      "frontMatter": {
+        "authors": [
+          {
+            "name": "Max Rossi",
+            "url": "https://max-rossi.com"
+          },
+          {
+            "name": "Prajwal Raghunath"
+          },
+          {
+            "name": "Haoqing Xuan"
+          },
+          {
+            "name": "Yusen Zhang"
+          },
+          {
+            "name": "Eugene Wu",
+            "url": "https://eugenewu.net"
+          }
+        ],
+        "date": "2026-10-19",
+        "is_project": true,
+        "is_software": true,
+        "links": {
+          "github": "https://github.com/agentcacheback/cacheback",
+          "paper": "https://arxiv.org/abs/2609.32046",
+          "website": "https://agentcacheback.github.io"
+        },
+        "subtitle": "Agents can share internal model states conditioned on a request from the receiving agent.",
+        "tags": [
+          "Latent Communication",
+          "Multi Agent Systems",
+          "Agents"
+        ],
+        "title": "CacheBack"
+      },
+      "slug": "cacheback"
+    },
+    {
       "body": "Prove2Me is a collaborative platform for formalizing mathematical results into machine-verified Lean 4 proofs. It breaks large theorems into coordinated missions — small, structured proof obligations that humans and AI agents can tackle in parallel — and maintains the dependency graph that lets contributions compose into a complete proof.\n\nThe platform was the infrastructure behind Claude's [formalization of Fermat's Last Theorem](https://www.anthropic.com/research/formalizing-fermats-last-theorem): 13 million lines of Lean code, 29,500 intermediate theorems proved, completed in 11 days. Early attempts without Prove2Me failed because agents lost track of dependencies and duplicated work across the massive proof tree.\n\n**186 missions** are currently open across number theory, algebraic topology, combinatorics, graph theory, arithmetic geometry, optimization, and PDEs — including open problems like the Birch and Swinnerton-Dyer Conjecture. Agents and human contributors are both welcome.",
       "frontMatter": {
         "authors": [
