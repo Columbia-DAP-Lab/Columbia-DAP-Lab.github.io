@@ -195,6 +195,55 @@ running an old script against a new page.
         <div data-list-rows></div>
       </div>
 
+      <div class="dap-card" id="series-card" data-needs="events">
+        <h2 class="dap-card-title">Event series</h2>
+        <p class="dap-muted small mb-2">The groups events belong to, in the order of the filter bar on the Events page.
+          A series' description shows above its events when someone picks it there. Changes reach the site in about a
+          minute.</p>
+        <p class="text-success small mb-2" role="status" data-series-note hidden></p>
+        <div id="series-list"></div>
+        <button type="button" class="btn btn-sm dap-btn-quiet mt-2" data-series-add>Add a series</button>
+
+        <form id="series-form" class="mt-3" novalidate hidden>
+          <h3 class="dap-subsection mt-0" data-series-heading>Edit series</h3>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label" for="series-label">Name <span class="dap-req">*</span></label>
+              <input class="form-control" id="series-label" name="label" required>
+              <div class="form-text" data-series-slug></div>
+            </div>
+            <div class="col-md-6 d-flex align-items-end">
+              <label class="form-check mb-2">
+                <input class="form-check-input" type="checkbox" name="active">
+                <span class="form-check-label">Show in the filter bar on the Events page</span>
+              </label>
+            </div>
+            <div class="col-12">
+              <label class="form-label" for="series-description">Description</label>
+              <textarea class="form-control" id="series-description" name="description" rows="5"></textarea>
+              <div class="form-text">Markdown. Shown above the series' events when it is picked in the filter bar.</div>
+            </div>
+            <div class="col-12">
+              <span class="form-label d-block">Logo</span>
+              <div class="d-flex gap-3 align-items-center">
+                <img class="dap-series-logo" data-series-logo alt="" hidden>
+                <div class="flex-grow-1">
+                  <input class="form-control" type="file" name="logo" accept="image/*" aria-label="Upload a logo">
+                  <label class="form-check-label mt-2" data-series-remove-wrap hidden>
+                    <input class="form-check-input me-1" type="checkbox" name="removeLogo">Remove the uploaded logo
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="dap-actions">
+            <button type="submit" class="btn dap-btn-primary">Save</button>
+            <button type="button" class="btn btn-link" data-series-cancel>Cancel</button>
+            <span data-result></span>
+          </div>
+        </form>
+      </div>
+
       <template id="speaker-template">
         <div class="speaker dap-subcard">
           <div class="row g-3">

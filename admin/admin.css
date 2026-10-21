@@ -387,3 +387,8 @@ pre.body { white-space: pre-wrap; font-family: inherit; margin: 0.5rem 0 0; }
 .dap-paper-row .dap-muted { font-size: 0.8rem; }
 #admin .dap-paper-edit { border: 0; background: none; color: var(--dap-link, #1d4f91); font-weight: 600; font-size: 0.82rem; padding: 0 0.2rem; }
 #admin .dap-paper-edit:hover { text-decoration: underline; }
+.dap-series-logo { width: 64px; height: 64px; object-fit: contain; border: 1px solid var(--dap-border, #e3e7ed); border-radius: 6px; background: #fff; }
+.dap-paper-row .dap-series-off { font-size: 0.72rem; font-weight: 700; color: var(--dap-muted); border: 1px solid var(--dap-border, #e3e7ed); border-radius: 999px; padding: 0 0.45rem; }
+#admin .dap-series-move { border: 0; background: none; color: var(--dap-muted); padding: 0 0.25rem; }
+#admin .dap-series-move:hover:not(:disabled) { color: var(--dap-columbia-dark, #012169); }
+#admin .dap-series-move:disabled { opacity: 0.3; }

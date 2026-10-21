@@ -368,6 +368,146 @@ export const setPublicationDate = internalMutation({
   },
 });
 
+// ------------------------------------------------------------- event series
+//
+// The Events tab's Event series card: every series (shown in the filter bar on
+// /events or retired), with its name, description, logo and order. Editing one
+// changes how its events are labeled and filtered on the site, so it rebuilds.
+
+const seriesRow = v.object({
+  _id: v.id("eventSeries"),
+  slug: v.string(),
+  label: v.string(),
+  description: v.optional(v.string()),
+  active: v.boolean(),
+  sortOrder: v.number(),
+  logoUrl: v.union(v.string(), v.null()),
+  hasUploadedLogo: v.boolean(),
+  events: v.number(),
+});
+
+/** Every series, in filter-bar order, with how many events each has. */
+export const listSeries = query({
+  args: {},
+  returns: v.array(seriesRow),
+  handler: async (ctx) => {
+    await requireCapability(ctx, "events");
+    const rows = (await ctx.db.query("eventSeries").take(100)).sort((a, b) => a.sortOrder - b.sortOrder);
+    const out = [];
+    for (const s of rows) {
+      const events = await ctx.db
+        .query("events")
+        .withIndex("by_series_and_startDate", (q) => q.eq("series", s.slug))
+        .take(500);
+      out.push({
+        _id: s._id,
+        slug: s.slug,
+        label: s.label,
+        description: s.description,
+        active: s.active,
+        sortOrder: s.sortOrder,
+        logoUrl:
+          s.logo?.kind === "storage" ? await ctx.storage.getUrl(s.logo.storageId) : (s.logo?.path ?? null),
+        hasUploadedLogo: s.logo?.kind === "storage",
+        events: events.filter((e) => e.status === "published").length,
+      });
+    }
+    return out;
+  },
+});
+
+/**
+ * Add a series, or change one. A new series takes its slug from its name (the
+ * slug is what links and styles use, so it does not change afterwards) and goes
+ * to the end of the filter bar.
+ */
+export const saveSeries = mutation({
+  args: {
+    id: v.optional(v.id("eventSeries")),
+    label: v.string(),
+    description: v.optional(v.string()),
+    active: v.boolean(),
+    /** A new logo, from generateUploadUrl. */
+    logo: v.optional(v.id("_storage")),
+    removeLogo: v.optional(v.boolean()),
+  },
+  returns: v.id("eventSeries"),
+  handler: async (ctx, args) => {
+    const email = await requireCapability(ctx, "events");
+    const label = args.label.trim();
+    if (!label) throw new ConvexError("A series needs a name.");
+    if (args.logo !== undefined) await checkImage(ctx, args.logo);
+    const description = args.description?.trim() || undefined;
+    const logo =
+      args.logo !== undefined ? { logo: { kind: "storage" as const, storageId: args.logo } } : args.removeLogo ? { logo: undefined } : {};
+
+    if (args.id !== undefined) {
+      const before = await snapshotOf(ctx, "eventSeries", args.id);
+      if (before === undefined) throw new ConvexError("That series no longer exists.");
+      await ctx.db.patch("eventSeries", args.id, { label, description, active: args.active, ...logo });
+      await record(ctx, { before, table: "eventSeries", documentId: args.id, action: "update", actor: email, affectsSite: true });
+      return args.id;
+    }
+
+    const slug = slugify(label);
+    if (!slug || slug === "all") throw new ConvexError("Choose another name for the series.");
+    const all = await ctx.db.query("eventSeries").take(100);
+    if (all.some((s) => s.slug === slug)) throw new ConvexError(`There is already a series called ${label}.`);
+    const id = await ctx.db.insert("eventSeries", {
+      slug,
+      label,
+      description,
+      active: args.active,
+      sortOrder: Math.max(0, ...all.map((s) => s.sortOrder)) + 1,
+      ...(args.logo !== undefined ? { logo: { kind: "storage" as const, storageId: args.logo } } : {}),
+    });
+    await record(ctx, { table: "eventSeries", documentId: id, action: "create", actor: email, affectsSite: true });
+    return id;
+  },
+});
+
+/** Move a series one place earlier or later in the filter bar. */
+export const moveSeries = mutation({
+  args: { id: v.id("eventSeries"), direction: v.union(v.literal("up"), v.literal("down")) },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const email = await requireCapability(ctx, "events");
+    const rows = (await ctx.db.query("eventSeries").take(100)).sort((a, b) => a.sortOrder - b.sortOrder);
+    const i = rows.findIndex((s) => s._id === args.id);
+    const j = args.direction === "up" ? i - 1 : i + 1;
+    if (i < 0 || j < 0 || j >= rows.length) return null;
+    // Renumber in order, then swap the two, so equal sortOrders cannot stall a move.
+    const order = rows.map((s) => s._id);
+    [order[i], order[j]] = [order[j], order[i]];
+    for (const [position, id] of order.entries()) {
+      const row = rows.find((s) => s._id === id)!;
+      if (row.sortOrder !== position) await ctx.db.patch("eventSeries", id, { sortOrder: position });
+    }
+    await record(ctx, { table: "eventSeries", documentId: args.id, action: "update", actor: email, snapshot: { moved: args.direction }, affectsSite: true });
+    return null;
+  },
+});
+
+/** Delete a series no event belongs to (one added by mistake, say). */
+export const deleteSeries = mutation({
+  args: { id: v.id("eventSeries") },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const email = await requireCapability(ctx, "events");
+    const series = await ctx.db.get("eventSeries", args.id);
+    if (series === null) return null;
+    const used = await ctx.db
+      .query("events")
+      .withIndex("by_series_and_startDate", (q) => q.eq("series", series.slug))
+      .first();
+    if (used !== null) throw new ConvexError(`${series.label} still has events. Hide it from the filter bar instead.`);
+    const before = await snapshotOf(ctx, "eventSeries", args.id);
+    await ctx.db.delete("eventSeries", args.id);
+    await record(ctx, { before, table: "eventSeries", documentId: args.id, action: "delete", actor: email, affectsSite: true });
+    return null;
+  },
+});
+
 /**
  * Replace an event series' description (the Markdown blurb above its events on
  * /events) from the command line:
