@@ -1,6 +1,17 @@
 {
   "events": [
     {
+      "date": "2027-01-19",
+      "description": "COMS 6113 is a research seminar on data systems for agents and new semantic workloads, and on using agents to support data systems. Agents consume, manipulate, and rely on state that extends beyond databases to files, documents, memory, tools, and the environments in which they act. Topics include representing and managing agent state, agent interactions with data and tools, multi-agent coordination and access, data safety, identity, and access controls, semantic analytics, and using agents to automate data discovery, analysis, and system optimization.\n\nThe seminar is intended for Ph.D. students and for undergraduate or graduate students interested in research. Students read classic data management papers alongside recent work, lead discussions, and pursue a semester-long research project. Meeting time and location are TBD; see the [course website](https://daplab.cs.columbia.edu/agentic-data/).",
+      "link": "https://daplab.cs.columbia.edu/agentic-data/",
+      "role": "Instructor",
+      "tag": "Course",
+      "time": "TBD",
+      "title": "Spring 2027 Data Systems with and for Agents Course",
+      "who": "Eugene Wu, Columbia University",
+      "wholink": "https://eugenewu.net"
+    },
+    {
       "bio": "Anthony Vanky is an assistant professor at Columbia's Graduate School of Architecture, Planning, and Preservation, with affiliations at the Data Science Institute and the NSF Center for Smart Streetscapes. He studies how digital data and pervasive technologies can help people understand and improve cities, with attention to residents' lived experiences. His background spans architecture, urban design, and planning. Before Columbia, he held appointments at the University of Michigan and MIT, where he also served as a research lead at the Senseable City Lab.",
       "date": "2026-12-03",
       "tag": "AI in the Public Interest",
@@ -38,6 +49,14 @@
       "where": "Davis Auditorium",
       "who": "Silvia Sellán",
       "wholink": "https://www.silviasellan.com/"
+    },
+    {
+      "date": "2026-10-27",
+      "description": "As coding agents approach the ceiling on established benchmarks, the field needs evaluations that keep pace with the frontier: tasks that are hard enough to separate the best models, broad enough to reflect real engineering work, and robust enough that the scores can be trusted. This talk shares lessons from building two such benchmarks at Scale AI.\n\nSWE Atlas extends evaluation beyond issue resolution to codebase Q&A, test writing, and refactoring. Its expert-authored tasks are graded with automated checks plus structured rubrics for engineering quality. Frontier agents often pass the functional checks yet fall short on maintainability, edge-case coverage, and cleanup, and their success is inconsistent across repeated attempts.\n\nSWE-Bench Pro V2 refreshes SWE-Bench Pro with expert-repaired tasks and a hardened evaluation protocol that locks down network access and closes routes for solution leakage and reward hacking. This protocol surfaced real instances of agents gaming the grader, and the gap between public and private task scores highlights training-time exposure as a persistent challenge for open benchmarks.\n\nDrawing on both efforts, I will discuss what it takes to build frontier benchmarks: expert-driven task design, rubric-based grading, and rigorous evaluation hygiene, along with open problems in measuring progress toward agents that work like professional engineers.",
+      "tag": "Seminar",
+      "time": "12PM",
+      "title": "Towards Building Frontier Coding Benchmarks",
+      "who": "Soham Dan, Scale AI"
     },
     {
       "bio": "Hannah Li is an Assistant Professor in the Decision, Risk, and Operations division at Columbia Business School. Her research focuses on developing data science methods for social settings—online platforms, education, and healthcare. Her research combines techniques from operations research, statistics, and economics to develop theoretical insights for practically motivated problems. Her work has been recognized by the INFORMS Dantzig Dissertation Award, MSOM Service Management SIG Best Paper Award, INFORMS DEI Best Student Paper Award, and the ACM Equity and Access in Algorithms, Mechanisms, and Optimization (EAAMO) Best Student Paper Award. She holds a BA in mathematics from Pomona College and a Ph.D. in operations research from Stanford, and was previously a postdoctoral associate at MIT.",
@@ -689,6 +708,19 @@
     }
   ],
   "publications": [
+    {
+      "authors": "Qian Xie, Tianyi Peng, Kostis Kaffes, Eugene Wu, Sripad Karne, Armaan Agrawal, Nikolaos Pagonas, Wenyue Hua, Nairen Cao, Yueli He",
+      "code": "https://github.com/AgentOptimizer/agentopt",
+      "conf": "NeurIPS 2026 Workshop on Resource-Aware Agentic AI",
+      "pub_date": "2026-10-19",
+      "tags": [
+        "ai",
+        "llm",
+        "multiobjective"
+      ],
+      "title": "Which Model for Which Role? Cost-Efficient Pareto Recommendation for LLM Agentic Workflows",
+      "url": "https://arxiv.org/abs/2610.26676"
+    },
     {
       "authors": "Jiakai Xu, Tiancheng Ge, Tujie Guan, Yusheng Li, Rohan Timmaraju, Eugene Wu, Kostis Kaffes",
       "conf": "arXiv",
@@ -2388,6 +2420,15 @@
     },
     {
       "advisor": [
+        "Junfeng Yang"
+      ],
+      "bio": "Yaniv Nemcovsky is an Associate Research Scientist in the Department of Computer Science at Columbia University, working with Professor Junfeng Yang. His research focuses on trustworthy AI, including system robustness and the mitigation of threats such as physical adversarial attacks, jailbreaks, unsafe behaviors of large language models, data poisoning, and backdoors. He received his PhD in Computer Science from the Technion, Israel Institute of Technology, where his thesis addressed adversarial attacks in the real world. His work on realistic physical attacks against visual navigation systems, one of the first credible demonstrations of real-world adversarial threats, received the Most Promising Paper Award at the ECCV 2022 workshop on Adversarial Robustness in the Real World. He previously held a short postdoc position at Ben-Gurion University of the Negev and taught a graduate course on adversarial threats at the Technion. He aims to pursue a faculty position and to lead a research group developing methods that keep AI systems reliable and safe in real-world deployment.",
+      "category": "Postdoc",
+      "image": "https://dutiful-turtle-748.convex.cloud/api/storage/7b5666da-a4d7-4e8c-9fbd-f41a18c8608c",
+      "name": "Yaniv Nemcovsky"
+    },
+    {
+      "advisor": [
         "Eugene Wu",
         "Jiakai Xu"
       ],
@@ -2528,9 +2569,9 @@
       "advisor": [
         "Yusen Zhang"
       ],
-      "bio": "Long-Horizon Multi-Agent RL",
+      "bio": "Post-training, RL, & Evals",
       "category": "Student",
-      "homepage": "https://hassamgani.com/",
+      "homepage": "https://hassamgani.com",
       "image": "https://dutiful-turtle-748.convex.cloud/api/storage/5460fb52-9ce9-4538-9953-1b34216b873b",
       "name": "Hassam Abdul Gani"
     },
