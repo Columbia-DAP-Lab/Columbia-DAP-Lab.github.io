@@ -1538,6 +1538,124 @@ handleSubmit(mergeForm, async () => {
   return "";
 });
 
+// ------------------------------------------------------------ event series
+//
+// The Events tab's Event series card: the series in filter-bar order, each
+// with Edit and up/down; one form below edits a series or adds one
+// (admin:listSeries, saveSeries, moveSeries).
+
+const seriesForm = $("#series-form");
+let seriesRows = [];
+let editingSeries = null; // the series being edited, or "new"
+
+const seriesNote = (text) => {
+  const note = $("[data-series-note]");
+  note.textContent = text;
+  note.hidden = !text;
+};
+
+const renderSeries = (rows) => {
+  seriesRows = rows;
+  $("#series-list").replaceChildren(
+    ...rows.map((s, i) =>
+      el(
+        "div",
+        { class: "dap-paper-row" },
+        el(
+          "span",
+          { class: "dap-paper-title" },
+          s.label,
+          el("span", { class: "dap-muted" }, ` · ${s.slug} · ${s.events} ${s.events === 1 ? "event" : "events"} `),
+          !s.active && el("span", { class: "dap-series-off", title: "Not in the filter bar" }, "hidden"),
+        ),
+        el("button", { type: "button", class: "dap-paper-edit", onclick: () => openSeries(s) }, "Edit"),
+        s.events === 0 &&
+          el("button", { type: "button", class: "dap-paper-edit", onclick: () => deleteSeries(s) }, "Delete"),
+        el(
+          "button",
+          { type: "button", class: "dap-series-move", disabled: i === 0, title: "Earlier in the filter bar", "aria-label": `Move ${s.label} up`, onclick: () => moveSeries(s, "up") },
+          "↑",
+        ),
+        el(
+          "button",
+          { type: "button", class: "dap-series-move", disabled: i === rows.length - 1, title: "Later in the filter bar", "aria-label": `Move ${s.label} down`, onclick: () => moveSeries(s, "down") },
+          "↓",
+        ),
+      ),
+    ),
+  );
+};
+
+const moveSeries = async (s, direction) => {
+  try {
+    await client.mutation(api.admin.moveSeries, { id: s._id, direction });
+    showStatus(null);
+  } catch (error) {
+    showStatus(message(error));
+  }
+};
+
+const deleteSeries = async (s) => {
+  if (!confirm(`Delete the ${s.label} series?`)) return;
+  try {
+    await client.mutation(api.admin.deleteSeries, { id: s._id });
+    if (editingSeries?._id === s._id) closeSeries();
+    showStatus(null);
+  } catch (error) {
+    showStatus(message(error));
+  }
+};
+
+const openSeries = (s) => {
+  editingSeries = s ?? "new";
+  seriesForm.reset();
+  setResult(seriesForm, "", true);
+  const f = seriesForm.elements;
+  f.label.value = s?.label ?? "";
+  f.description.value = s?.description ?? "";
+  f.active.checked = s ? s.active : true;
+  $("[data-series-heading]").textContent = s ? `Edit ${s.label}` : "Add a series";
+  $("[data-series-slug]").textContent = s
+    ? `Its short name in links is "${s.slug}", which stays the same if you rename it.`
+    : "Its short name in links is made from the name.";
+  const logo = $("[data-series-logo]");
+  logo.hidden = !s?.logoUrl;
+  if (s?.logoUrl) logo.src = s.logoUrl;
+  $("[data-series-remove-wrap]").hidden = !s?.hasUploadedLogo;
+  seriesForm.hidden = false;
+  seriesNote("");
+  seriesForm.scrollIntoView({ behavior: "smooth", block: "start" });
+  f.label.focus();
+};
+
+const closeSeries = () => {
+  editingSeries = null;
+  seriesForm.reset();
+  seriesForm.hidden = true;
+};
+
+$("[data-series-add]").addEventListener("click", () => openSeries(null));
+$("[data-series-cancel]").addEventListener("click", closeSeries);
+
+handleSubmit(seriesForm, async () => {
+  if (!editingSeries) throw new Error("Choose a series to edit first.");
+  const f = seriesForm.elements;
+  const args = {
+    label: f.label.value.trim(),
+    description: f.description.value.trim() || undefined,
+    active: f.active.checked,
+    removeLogo: f.removeLogo.checked || undefined,
+  };
+  if (editingSeries !== "new") args.id = editingSeries._id;
+  const file = f.logo.files[0];
+  if (file) args.logo = await uploadImage(file, PHOTO_SIDE);
+  await client.mutation(api.admin.saveSeries, args);
+  const name = args.label;
+  closeSeries();
+  seriesNote(`Saved ${name}. The site updates in about a minute.`);
+  return "";
+});
+
 /** Every address in pasted text, whatever separates them ("Jane <jd1@columbia.edu>, …"). */
 const emailsIn = (text) => [...new Set((text.match(/[^\s<>,;:"'()[\]]+@[^\s<>,;:"'()[\]]+/g) ?? []).map((e) => e.toLowerCase()))];
 
@@ -1636,6 +1754,7 @@ const renderMe = (me) => {
   if (me.profile !== null) subscribe(api.profiles.myProfile, {}, renderProfile);
   if (can(me.capabilities, "events")) {
     subscribe(api.admin.pending, { table: "events" }, (rows) => renderQueue("events", rows, renderEvent));
+    subscribe(api.admin.listSeries, {}, renderSeries);
     subscribe(api.admin.listEvents, {}, (rows) => {
       PUBLISHED.events.rows = rows;
       renderPublished("events");
