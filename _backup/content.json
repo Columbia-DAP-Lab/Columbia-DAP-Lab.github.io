@@ -51,6 +51,18 @@
       "wholink": "https://www.silviasellan.com/"
     },
     {
+      "bio": "Yaniv Nemcovsky is an Associate Research Scientist in the Department of Computer Science at Columbia University, working with Professor Junfeng Yang. His research focuses on trustworthy AI, including system robustness and the mitigation of threats such as physical adversarial attacks, jailbreaks, unsafe behaviors of large language models, data poisoning and backdoors. He received his PhD in Computer Science from the Technion, Israel Institute of Technology, where his thesis addressed adversarial attacks in the real world.",
+      "date": "2026-11-03",
+      "description": "Deep neural networks are deployed across safety critical perception and language tasks, and remain vulnerable to adversarial perturbations. Physical patches placed in the scene can divert navigation systems from their target, and printed patches can likewise suppress human detection. In LLMs, steering along refusal directions exposes biases that standard benchmarks miss, indicating that alignment presents a fairness facade rather than truly mitigating bias. Beyond attacks, meaningful evaluation can be extrapolated from semantic model representations, supporting per query model selection and success prediction by characterizing models' success regions. These results indicate that in-depth evaluation can reveal failure modes beyond standard benchmarks, and can support per query agent orchestration that routes suspicious queries to robust agents.",
+      "end_date": "2026-11-03",
+      "role": "Associate Research Scientist",
+      "tag": "Seminar",
+      "time": "12PM-1PM",
+      "title": "Adversarial attacks and in-depth evaluation",
+      "who": "Yaniv Nemcovsky, RCS"
+    },
+    {
+      "bio": "Soham Dan is a Research Scientist at Scale AI, where he works on benchmarks and evaluations for LLM coding agents. His recent work includes SWE-Bench Pro V2, a refreshed and more rigorous version of the SWE-Bench Pro leaderboard, and SWE Atlas, a benchmark suite that evaluates coding agents on professional software engineering tasks beyond issue resolution. Before Scale, he was a Researcher at Microsoft Copilot and before that at IBM Research. He holds a Ph.D. from the University of Pennsylvania and a B.Tech. from IIT Kharagpur, where he received the President of India Gold Medal.",
       "date": "2026-10-27",
       "description": "As coding agents approach the ceiling on established benchmarks, the field needs evaluations that keep pace with the frontier: tasks that are hard enough to separate the best models, broad enough to reflect real engineering work, and robust enough that the scores can be trusted. This talk shares lessons from building two such benchmarks at Scale AI.\n\nSWE Atlas extends evaluation beyond issue resolution to codebase Q&A, test writing, and refactoring. Its expert-authored tasks are graded with automated checks plus structured rubrics for engineering quality. Frontier agents often pass the functional checks yet fall short on maintainability, edge-case coverage, and cleanup, and their success is inconsistent across repeated attempts.\n\nSWE-Bench Pro V2 refreshes SWE-Bench Pro with expert-repaired tasks and a hardened evaluation protocol that locks down network access and closes routes for solution leakage and reward hacking. This protocol surfaced real instances of agents gaming the grader, and the gap between public and private task scores highlights training-time exposure as a persistent challenge for open benchmarks.\n\nDrawing on both efforts, I will discuss what it takes to build frontier benchmarks: expert-driven task design, rubric-based grading, and rigorous evaluation hygiene, along with open problems in measuring progress toward agents that work like professional engineers.",
       "tag": "Seminar",
@@ -709,6 +721,30 @@
   ],
   "publications": [
     {
+      "authors": "Charlie Summers, Zhuo Zhang, Oliver Kennedy, Eugene Wu",
+      "conf": "Preprint 2026",
+      "pub_date": "2026-10-21",
+      "tags": [
+        "ai",
+        "sys",
+        "db"
+      ],
+      "title": "Data Flow Control: Data Safety Policies for AI Agents",
+      "url": "https://www.dropbox.com/scl/fi/dab78ndzotlhsyb1mnf50/dfc-sigmod27-submitted.pdf?rlkey=vji3qd5ar2mx4woy3dipy4hnc&dl=0"
+    },
+    {
+      "authors": "Jixian Su, Yusen Zhang, Eugene Wu, Kexin Rong",
+      "conf": "Preprint",
+      "pub_date": "2026-10-21",
+      "tags": [
+        "ai",
+        "bench",
+        "db"
+      ],
+      "title": "Prompt Analytics",
+      "url": "https://www.dropbox.com/scl/fi/uwjxgsqjzcpnvklcl07sz/facet-sigmod27-submitted.pdf?rlkey=9e9v9ucq8rozlzu5hxbrkvjuq&dl=0"
+    },
+    {
       "authors": "Qian Xie, Tianyi Peng, Kostis Kaffes, Eugene Wu, Sripad Karne, Armaan Agrawal, Nikolaos Pagonas, Wenyue Hua, Nairen Cao, Yueli He",
       "code": "https://github.com/AgentOptimizer/agentopt",
       "conf": "NeurIPS 2026 Workshop on Resource-Aware Agentic AI",
@@ -1082,17 +1118,6 @@
       ],
       "title": "VISTA: A Versatile Interactive User Simulation Toolkit for Agent Evaluation",
       "url": "https://arxiv.org/abs/2606.11079"
-    },
-    {
-      "authors": "Charlie Summers, Eugene Wu",
-      "conf": "arXiv 2026",
-      "pub_date": "2026-06-04",
-      "tags": [
-        "ai",
-        "sys"
-      ],
-      "title": "Data Flow Control: Data Safety Policies for AI Agents",
-      "url": "https://arxiv.org/abs/2606.05679"
     },
     {
       "authors": "Baolin Peng, Wenlin Yao, Qianhui Wu, Hao Cheng, Xiao Yu, Rui Yang, Tao Ge, Alessandro Sordoni, Xingdi Yuan, Yelong Shen, Pengcheng He, Tong Zhang, Zhou Yu, Jianfeng Gao",
@@ -2702,7 +2727,7 @@
       "slug": "workshop"
     },
     {
-      "description": "The AI in the Public Interest group brings together researchers from across Columbia\nUniversity working to advance AI and computational methods in service of the public\ninterest. Our members span a range of technical areas while sharing a common commitment\nto rigorous methodological research with clear societal relevance.\n\nThe group provides a forum for researchers to exchange ideas across subfields, identify\ncommon methodological challenges, and explore how advances in AI can contribute to\nconsequential real-world problems. Through seminars, collaborations, and regular\nconvenings, we aim to catalyze new research partnerships, connect methodological\ninnovation with substantive applications, and build a broader technical community focused\non ensuring that advances in AI generate benefits that are widely shared across society.\n\nThe series is led by Lily Xu and co-organized with Columbia Data Science Institute's\nCenter for Data, Media, and Society.\n\n**The series meets every other Thursday, 3–4PM, in CSB 453 (the CS Conference Room,\nin the Mudd building).**",
+      "description": "The AI in the Public Interest group brings together researchers from across Columbia\nUniversity working to advance AI and computational methods in service of the public\ninterest. Our members span a range of technical areas while sharing a common commitment\nto rigorous methodological research with clear societal relevance.\n\nThe group provides a forum for researchers to exchange ideas across subfields, identify\ncommon methodological challenges, and explore how advances in AI can contribute to\nconsequential real-world problems. Through seminars, collaborations, and regular\nconvenings, we aim to catalyze new research partnerships, connect methodological\ninnovation with substantive applications, and build a broader technical community focused\non ensuring that advances in AI generate benefits that are widely shared across society.\n\nThe series is led by Lily Xu and co-organized with Columbia Data Science Institute's\nCenter for Data, Media, and Society, and partners with the Society of Fellows and Heyman Center for the Humanities.\n\n**The series meets every other Thursday, 3–4PM, in CSB 453 (the CS Conference Room,\nin the Mudd building).**",
       "label": "AI in the Public Interest",
       "logo": "https://dutiful-turtle-748.convex.cloud/api/storage/511ff37c-53e9-49e9-a733-31d4ac36ad45",
       "slug": "ai-in-the-public-interest"
