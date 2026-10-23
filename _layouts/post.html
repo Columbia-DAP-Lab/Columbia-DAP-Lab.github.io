@@ -1,6 +1,9 @@
 ---
 layout: default
 ---
+{% if page.post_template %}
+  {% include {{ page.post_template }} %}
+{% else %}
 
 {%- comment -%}
 A blog post: the same page header as every other page, then the list of posts
@@ -80,3 +83,4 @@ separate index; /blog forwards to the newest post.
   };
 </script>
 <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+{% endif %}
