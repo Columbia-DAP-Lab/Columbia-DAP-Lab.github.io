@@ -41,6 +41,28 @@
       "wholink": "https://www.wajeehaahmad.com/"
     },
     {
+      "bio": "Yaniv Nemcovsky is an Associate Research Scientist in the Department of Computer Science at Columbia University, working with Professor Junfeng Yang. His research focuses on trustworthy AI, including system robustness and the mitigation of threats such as physical adversarial attacks, jailbreaks, unsafe behaviors of large language models, data poisoning and backdoors. He received his PhD in Computer Science from the Technion, Israel Institute of Technology, where his thesis addressed adversarial attacks in the real world.",
+      "date": "2026-11-10",
+      "description": "Large language models present hidden behaviors that standard benchmarks miss. Compliance refusal initializations reveal compliance directions via previously successful attacks, improving the attack success rate while reducing its cost. A latent adversarial proxy captures a more meaningful training signal than straightforward suffix attacks, enhancing model robustness. Steering along refusal directions reveals biases that alignment conceals rather than removes. Backdoor injection leaves a persistent signature in the representation space, undermining the attack's stealthiness. Sentence embeddings encode extensive semantic information, supporting per query model selection and performance prediction. These results present recoverable behavioral signals, encoding relevant practical information beyond standard evaluation criteria.",
+      "end_date": "2026-11-10",
+      "role": "Associate Research Scientist",
+      "tag": "Seminar",
+      "time": "12PM-1PM",
+      "title": "Revealing and mitigating hidden LLM behaviors",
+      "where": "CSB 453",
+      "who": "Yaniv Nemcovsky, RCS"
+    },
+    {
+      "bio": "Prashant Pandey is an assistant professor in the Khoury College of Computer Sciences at Northeastern University. His research focuses on building scalable data systems with strong theoretical foundations, spanning data structure design, high-performance and GPU systems, and applications in vector search, LLM serving, and computational biology. His work has received a Best of SIGMOD 2026 paper award, an ALENEX 2026 Best Artifact Award, FAST 2016 Best Paper Award. He is a recipient of the NSF CAREER Award 2024 and the IEEE-CS Early Career Researchers Award for Excellence in High Performance Computing 2023. Before joining Northeastern, he was a research scientist at VMware Research and a postdoctoral researcher at UC Berkeley and Carnegie Mellon University.",
+      "date": "2026-11-06",
+      "description": "Filters and hash tables sit underneath nearly every data system, from databases and storage engines to networking and genomics pipelines. Their classic designs come with trade-offs that are often treated as unavoidable. For example, a filter's false-positive guarantee holds only for a single query, so a skewed or adversarial workload has no bound on the number of false positives. Linear-probing hash tables are fast and compact, but their performance degrades as they become fuller, and known fixes trade that problem for periodic, expensive rebuilds.\n\nIn this talk, I will show how we can overcome these trade-offs. First, I will present adaptive filters, which learn from each false positive and fix it, guaranteeing a bounded false-positive rate for any sequence of queries. Our Adaptive Quotient Filter matches the space lower bound, preserves the features of traditional quotient filters, and runs 10–30× faster than prior adaptive filters and up to 6× faster than traditional filters on database workloads. Next, I will present Zombie Hashing, which reuses deletion markers (tombstones) to keep linear probing fast, cleaning up the table a little on every operation instead of all at once. The result is consistently high performance at high space efficiency, without latency spikes.\n\nI will close with lessons on how theory and practice inform each other in designing data structures for modern systems.",
+      "tag": "Seminar",
+      "time": "2PM-3PM",
+      "title": "From Filters to Hash Tables: Rethinking Core Data Structures for Scalable Performance",
+      "where": "488",
+      "who": "Prashant Pandey, Khoury College of Computer Sciences, Northeastern University"
+    },
+    {
       "bio": "Silvia Sellán leads the Geometry and the City laboratory at Columbia University, where she is an assistant professor of computer science. Her work in computer graphics and geometry processing investigates ways to represent shapes implicitly and reconstruct surfaces. She completed her doctorate at the University of Toronto and held a postdoctoral research position at MIT before joining Columbia.",
       "date": "2026-11-05",
       "tag": "AI in the Public Interest",
@@ -49,17 +71,6 @@
       "where": "Davis Auditorium",
       "who": "Silvia Sellán",
       "wholink": "https://www.silviasellan.com/"
-    },
-    {
-      "bio": "Yaniv Nemcovsky is an Associate Research Scientist in the Department of Computer Science at Columbia University, working with Professor Junfeng Yang. His research focuses on trustworthy AI, including system robustness and the mitigation of threats such as physical adversarial attacks, jailbreaks, unsafe behaviors of large language models, data poisoning and backdoors. He received his PhD in Computer Science from the Technion, Israel Institute of Technology, where his thesis addressed adversarial attacks in the real world.",
-      "date": "2026-11-03",
-      "description": "Deep neural networks are deployed across safety critical perception and language tasks, and remain vulnerable to adversarial perturbations. Physical patches placed in the scene can divert navigation systems from their target, and printed patches can likewise suppress human detection. In LLMs, steering along refusal directions exposes biases that standard benchmarks miss, indicating that alignment presents a fairness facade rather than truly mitigating bias. Beyond attacks, meaningful evaluation can be extrapolated from semantic model representations, supporting per query model selection and success prediction by characterizing models' success regions. These results indicate that in-depth evaluation can reveal failure modes beyond standard benchmarks, and can support per query agent orchestration that routes suspicious queries to robust agents.",
-      "end_date": "2026-11-03",
-      "role": "Associate Research Scientist",
-      "tag": "Seminar",
-      "time": "12PM-1PM",
-      "title": "Adversarial attacks and in-depth evaluation",
-      "who": "Yaniv Nemcovsky, RCS"
     },
     {
       "bio": "Soham Dan is a Research Scientist at Scale AI, where he works on benchmarks and evaluations for LLM coding agents. His recent work includes SWE-Bench Pro V2, a refreshed and more rigorous version of the SWE-Bench Pro leaderboard, and SWE Atlas, a benchmark suite that evaluates coding agents on professional software engineering tasks beyond issue resolution. Before Scale, he was a Researcher at Microsoft Copilot and before that at IBM Research. He holds a Ph.D. from the University of Pennsylvania and a B.Tech. from IIT Kharagpur, where he received the President of India Gold Medal.",
@@ -745,7 +756,18 @@
       "url": "https://www.dropbox.com/scl/fi/uwjxgsqjzcpnvklcl07sz/facet-sigmod27-submitted.pdf?rlkey=9e9v9ucq8rozlzu5hxbrkvjuq&dl=0"
     },
     {
-      "authors": "Qian Xie, Tianyi Peng, Kostis Kaffes, Eugene Wu, Sripad Karne, Armaan Agrawal, Nikolaos Pagonas, Wenyue Hua, Nairen Cao, Yueli He",
+      "authors": "Chenxi Huang, Haonan Wang, Jinghe Zhang, Aleksandr Nogikh, Franjo Ivančić, Petros Maniatis, Eugene Wu, Kostis Kaffes, Junfeng Yang, Baishakhi Ray",
+      "conf": "arXiv",
+      "pub_date": "2026-10-21",
+      "tags": [
+        "ai",
+        "agent-debug"
+      ],
+      "title": "Do Coding Agents Understand Why Systems Crash---and Why They Don't?",
+      "url": "https://arxiv.org/abs/2610.29332"
+    },
+    {
+      "authors": "Qian Xie, Tianyi Peng, Kostis Kaffes, Eugene Wu, Sripad Karne, Armaan Agrawal, Nikos Pagonas, Wenyue Hua, Nairen Cao, Yueli He",
       "code": "https://github.com/AgentOptimizer/agentopt",
       "conf": "NeurIPS 2026 Workshop on Resource-Aware Agentic AI",
       "pub_date": "2026-10-19",
@@ -2231,7 +2253,12 @@
       "name": "Georgios Liargkovas"
     },
     {
+      "bio": "Nikos Pagonas is a third-year Computer Science PhD student at Columbia University advised by Prof. Kostis Kaffes, where he conducts research in the DAPLab on systems for agentic AI. His work builds systems that leverage workflow structure and runtime characteristics to optimize model routing, scheduling, and resource allocation for efficient agentic serving.",
       "category": "PhD",
+      "field": [
+        "AI",
+        "Systems"
+      ],
       "homepage": "https://nikpag.github.io/",
       "image": "https://dutiful-turtle-748.convex.cloud/api/storage/9b541acf-173d-46f2-a81b-1a566a7c22b0",
       "name": "Nikos Pagonas"
