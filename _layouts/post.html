@@ -5,7 +5,8 @@ layout: default
 A blog post: the same page header as every other page, then the article in the
 reading style first made for the CacheBack post (files/css/blog/article.css).
 The list of posts never covers the article: on wide screens it is a quiet column
-beside it, which "Hide posts" folds away (remembered in localStorage); on narrow
+beside it, which "Hide posts" blanks without moving the article (remembered in
+localStorage); on narrow
 screens "All posts" opens it above the article. There is no separate index;
 /blog forwards to the newest post.
 
@@ -86,8 +87,8 @@ Front matter a post can set:
     padding-right: 0.25rem;
   }
   .post-shell > .post-article { grid-area: article; }
-  .post-shell[data-nav="closed"] { grid-template-columns: minmax(0, 1fr); grid-template-areas: "toggle" "article"; }
-  .post-shell[data-nav="closed"] > .post-nav { display: none; }
+  /* Folding the list keeps its column, so the article does not move. */
+  .post-shell[data-nav="closed"] > .post-nav { visibility: hidden; }
   .post-subtitle {
     text-align: center;
     font-size: 1.3em;
@@ -99,7 +100,7 @@ Front matter a post can set:
   @media (max-width: 991.98px) {
     .post-shell,
     .post-shell[data-nav="open"] { grid-template-columns: minmax(0, 1fr); grid-template-areas: "toggle" "nav" "article"; }
-    .post-shell:not([data-nav="open"]) > .post-nav { display: none; }
+    .post-shell:not([data-nav="open"]) > .post-nav { display: none; visibility: visible; }
     .post-nav {
       position: static;
       max-height: 45vh;
