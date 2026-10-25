@@ -13,8 +13,6 @@ authors:
   - name: "Eugene Wu"
 excerpt: "CacheBack uses the receiver’s query to select which sender positions to communicate."
 slug: cacheback
-published: false
-noindex: true
 article_class: cacheback-article
 custom_body: true
 math: false
