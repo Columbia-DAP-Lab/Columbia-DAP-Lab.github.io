@@ -6,9 +6,9 @@ A blog post: the same page header as every other page, then the article in the
 reading style first made for the CacheBack post (files/css/blog/article.css).
 On wide screens the list of posts has its own column left of the article, with
 an empty one of the same width on the right, so the article stays centered and
-nothing overlaps. "Hide posts" blanks the column without moving anything
-(remembered in localStorage). On narrower screens "All posts" opens the list
-above the article. There is no separate index; /blog forwards to the newest post.
+nothing overlaps. The button heading that column stays in view; "Hide posts"
+blanks the list without moving anything (remembered in localStorage). On
+narrower screens "All posts" opens the list above the article. There is no separate index; /blog forwards to the newest post.
 
 Front matter a post can set:
   title_prefix, title_accent  the title in two parts, the second in the accent color
@@ -30,12 +30,13 @@ Front matter a post can set:
 </header>
 
 <div class="post-shell" data-post-shell>
-  <button class="btn btn-sm btn-dap-outline post-nav-toggle" type="button" aria-controls="post-nav" aria-expanded="true">Hide posts</button>
-
   <div class="post-stage">
-    <nav class="post-nav" id="post-nav" aria-label="All posts">
-      {% include blog-sidebar.html %}
-    </nav>
+    <div class="post-nav">
+      <button class="btn btn-sm btn-dap-outline post-nav-toggle" type="button" aria-controls="post-nav-list" aria-expanded="true">Hide posts</button>
+      <nav class="post-nav-list" id="post-nav-list" aria-label="All posts">
+        {% include blog-sidebar.html %}
+      </nav>
+    </div>
 
     <article class="post-article{% if page.article_class %} {{ page.article_class }}{% endif %}">
       {% include post-meta.html %}
@@ -72,7 +73,7 @@ Front matter a post can set:
 </script>
 
 <style>
-  .post-nav-toggle { margin-bottom: 1.25rem; }
+  .post-nav-toggle { margin-bottom: 1rem; }
   .post-subtitle {
     text-align: center;
     font-size: 1.3em;
@@ -97,22 +98,26 @@ Front matter a post can set:
       column-gap: var(--nav-gap);
       align-items: start;
     }
+    /* The column sticks below the site header: the button stays put, the list scrolls. */
     .post-nav {
       grid-column: 1;
       position: sticky;
       top: 5.5rem; /* below the sticky site header */
       max-height: calc(100vh - 7rem);
-      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
       padding-top: 2.25rem;
     }
+    .post-nav-list { overflow-y: auto; min-height: 0; width: 100%; }
     .post-stage > .post-article { grid-column: 2; }
-    .post-shell[data-nav="closed"] .post-nav { visibility: hidden; }
+    .post-shell[data-nav="closed"] .post-nav-list { visibility: hidden; }
   }
 
   /* Narrower: the list, when open, sits above the article. */
   @media (max-width: 1199.98px) {
-    .post-shell:not([data-nav="open"]) .post-nav { display: none; }
-    .post-nav {
+    .post-shell:not([data-nav="open"]) .post-nav-list { display: none; }
+    .post-nav-list {
       max-height: 45vh;
       overflow-y: auto;
       margin-bottom: 1.5rem;
