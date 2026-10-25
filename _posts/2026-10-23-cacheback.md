@@ -15,7 +15,16 @@ excerpt: "CacheBack uses the receiver’s query to select which sender positions
 slug: cacheback
 published: false
 noindex: true
-post_template: blog/cacheback/post-layout.html
+article_class: cacheback-article
+custom_body: true
+math: false
+post_css:
+  - /files/css/blog/cacheback.css
+post_js:
+  - /files/js/blog/cacheback/question-trace.js
+  - /files/js/blog/cacheback/article.js
+  - /files/js/blog/cacheback/figures.js
+  - /files/js/blog/cacheback/communication.js
 ---
 
 <div class="cb-reading-progress" aria-hidden="true"><span id="cb-reading-progress"></span></div>
