@@ -61,9 +61,9 @@
 .post-prose h1, .post-prose h2, .post-prose h3, .post-prose h4 { font-family: var(--serif); font-weight: 500; color: var(--ink); letter-spacing: -0.02em; scroll-margin-top: 85px; }
 .post-prose h1 { font-size: 34px; line-height: 1.2; margin-top: 56px; margin-bottom: 22px; }
 .post-prose h2 { font-size: 31px; line-height: 1.22; margin-top: 56px; margin-bottom: 20px; }
-/* h3 and h4 switch to the sans, so they stand apart from the serif paragraphs. */
-.post-prose h3 { font: 650 19px/1.35 var(--sans); letter-spacing: -0.01em; margin-top: 40px; margin-bottom: 12px; }
-.post-prose h4 { font: 600 13px/1.4 var(--sans); letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); margin-top: 32px; margin-bottom: 10px; }
+/* h3: the serif, but bold, darker and in capitals, so it stands apart from paragraphs. */
+.post-prose h3 { font: 700 17px/1.4 var(--serif); letter-spacing: 0.06em; text-transform: uppercase; color: #15191b; margin-top: 40px; margin-bottom: 12px; }
+.post-prose h4 { font: 700 1em/1.4 var(--serif); letter-spacing: 0; color: #15191b; margin-top: 28px; margin-bottom: 8px; }
 
 .post-prose ul, .post-prose ol { padding-left: 1.4em; margin-top: 0; margin-bottom: 22px; }
 .post-prose li + li { margin-top: 0.35em; }
@@ -127,7 +127,7 @@
   .post-article .post-title { font-size: 34px; }
   .post-prose h1 { font-size: 28px; }
   .post-prose h2 { font-size: 26px; margin-top: 44px; }
-  .post-prose h3 { font-size: 18px; }
+  .post-prose h3 { font-size: 16px; }
   .post-prose pre, .post-prose .highlight { font-size: 13px; }
 }
 @media (max-width: 575.98px) {
