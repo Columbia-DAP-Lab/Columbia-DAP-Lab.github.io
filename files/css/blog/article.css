@@ -1,0 +1,145 @@
+/*
+ * Blog posts: the reading style first made for the CacheBack post, for every
+ * post. A serif reading column on a paper-colored page, a large title that can
+ * carry an accent (title_prefix / title_accent in front matter), and figures
+ * that may run wider than the text (class="wide").
+ *
+ * Selectors stay at one class and an element, so a post's own <style> block
+ * (which comes later in the page) still wins over these.
+ */
+.post-article {
+  --ink: #24272a;
+  --muted: #616b70;
+  --rule: #dfe3e4;
+  --accent: #4a7877;
+  --accent-dark: #245858;
+  --title-accent: #476e80;
+  --paper: #fdfdfc;
+  --code-bg: #f5f7f7;
+  --serif: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+  --measure: 640px;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 12pt;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  padding: 2.5rem 1.5rem 3.5rem;
+}
+
+/* Title and byline */
+.post-article > .post-header {
+  max-width: var(--measure);
+  margin: 0 auto 28px;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--rule);
+}
+.post-article .post-title {
+  font: 500 26pt/1.15 var(--serif);
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  margin: 0;
+}
+.post-article .post-title-accent { color: var(--title-accent); }
+.post-article .post-byline { font: 9.5pt/1.65 var(--sans); color: var(--muted); margin: 16px 0 0; }
+.post-article .post-byline a { color: var(--muted); text-decoration: underline; text-decoration-color: var(--rule); }
+.post-article .post-byline a:hover { color: var(--accent-dark); }
+
+/*
+ * The reading column is the post body itself, so blocks that set their own
+ * margins (inline styles in older posts) still line up with the text. A .wide
+ * block breaks out of it, centered, up to 1040px.
+ */
+.post-prose { max-width: var(--measure); margin-left: auto; margin-right: auto; }
+.post-prose > .wide {
+  width: min(1040px, calc(100vw - 3rem));
+  max-width: none;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.post-prose > :first-child { margin-top: 0; }
+
+.post-prose p { margin-top: 0; margin-bottom: 18px; }
+.post-prose li { line-height: 1.7; }
+.post-prose a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 3px; text-decoration-color: #9ab8b6; }
+.post-prose a:hover { color: var(--accent-dark); text-decoration-color: currentColor; }
+.post-prose strong { font-weight: 600; color: #202528; }
+
+.post-prose h1, .post-prose h2, .post-prose h3, .post-prose h4 { font-family: var(--serif); font-weight: 500; color: var(--ink); letter-spacing: -0.02em; scroll-margin-top: 85px; }
+.post-prose h1 { font-size: 19pt; line-height: 1.2; margin-top: 48px; margin-bottom: 18px; }
+.post-prose h2 { font-size: 17pt; line-height: 1.25; margin-top: 48px; margin-bottom: 16px; }
+/* h3: the serif, but bold, darker and in capitals, so it stands apart from paragraphs. */
+.post-prose h3 { font: 700 10pt/1.4 var(--serif); letter-spacing: 0.06em; text-transform: uppercase; color: #15191b; margin-top: 34px; margin-bottom: 10px; }
+.post-prose h4 { font: 700 1em/1.4 var(--serif); letter-spacing: 0; color: #15191b; margin-top: 24px; margin-bottom: 6px; }
+
+.post-prose ul, .post-prose ol { padding-left: 1.4em; margin-top: 0; margin-bottom: 18px; }
+.post-prose li + li { margin-top: 0.35em; }
+.post-prose li > ul, .post-prose li > ol { margin-top: 0.35em; margin-bottom: 0; }
+
+.post-prose blockquote {
+  margin-top: 0;
+  margin-bottom: 18px;
+  padding: 2px 0 2px 20px;
+  border-left: 2px solid var(--accent);
+  color: #4c575c;
+  font-style: italic;
+}
+.post-prose blockquote p:last-child { margin-bottom: 0; }
+
+.post-prose hr { border: 0; border-top: 1px solid var(--rule); margin-top: 48px; margin-bottom: 48px; opacity: 1; }
+
+/* Images and figures */
+.post-prose img { display: block; max-width: 100%; height: auto; margin: 32px auto; }
+.post-prose p > img:only-child { margin-top: 10px; margin-bottom: 10px; }
+.post-prose figure { margin-top: 36px; margin-bottom: 40px; }
+.post-prose figure img { margin-top: 0; margin-bottom: 0; }
+.post-prose figcaption, .post-prose .caption, .post-prose .figure-caption {
+  font: 9pt/1.65 var(--sans);
+  color: var(--muted);
+  text-align: center;
+  margin-top: 12px;
+}
+.post-prose > .caption, .post-prose > .figure-caption { margin-bottom: 28px; }
+
+/* Code */
+.post-prose code { font-family: var(--mono); font-size: 0.78em; }
+.post-prose :not(pre) > code { background: var(--code-bg); border: 1px solid var(--rule); border-radius: 3px; padding: 0.05em 0.3em; color: #3d4a4f; }
+.post-prose pre, .post-prose .highlight {
+  font: 9pt/1.6 var(--mono);
+  background: var(--code-bg);
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  color: #3d4a4f;
+  overflow-x: auto;
+  margin-top: 0;
+  margin-bottom: 26px;
+}
+.post-prose pre { padding: 14px 16px; }
+.post-prose .highlight pre { margin: 0; border: 0; background: none; }
+.post-prose pre code { font-size: inherit; background: none; border: 0; padding: 0; }
+
+/* Tables: sans, like the CacheBack figures, and scrollable when too wide. */
+.post-prose table { font: 9.5pt/1.5 var(--sans); border-collapse: collapse; margin-top: 0; margin-bottom: 28px; display: block; overflow-x: auto; }
+.post-prose th, .post-prose td { padding: 8px 12px 8px 0; border-bottom: 1px solid var(--rule); text-align: left; vertical-align: top; }
+.post-prose thead th { font-weight: 600; color: var(--muted); font-size: 8.5pt; border-bottom-color: #c9d0d2; }
+
+/* Math */
+.post-prose mjx-container[display="true"] { overflow-x: auto; overflow-y: hidden; }
+
+@media (min-width: 1550px) {
+  .post-article { font-size: 12.5pt; --measure: 680px; }
+}
+@media (max-width: 760px) {
+  .post-article { line-height: 1.65; padding: 1.75rem 1rem 2.5rem; }
+  .post-article .post-title { font-size: 22pt; }
+  .post-prose h1 { font-size: 17pt; }
+  .post-prose h2 { font-size: 15pt; margin-top: 40px; }
+  .post-prose pre, .post-prose .highlight { font-size: 8.5pt; }
+}
+@media (max-width: 575.98px) {
+  .post-article { padding-left: 0; padding-right: 0; background: none; }
+  .post-article .post-title { font-size: 20pt; }
+}

@@ -1,17 +1,24 @@
 ---
 layout: default
 ---
-{% if page.post_template %}
-  {% include {{ page.post_template }} %}
-{% else %}
-
 {%- comment -%}
-A blog post: the same page header as every other page, then the list of posts
-in a fixed left column and the article in a centered reading column beside it.
-On wide screens the list is always there, so nothing moves; on narrow ones it is
-a button that opens the same list in a drawer over the page. There is no
+A blog post: the same page header as every other page, then the article in the
+reading style first made for the CacheBack post (files/css/blog/article.css).
+The list of posts opens in a drawer from the "All posts" button. There is no
 separate index; /blog forwards to the newest post.
+
+Front matter a post can set:
+  title_prefix, title_accent  the title in two parts, the second in the accent color
+  post_css, post_js           lists of extra stylesheets and scripts for the post
+  article_class               an extra class on the article
+  custom_body: true           the post styles its own body; skip the Markdown styles
+  math: false                 skip MathJax (which treats $…$ as math)
 {%- endcomment -%}
+
+<link rel="stylesheet" href="{{ '/files/css/blog/article.css' | relative_url }}">
+{%- for href in page.post_css %}
+<link rel="stylesheet" href="{{ href | relative_url }}">
+{%- endfor %}
 
 <header class="page-header">
   {%- comment -%} Not an h1: the post title below is the page's heading. {%- endcomment %}
@@ -19,23 +26,17 @@ separate index; /blog forwards to the newest post.
   <p class="page-lede">Research notes, results, and news from the lab.</p>
 </header>
 
-<div class="post-layout">
-  <aside class="post-nav" aria-label="All posts">
-    {% include blog-sidebar.html %}
-  </aside>
+<button class="btn btn-sm btn-dap-outline post-nav-toggle" type="button"
+        data-bs-toggle="offcanvas" data-bs-target="#postNavDrawer" aria-controls="postNavDrawer">
+  All posts
+</button>
 
-  <div class="post-main">
-    <button class="btn btn-sm btn-dap-outline post-nav-toggle" type="button"
-            data-bs-toggle="offcanvas" data-bs-target="#postNavDrawer" aria-controls="postNavDrawer">
-      All posts
-    </button>
-
-    <article class="prose post-body">
-      {% include post-meta.html %}
-      {{ content }}
-    </article>
+<article class="post-article{% if page.article_class %} {{ page.article_class }}{% endif %}">
+  {% include post-meta.html %}
+  <div class="post-body{% unless page.custom_body %} post-prose{% endunless %}">
+    {{ content }}
   </div>
-</div>
+</article>
 
 <div class="offcanvas offcanvas-start" tabindex="-1" id="postNavDrawer" aria-labelledby="postNavDrawerTitle">
   <div class="offcanvas-header">
@@ -48,39 +49,23 @@ separate index; /blog forwards to the newest post.
 </div>
 
 <style>
-  .post-layout {
-    display: grid;
-    grid-template-columns: 220px minmax(0, 1fr);
-    gap: 3rem;
-    align-items: start;
-  }
-  .post-nav {
-    position: sticky;
-    top: 5.5rem; /* below the sticky site header */
-    max-height: calc(100vh - 7rem);
-    overflow-y: auto;
-    padding-right: 0.25rem;
-  }
-  .post-nav-toggle { display: none; margin-bottom: 1.5rem; }
-  .post-body img { display: block; margin: 1.25em auto; }
+  .post-nav-toggle { margin-bottom: 1.5rem; }
   .post-subtitle {
     text-align: center;
-    font-size: 1.6rem;
-    font-weight: 700;
-    margin: 0.6rem 0 1.2rem;
-  }
-
-  @media (max-width: 991.98px) {
-    .post-layout { grid-template-columns: minmax(0, 1fr); }
-    .post-nav { display: none; }
-    .post-nav-toggle { display: inline-block; }
+    font-size: 1.3em;
+    font-weight: 600;
+    margin: 0.6rem auto 1.2rem;
   }
 </style>
 
+{%- unless page.math == false %}
 <script>
   MathJax = {
     tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] }
   };
 </script>
 <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
-{% endif %}
+{%- endunless %}
+{%- for src in page.post_js %}
+<script defer src="{{ src | relative_url }}"></script>
+{%- endfor %}

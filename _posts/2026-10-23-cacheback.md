@@ -13,9 +13,16 @@ authors:
   - name: "Eugene Wu"
 excerpt: "CacheBack uses the receiver’s query to select which sender positions to communicate."
 slug: cacheback
-published: false
-noindex: true
-post_template: blog/cacheback/post-layout.html
+article_class: cacheback-article
+custom_body: true
+math: false
+post_css:
+  - /files/css/blog/cacheback.css
+post_js:
+  - /files/js/blog/cacheback/question-trace.js
+  - /files/js/blog/cacheback/article.js
+  - /files/js/blog/cacheback/figures.js
+  - /files/js/blog/cacheback/communication.js
 ---
 
 <div class="cb-reading-progress" aria-hidden="true"><span id="cb-reading-progress"></span></div>
@@ -23,9 +30,9 @@ post_template: blog/cacheback/post-layout.html
 
 <div class="cb-prose">
 <nav aria-label="Research resources" class="cb-resources"><a href="https://arxiv.org/pdf/2609.32046">Paper ↗</a><a href="https://github.com/maxr0ssi/rclc">Code ↗</a><a href="https://agentcacheback.github.io">Project ↗</a><a href="https://huggingface.co/papers/2609.32046">HF paper ↗</a></nav>
-<p data-edit-id="text-5" style="font-size:21px">Recently, frontier models have made progress on a range of open research problems, often with hundreds or thousands of agents working together.</p>
-<p data-edit-id="text-120" style="color:#476e80;font-size:21px">So it seems like having lots of agents work on a task is a pretty good idea.</p>
-<p data-edit-id="text-121" style="font-size:21px">Multi-agent systems can distribute information and work across models to run in parallel, manage context limits, and divide tasks into specialized steps.</p>
+<p data-edit-id="text-5" style="font-size:13.5pt">Recently, frontier models have made progress on a range of open research problems, often with hundreds or thousands of agents working together.</p>
+<p data-edit-id="text-120" style="color:#476e80;font-size:13.5pt">So it seems like having lots of agents work on a task is a pretty good idea.</p>
+<p data-edit-id="text-121" style="font-size:13.5pt">Multi-agent systems can distribute information and work across models to run in parallel, manage context limits, and divide tasks into specialized steps.</p>
 <p data-edit-id="text-107">On a smaller scale, agents can answer a question across several articles. Each agent reads a different article, then sends a summary to a receiver that combines the summaries into an answer. The receiver’s answer depends on the evidence those summaries contain.</p>
 <p data-edit-id="text-105">The dominant form of communication between these agents is text, generated one token at a time. LatentMAS instead sends the sender’s KV cache. But combining full caches at the receiver reassembles the contexts we divided across agents, defeating the context-management purpose of delegation.</p>
 <p data-edit-id="text-106">We separate two decisions: what information to send, and how to represent it. To decide what to send, we start with what the receiver needs. CacheBack uses a receiver query to select which positions in the sender’s sequence to send, limiting how much context reaches the receiver. In our experiments, that query is the task question.</p>
