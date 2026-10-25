@@ -32,7 +32,7 @@ Front matter a post can set:
 <div class="post-shell" data-post-shell>
   <div class="post-stage">
     <div class="post-nav">
-      <button class="btn btn-sm btn-dap-outline post-nav-toggle" type="button" aria-controls="post-nav-list" aria-expanded="true">Hide posts</button>
+      <button class="btn btn-sm btn-dap-outline post-nav-toggle" type="button" aria-controls="post-nav-list" aria-expanded="true"><svg class="post-nav-caret" viewBox="0 0 10 10" aria-hidden="true"><path d="M3 1.5 7.5 5 3 8.5z" fill="currentColor"/></svg><span class="post-nav-label">Hide posts</span></button>
       <nav class="post-nav-list" id="post-nav-list" aria-label="All posts">
         {% include blog-sidebar.html %}
       </nav>
@@ -53,13 +53,14 @@ Front matter a post can set:
   (() => {
     const shell = document.querySelector("[data-post-shell]");
     const button = shell.querySelector(".post-nav-toggle");
+    const label = button.querySelector(".post-nav-label");
     const wide = window.matchMedia("(min-width: 1200px)");
     const KEY = "dap-post-nav";
     const saved = () => { try { return localStorage.getItem(KEY); } catch { return null; } };
     const show = (open) => {
       shell.dataset.nav = open ? "open" : "closed";
       button.setAttribute("aria-expanded", String(open));
-      button.textContent = open ? "Hide posts" : "All posts";
+      label.textContent = open ? "Hide posts" : "All posts";
     };
     const initial = () => wide.matches && saved() !== "closed";
     show(initial());
@@ -73,7 +74,19 @@ Front matter a post can set:
 </script>
 
 <style>
-  .post-nav-toggle { margin-bottom: 1rem; }
+  /* As wide as the list it opens and closes. */
+  .post-nav-toggle {
+    width: 100%;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+  }
+  /* Points right while the list is hidden and turns down when it shows. */
+  .post-nav-caret { width: 0.7em; height: 0.7em; flex: none; transition: transform 0.2s ease; }
+  .post-nav-toggle[aria-expanded="true"] .post-nav-caret { transform: rotate(90deg); }
+  @media (prefers-reduced-motion: reduce) { .post-nav-caret { transition: none; } }
   .post-subtitle {
     text-align: center;
     font-size: 1.3em;
