@@ -4,8 +4,11 @@ layout: default
 {%- comment -%}
 A blog post: the same page header as every other page, then the article in the
 reading style first made for the CacheBack post (files/css/blog/article.css).
-The list of posts opens in a drawer from the "All posts" button. There is no
-separate index; /blog forwards to the newest post.
+On wide screens the list of posts has its own column left of the article, with
+an empty one of the same width on the right, so the article stays centered and
+nothing overlaps. The button heading that column stays in view; "Hide posts"
+blanks the list without moving anything (remembered in localStorage). On
+narrower screens "All posts" opens the list above the article. There is no separate index; /blog forwards to the newest post.
 
 Front matter a post can set:
   title_prefix, title_accent  the title in two parts, the second in the accent color
@@ -26,35 +29,115 @@ Front matter a post can set:
   <p class="page-lede">Research notes, results, and news from the lab.</p>
 </header>
 
-<button class="btn btn-sm btn-dap-outline post-nav-toggle" type="button"
-        data-bs-toggle="offcanvas" data-bs-target="#postNavDrawer" aria-controls="postNavDrawer">
-  All posts
-</button>
+<div class="post-shell" data-post-shell>
+  <div class="post-stage">
+    <div class="post-nav">
+      <button class="btn btn-sm btn-dap-outline post-nav-toggle" type="button" aria-controls="post-nav-list" aria-expanded="true"><svg class="post-nav-caret" viewBox="0 0 10 10" aria-hidden="true"><path d="M3 1.5 7.5 5 3 8.5z" fill="currentColor"/></svg><span class="post-nav-label">Hide posts</span></button>
+      <nav class="post-nav-list" id="post-nav-list" aria-label="All posts">
+        {% include blog-sidebar.html %}
+      </nav>
+    </div>
 
-<article class="post-article{% if page.article_class %} {{ page.article_class }}{% endif %}">
-  {% include post-meta.html %}
-  <div class="post-body{% unless page.custom_body %} post-prose{% endunless %}">
-    {{ content }}
-  </div>
-</article>
-
-<div class="offcanvas offcanvas-start" tabindex="-1" id="postNavDrawer" aria-labelledby="postNavDrawerTitle">
-  <div class="offcanvas-header">
-    <h2 class="offcanvas-title h5" id="postNavDrawerTitle">All posts</h2>
-    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-  </div>
-  <div class="offcanvas-body">
-    {% include blog-sidebar.html %}
+    <article class="post-article{% if page.article_class %} {{ page.article_class }}{% endif %}">
+      {% include post-meta.html %}
+      <div class="post-body{% unless page.custom_body %} post-prose{% endunless %}">
+        {{ content }}
+      </div>
+    </article>
   </div>
 </div>
 
+<script>
+  // Show or blank the list of posts. Wide screens start with it showing (or as
+  // the reader last left it); narrower ones start with it folded away.
+  (() => {
+    const shell = document.querySelector("[data-post-shell]");
+    const button = shell.querySelector(".post-nav-toggle");
+    const label = button.querySelector(".post-nav-label");
+    const wide = window.matchMedia("(min-width: 1200px)");
+    const KEY = "dap-post-nav";
+    const saved = () => { try { return localStorage.getItem(KEY); } catch { return null; } };
+    const show = (open) => {
+      shell.dataset.nav = open ? "open" : "closed";
+      button.setAttribute("aria-expanded", String(open));
+      label.textContent = open ? "Hide posts" : "All posts";
+    };
+    const initial = () => wide.matches && saved() !== "closed";
+    show(initial());
+    wide.addEventListener("change", () => show(initial()));
+    button.addEventListener("click", () => {
+      const open = shell.dataset.nav !== "open";
+      show(open);
+      if (wide.matches) try { localStorage.setItem(KEY, open ? "open" : "closed"); } catch {}
+    });
+  })();
+</script>
+
 <style>
-  .post-nav-toggle { margin-bottom: 1.5rem; }
+  /* As wide as the list it opens and closes. */
+  .post-nav-toggle {
+    width: 100%;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+  }
+  /* Points right while the list is hidden and turns down when it shows. */
+  .post-nav-caret { width: 0.7em; height: 0.7em; flex: none; transition: transform 0.2s ease; }
+  .post-nav-toggle[aria-expanded="true"] .post-nav-caret { transform: rotate(90deg); }
+  @media (prefers-reduced-motion: reduce) { .post-nav-caret { transition: none; } }
   .post-subtitle {
     text-align: center;
     font-size: 1.3em;
     font-weight: 600;
     margin: 0.6rem auto 1.2rem;
+  }
+
+  /*
+   * Wide: three columns, the list | the article | an empty twin of the list's
+   * column. The row may run past the page frame into the window's margins, so
+   * the article keeps as much of the frame's width as fits (up to all of it).
+   */
+  @media (min-width: 1200px) {
+    .post-stage {
+      --nav-width: 200px;
+      --nav-gap: 1.5rem;
+      --stage-width: min(100vw - 2rem, 100% + 2 * (var(--nav-width) + var(--nav-gap)));
+      width: var(--stage-width);
+      margin-left: calc((100% - var(--stage-width)) / 2);
+      display: grid;
+      grid-template-columns: var(--nav-width) minmax(0, 1fr) var(--nav-width);
+      column-gap: var(--nav-gap);
+      align-items: start;
+    }
+    /* The column sticks below the site header: the button stays put, the list scrolls. */
+    .post-nav {
+      grid-column: 1;
+      position: sticky;
+      top: 5.5rem; /* below the sticky site header */
+      max-height: calc(100vh - 7rem);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      padding-top: 2.25rem;
+    }
+    .post-nav-list { overflow-y: auto; min-height: 0; width: 100%; }
+    .post-stage > .post-article { grid-column: 2; }
+    .post-shell[data-nav="closed"] .post-nav-list { visibility: hidden; }
+  }
+
+  /* Narrower: the list, when open, sits above the article. */
+  @media (max-width: 1199.98px) {
+    .post-shell:not([data-nav="open"]) .post-nav-list { display: none; }
+    .post-nav-list {
+      max-height: 45vh;
+      overflow-y: auto;
+      margin-bottom: 1.5rem;
+      padding: 0.5rem 0;
+      border-top: 1px solid var(--dap-rule);
+      border-bottom: 1px solid var(--dap-rule);
+    }
   }
 </style>
 

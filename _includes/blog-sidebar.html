@@ -1,6 +1,7 @@
 {%- comment -%}
 The list of blog posts, newest first: title and date, the current post marked.
-Used in the post layout's left column and in its drawer on narrow screens.
+Used in the post layout: a quiet column beside the article on wide screens, and
+a panel above it on narrow ones.
 {%- endcomment -%}
 <ul class="post-list">
   {%- for post in site.posts -%}
@@ -18,17 +19,17 @@ Used in the post layout's left column and in its drawer on narrow screens.
 
 <style>
 .post-list { list-style: none; margin: 0; padding: 0; }
-.post-list li + li { margin-top: 0.15rem; }
+.post-list li + li { margin-top: 0.1rem; }
 .post-list-link {
   display: block;
-  padding: 0.5rem 0.65rem;
+  padding: 0.4rem 0.6rem;
   border-left: 2px solid transparent;
   border-radius: 0 6px 6px 0;
-  color: var(--dap-ink);
+  color: #3b4552;
 }
 .post-list-link:hover { background: var(--dap-surface); text-decoration: none; color: var(--dap-navy); }
 .post-list-link.current { border-left-color: var(--dap-navy); background: var(--dap-surface); }
-.post-list-title { display: block; font-size: 0.9rem; font-weight: 600; line-height: 1.35; }
-.post-list-link.current .post-list-title { color: var(--dap-navy); }
-.post-list-date { display: block; font-size: 0.78rem; color: var(--dap-muted); margin-top: 0.15rem; }
+.post-list-title { display: block; font-size: 0.84rem; font-weight: 500; line-height: 1.35; }
+.post-list-link.current .post-list-title { color: var(--dap-navy); font-weight: 600; }
+.post-list-date { display: block; font-size: 0.74rem; color: var(--dap-muted); margin-top: 0.15rem; }
 </style>
