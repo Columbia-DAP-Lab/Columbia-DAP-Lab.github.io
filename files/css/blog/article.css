@@ -23,7 +23,7 @@
   background: var(--paper);
   color: var(--ink);
   font-family: var(--serif);
-  font-size: 21px;
+  font-size: 19px;
   line-height: 1.68;
   -webkit-font-smoothing: antialiased;
   padding: 2.5rem 1.5rem 3.5rem;
@@ -62,20 +62,20 @@
 }
 .post-prose > :first-child { margin-top: 0; }
 
-.post-prose p { margin-top: 0; margin-bottom: 22px; }
+.post-prose p { margin-top: 0; margin-bottom: 20px; }
 .post-prose li { line-height: 1.68; }
 .post-prose a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 3px; text-decoration-color: #9ab8b6; }
 .post-prose a:hover { color: var(--accent-dark); text-decoration-color: currentColor; }
 .post-prose strong { font-weight: 600; color: #202528; }
 
 .post-prose h1, .post-prose h2, .post-prose h3, .post-prose h4 { font-family: var(--serif); font-weight: 500; color: var(--ink); letter-spacing: -0.02em; scroll-margin-top: 85px; }
-.post-prose h1 { font-size: 34px; line-height: 1.2; margin-top: 56px; margin-bottom: 22px; }
-.post-prose h2 { font-size: 31px; line-height: 1.22; margin-top: 56px; margin-bottom: 20px; }
+.post-prose h1 { font-size: 31px; line-height: 1.2; margin-top: 56px; margin-bottom: 22px; }
+.post-prose h2 { font-size: 28px; line-height: 1.22; margin-top: 56px; margin-bottom: 20px; }
 /* h3: the serif, but bold, darker and in capitals, so it stands apart from paragraphs. */
-.post-prose h3 { font: 700 17px/1.4 var(--serif); letter-spacing: 0.06em; text-transform: uppercase; color: #15191b; margin-top: 40px; margin-bottom: 12px; }
+.post-prose h3 { font: 700 16px/1.4 var(--serif); letter-spacing: 0.06em; text-transform: uppercase; color: #15191b; margin-top: 40px; margin-bottom: 12px; }
 .post-prose h4 { font: 700 1em/1.4 var(--serif); letter-spacing: 0; color: #15191b; margin-top: 28px; margin-bottom: 8px; }
 
-.post-prose ul, .post-prose ol { padding-left: 1.4em; margin-top: 0; margin-bottom: 22px; }
+.post-prose ul, .post-prose ol { padding-left: 1.4em; margin-top: 0; margin-bottom: 20px; }
 .post-prose li + li { margin-top: 0.35em; }
 .post-prose li > ul, .post-prose li > ol { margin-top: 0.35em; margin-bottom: 0; }
 
@@ -130,14 +130,14 @@
 .post-prose mjx-container[display="true"] { overflow-x: auto; overflow-y: hidden; }
 
 @media (min-width: 1550px) {
-  .post-article { font-size: 22px; --measure: 760px; }
+  .post-article { font-size: 20px; --measure: 760px; }
 }
 @media (max-width: 760px) {
-  .post-article { font-size: 18px; line-height: 1.65; padding: 1.75rem 1rem 2.5rem; }
+  .post-article { font-size: 17px; line-height: 1.65; padding: 1.75rem 1rem 2.5rem; }
   .post-article .post-title { font-size: 34px; }
-  .post-prose h1 { font-size: 28px; }
-  .post-prose h2 { font-size: 26px; margin-top: 44px; }
-  .post-prose h3 { font-size: 16px; }
+  .post-prose h1 { font-size: 26px; }
+  .post-prose h2 { font-size: 24px; margin-top: 44px; }
+  .post-prose h3 { font-size: 15px; }
   .post-prose pre, .post-prose .highlight { font-size: 13px; }
 }
 @media (max-width: 575.98px) {
