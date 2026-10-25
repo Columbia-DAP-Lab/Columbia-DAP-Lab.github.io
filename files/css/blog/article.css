@@ -47,9 +47,19 @@
 .post-article .post-byline a { color: var(--muted); text-decoration: underline; text-decoration-color: var(--rule); }
 .post-article .post-byline a:hover { color: var(--accent-dark); }
 
-/* The reading column: everything in a Markdown post sits in it, except .wide. */
-.post-prose > * { max-width: var(--measure); margin-left: auto; margin-right: auto; }
-.post-prose > .wide { max-width: none; }
+/*
+ * The reading column is the post body itself, so blocks that set their own
+ * margins (inline styles in older posts) still line up with the text. A .wide
+ * block breaks out of it, centered, up to 1040px.
+ */
+.post-prose { max-width: var(--measure); margin-left: auto; margin-right: auto; }
+.post-prose > .wide {
+  width: min(1040px, calc(100vw - 3rem));
+  max-width: none;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+}
 .post-prose > :first-child { margin-top: 0; }
 
 .post-prose p { margin-top: 0; margin-bottom: 22px; }
