@@ -19,7 +19,6 @@
   --serif: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
   --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --mono: ui-monospace, SFMono-Regular, Menlo, monospace;
-  --measure: 640px;
   background: var(--paper);
   color: var(--ink);
   font-family: var(--serif);
@@ -28,6 +27,9 @@
   -webkit-font-smoothing: antialiased;
   padding: 2.5rem 1.5rem 3.5rem;
 }
+
+/* The reading measure, also on the stage so the layout can place the list of posts beside it. */
+.post-stage, .post-article { --measure: 640px; }
 
 /* Title and byline */
 .post-article > .post-header {
@@ -50,16 +52,18 @@
 /*
  * The reading column is the post body itself, so blocks that set their own
  * margins (inline styles in older posts) still line up with the text. A .wide
- * block breaks out of it, centered, up to 1040px.
+ * block breaks out of it to the article's full width, centered.
  */
 .post-prose { max-width: var(--measure); margin-left: auto; margin-right: auto; }
 .post-prose > .wide {
-  width: min(1040px, calc(100vw - 3rem));
+  width: 100cqw; /* the article's full inner width */
   max-width: none;
   position: relative;
   left: 50%;
   transform: translateX(-50%);
 }
+/* Lets a .wide block size itself to the article (only Markdown posts need it). */
+.post-article:has(> .post-prose) { container-type: inline-size; }
 .post-prose > :first-child { margin-top: 0; }
 
 .post-prose p { margin-top: 0; margin-bottom: 18px; }
@@ -130,7 +134,8 @@
 .post-prose mjx-container[display="true"] { overflow-x: auto; overflow-y: hidden; }
 
 @media (min-width: 1550px) {
-  .post-article { font-size: 12.5pt; --measure: 680px; }
+  .post-article { font-size: 12.5pt; }
+  .post-stage, .post-article { --measure: 680px; }
 }
 @media (max-width: 760px) {
   .post-article { line-height: 1.65; padding: 1.75rem 1rem 2.5rem; }

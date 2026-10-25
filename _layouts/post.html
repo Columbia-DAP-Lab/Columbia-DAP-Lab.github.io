@@ -4,11 +4,11 @@ layout: default
 {%- comment -%}
 A blog post: the same page header as every other page, then the article in the
 reading style first made for the CacheBack post (files/css/blog/article.css).
-The list of posts never covers the article: on wide screens it is a quiet column
-beside it, which "Hide posts" blanks without moving the article (remembered in
-localStorage); on narrow
-screens "All posts" opens it above the article. There is no separate index;
-/blog forwards to the newest post.
+On wide screens the list of posts has its own column left of the article, with
+an empty one of the same width on the right, so the article stays centered and
+nothing overlaps. "Hide posts" blanks the column without moving anything
+(remembered in localStorage). On narrower screens "All posts" opens the list
+above the article. There is no separate index; /blog forwards to the newest post.
 
 Front matter a post can set:
   title_prefix, title_accent  the title in two parts, the second in the accent color
@@ -32,25 +32,27 @@ Front matter a post can set:
 <div class="post-shell" data-post-shell>
   <button class="btn btn-sm btn-dap-outline post-nav-toggle" type="button" aria-controls="post-nav" aria-expanded="true">Hide posts</button>
 
-  <nav class="post-nav" id="post-nav" aria-label="All posts">
-    {% include blog-sidebar.html %}
-  </nav>
+  <div class="post-stage">
+    <nav class="post-nav" id="post-nav" aria-label="All posts">
+      {% include blog-sidebar.html %}
+    </nav>
 
-  <article class="post-article{% if page.article_class %} {{ page.article_class }}{% endif %}">
-    {% include post-meta.html %}
-    <div class="post-body{% unless page.custom_body %} post-prose{% endunless %}">
-      {{ content }}
-    </div>
-  </article>
+    <article class="post-article{% if page.article_class %} {{ page.article_class }}{% endif %}">
+      {% include post-meta.html %}
+      <div class="post-body{% unless page.custom_body %} post-prose{% endunless %}">
+        {{ content }}
+      </div>
+    </article>
+  </div>
 </div>
 
 <script>
-  // Open or fold the list of posts. Wide screens start open (or as the reader
-  // last left it); narrow ones start folded, with the list above the article.
+  // Show or blank the list of posts. Wide screens start with it showing (or as
+  // the reader last left it); narrower ones start with it folded away.
   (() => {
     const shell = document.querySelector("[data-post-shell]");
     const button = shell.querySelector(".post-nav-toggle");
-    const wide = window.matchMedia("(min-width: 992px)");
+    const wide = window.matchMedia("(min-width: 1200px)");
     const KEY = "dap-post-nav";
     const saved = () => { try { return localStorage.getItem(KEY); } catch { return null; } };
     const show = (open) => {
@@ -70,25 +72,7 @@ Front matter a post can set:
 </script>
 
 <style>
-  .post-shell {
-    display: grid;
-    grid-template-columns: 200px minmax(0, 1fr);
-    grid-template-areas: "toggle toggle" "nav article";
-    column-gap: 2rem;
-    align-items: start;
-  }
-  .post-nav-toggle { grid-area: toggle; justify-self: start; margin-bottom: 1.25rem; }
-  .post-nav {
-    grid-area: nav;
-    position: sticky;
-    top: 5.5rem; /* below the sticky site header */
-    max-height: calc(100vh - 7rem);
-    overflow-y: auto;
-    padding-right: 0.25rem;
-  }
-  .post-shell > .post-article { grid-area: article; }
-  /* Folding the list keeps its column, so the article does not move. */
-  .post-shell[data-nav="closed"] > .post-nav { visibility: hidden; }
+  .post-nav-toggle { margin-bottom: 1.25rem; }
   .post-subtitle {
     text-align: center;
     font-size: 1.3em;
@@ -96,14 +80,41 @@ Front matter a post can set:
     margin: 0.6rem auto 1.2rem;
   }
 
-  /* Narrow: one column; the list, when open, sits above the article. */
-  @media (max-width: 991.98px) {
-    .post-shell,
-    .post-shell[data-nav="open"] { grid-template-columns: minmax(0, 1fr); grid-template-areas: "toggle" "nav" "article"; }
-    .post-shell:not([data-nav="open"]) > .post-nav { display: none; visibility: visible; }
+  /*
+   * Wide: three columns, the list | the article | an empty twin of the list's
+   * column. The row may run past the page frame into the window's margins, so
+   * the article keeps as much of the frame's width as fits (up to all of it).
+   */
+  @media (min-width: 1200px) {
+    .post-stage {
+      --nav-width: 200px;
+      --nav-gap: 1.5rem;
+      --stage-width: min(100vw - 2rem, 100% + 2 * (var(--nav-width) + var(--nav-gap)));
+      width: var(--stage-width);
+      margin-left: calc((100% - var(--stage-width)) / 2);
+      display: grid;
+      grid-template-columns: var(--nav-width) minmax(0, 1fr) var(--nav-width);
+      column-gap: var(--nav-gap);
+      align-items: start;
+    }
     .post-nav {
-      position: static;
+      grid-column: 1;
+      position: sticky;
+      top: 5.5rem; /* below the sticky site header */
+      max-height: calc(100vh - 7rem);
+      overflow-y: auto;
+      padding-top: 2.25rem;
+    }
+    .post-stage > .post-article { grid-column: 2; }
+    .post-shell[data-nav="closed"] .post-nav { visibility: hidden; }
+  }
+
+  /* Narrower: the list, when open, sits above the article. */
+  @media (max-width: 1199.98px) {
+    .post-shell:not([data-nav="open"]) .post-nav { display: none; }
+    .post-nav {
       max-height: 45vh;
+      overflow-y: auto;
       margin-bottom: 1.5rem;
       padding: 0.5rem 0;
       border-top: 1px solid var(--dap-rule);
