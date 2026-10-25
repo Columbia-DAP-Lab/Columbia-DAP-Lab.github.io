@@ -31,7 +31,9 @@ jobs:
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.4.5'  # Specify the required Ruby version
+          # The latest 3.4.x: newer runner images only carry the latest patch
+          # release, so a pinned patch (3.4.5) stops being installable.
+          ruby-version: '3.4'
           bundler-cache: true  # Cache dependencies
 
       - name: Install dependencies
