@@ -767,7 +767,7 @@
       "url": "https://arxiv.org/abs/2610.29332"
     },
     {
-      "authors": "Qian Xie, Tianyi Peng, Kostis Kaffes, Eugene Wu, Sripad Karne, Armaan Agrawal, Nikos Pagonas, Wenyue Hua, Nairen Cao, Yueli He",
+      "authors": "Qian Xie*, Wenyue Hua*, Yueli He, Sripad Karne, Armaan Agrawal, Nikos Pagonas, Eugene Wu, Kostis Kaffes, Tianyi Peng, Nairen Cao",
       "code": "https://github.com/AgentOptimizer/agentopt",
       "conf": "NeurIPS 2026 Workshop on Resource-Aware Agentic AI",
       "pub_date": "2026-10-19",
