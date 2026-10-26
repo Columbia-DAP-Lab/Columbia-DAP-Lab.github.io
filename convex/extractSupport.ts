@@ -20,18 +20,44 @@ const rateLimiter = new RateLimiter(components.rateLimiter, {
 });
 
 const entry = v.object({ slug: v.string(), label: v.string(), description: v.optional(v.string()) });
+const vocabulary = v.object({
+  series: v.array(entry),
+  topics: v.array(entry),
+  fields: v.array(entry),
+  tags: v.optional(v.array(v.string())),
+});
 
 /**
  * Check that the caller may submit and has reads left, and return the closed
  * vocabularies the model must choose from.
  */
 export const begin = internalMutation({
-  args: { kind: v.union(v.literal("event"), v.literal("publication"), v.literal("person"), v.literal("news")) },
-  returns: v.object({ series: v.array(entry), topics: v.array(entry), fields: v.array(entry) }),
+  args: {
+    kind: v.union(
+      v.literal("event"),
+      v.literal("publication"),
+      v.literal("person"),
+      v.literal("news"),
+      v.literal("project"),
+    ),
+  },
+  returns: vocabulary,
   handler: async (ctx, args) => {
-    // Filling the person form is for whoever may submit one: admins.
-    const email = args.kind === "person" ? await requireCapability(ctx, "people") : await requireSubmitter(ctx);
-    return await limitedVocabulary(ctx, email);
+    // Filling the person and project forms is for whoever may save them.
+    const email =
+      args.kind === "person"
+        ? await requireCapability(ctx, "people")
+        : args.kind === "project"
+          ? await requireCapability(ctx, "admin")
+          : await requireSubmitter(ctx);
+    const vocab = await limitedVocabulary(ctx, email);
+    if (args.kind !== "project") return vocab;
+    // The chips projects already use, most used first, so new ones match.
+    const counts = new Map<string, number>();
+    for (const project of await ctx.db.query("projects").take(500)) {
+      for (const tag of project.tags) counts.set(tag, (counts.get(tag) ?? 0) + 1);
+    }
+    return { ...vocab, tags: [...counts.keys()].sort((a, b) => counts.get(b)! - counts.get(a)!).slice(0, 60) };
   },
 });
 

@@ -565,6 +565,33 @@ const FILL = {
     // A reviewer's edit keeps the submitter's choice; a fresh draft starts featured.
     form.elements.featured.checked = draft.featured ?? true;
   },
+  project: (form, draft) => {
+    // Over a project being edited, a field the text says nothing about keeps its value.
+    const keep = editing !== null;
+    const f = form.elements;
+    for (const name of ["title", "subtitle", "body"]) {
+      if (draft[name] !== undefined || !keep) f[name].value = draft[name] ?? "";
+    }
+    if (draft.date) f.date.value = draft.date;
+    if (draft.tags?.length || !keep) f.tags.value = (draft.tags ?? []).join(", ");
+    if (draft.kinds?.length || !keep) setChecks($(".dap-inline-checks", form), draft.kinds);
+    if (draft.authors?.length || !keep) {
+      $('[data-rows="authors"]').replaceChildren();
+      for (const author of draft.authors ?? []) addRow("authors", author);
+    }
+    // Links and papers add to an edited project's; a new one gets just the text's.
+    for (const [kind, key] of [["links", "url"], ["papers", "title"]]) {
+      if (!keep) $(`[data-rows="${kind}"]`).replaceChildren();
+      const have = new Set(rowValues(kind).map((row) => row[key].toLowerCase()));
+      for (const row of draft[kind] ?? []) if (!have.has(String(row[key]).toLowerCase())) addRow(kind, row);
+    }
+    if (!$('[data-rows="authors"] .dap-row')) addRow("authors");
+    // A new project's short name follows its title, as when typing one.
+    if (!slugTouched) {
+      f.slug.value = slugify(f.title.value);
+      $("[data-slug-preview]").textContent = f.slug.value || "my-project";
+    }
+  },
   person: (form, draft) => {
     setFields(form, draft, ["name", "category", "title", "homepage", "email", "affiliation", "bio"]);
     form.elements.advisors.value = (draft.advisors ?? []).join("\n");
@@ -574,7 +601,11 @@ const FILL = {
 
 const draftTitle = (draft) => draft.title ?? draft.name ?? "Untitled";
 
-const pasteToFill = (kind, form) => {
+/**
+ * `next` runs before a draft that follows a submitted one, for a form that keeps
+ * showing what was just saved (projects); `filled` words the status line.
+ */
+const pasteToFill = (kind, form, { next, filled } = {}) => {
   const card = $(`[data-quick-add="${kind}"]`);
   const textarea = $("[data-quick-text]", card);
   const button = $("[data-quick-extract]", card);
@@ -643,7 +674,8 @@ const pasteToFill = (kind, form) => {
         return;
       }
       setStatus(
-        items.length === 1 ? "Filled in below. Check it, then submit." : `Found ${items.length}. The first is filled in below.`,
+        filled?.(items.length) ??
+          (items.length === 1 ? "Filled in below. Check it, then submit." : `Found ${items.length}. The first is filled in below.`),
         "success",
       );
       show(0);
@@ -657,9 +689,11 @@ const pasteToFill = (kind, form) => {
   form.addEventListener("submitted", () => {
     if (current < 0) return;
     done.add(current);
-    const next = items.findIndex((_, index) => !done.has(index));
-    if (next >= 0) show(next);
-    else {
+    const following = items.findIndex((_, index) => !done.has(index));
+    if (following >= 0) {
+      next?.();
+      show(following);
+    } else {
       current = -1;
       warnings.hidden = true;
       renderList();
@@ -1158,6 +1192,16 @@ handleSubmit(projectForm, async (event) => {
   await loadProject(id);
   if (publish) return "Published. The Projects page updates in about a minute.";
   return editing?.status === "published" ? "Saved. The live page updates in about a minute." : "Draft saved. It is not on the site until you publish it.";
+});
+
+pasteToFill("project", projectForm, {
+  next: resetProjectForm,
+  filled: (count) =>
+    editing !== null
+      ? `Filled into ${editing.title}: fields the text does not cover are unchanged, and its links and papers are added. Check it, then save.`
+      : count === 1
+        ? "Filled in below. Check it, then save."
+        : `Found ${count}. The first is filled in below.`,
 });
 
 const KIND_LABELS = { project: "Project", software: "Software", benchmark: "Benchmark" };
