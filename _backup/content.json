@@ -18,7 +18,7 @@
       "time": "3PM-4PM",
       "title": "TBA",
       "where": "CSB 453",
-      "who": "Anthony Vanky",
+      "who": "Anthony Vanky, Columbia GSAPP",
       "wholink": "https://datascience.columbia.edu/people/anthony-vanky/"
     },
     {
@@ -37,7 +37,7 @@
       "time": "3PM-4PM",
       "title": "TBA",
       "where": "CSB 453",
-      "who": "Wajeeha Ahmad",
+      "who": "Wajeeha Ahmad, Columbia Business School, Management division",
       "wholink": "https://www.wajeehaahmad.com/"
     },
     {
@@ -65,11 +65,13 @@
     {
       "bio": "Silvia Sellán leads the Geometry and the City laboratory at Columbia University, where she is an assistant professor of computer science. Her work in computer graphics and geometry processing investigates ways to represent shapes implicitly and reconstruct surfaces. She completed her doctorate at the University of Toronto and held a postdoctoral research position at MIT before joining Columbia.",
       "date": "2026-11-05",
+      "description": "With the support of the New York State Government and the Columbia Scientific Union for the Reduction of Gun Violence, we are hosting a workshop on the illegal 3D printing of firearms and how it can be stopped. It is a multidisciplinary problem combining engineering, computer science, public health, law, social science and law enforcement, and will have speakers from all these communities.\n\nRegister here: [https://datascience.columbia.edu/events/safety-3d-printing](https://datascience.columbia.edu/events/safety-3d-printing)",
+      "link": "https://datascience.columbia.edu/events/safety-3d-printing",
       "tag": "AI in the Public Interest",
-      "time": "3PM-4PM",
-      "title": "Ghost Gun Workshop",
-      "where": "Davis Auditorium",
-      "who": "Silvia Sellán",
+      "time": "2PM-4:30PM",
+      "title": "Safety in 3D Printing (Workshop on Ghost Guns)",
+      "where": "Davis Auditorium (CEPSR 4th Floor — Campus level)",
+      "who": "Silvia Sellán, Columbia CS",
       "wholink": "https://www.silviasellan.com/"
     },
     {
@@ -123,7 +125,8 @@
       "time": "3PM-4PM",
       "title": "What would it cost to end extreme poverty?",
       "where": "CSB 453",
-      "who": "Roshni Sahoo"
+      "who": "Roshni Sahoo, Columbia DRO",
+      "wholink": "https://roshni714.github.io/"
     },
     {
       "bio": "Vyas Sekar is the Tan Family Chair Professor at Carnegie Mellon University, co-founder at Rockfish Data, and Chief Scientist at Conviva. He received his B.Tech from IIT Madras (President's Gold Medal) and his Ph.D. from CMU. His work has received several honors, including an NSF CAREER Award, the SIGCOMM Rising Star Award, best paper awards at SIGCOMM/CoNEXT/Multimedia, the NSA Science of Security Prize, and SIGCOMM Test of Time Awards.",
@@ -178,7 +181,7 @@
       "time": "3PM-4PM",
       "title": "Selective interventions for information acquisition: Incentives and audits for biodiversity",
       "where": "CSB 453",
-      "who": "Lily Xu",
+      "who": "Lily Xu, Columbia IEOR",
       "wholink": "https://lily-x.github.io/"
     },
     {
@@ -2828,9 +2831,9 @@
       "slug": "workshop"
     },
     {
-      "description": "The AI in the Public Interest group brings together researchers from across Columbia\nUniversity working to advance AI and computational methods in service of the public\ninterest. Our members span a range of technical areas while sharing a common commitment\nto rigorous methodological research with clear societal relevance.\n\nThe group provides a forum for researchers to exchange ideas across subfields, identify\ncommon methodological challenges, and explore how advances in AI can contribute to\nconsequential real-world problems. Through seminars, collaborations, and regular\nconvenings, we aim to catalyze new research partnerships, connect methodological\ninnovation with substantive applications, and build a broader technical community focused\non ensuring that advances in AI generate benefits that are widely shared across society.\n\nThe series is led by Lily Xu and co-organized with Columbia Data Science Institute's\nCenter for Data, Media, and Society, and partners with the Society of Fellows and Heyman Center for the Humanities.\n\n**The series meets every other Thursday, 3–4PM, in CSB 453 (the CS Conference Room,\nin the Mudd building).**",
+      "description": "The AI in the Public Interest group brings together researchers from across Columbia\nUniversity working to advance AI and computational methods in service of the public\ninterest. Our members span a range of technical areas while sharing a common commitment\nto rigorous methodological research with clear societal relevance.\n\nThe group provides a forum for researchers to exchange ideas across subfields, identify\ncommon methodological challenges, and explore how advances in AI can contribute to\nconsequential real-world problems. Through seminars, collaborations, and regular\nconvenings, we aim to catalyze new research partnerships, connect methodological\ninnovation with substantive applications, and build a broader technical community focused\non ensuring that advances in AI generate benefits that are widely shared across society.\n\nThe series is led by Lily Xu and co-organized with Columbia Data Science Institute's\n[Center for Data, Media, and Society](https://datascience.columbia.edu/research/centers/data-media-and-society/), and partners with the [Society of Fellows and Heyman Center for the Humanities](https://sofheyman.org/).\n\n**The series meets every other Thursday, 3–4PM, in CSB 453 (the CS Conference Room,\nin the Mudd building).**",
       "label": "AI in the Public Interest",
-      "logo": "https://dutiful-turtle-748.convex.cloud/api/storage/511ff37c-53e9-49e9-a733-31d4ac36ad45",
+      "logo": "https://dutiful-turtle-748.convex.cloud/api/storage/9af4eb64-4fab-475a-bea5-abe2ac43beca",
       "slug": "ai-in-the-public-interest"
     },
     {
@@ -2839,6 +2842,70 @@
     }
   ],
   "projects": [
+    {
+      "body": "Disaster Genome bridges the gap between disaster research and practice, helping policymakers, planners, and communities understand the interconnected factors that shape disaster risk and resilience. Its AI-powered Climate Adaptation Support Tool (CAST) draws on research curated by experts at Columbia University’s National Center for Disaster Preparedness to answer questions with citations to supporting sources. Initially focused on wildfire adaptation, the project supports evidence-based planning, policy, and investment decisions with an emphasis on community resilience and equity.",
+      "frontMatter": {
+        "authors": [
+          {
+            "name": "Jeff Schlegelmilch"
+          },
+          {
+            "name": "Josh DeVincenzo"
+          },
+          {
+            "name": "Shuyang Huang"
+          },
+          {
+            "name": "Eugene Wu"
+          },
+          {
+            "name": "Yixuan xu"
+          },
+          {
+            "name": "Emily Su"
+          },
+          {
+            "name": "Hudson Defee"
+          },
+          {
+            "name": "Madison Malthaner"
+          },
+          {
+            "name": "Mikaela Zhang"
+          },
+          {
+            "name": "Minsuk Kim"
+          },
+          {
+            "name": "Rebecca Yao"
+          },
+          {
+            "name": "Reva Bhardwaj"
+          },
+          {
+            "name": "Stuti Johri"
+          },
+          {
+            "name": "Tushar Mittal"
+          }
+        ],
+        "date": "2026-10-26",
+        "is_project": true,
+        "is_software": true,
+        "links": {
+          "website": "https://disastergenome.github.io/"
+        },
+        "subtitle": "A climate adaptation support tool that brings expert-curated, validated evidence into planning, policy, investment, and strategic decisions.",
+        "tags": [
+          "Climate Adaptation",
+          "Disaster Resilience",
+          "AI",
+          "Decision Support"
+        ],
+        "title": "Disaster Genome"
+      },
+      "slug": "disaster-genome"
+    },
     {
       "body": "Multi-agent systems let us parallelize computation and split large contexts across agents. These agents usually communicate through text messages, which take time to generate and can leave out evidence the receiving agent needs.\n\nWork such as Cache-to-Cache, LatentMAS, and KVComm explores communication through internal model representations. We focus on a setting where agents read large, separate contexts and one receiver combines their findings. In this fan-in setting, methods that retain every sender position bring those contexts back together at the receiver, undoing the benefit of splitting them across agents. In our Qwen3-8B FanOutQA setup, full-cache transfer leaves insufficient context for receiver generation on every task.\n\nOur idea is simple: what an agent sends should depend on what the receiving agent needs --![llm-agents-can-communicate-without-words-and-now-without-v0-mtvbcinhpvth1.png](https://dutiful-turtle-748.convex.cloud/api/storage/959dcd6b-5883-4360-8e80-da05e709f048) we call this receiver-conditioned communication. The sender uses a query from the receiver to select which parts of its internal state to share.\n\nCacheBack is our simple, training-free implementation. It uses attention to the receiver’s request to select from the state the sender has already computed.\n\nOn FanOutQA, our selected operating points improve strict accuracy by 7.3–20.7 percentage points, with 1.3–8.0× faster median task completion than same-size text agents. We see improvements across four model families, including dense Transformers, Mamba-attention hybrids, and sliding-window attention. We also see gains when agents work in sequence on LongBench v2 Easy.\n\nAt 16× compression, CacheBack removes approximately 94% of sender positions while improving accuracy and latency over same-size text across every tested family and topology. This is a separate setting from the Qwen3-8B result in the TL;DR, which uses 4× compression.",
       "frontMatter": {
