@@ -2843,6 +2843,49 @@
   ],
   "projects": [
     {
+      "body": "Prompt Analytics turns collections of LLM prompts into reusable knowledge about what works and when. Our system, Facet, identifies recurring guidance in prompts and measures how its effects vary across models and tasks. Drawing on 4,475 prompts and 6.5 million controlled interventions, we show how this evidence can improve existing text-to-SQL pipelines and guide automatic prompt optimization.  \n\nThe library now have >35K prompts and is growing.  Use Facet locally to analyze the prompts your agent is making, use our web service to optimize your prompts, and contribute to the library!",
+      "frontMatter": {
+        "authors": [
+          {
+            "name": "Jixian Su",
+            "url": "https://www.linkedin.com/in/jixian-su-b3310237b/"
+          },
+          {
+            "name": "Yusen Zhang",
+            "url": "https://yuszh.com/"
+          },
+          {
+            "name": "Eugene Wu",
+            "url": "https://eugenewu.net"
+          },
+          {
+            "name": "Kexin Rong",
+            "url": "https://kexinrong.github.io/"
+          }
+        ],
+        "date": "2026-10-30",
+        "is_project": true,
+        "is_software": true,
+        "links": {
+          "website": "https://promptanalytics.github.io"
+        },
+        "publications": [
+          {
+            "title": "Prompt Analytics",
+            "url": "https://www.dropbox.com/scl/fi/uwjxgsqjzcpnvklcl07sz/facet-sigmod27-submitted.pdf?rlkey=9e9v9ucq8rozlzu5hxbrkvjuq&dl=0",
+            "venue": "Preprint",
+            "year": 2026
+          }
+        ],
+        "subtitle": "Collecting a public corpus of prompts and their context for large scale analytics, prompt optimization, and understanding.",
+        "tags": [
+          "prompts"
+        ],
+        "title": "Prompt Analytics"
+      },
+      "slug": "prompt-analytics"
+    },
+    {
       "body": "Disaster Genome bridges the gap between disaster research and practice, helping policymakers, planners, and communities understand the interconnected factors that shape disaster risk and resilience. Its AI-powered Climate Adaptation Support Tool (CAST) draws on research curated by experts at Columbia University’s National Center for Disaster Preparedness to answer questions with citations to supporting sources. Initially focused on wildfire adaptation, the project supports evidence-based planning, policy, and investment decisions with an emphasis on community resilience and equity.",
       "frontMatter": {
         "authors": [
