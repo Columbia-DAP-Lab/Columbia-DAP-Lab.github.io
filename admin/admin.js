@@ -1080,7 +1080,8 @@ const resetProjectForm = () => {
   slugTouched = false;
   projectForm.reset();
   projectForm.elements.id.value = "";
-  projectForm.elements.date.value = new Date().toISOString().slice(0, 10);
+  // Today here, not in UTC, which is already tomorrow on a New York evening.
+  projectForm.elements.date.value = new Date().toLocaleDateString("en-CA");
   projectForm.elements.slug.readOnly = false;
   for (const kind of ["authors", "links", "papers"]) $(`[data-rows="${kind}"]`).replaceChildren();
   addRow("authors");

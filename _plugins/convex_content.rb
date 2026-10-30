@@ -64,6 +64,13 @@ module ConvexContent
       @source = source
     end
 
+    # Built whatever its date. Jekyll holds back future-dated documents, but the
+    # Projects page lists every published project, so a project dated tomorrow
+    # would be linked there and 404 until its date came.
+    def write?
+      collection.write? && data.fetch("published", true) != false
+    end
+
     private
 
     def read_content(**)
