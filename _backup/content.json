@@ -735,6 +735,16 @@
   ],
   "publications": [
     {
+      "authors": "Chenhao Hong, Jiakai Xu, Kaushiki Singh, Yusen Zhang, Eugene Wu",
+      "conf": "arXiv",
+      "pub_date": "2026-10-30",
+      "tags": [
+        "llm"
+      ],
+      "title": "CIRCE Divines LLM Task Complexity from Constraint Structure",
+      "url": "https://arxiv.org/abs/2610.41089"
+    },
+    {
       "authors": "Charlie Summers, Zhuo Zhang, Oliver Kennedy, Eugene Wu",
       "conf": "Preprint 2026",
       "pub_date": "2026-10-21",
