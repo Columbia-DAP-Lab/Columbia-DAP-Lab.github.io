@@ -38,7 +38,7 @@ People page are shown in bold. Filtered by the chips on /publications
             </div>
             <div class="pub-meta">
               <span class="pub-venue">{% include venue.html venue=p.conf year=year_of_paper %}</span>
-              {%- if p.comments %}<span class="pub-note">{{ p.comments }}</span>{% endif -%}
+              {%- if p.comment %}<span class="pub-note">{{ p.comment }}</span>{% endif -%}
               {%- if p.video %}<a href="{{ p.video }}">Talk</a>{% endif -%}
               {%- if p.blog %}<a href="{{ p.blog }}">Blog post</a>{% endif -%}
               {%- if p.code %}<a href="{{ p.code }}">Code</a>{% endif -%}
