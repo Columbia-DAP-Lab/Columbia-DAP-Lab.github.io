@@ -1,6 +1,17 @@
 {
   "events": [
     {
+      "bio": "Xia Zhou is an Associate Professor in the Department of Computer Science at Columbia University, where she directs the Mobile X laboratory. Before joining Columbia in 2022, she was a faculty member in the Department of Computer Science at Dartmouth College. Her research interests lie broadly in mobile computing with recent focuses on developing next-generation communication and sensing systems using light and fabrics, and examining their applications in health, AI security, robotics, and HCI. Her works have been recognized by various paper awards, including the UBICOMP 10-Year Impact Award in 2024, Best Paper Award at ACM MobiSys 2024 and NSDI 2020.",
+      "date": "2027-05-06",
+      "description": "TBA",
+      "tag": "AI in the Public Interest",
+      "time": "12-1PM",
+      "title": "Xia Zhou talk",
+      "where": "CSB 453",
+      "who": "Xia Zhou, Columbia CS",
+      "wholink": "https://www.cs.columbia.edu/~xia/"
+    },
+    {
       "bio": "Tapan Parikh is an Associate Professor at Cornell Tech, and leads Convovo.ai, a research and design studio for Conversational AI. His recent work has focused on understanding LLM behaviour using qualitative methods borrowed from HCI and interpretive social science, and developing new measures that can track LLM behavior rather than capability. Previously, he was one of the founders of the ICTD sub-field, which studies the design and evaluation of computing technologies for international development. He has received several awards, including a Sloan fellowship, an NSF Career Award, TR35, and multiple best paper awards at top HCI conferences.",
       "date": "2027-02-25",
       "description": "Most LLM benchmarks measure performance; we don't yet have scalable ways to measure more subtle aspects of LLM behavior, like how they respond under pressure, or how they choose between two equally valid options depending on how they are presented. Measuring this is hard because behavior must be sampled repeatedly, most of the data is unstructured text, and comparisons must be rigorous. To address this, we provide a framework of frozen, public stimuli run identically on a cross-vendor panel for a few dollars per model or less. Each study reads transcripts in one of three ways: exact match on a clamped reply; a codebook applied by LLM judges with human agreement reported per code; or an instrumented environment that records what an agent did independently of what it said. Using this method, we analyzed four years of releases from frontier and open-source labs to find:\n* Convergence: asked to pick a word, most models say 'serendipity'; later releases converge more, and the effect can be traced through releases and languages.\n* Resistance: a trailing \"right?\" moves endorsement of your claim by up to 32 points; older models cave, and newer models resist.  \n* Pressure: whether a model holds a position under pressure tracks its generation; the way it does so tracks its lab.\n* Account: told to do something their repository's documentation contradicts, some coding agents warned and others silently ignored the contradiction.\nInstruments like these, run on every release, can help us uncover hidden behavioral biases, track how they change over time and across models, and speculate about training processes the frontier labs usually keep hidden.",
@@ -84,6 +95,15 @@
       "where": "Davis Auditorium (CEPSR 4th Floor — Campus level)",
       "who": "Silvia Sellán, Columbia CS",
       "wholink": "https://www.silviasellan.com/"
+    },
+    {
+      "date": "2026-11-01",
+      "description": "I’ll talk about new faster algorithms for 3SUM, APSP, and many more problems. They all follow from one new algorithm for quickly computing certain entries of a matrix product. That algorithm was found by Anthropic using an internal model of Claude. They then contacted me and Virginia Vassilevska Williams to understand and properly write up the algorithm.\n\nI’ll talk about the algorithm itself, what it means for fine-grained complexity, and the experience of being contacted by Anthropic and putting this paper together.",
+      "tag": "Seminar",
+      "time": "12:30PM",
+      "title": "Truly Subquadratic 3SUM and Truly Subcubic APSP via Triangles in Sparse Lopsided Graphs",
+      "where": "CSB 453 (main conference room)",
+      "who": "Josh Alman"
     },
     {
       "bio": "Soham Dan is a Research Scientist at Scale AI, where he works on benchmarks and evaluations for LLM coding agents. His recent work includes SWE-Bench Pro V2, a refreshed and more rigorous version of the SWE-Bench Pro leaderboard, and SWE Atlas, a benchmark suite that evaluates coding agents on professional software engineering tasks beyond issue resolution. Before Scale, he was a Researcher at Microsoft Copilot and before that at IBM Research. He holds a Ph.D. from the University of Pennsylvania and a B.Tech. from IIT Kharagpur, where he received the President of India Gold Medal.",
@@ -791,6 +811,17 @@
       "url": "https://arxiv.org/abs/2610.29332"
     },
     {
+      "authors": "A. Ali Heydari, Ken Gu, Vidya Srinivas, Hong Yu, Akshay Paruchuri, Zhihan Zhang, Yuwei Zhang, Qian He, Hamid Palangi, Nova Hammerquist, Ahmed A. Metwally, Brent Winslow, Yubin Kim, Kumar Ayush, Yuzhe Yang, Girish Narayanswamy, Maxwell A. Xu, Jake Garrison, Samuel Schmidgall, Amy Armento Lee, Jenny Vafeiadou, Ben Graef, Isaac R. Galatzer-Levy, Erik Schenck, Andrew Barakat, Javier Perez, Jacqueline Shreibati, John Hernandez, Anthony Z. Faranesh, Naghmeh Rezaei, Javier L. Prieto, Conor Heneghan, Jiening Zhan, Mark Malhotra, Shwetak Patel, Yun Liu, Tim Althoff, Xin Liu, Daniel McDuff, Xuhai Orson Xu",
+      "conf": "Nature 2026",
+      "pub_date": "2026-10-21",
+      "tags": [
+        "ai",
+        "hac"
+      ],
+      "title": "The anatomy of a personal health agent",
+      "url": "https://doi.org/10.1038/s41586-026-11161-8"
+    },
+    {
       "authors": "Qian Xie*, Wenyue Hua*, Yueli He, Sripad Karne, Armaan Agrawal, Nikos Pagonas, Eugene Wu, Kostis Kaffes, Tianyi Peng, Nairen Cao",
       "code": "https://github.com/AgentOptimizer/agentopt",
       "conf": "NeurIPS 2026 Workshop on Resource-Aware Agentic AI",
@@ -852,7 +883,6 @@
     },
     {
       "authors": "Yun-Yun Tsai, Yuning Mao, Shiqi Wang, Junfeng Yang, Sinong Wang",
-      "comment": "Generated web UIs can compile and look right while breaking under actual interaction; this harness drives them with a UI agent so correctness is measured by use rather than by screenshots.",
       "conf": "arXiv 2026",
       "pub_date": "2026-10-01",
       "tags": [
@@ -936,7 +966,6 @@
     },
     {
       "authors": "Yunan Lu, Shuang Xie, Meghna Allamudi, Mingyu Zhao, Han Li, Lingyun Wang, Zhou Yu",
-      "comment": "Generates realistic user interaction traces, so A/B tests, recommenders, and interfaces can be evaluated against simulated users instead of waiting on real traffic.",
       "conf": "arXiv 2026",
       "pub_date": "2026-09-01",
       "tags": [
@@ -950,7 +979,6 @@
     },
     {
       "authors": "Maximillian Rossi, Prajwal Raghunath, Haoqing Xuan, Yusen Zhang, Eugene Wu",
-      "comment": "When agents pass KV caches instead of text, conditioning the transfer on the receiving agent recovers 94% of the benefit — making latent communication practical for multi-agent systems that split large contexts.",
       "conf": "arXiv 2026",
       "pub_date": "2026-09-01",
       "tags": [
@@ -963,7 +991,6 @@
     },
     {
       "authors": "Jianxing Chen, Xiao Yu, Shipra Agrawal, Zhou Yu",
-      "comment": "Computer-use agents can cause real harm even from benign instructions, and SCOUT pairs reasoning with tool-use to detect it before the damage lands.",
       "conf": "arXiv 2026",
       "pub_date": "2026-09-01",
       "tags": [
@@ -1018,6 +1045,17 @@
       ],
       "title": "OpenForgeRL: Train Harness-native Agents in Any Environment",
       "url": "https://arxiv.org/abs/2607.21557"
+    },
+    {
+      "authors": "Siyan Li, Kai-Hui Liang, Shopnil Shahriar, Yilin Ye, Shiyoh Goetsu, Wei-Wei Du, Masahiro Yoshida, Tsunayuki Ohwa, Xuhai Orson Xu, Zhou Yu",
+      "conf": "CUI 2026",
+      "pub_date": "2026-07-21",
+      "tags": [
+        "ai",
+        "hac"
+      ],
+      "title": "Invisible Impact of Empathy on Behavioral Change: Isolating the Effect of Empathy in Long-term Physical Activity Coaching Chatbot Interactions",
+      "url": "https://doi.org/10.1145/3816046.3816277"
     },
     {
       "authors": "Alex Mathai, Shobini Iyer, Aleksandr Nogikh, Petros Maniatis, Franjo Ivančić, Junfeng Yang, Baishakhi Ray",
@@ -1133,17 +1171,6 @@
       ],
       "title": "OSWorld2.0: Benchmarking Computer Use Agents on Long-Horizon Real-World Tasks",
       "url": "https://arxiv.org/abs/2606.29537"
-    },
-    {
-      "authors": "Li Siyan, Kai-Hui Liang, Shopnil Shahriar, Yilin Ye, Shiyoh Goetsu, Wei-Wei Du, Masahiro Yoshida, Tsunayuki Ohwa, Xuhai Xu, Zhou Yu",
-      "conf": "arXiv 2026",
-      "pub_date": "2026-06-25",
-      "tags": [
-        "ai",
-        "hac"
-      ],
-      "title": "Invisible Impact of Empathy on Behavioral Change: Isolating the Effect of Empathy in Long-term Physical Activity Coaching Chatbot Interactions",
-      "url": "https://arxiv.org/abs/2606.26641"
     },
     {
       "authors": "Adam Storek, Nikolaus Holzer, Zhuo Zhang, Suman Jana",
@@ -1363,7 +1390,7 @@
       "url": "https://arxiv.org/abs/2604.17180"
     },
     {
-      "authors": "Yancheng Cao, Yishu Ji, Chris Yue Fu, Sahiti Dharmavaram, Meghan Turchioe, Natalie C Benda, Lena Mamykina, Yuling Sun, Xuhai Orson Xu",
+      "authors": "Yancheng Cao, Yishu Ji, Yue Fu, Sahiti Dharmavaram, Meghan Turchioe, Natalie C Benda, Lena Mamykina, Yuling Sun, Xuhai Orson Xu",
       "conf": "CHI 2026",
       "pub_date": "2026-04-13",
       "tags": [
@@ -1371,10 +1398,11 @@
         "hac"
       ],
       "title": "More than Decision Support: Exploring Patients' Longitudinal Usage of Large Language Models in Real-World Healthcare-Seeking Journeys",
-      "url": "https://arxiv.org/abs/2602.14733"
+      "url": "https://doi.org/10.1145/3772318.3791946"
     },
     {
-      "authors": "Ruishi Zou, Shiyu Xu, Margaret E Morris, Jihan Ryu, Timothy D. Becker, Nicholas Allen, Anne Marie Albano, Randy Auerbach, Dan Adler, Varun Mishra, Lace Padilla, Dakuo Wang, Ryan Sultan, Xuhai Orson Xu",
+      "authors": "Ruishi Zou, Shiyu Xu, Margaret E Morris, Jihan Ryu, Timothy D. Becker, Nicholas Allen, Anne Marie Albano, Randy Auerbach, Dan Adler, Varun Mishra, Lace M. Padilla, Dakuo Wang, Ryan Sultan, Xuhai Orson Xu",
+      "comment": "Honorable Mention Award",
       "conf": "CHI 2026",
       "pub_date": "2026-04-13",
       "tags": [
@@ -1384,7 +1412,7 @@
         "multimodal"
       ],
       "title": "MIND: Empowering Mental Health Clinicians with Multimodal Data Insights through a Narrative Dashboard",
-      "url": "https://arxiv.org/abs/2601.14641"
+      "url": "https://doi.org/10.1145/3772318.3790529"
     },
     {
       "authors": "Nikos Pagonas, Matthew Lou, Tianyi Peng, Dan Rubenstein, Kostis Kaffes",
@@ -1418,6 +1446,18 @@
       ],
       "title": "AgentOpt v0.1 Technical Report: Client-Side Optimization for LLM-Based Agents",
       "url": "https://arxiv.org/abs/2604.06296"
+    },
+    {
+      "authors": "Zhihan Jiang, Running Zhao, Lin Lin, Yue Yu, Handi Chen, Xinchen Zhang, Xuhai Orson Xu, Yifang Wang, Xiaojuan Ma, Edith C. H. Ngai",
+      "conf": "ACM Transactions on Computing for Healthcare 2026",
+      "pub_date": "2026-04-06",
+      "tags": [
+        "ai",
+        "sys",
+        "rag"
+      ],
+      "title": "DietGlance: Dietary Monitoring and Personalized Analysis at a Glance with Knowledge-Empowered AI Assistant",
+      "url": "https://doi.org/10.1145/3797883"
     },
     {
       "authors": "Wenyue Hua, Tianyi Peng, Chi Wang, Jiaxin Pei, Ian Kaufman, Bryan Lim, Chandler Fang",
@@ -1505,7 +1545,6 @@
     },
     {
       "authors": "Raphael Shu, Yusen Zhang, Young Min Cho, Jin Mo Yang, Yuan Yuan, Wenliang Zheng, Sharath Chandra Guntuku, Lyle Ungar, Zhou Yu, Rui Zhang",
-      "comment": "Most multi-agent benchmarks test short, competitive episodes; AgentWorld isolates genuine long-horizon collaboration instead of summing up individual performance.",
       "conf": "COLM 2026",
       "pub_date": "2026-01-01",
       "tags": [
@@ -1620,6 +1659,18 @@
       "url": "https://arxiv.org/abs/2506.02385"
     },
     {
+      "authors": "Ziyi Xuan, Yiwen Wu, Xuhai Xu, Vinod Namboodiri, Mooi Choo Chuah, Yu Yang",
+      "conf": "IMWUT 2025",
+      "pub_date": "2025-12-02",
+      "tags": [
+        "ai",
+        "hac",
+        "simulation"
+      ],
+      "title": "Design and Evaluation of Generative Agent-based Platform for Human-Assistant Interaction Research: A Tale of 10 User Studies",
+      "url": "https://doi.org/10.1145/3770661"
+    },
+    {
       "authors": "Jingwen Liu, Hantao Yu, Clayton Sanford, Alexandr Andoni, Daniel Hsu",
       "conf": "NeurIPS 2025",
       "pub_date": "2025-12-02",
@@ -1643,6 +1694,18 @@
       ],
       "title": "A Decade of Systems for Human Data Interaction",
       "url": "https://arxiv.org/abs/2511.15585"
+    },
+    {
+      "authors": "Bridget Dwyer, Matthew Flathers, Akane Sano, Allison Dempsey, Andrea Cipriani, Asim H. Gazi, Bryce Hill, Carla Gorban, Carolyn I. Rodriguez, Charles Stromeyer, Darlene King, Eden Rozenblit, Gillian Strudwick, Jake Linardon, Jiaee Cheong, Joseph Firth, Julian Herpertz, Julian Schwarz, Khai Truong, Margaret Emerson, Martin P. Paulus, Michelle Patriquin, Yining Hua, Soumya Choudhary, Steven Siddals, Laura Ospina Pinillos, Jason Bantjes, Stephen M. Schueller, Xuhai Xu, Ken Duckworth, Daniel H. Gillison, Michael Wood, John Torous",
+      "conf": "NPP—Digital Psychiatry and Neuroscience 2025",
+      "pub_date": "2025-11-14",
+      "tags": [
+        "bench",
+        "llm",
+        "safety"
+      ],
+      "title": "Mindbench.ai: an actionable platform to evaluate the profile and performance of large language models in a mental healthcare context",
+      "url": "https://doi.org/10.1038/s44277-025-00049-6"
     },
     {
       "authors": "Georgios Liargkovas, Prabhpreet Singh Sodhi, Kostis Kaffes",
@@ -1725,16 +1788,16 @@
       "url": "https://www.cs.columbia.edu/~junfeng/papers/ai-email-imc25.pdf"
     },
     {
-      "authors": "A. Ali Heydari, Ken Gu, Vidya Srinivas, Hong Yu, Zhihan Zhang, Yuwei Zhang, Akshay Paruchuri, Qian He, Hamid Palangi, Nova Hammerquist, Ahmed A. Metwally, Brent Winslow, Yubin Kim, Kumar Ayush, Yuzhe Yang, Girish Narayanswamy, Maxwell A. Xu, Jake Garrison, Amy Armento Lee, Jenny Vafeiadou, Ben Graef, Isaac R. Galatzer-Levy, Erik Schenck, Andrew Barakat, Javier Perez, Jacqueline Shreibati, John Hernandez, Anthony Z. Faranesh, Javier L. Prieto, Connor Heneghan, Yun Liu, Jiening Zhan, Mark Malhotra, Shwetak Patel, Tim Althoff, Xin Liu, Daniel McDuff, Xuhai Orson Xu",
-      "conf": "arXiv 2025",
-      "pub_date": "2025-08-27",
+      "authors": "Jiachen Li, Xiwen Li, Justin Steinberg, Akshat Choube, Bingsheng Yao, Xuhai Xu, Dakuo Wang, Elizabeth Mynatt, Varun Mishra",
+      "conf": "IMWUT 2025",
+      "pub_date": "2025-09-03",
       "tags": [
-        "ai",
         "hac",
-        "whitepaper"
+        "multimodal",
+        "vis"
       ],
-      "title": "The Anatomy of a Personal Health Agent",
-      "url": "https://arxiv.org/abs/2508.20148"
+      "title": "Vital Insight: Assisting Experts' Context-Driven Sensemaking of Multi-modal Personal Tracking Data Using Visualization and Human-in-the-Loop LLM",
+      "url": "https://doi.org/10.1145/3749508"
     },
     {
       "authors": "Tao Long, Sitong Wang, Émilie Fabre, Tony Wang, Anup Sathya, Jason Wu, Savvas Dimitrios Petridis, Ding Li, Tuhin Chakrabarty, Yue Jiang, Jingyi Li, Tiffany Tseng, Ken Nakagaki, Qian Yang, Nikolas Martelaro, Jeffrey V. Nickerson, Lydia B. Chilton",
@@ -1772,6 +1835,17 @@
       ],
       "title": "Learning to Rewrite: Generalized LLM-Generated Text Detection",
       "url": "https://arxiv.org/abs/2408.04237"
+    },
+    {
+      "authors": "Vidya Srinivas, Xuhai Xu, Xin Liu, Kumar Ayush, Isaac Galatzer-Levy, Shwetak Patel, Daniel McDuff, Tim Althoff",
+      "conf": "ACL 2025",
+      "pub_date": "2025-07-01",
+      "tags": [
+        "hac",
+        "llm"
+      ],
+      "title": "Substance over Style: Evaluating Proactive Conversational Coaching Agents",
+      "url": "https://doi.org/10.18653/v1/2025.acl-long.1017"
     },
     {
       "authors": "Weichen Li, Albert Jan, Baishakhi Ray, Chengzhi Mao, Junfeng Yang, Kexin Pei",
@@ -2015,18 +2089,6 @@
       ],
       "title": "DynEx: Agentic Assistance to Bridge Design and Code",
       "url": "https://arxiv.org/abs/2410.00400"
-    },
-    {
-      "authors": "Zhihan Jiang, Running Zhao, Lin Lin, Yue Yu, Handi Chen, Xinchen Zhang, Xuhai Orson Xu, Yifang Wang, Xiaojuan Ma, Edith CH Ngai",
-      "conf": "ACM HEALTH",
-      "pub_date": "2025-02-03",
-      "tags": [
-        "ai",
-        "sys",
-        "rag"
-      ],
-      "title": "DietGlance: dietary monitoring and personalized analysis at a glance with knowledge-empowered AI assistant",
-      "url": "https://arxiv.org/abs/2502.01317"
     },
     {
       "authors": "Shuo Zhang, Zezhou Huang, Eugene Wu",
