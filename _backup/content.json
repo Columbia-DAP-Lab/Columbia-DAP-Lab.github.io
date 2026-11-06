@@ -6,7 +6,7 @@
       "description": "TBA",
       "tag": "AI in the Public Interest",
       "time": "12-1PM",
-      "title": "Xia Zhou talk",
+      "title": "TBA",
       "where": "CSB 453",
       "who": "Xia Zhou, Columbia CS",
       "wholink": "https://www.cs.columbia.edu/~xia/"
@@ -14,10 +14,10 @@
     {
       "bio": "Tapan Parikh is an Associate Professor at Cornell Tech, and leads Convovo.ai, a research and design studio for Conversational AI. His recent work has focused on understanding LLM behaviour using qualitative methods borrowed from HCI and interpretive social science, and developing new measures that can track LLM behavior rather than capability. Previously, he was one of the founders of the ICTD sub-field, which studies the design and evaluation of computing technologies for international development. He has received several awards, including a Sloan fellowship, an NSF Career Award, TR35, and multiple best paper awards at top HCI conferences.",
       "date": "2027-02-25",
-      "description": "Most LLM benchmarks measure performance; we don't yet have scalable ways to measure more subtle aspects of LLM behavior, like how they respond under pressure, or how they choose between two equally valid options depending on how they are presented. Measuring this is hard because behavior must be sampled repeatedly, most of the data is unstructured text, and comparisons must be rigorous. To address this, we provide a framework of frozen, public stimuli run identically on a cross-vendor panel for a few dollars per model or less. Each study reads transcripts in one of three ways: exact match on a clamped reply; a codebook applied by LLM judges with human agreement reported per code; or an instrumented environment that records what an agent did independently of what it said. Using this method, we analyzed four years of releases from frontier and open-source labs to find:\n* Convergence: asked to pick a word, most models say 'serendipity'; later releases converge more, and the effect can be traced through releases and languages.\n* Resistance: a trailing \"right?\" moves endorsement of your claim by up to 32 points; older models cave, and newer models resist.  \n* Pressure: whether a model holds a position under pressure tracks its generation; the way it does so tracks its lab.\n* Account: told to do something their repository's documentation contradicts, some coding agents warned and others silently ignored the contradiction.\nInstruments like these, run on every release, can help us uncover hidden behavioral biases, track how they change over time and across models, and speculate about training processes the frontier labs usually keep hidden.",
+      "description": "TBA",
       "tag": "AI in the Public Interest",
       "time": "12-1PM",
-      "title": "Low-Cost Assays for Measuring Model Behavior Across Vendors and Releases",
+      "title": "TBA",
       "where": "CSB 453",
       "who": "Tapan Parikh, Cornell Tech (Information Science)",
       "wholink": "https://tap2k.org/"
@@ -55,9 +55,10 @@
     {
       "bio": "Wajeeha Ahmad is an assistant professor of management at Columbia Business School and a Digital Fellow with Stanford's Digital Economy Lab. She studies how AI and digital technologies affect business and society, including how organizations can adopt and govern these technologies to support both competitiveness and societal benefits. She earned her doctorate at Stanford in Management Science and Engineering. At MIT, she completed a master's in Technology and Policy and an undergraduate degree in Mathematics with Computer Science.",
       "date": "2026-11-19",
+      "description": "Digital media platforms serve as critical channels for innovative activity. While platforms rely on algorithms to maximize engagement and drive network effects, we know little about how various online interactions affect user contributions. I develop and deploy autonomous generative AI agents in a large-scale field experiment on a major social media platform, randomizing users’ exposure to distinct types of interactions to causally identify their effects on subsequent contributions. The results reveal a governance trade-off central to the management of digital platforms and online social interactions: controversial interactions spur the largest increase in immediate replies and thread growth but suppress posting in the following week and month. In contrast, informative interactions better retain contributors over time, increasing weekly retention by approximately 4% and total contributions by 5%. These effects vary by user experience, with informative agreeable responses strengthening retention among new contributors and informative disagreeable responses broadening the contributor base. Overall, my findings show that optimizing for engagement can come at the expense of lasting contributions, demonstrating how design choices shape organizational performance and the health of digital public discourse. By cultivating informative interactions, platforms can sustain contributors and foster more inclusive digital ecosystems with higher participation and higher-quality contributions for sustained knowledge creation.",
       "tag": "AI in the Public Interest",
       "time": "3PM-4PM",
-      "title": "TBA",
+      "title": "Managing Online Participation: Evidence from a Field Experiment with AI Agents",
       "where": "CSB 453",
       "who": "Wajeeha Ahmad, Columbia Business School, Management division",
       "wholink": "https://www.wajeehaahmad.com/"
@@ -2914,7 +2915,7 @@
       "slug": "workshop"
     },
     {
-      "description": "The AI in the Public Interest group brings together researchers from across Columbia\nUniversity working to advance AI and computational methods in service of the public\ninterest. Our members span a range of technical areas while sharing a common commitment\nto rigorous methodological research with clear societal relevance.\n\nThe group provides a forum for researchers to exchange ideas across subfields, identify\ncommon methodological challenges, and explore how advances in AI can contribute to\nconsequential real-world problems. Through seminars, collaborations, and regular\nconvenings, we aim to catalyze new research partnerships, connect methodological\ninnovation with substantive applications, and build a broader technical community focused\non ensuring that advances in AI generate benefits that are widely shared across society.\n\nThe series is led by Lily Xu and co-organized with Columbia Data Science Institute's\n[Center for Data, Media, and Society](https://datascience.columbia.edu/research/centers/data-media-and-society/), and partners with the [Society of Fellows and Heyman Center for the Humanities](https://sofheyman.org/).\n\n**The series meets every other Thursday, 3–4PM, in CSB 453 (the CS Conference Room,\nin the Mudd building).**",
+      "description": "The AI in the Public Interest group brings together researchers from across Columbia\nUniversity working to advance AI and computational methods in service of the public\ninterest. Our members span a range of technical areas while sharing a common commitment\nto rigorous methodological research with clear societal relevance.\n\nThe group provides a forum for researchers to exchange ideas across subfields, identify\ncommon methodological challenges, and explore how advances in AI can contribute to\nconsequential real-world problems. Through seminars, collaborations, and regular\nconvenings, we aim to catalyze new research partnerships, connect methodological\ninnovation with substantive applications, and build a broader technical community focused\non ensuring that advances in AI generate benefits that are widely shared across society.\n\nThe series is led by Lily Xu and co-organized with Columbia Data Science Institute's\n[Center for Data, Media, and Society](https://datascience.columbia.edu/research/centers/data-media-and-society/), and partners with the [Society of Fellows and Heyman Center for the Humanities](https://sofheyman.org/). We are grateful for support from the Office of the Vice Provost for Faculty Advancement's Faculty-Led Initiative program.\n\n**The series meets every other Thursday, 3–4PM, in CSB 453 (the CS Conference Room,\nin the Mudd building).**",
       "label": "AI in the Public Interest",
       "logo": "https://dutiful-turtle-748.convex.cloud/api/storage/9af4eb64-4fab-475a-bea5-abe2ac43beca",
       "slug": "ai-in-the-public-interest"
