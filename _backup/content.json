@@ -12,6 +12,17 @@
       "wholink": "https://www.cs.columbia.edu/~xia/"
     },
     {
+      "bio": "Yamil Ricardo Velez is an Assistant Professor of Political Science at Columbia University. His research focuses on how the quality of political information influences political engagement and representation. His most recent work explores the potential for generative artificial intelligence to enhance our understanding of public opinion through the use of adaptive surveys. His work has been published in journals such as American Political Science Review, American Journal of Political Science, Journal of Politics, British Journal of Political Science, and Political Analysis. He is on the editorial board of the Journal of Experimental Political Science and Political Psychology. Before joining Columbia, he held faculty positions at George Washington University and Wesleyan University. He holds a Ph.D. in Political Science from Stony Brook University.",
+      "date": "2027-03-25",
+      "description": "TBA",
+      "tag": "AI in the Public Interest",
+      "time": "12-1pm",
+      "title": "TBA",
+      "where": "CSB 453",
+      "who": "Yamil R. Velez, Columbia Political Science",
+      "wholink": "https://www.yamilrvelez.com/"
+    },
+    {
       "bio": "Tapan Parikh is an Associate Professor at Cornell Tech, and leads Convovo.ai, a research and design studio for Conversational AI. His recent work has focused on understanding LLM behaviour using qualitative methods borrowed from HCI and interpretive social science, and developing new measures that can track LLM behavior rather than capability. Previously, he was one of the founders of the ICTD sub-field, which studies the design and evaluation of computing technologies for international development. He has received several awards, including a Sloan fellowship, an NSF Career Award, TR35, and multiple best paper awards at top HCI conferences.",
       "date": "2027-02-25",
       "description": "TBA",
@@ -2926,7 +2937,7 @@
       "slug": "workshop"
     },
     {
-      "description": "The AI in the Public Interest group brings together researchers from across Columbia\nUniversity working to advance AI and computational methods in service of the public\ninterest. Our members span a range of technical areas while sharing a common commitment\nto rigorous methodological research with clear societal relevance.\n\nThe group provides a forum for researchers to exchange ideas across subfields, identify\ncommon methodological challenges, and explore how advances in AI can contribute to\nconsequential real-world problems. Through seminars, collaborations, and regular\nconvenings, we aim to catalyze new research partnerships, connect methodological\ninnovation with substantive applications, and build a broader technical community focused\non ensuring that advances in AI generate benefits that are widely shared across society.\n\nThe series is led by Lily Xu and co-organized with Columbia Data Science Institute's\n[Center for Data, Media, and Society](https://datascience.columbia.edu/research/centers/data-media-and-society/), and partners with the [Society of Fellows and Heyman Center for the Humanities](https://sofheyman.org/). We are grateful for support from the Office of the Vice Provost for Faculty Advancement's Faculty-Led Initiative program.\n\n**The series meets every other Thursday, 3–4pm, in CSB 453 (the CS Conference Room,\nin the Mudd building). In spring 2027, we'll meet Thursday 12-1pm.**",
+      "description": "The AI in the Public Interest group brings together researchers from across Columbia\nUniversity working to advance AI and computational methods in service of the public\ninterest. Our members span a range of technical areas while sharing a common commitment\nto rigorous methodological research with clear societal relevance.\n\nThe group provides a forum for researchers to exchange ideas across subfields, identify\ncommon methodological challenges, and explore how advances in AI can contribute to\nconsequential real-world problems. Through seminars, collaborations, and regular\nconvenings, we aim to catalyze new research partnerships, connect methodological\ninnovation with substantive applications, and build a broader technical community focused\non ensuring that advances in AI generate benefits that are widely shared across society.\n\nThe series is co-organized by Lily Xu, Silvia Sellán, and Eugene Wu as part of Columbia Data Science Institute's\n[Center for Data, Media, and Society](https://datascience.columbia.edu/research/centers/data-media-and-society/). We partner with the [Society of Fellows and Heyman Center for the Humanities](https://sofheyman.org/) and are grateful for support from the Office of the Vice Provost for Faculty Advancement's Faculty-Led Initiative program.\n\n**The series meets every other Thursday, 3–4pm, in CSB 453 (the CS Conference Room,\nin the Mudd building). In spring 2027, we'll meet Thursday 12-1pm.**",
       "label": "AI in the Public Interest",
       "logo": "https://dutiful-turtle-748.convex.cloud/api/storage/9af4eb64-4fab-475a-bea5-abe2ac43beca",
       "slug": "ai-in-the-public-interest"
