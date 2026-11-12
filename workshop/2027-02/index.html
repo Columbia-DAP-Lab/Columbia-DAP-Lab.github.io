@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trustworthy Agents for 2027 - DAPLab Showcase, February 2027</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="schedule.css">
+
+    <style>
+        html { scroll-behavior: smooth; }
+        body { padding-top: 0; }
+
+        .section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 50px 0;
+        }
+        .final_panel { background-color: rgba(96, 165, 250, 0.25); }
+        .soft_panel { background-color: #f6f8fb; }
+
+        .ribbon {
+            width: 100vw;
+            height: 30px;
+            margin-left: calc(-50vw + 50%);
+            margin-right: calc(-50vw + 50%);
+            filter: saturate(2);
+        }
+        .subheading {
+            color: #005BBF;
+            font-weight: bold;
+            text-align: center;
+        }
+        .blue { color: #005BBF; }
+
+        /* headshots, same sizes as the 2025-10 page */
+        .keynote_img { height: 180px; width: auto; object-fit: cover; border-radius: 12px; box-shadow: 3px 3px 12px rgba(0,0,0,0.3); }
+        .grid_img { height: 100px; width: auto; object-fit: cover; border-radius: 8px; box-shadow: 2px 2px 8px rgba(0,0,0,0.2); }
+        .initials {
+            display: inline-flex; align-items: center; justify-content: center;
+            height: 100px; width: 100px; border-radius: 8px;
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.2);
+            background: linear-gradient(135deg, #005BBF, #60a5fa);
+            color: #fff; font-size: 34px; font-weight: 700;
+        }
+        .initials.big { height: 180px; width: 150px; border-radius: 12px; font-size: 52px; }
+        .tbd { color: #b45309; }
+
+        /* why come */
+        .why_card {
+            height: 100%;
+            background: #fff;
+            border-top: 4px solid #005BBF;
+            border-radius: 10px;
+            box-shadow: 2px 2px 12px rgba(0,0,0,0.08);
+            padding: 24px;
+        }
+        .why_card .num { color: #005BBF; font-weight: 800; font-size: 2rem; line-height: 1; }
+        .why_card h4 { margin: 10px 0 8px; font-weight: 700; }
+        .why_card p { color: #555; margin: 0; }
+
+        /* prevent / enable map */
+        .map { border-collapse: separate; border-spacing: 0; width: 100%; border-radius: 10px; overflow: hidden; box-shadow: 2px 2px 12px rgba(0,0,0,0.08); background: #fff; }
+        .map th, .map td { padding: 16px 18px; vertical-align: top; border-bottom: 1px solid #e6e9ef; }
+        .map tr:last-child td, .map tr:last-child th { border-bottom: none; }
+        .map thead th { background: #005BBF; color: #fff; text-transform: uppercase; letter-spacing: .05em; font-size: .9rem; }
+        .map tbody th { width: 160px; color: #005BBF; font-size: 1.15rem; background: #f6f8fb; }
+        .map .who { display: block; color: #666; font-size: .95em; margin-top: 4px; }
+
+        /* past speakers name chips */
+        .chips { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+        .chips span { background: #fff; border: 1px solid #dfe4ec; border-radius: 999px; padding: 6px 14px; font-size: .95em; }
+
+        /* past workshops */
+        .past_card { display: block; height: 100%; text-decoration: none; color: inherit; background: #fff; border-radius: 10px; box-shadow: 2px 2px 12px rgba(0,0,0,0.08); padding: 22px; }
+        .past_card:hover { box-shadow: 2px 2px 16px rgba(0,91,191,0.3); }
+        .past_card .date { color: #005BBF; font-weight: 700; font-size: .85rem; text-transform: uppercase; letter-spacing: .05em; }
+        .past_card h4 { margin: 6px 0 8px; font-weight: 700; color: #222; }
+        .past_card p { color: #555; margin: 0; }
+
+        .gallery { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+        .gallery img {
+            width: 200px; height: 150px; object-fit: cover; border-radius: 10px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease-in-out;
+        }
+        .gallery img:hover { transform: scale(1.5); position: relative; z-index: 2; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">DAPLab</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#speakers">Speakers</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#schedule">Schedule</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#past">Past Workshops</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero: same animated hero as the 2025-10 page (main.css) -->
+    <div class="flex-container">
+        <div class='wrapper'>
+            <div class='hero'></div>
+            <div class='content'>
+                <h1 class='h1--scalingSize' data-text='Trustworthy Agents for 2027'>Trustworthy Agents for 2027</h1>
+                <h3>DAPLab Showcase | February 2, 2027 | Amazon, Times Square</h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- About -->
+    <div class="section" id="about">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-2"></div>
+                <div class="col-md-8" style="padding-top: 50px; padding-bottom: 50px">
+                    <h1 class="mb-5 heading" style="text-align: center;">How do we stop AI agents from doing bad things, <br> and get them doing good work?</h1>
+                </div>
+                <div class="col-md-2"></div>
+            </div>
+
+            <div class="row" style="padding-bottom: 50px">
+                <div class="col-md-2"></div>
+                <div class="col-md-4">
+                    <p>
+                        AI agents are moving from demos into real work, and in 2027 the hard questions are about trust.
+                        Will the biggest failures come from bad data, or from agents escaping their sandboxes?
+                        Who checks the AI-generated output piling up in every organization?
+                        Can we secure agents with fundamental solutions we already know how to build?
+                    </p>
+                    <p>
+                        This showcase brings industry and academic speakers together with the faculty and students of the
+                        <a href="https://daplab.cs.columbia.edu/">Data, Agents and Processes Lab (DAPLab)</a> at Columbia
+                        to share how to <b>prevent the bad things</b> agents can do and <b>enable the productivity</b> they promise:
+                        talks, a panel, live demos, and student posters.
+                    </p>
+                    <p>
+                        The event is invite-only, for leaders from industry and government. See our <a href="#past">past workshops</a>.
+                    </p>
+                </div>
+                <div class="col-md-4">
+                    <span class="blue">When:</span> Tuesday, February 2, 2027 <br>
+                    <br>
+                    <span class="blue">Where:</span> Amazon Offices, Times Square, New York City<br>
+                    <br>
+                    <span class="blue">Time:</span> 9:00am-4:30pm, includes breakfast and lunch<br>
+                    <br>
+                    <span class="blue">Entry:</span> Bring a government-issued photo ID, and register with your full legal name as it appears on it.<br>
+                    <br>
+                    <span class="blue">Registration:</span> By invitation. Use the access code in your invitation.<br>
+                    <br>
+                    <a href="https://www.eventbrite.com/e/daplab-showcase-ai-agents-for-work-tickets-2004285295272" target="_blank" class="btn btn-primary btn-lg" style="padding: 20px;">Register (by invitation)</a>
+                </div>
+                <div class="col-md-2"></div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12" style="text-align: center;">
+                    <a href="https://daplab.cs.columbia.edu/"><img src="/files/images/daplab_logo_horiz.png" alt="DAPLab Logo" class="img-fluid" style="padding:20px; height: 75px;"></a>
+                    <a href="https://www.engineering.columbia.edu/"><img src="../2025-10/images/columbia_seas_logo.jpg" alt="Columbia SEAS Logo" class="img-fluid" style="padding:20px; height: 85px;"></a>
+                    <a href="https://datascience.columbia.edu/"><img src="../2025-10/images/dsi.png" alt="Columbia DSI Logo" class="img-fluid" style="padding:20px; height: 85px;"></a>
+                    <a href="https://www.amazon.science/"><img src="/files/images/partner-amazon.svg" alt="Amazon" class="img-fluid" style="padding:20px; height: 75px;"></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Prevent / Enable -->
+    <div class="section" id="research">
+        <div class="container">
+            <h2 class="mb-5 subheading">DAPLab Research on Trustworthy Agents</h2>
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <table class="map">
+                        <thead>
+                            <tr><th></th><th>Prevent bad things</th><th>Enable productivity</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th>Evaluation</th>
+                                <td>Testing and checking agent software</td>
+                                <td>Human oversight, productivity, and measuring real work</td>
+                            </tr>
+                            <tr>
+                                <th>Security</th>
+                                <td>Full-stack security, and red teaming for defense</td>
+                                <td>Quality infrastructure: design, abstraction, sandboxing, and runtime checkpoint and rollback</td>
+                            </tr>
+                            <tr>
+                                <th>Data</th>
+                                <td>Data quality and robustness</td>
+                                <td>Agents that answer questions over data lakes (LakeQA), and pretraining and post-training</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <img src="../2025-10/images/ribbon2.png" class="ribbon" alt="">
+    </div>
+
+    <!-- Speakers -->
+    <div class="section" id="speakers">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <h2 class="mb-5 subheading">Speakers</h2>
+                    <br>
+                </div>
+            </div>
+
+            <!-- Speakers grid -->
+            <div class="row justify-content-center">
+                <div class="col-md-10">
+                    <div class="row g-4">
+                        <div class="col-6 col-md-4 col-lg-3 text-center">
+                            <img src="/media/3d80359d-3283-4aab-a8ea-a47cdf082b20.jpg" alt="Eugene Wu" class="grid_img">
+                            <p class="mt-2 mb-0"><strong><a href="https://www.eugenewu.net/" target="_blank" style="color: inherit;">Eugene Wu</a></strong></p>
+                            <p class="mb-0" style="font-size: 0.9em; color: #666;">Columbia CS, DAPLab Co-director</p>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg-3 text-center">
+                            <img src="../2025-10/images/headshots/zhou_yu.jpg" alt="Zhou Yu" class="grid_img">
+                            <p class="mt-2 mb-0"><strong><a href="https://www.cs.columbia.edu/~zhouyu/" target="_blank" style="color: inherit;">Zhou Yu</a></strong></p>
+                            <p class="mb-0" style="font-size: 0.9em; color: #666;">Columbia CS, DAPLab Co-director</p>
+                        </div>
+                        <!-- TODO: add headshot at images/headshots/simha_sethumadhavan.jpg and swap the initials for <img> -->
+                        <div class="col-6 col-md-4 col-lg-3 text-center">
+                            <span class="initials">SS</span>
+                            <p class="mt-2 mb-0"><strong><a href="https://www.cs.columbia.edu/~simha/" target="_blank" style="color: inherit;">Simha Sethumadhavan</a></strong></p>
+                            <p class="mb-0" style="font-size: 0.9em; color: #666;">Columbia CS</p>
+                        </div>
+                        <!-- TODO: headshot images/headshots/suman_jana.jpg -->
+                        <div class="col-6 col-md-4 col-lg-3 text-center">
+                            <span class="initials">SJ</span>
+                            <p class="mt-2 mb-0"><strong><a href="https://www.cs.columbia.edu/~suman/" target="_blank" style="color: inherit;">Suman Jana</a></strong></p>
+                            <p class="mb-0" style="font-size: 0.9em; color: #666;">Columbia CS</p>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg-3 text-center">
+                            <img src="/media/b393d37c-c545-497d-8076-e1b1291b5773.jpg" alt="Kostis Kaffes" class="grid_img">
+                            <p class="mt-2 mb-0"><strong><a href="https://www.cs.columbia.edu/~kkaffes/" target="_blank" style="color: inherit;">Kostis Kaffes</a></strong></p>
+                            <p class="mb-0" style="font-size: 0.9em; color: #666;">Columbia CS</p>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg-3 text-center">
+                            <img src="../2025-10/images/headshots/junfeng_yang.jpg" alt="Junfeng Yang" class="grid_img">
+                            <p class="mt-2 mb-0"><strong><a href="https://www.cs.columbia.edu/~junfeng/" target="_blank" style="color: inherit;">Junfeng Yang</a></strong></p>
+                            <p class="mb-0" style="font-size: 0.9em; color: #666;">Columbia CS</p>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg-3 text-center">
+                            <img src="../2025-10/images/headshots/lydia_chilton.jpg" alt="Lydia Chilton" class="grid_img">
+                            <p class="mt-2 mb-0"><strong><a href="https://www.cs.columbia.edu/~chilton/" target="_blank" style="color: inherit;">Lydia Chilton</a></strong></p>
+                            <p class="mb-0" style="font-size: 0.9em; color: #666;">Columbia CS</p>
+                        </div>
+                        <!-- TODO: headshot images/headshots/micah_goldblum.jpg -->
+                        <div class="col-6 col-md-4 col-lg-3 text-center">
+                            <span class="initials">MG</span>
+                            <p class="mt-2 mb-0"><strong><a href="https://goldblum.github.io/" target="_blank" style="color: inherit;">Micah Goldblum</a></strong></p>
+                            <p class="mb-0" style="font-size: 0.9em; color: #666;">Columbia EE</p>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg-3 text-center">
+                            <img src="../2025-10/images/headshots/john_hewitt.png" alt="John Hewitt" class="grid_img">
+                            <p class="mt-2 mb-0"><strong><a href="https://www.cs.columbia.edu/~johnhew/" target="_blank" style="color: inherit;">John Hewitt</a></strong></p>
+                            <p class="mb-0" style="font-size: 0.9em; color: #666;">Columbia CS</p>
+                        </div>
+                        <!-- TODO: headshot images/headshots/neel_guha.jpg -->
+                        <div class="col-6 col-md-4 col-lg-3 text-center">
+                            <span class="initials">NG</span>
+                            <p class="mt-2 mb-0"><strong><a href="https://neelguha.github.io/" target="_blank" style="color: inherit;">Neel Guha</a></strong></p>
+                            <p class="mb-0" style="font-size: 0.9em; color: #666;">Columbia Law School</p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <img src="../2025-10/images/ribbon2.png" class="ribbon" alt="">
+    </div>
+
+    <!-- Schedule: same timeline markup as the 2025-10 page (schedule.css) -->
+    <div class="section" id="schedule">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3"></div>
+                <div class="col-md-6">
+                    <h2 class="mb-5 subheading">Schedule</h2>
+                    <br><br>
+                </div>
+                <div class="col-md-3"></div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+
+                    <div class="row margin-b-30 flex-nowrap">
+                        <div class="col-2 event-info"><span>9:00</span></div>
+                        <div class="col-8 event-detail">
+                            <h3>Breakfast and Check-in</h3>
+                            <p></p>
+                        </div>
+                    </div>
+
+                    <div class="row margin-b-30 flex-nowrap">
+                        <div class="col-2 event-info"><span>9:30</span></div>
+                        <div class="col-8 event-detail">
+                            <h3>Welcome</h3>
+                            <h4>Prof. <a href="https://www.eugenewu.net/" target="_blank" style="color: inherit;">Eugene Wu</a> and Prof. <a href="https://www.cs.columbia.edu/~zhouyu/" target="_blank" style="color: inherit;">Zhou Yu</a></h4>
+                            Co-directors of DAPLab, Columbia CS Faculty
+                            <p></p>
+                        </div>
+                    </div>
+
+                    <div class="row margin-b-30 flex-nowrap">
+                        <div class="col-2 event-info"><span>9:45</span></div>
+                        <div class="col-8 event-detail">
+                            <h3>Morning Keynote</h3>
+                            <p></p>
+                        </div>
+                    </div>
+
+                    <div class="row margin-b-30 flex-nowrap">
+                        <div class="col-2 event-info"><span>10:30</span></div>
+                        <div class="col-8 event-detail">
+                            <h3>Evaluation: Checking What Agents Do</h3>
+                            <p><a href="https://www.cs.columbia.edu/~junfeng/" target="_blank" style="color: inherit;">Junfeng Yang</a>, Columbia Computer Science &middot; testing agent software</p>
+                            <p><a href="https://www.cs.columbia.edu/~chilton/" target="_blank" style="color: inherit;">Lydia Chilton</a>, Columbia Computer Science &middot; HCI and human oversight</p>
+                            <p><a href="https://www.cs.columbia.edu/~zhouyu/" target="_blank" style="color: inherit;">Zhou Yu</a>, Columbia Computer Science &middot; agents and productivity</p>
+                            <p><a href="https://neelguha.github.io/" target="_blank" style="color: inherit;">Neel Guha</a>, Columbia Law School</p>
+                        </div>
+                    </div>
+
+                    <div class="row margin-b-30 flex-nowrap">
+                        <div class="col-2 event-info"><span>11:30</span></div>
+                        <div class="col-8 event-detail">
+                            <h3>Security: From Full-Stack Defenses to Safe Runtimes</h3>
+                            <p><a href="https://www.cs.columbia.edu/~simha/" target="_blank" style="color: inherit;">Simha Sethumadhavan</a>, Columbia Computer Science &middot; full-stack security</p>
+                            <p><a href="https://www.cs.columbia.edu/~suman/" target="_blank" style="color: inherit;">Suman Jana</a>, Columbia Computer Science &middot; red teaming for defense</p>
+                            <p><a href="https://www.cs.columbia.edu/~kkaffes/" target="_blank" style="color: inherit;">Kostis Kaffes</a>, Columbia Computer Science &middot; sandboxing, checkpoint and rollback</p>
+                        </div>
+                    </div>
+
+                    <div class="row margin-b-30 flex-nowrap">
+                        <div class="col-2 event-info"><span>12:30</span></div>
+                        <div class="col-8 event-detail">
+                            <h3>Lunch, Student Posters and Live Demos</h3>
+                            <p>DAPLab students</p>
+                        </div>
+                    </div>
+
+                    <div class="row margin-b-30 flex-nowrap">
+                        <div class="col-2 event-info"><span>1:30</span></div>
+                        <div class="col-8 event-detail">
+                            <h3>Afternoon Keynote</h3>
+                            <p></p>
+                        </div>
+                    </div>
+
+                    <div class="row margin-b-30 flex-nowrap">
+                        <div class="col-2 event-info"><span>2:15</span></div>
+                        <div class="col-8 event-detail">
+                            <h3>Data: Quality In, Quality Out</h3>
+                            <p><a href="https://goldblum.github.io/" target="_blank" style="color: inherit;">Micah Goldblum</a>, Columbia Electrical Engineering &middot; data quality</p>
+                            <p><a href="https://www.eugenewu.net/" target="_blank" style="color: inherit;">Eugene Wu</a>, Columbia Computer Science &middot; LakeQA</p>
+                            <p><a href="https://www.cs.columbia.edu/~johnhew/" target="_blank" style="color: inherit;">John Hewitt</a>, Columbia Computer Science &middot; pretraining and post-training</p>
+                        </div>
+                    </div>
+
+                    <div class="row margin-b-30 flex-nowrap">
+                        <div class="col-2 event-info"><span>3:15</span></div>
+                        <div class="col-8 event-detail">
+                            <h3>Industry Panel: The Top AI Security Risk of 2027</h3>
+                            <p>As agents take on more autonomous work in 2027, which risks will matter most: unreliable data, or agents acting beyond their intended permissions? Industry and government leaders discuss where the next failures are likely to come from and what safeguards organizations should build now.</p>
+                        </div>
+                    </div>
+
+                    <div class="row margin-b-30 flex-nowrap">
+                        <div class="col-2 event-info"><span>4:00</span></div>
+                        <div class="col-8 event-detail">
+                            <h3>Partnering with DAPLab, and Closing Remarks</h3>
+                            <p><a href="https://www.eugenewu.net/" target="_blank" style="color: inherit;">Eugene Wu</a> and <a href="https://www.cs.columbia.edu/~zhouyu/" target="_blank" style="color: inherit;">Zhou Yu</a></p>
+                        </div>
+                    </div>
+
+                    <div class="row margin-b-30 flex-nowrap">
+                        <div class="col-2 event-info"><span>4:30</span></div>
+                        <div class="col-8 event-detail">
+                            <h3>Close</h3>
+                            <p></p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <img src="../2025-10/images/ribbon2.png" class="ribbon" alt="">
+    </div>
+
+    <!-- Past speakers -->
+    <div class="section" id="past">
+        <div class="container">
+            <h2 class="mb-5 subheading">Past Speakers Include</h2>
+
+            <div class="row justify-content-center mb-5">
+                <div class="col-md-10">
+                    <div class="row g-3 justify-content-center">
+                        <div class="col-md-5 text-center">
+                            <img src="../2025-10/images/headshots/laurens_van_der_maaten.png" alt="Laurens van der Maaten" class="keynote_img">
+                            <p class="mt-3 mb-1"><strong style="font-size: 1.2em;">Laurens van der Maaten</strong></p>
+                            <p class="mb-0" style="font-size: 0.95em; color: #666;">Anthropic</p>
+                            <p class="mt-2" style="color: #005BBF; font-weight: 600; font-size: 1.05em;">Keynote, Oct 2025</p>
+                        </div>
+                        <div class="col-md-5 text-center">
+                            <img src="../2025-10/images/headshots/sasha_rush.jpg" alt="Sasha Rush" class="keynote_img">
+                            <p class="mt-3 mb-1"><strong style="font-size: 1.2em;">Sasha Rush</strong></p>
+                            <p class="mb-0" style="font-size: 0.95em; color: #666;">Cursor</p>
+                            <p class="mt-2" style="color: #005BBF; font-weight: 600; font-size: 1.05em;">Keynote, Oct 2025</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row justify-content-center mb-5">
+                <div class="col-md-10">
+                    <div class="row g-4">
+                        <div class="col-6 col-md-4 col-lg-3 text-center">
+                            <span class="initials">JW</span>
+                            <p class="mt-2 mb-0"><strong>Jason Wei</strong></p>
+                            <p class="mb-0" style="font-size: 0.9em; color: #666;">OpenAI &middot; Keynote, Mar 2025</p>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg-3 text-center">
+                            <span class="initials">DP</span>
+                            <p class="mt-2 mb-0"><strong>Danielle Perszyk</strong></p>
+                            <p class="mb-0" style="font-size: 0.9em; color: #666;">Amazon AGI &middot; Keynote, Mar 2025</p>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg-3 text-center">
+                            <span class="initials">JF</span>
+                            <p class="mt-2 mb-0"><strong>Jonathan Frankle</strong></p>
+                            <p class="mb-0" style="font-size: 0.9em; color: #666;">Databricks</p>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg-3 text-center">
+                            <img src="../2025-10/images/headshots/wenyue_hua.jpeg" alt="Wenyue Hua" class="grid_img">
+                            <p class="mt-2 mb-0"><strong>Wenyue Hua</strong></p>
+                            <p class="mb-0" style="font-size: 0.9em; color: #666;">Microsoft Frontier AI</p>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg-3 text-center">
+                            <img src="../2025-10/images/headshots/ZachLipton.png" alt="Zach Lipton" class="grid_img">
+                            <p class="mt-2 mb-0"><strong>Zach Lipton</strong></p>
+                            <p class="mb-0" style="font-size: 0.9em; color: #666;">CTO of Abridge & CMU faculty</p>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg-3 text-center">
+                            <img src="../2025-10/images/headshots/justin_debradant.jpeg" alt="Justin Debrabant" class="grid_img">
+                            <p class="mt-2 mb-0"><strong>Justin Debrabant</strong></p>
+                            <p class="mb-0" style="font-size: 0.9em; color: #666;">Databricks</p>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg-3 text-center">
+                            <img src="../2025-10/images/headshots/NataliaDorogi.png" alt="Natalia Dorogi" class="grid_img">
+                            <p class="mt-2 mb-0"><strong>Natalia Dorogi</strong></p>
+                            <p class="mb-0" style="font-size: 0.9em; color: #666;">McKinsey Quantum Black</p>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg-3 text-center">
+                            <img src="../2025-10/images/headshots/Jamshed Cooper.jpeg" alt="Jamshed Cooper" class="grid_img">
+                            <p class="mt-2 mb-0"><strong>Jamshed Cooper</strong></p>
+                            <p class="mb-0" style="font-size: 0.9em; color: #666;">UBS</p>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg-3 text-center">
+                            <img src="../2025-10/images/headshots/rotem_weiss.png" alt="Rotem Weiss" class="grid_img">
+                            <p class="mt-2 mb-0"><strong>Rotem Weiss</strong></p>
+                            <p class="mb-0" style="font-size: 0.9em; color: #666;">Tavily</p>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg-3 text-center">
+                            <img src="../2025-10/images/headshots/mehdi_jamei.jpeg" alt="Mehdi Jamei" class="grid_img">
+                            <p class="mt-2 mb-0"><strong>Mehdi Jamei</strong></p>
+                            <p class="mb-0" style="font-size: 0.9em; color: #666;">Veris</p>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg-3 text-center">
+                            <img src="../2025-10/images/headshots/baishakhi_ray.jpg" alt="Baishakhi Ray" class="grid_img">
+                            <p class="mt-2 mb-0"><strong>Baishakhi Ray</strong></p>
+                            <p class="mb-0" style="font-size: 0.9em; color: #666;">Columbia CS</p>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg-3 text-center">
+                            <img src="../2025-10/images/headshots/tianyi_peng.jpg" alt="Tianyi Peng" class="grid_img">
+                            <p class="mt-2 mb-0"><strong>Tianyi Peng</strong></p>
+                            <p class="mb-0" style="font-size: 0.9em; color: #666;">Columbia CBS</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chips mb-5">
+                <span><b>Karina Nguyen</b>, OpenAI</span>
+                <span><b>Lei Kang</b>, Google</span>
+                <span><b>Cheng Tan</b>, Microsoft</span>
+                <span><b>Jim Laredo</b>, IBM</span>
+                <span><b>Xiaofeng Wang</b>, LinkedIn</span>
+                <span><b>Chris Xi</b>, Zoom</span>
+                <span><b>Eric Kuang</b>, Datadog</span>
+                <span><b>Cong Yu</b>, Celonis</span>
+                <span><b>Sivan Veera</b>, Infosys</span>
+                <span><b>Deepak Dastrala</b>, Intellect</span>
+                <span><b>Diane Yu</b>, Tidalwave</span>
+                <span><b>Yun Zhang</b>, Millennium</span>
+                <span><b>Yin Luo</b>, Wolfe Research</span>
+            </div>
+
+            <h2 class="mb-4 mt-5 subheading">Past Workshops</h2>
+            <div class="row g-4 justify-content-center mb-5">
+                <div class="col-md-5">
+                    <a class="past_card" href="../2025-10/">
+                        <div class="date">October 27, 2025 &middot; Columbia Business School</div>
+                        <h4>AI Agents for Work</h4>
+                        <p>Keynotes from Sasha Rush (Cursor) and Laurens van der Maaten (Anthropic). Topics: trust in agentic systems, research talks, and an industry panel on deploying agents.</p>
+                    </a>
+                </div>
+                <div class="col-md-5">
+                    <a class="past_card" href="../2025-03/">
+                        <div class="date">March 12, 2025 &middot; Columbia Business School</div>
+                        <h4>AI Agents for Work</h4>
+                        <p>Keynotes from Jason Wei (OpenAI) and Danielle Perszyk (Amazon AGI). Topics: new technology for AI agents, and deploying AI agents in the enterprise.</p>
+                    </a>
+                </div>
+            </div>
+
+            <h4 class="text-center mb-4 blue" style="font-weight:700;">Photos from March 2025</h4>
+            <div class="gallery">
+                <img src="../2025-03/images/20250312_Dini_2042.jpg" alt="DAPLab workshop, March 2025">
+                <img src="../2025-03/images/20250312_Dini_2143.jpg" alt="DAPLab workshop, March 2025">
+                <img src="../2025-03/images/20250312_Dini_2278.jpg" alt="DAPLab workshop, March 2025">
+                <img src="../2025-03/images/20250312_Dini_2360.jpg" alt="DAPLab workshop, March 2025">
+                <img src="../2025-03/images/20250312_Dini_2440.jpg" alt="DAPLab workshop, March 2025">
+                <img src="../2025-03/images/20250312_Dini_2563.jpg" alt="DAPLab workshop, March 2025">
+                <img src="../2025-03/images/20250312_Dini_2755.jpg" alt="DAPLab workshop, March 2025">
+                <img src="../2025-03/images/20250312_Dini_2950.jpg" alt="DAPLab workshop, March 2025">
+            </div>
+        </div>
+    </div>
+
+    <div class="section final_panel" id="attending" style="padding-bottom: 100px">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-6 text-center">
+                                        Questions? <br>
+                    Email Prof. Lydia Chilton - chilton@cs.columbia.edu
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // If a headshot can't load (e.g. /media photos when previewing locally), show initials instead.
+        document.querySelectorAll('img.grid_img, img.keynote_img').forEach(function (img) {
+            function swap() {
+                var s = document.createElement('span');
+                s.className = 'initials' + (img.classList.contains('keynote_img') ? ' big' : '');
+                s.textContent = (img.alt || '?').split(/\s+/).map(function (w) { return w[0]; }).slice(0, 2).join('').toUpperCase();
+                img.replaceWith(s);
+            }
+            if (img.complete && img.naturalWidth === 0) swap(); else img.addEventListener('error', swap);
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
