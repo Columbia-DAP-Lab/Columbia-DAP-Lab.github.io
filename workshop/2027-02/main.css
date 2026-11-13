@@ -201,3 +201,13 @@
     pointer-events: none;
   }
   
+  /* Safari/WebKit intermittently drops the mix-blend-mode on .content, and the
+     inverted text then renders black. In WebKit, skip the blend and pick a color
+     that comes out white after .flex-container's invert filter. */
+  @supports (font: -apple-system-body) and (-webkit-appearance: none) {
+    .content {
+      mix-blend-mode: normal;
+      filter: none;
+      color: #000;
+    }
+  }
