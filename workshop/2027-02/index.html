@@ -39,6 +39,8 @@
         /* headshots, same sizes as the 2025-10 page */
         .keynote_img { height: 180px; width: auto; object-fit: cover; border-radius: 12px; box-shadow: 3px 3px 12px rgba(0,0,0,0.3); }
         .grid_img { height: 100px; width: auto; object-fit: cover; border-radius: 8px; box-shadow: 2px 2px 8px rgba(0,0,0,0.2); }
+        /* landscape headshots would overflow the half-width columns on phones */
+        .keynote_img, .grid_img { max-width: 100%; }
         .initials {
             display: inline-flex; align-items: center; justify-content: center;
             height: 100px; width: 100px; border-radius: 8px;
@@ -69,6 +71,12 @@
         .map thead th { background: #005BBF; color: #fff; text-transform: uppercase; letter-spacing: .05em; font-size: .9rem; }
         .map tbody th { width: 160px; color: #005BBF; font-size: 1.15rem; background: #f6f8fb; }
         .map .who { display: block; color: #666; font-size: .95em; margin-top: 4px; }
+        /* on phones the table is wider than the screen, which makes the whole page scroll sideways */
+        @media (max-width: 575.98px) {
+            .map th, .map td { padding: 10px 8px; font-size: .9rem; }
+            .map thead th { font-size: .7rem; letter-spacing: .02em; }
+            .map tbody th { width: auto; font-size: .95rem; }
+        }
 
         /* past speakers name chips */
         .chips { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
