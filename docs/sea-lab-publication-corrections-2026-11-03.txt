@@ -1,0 +1,192 @@
+SEA Lab publication corrections
+Prepared November 3, 2026
+
+Five existing DAPLab publication entries point to preprints. This handoff lists
+the replacement fields for the versions of record.
+
+Open https://daplab.cs.columbia.edu/admin/ and select Papers, then Published
+papers. A publication reviewer or site admin can locate each entry by its
+current title or URL, select Edit, apply the listed fields, and save the changes.
+The DOI link goes in the Paper URL field.
+
+The live site reads publication records from Convex. Apply these corrections
+through the admin portal to publish them.
+
+============================================================
+Existing title to locate: The Anatomy of a Personal Health Agent
+Current venue: arXiv 2025
+Current pub_date: 2025-08-27
+Current URL: https://arxiv.org/abs/2508.20148
+
+Replace with the following fields:
+Title: The anatomy of a personal health agent
+Authors (one per line, in publication order):
+A. Ali Heydari
+Ken Gu
+Vidya Srinivas
+Hong Yu
+Akshay Paruchuri
+Zhihan Zhang
+Yuwei Zhang
+Qian He
+Hamid Palangi
+Nova Hammerquist
+Ahmed A. Metwally
+Brent Winslow
+Yubin Kim
+Kumar Ayush
+Yuzhe Yang
+Girish Narayanswamy
+Maxwell A. Xu
+Jake Garrison
+Samuel Schmidgall
+Amy Armento Lee
+Jenny Vafeiadou
+Ben Graef
+Isaac R. Galatzer-Levy
+Erik Schenck
+Andrew Barakat
+Javier Perez
+Jacqueline Shreibati
+John Hernandez
+Anthony Z. Faranesh
+Naghmeh Rezaei
+Javier L. Prieto
+Conor Heneghan
+Jiening Zhan
+Mark Malhotra
+Shwetak Patel
+Yun Liu
+Tim Althoff
+Xin Liu
+Daniel McDuff
+Xuhai Orson Xu
+Venue: Nature 2026
+Full publication venue: Nature
+Publication year: 2026
+pubDate: 2026-10-21
+Date precision: day
+DOI: 10.1038/s41586-026-11161-8
+URL: https://doi.org/10.1038/s41586-026-11161-8
+Topics: ai, hac
+Correction notes: Use the 40 authors and their order from the published Nature version. This includes Samuel Schmidgall and Naghmeh Rezaei and uses the published spelling of Conor Heneghan. Remove the whitepaper tag because the final version is a research article.
+
+============================================================
+Existing title to locate: DietGlance: dietary monitoring and personalized analysis at a glance with knowledge-empowered AI assistant
+Current venue: ACM HEALTH
+Current pub_date: 2025-02-03
+Current URL: https://arxiv.org/abs/2502.01317
+
+Replace with the following fields:
+Title: DietGlance: Dietary Monitoring and Personalized Analysis at a Glance with Knowledge-Empowered AI Assistant
+Authors (one per line, in publication order):
+Zhihan Jiang
+Running Zhao
+Lin Lin
+Yue Yu
+Handi Chen
+Xinchen Zhang
+Xuhai Xu
+Yifang Wang
+Xiaojuan Ma
+Edith C. H. Ngai
+Venue: ACM Transactions on Computing for Healthcare 2026
+Full publication venue: ACM Transactions on Computing for Healthcare
+Publication year: 2026
+pubDate: 2026-04-06
+Date precision: day
+DOI: 10.1145/3797883
+URL: https://doi.org/10.1145/3797883
+Topics: ai, sys, rag
+Correction notes: Use the full journal name and the online publication date of 2026-04-06.
+
+============================================================
+Existing title to locate: MIND: Empowering Mental Health Clinicians with Multimodal Data Insights through a Narrative Dashboard
+Current venue: CHI 2026
+Current pub_date: 2026-04-13
+Current URL: https://arxiv.org/abs/2601.14641
+
+Replace with the following fields:
+Title: MIND: Empowering Mental Health Clinicians with Multimodal Data Insights through a Narrative Dashboard
+Authors (one per line, in publication order):
+Ruishi Zou
+Shiyu Xu
+Margaret E Morris
+Jihan Ryu
+Timothy D. Becker
+Nicholas Allen
+Anne Marie Albano
+Randy Auerbach
+Dan Adler
+Varun Mishra
+Lace M. Padilla
+Dakuo Wang
+Ryan Sultan
+Xuhai Xu
+Venue: CHI 2026
+Full publication venue: Proceedings of the 2026 CHI Conference on Human Factors in Computing Systems
+Publication year: 2026
+pubDate: 2026-04-13
+Date precision: day
+DOI: 10.1145/3772318.3790529
+URL: https://doi.org/10.1145/3772318.3790529
+Topics: ai, sys, vis, multimodal
+Comment: Honorable Mention Award
+Correction notes: Replace the link with the official DOI, retain the existing topic tags, and add Honorable Mention Award. Author names follow the published version, including Lace M. Padilla.
+
+============================================================
+Existing title to locate: More than Decision Support: Exploring Patients' Longitudinal Usage of Large Language Models in Real-World Healthcare-Seeking Journeys
+Current venue: CHI 2026
+Current pub_date: 2026-04-13
+Current URL: https://arxiv.org/abs/2602.14733
+
+Replace with the following fields:
+Title: More than Decision Support: Exploring Patients' Longitudinal Usage of Large Language Models in Real-World Healthcare-Seeking Journeys
+Authors (one per line, in publication order):
+Yancheng Cao
+Yishu Ji
+Yue Fu
+Sahiti Dharmavaram
+Meghan Turchioe
+Natalie C Benda
+Lena Mamykina
+Yuling Sun
+Xuhai Xu
+Venue: CHI 2026
+Full publication venue: Proceedings of the 2026 CHI Conference on Human Factors in Computing Systems
+Publication year: 2026
+pubDate: 2026-04-13
+Date precision: day
+DOI: 10.1145/3772318.3791946
+URL: https://doi.org/10.1145/3772318.3791946
+Topics: ai, hac
+Correction notes: Replace the link with the official DOI. Use the published author list, in which the third author is Yue Fu. Retain CHI 2026 and the existing date of 2026-04-13.
+
+============================================================
+Existing title to locate: Invisible Impact of Empathy on Behavioral Change: Isolating the Effect of Empathy in Long-term Physical Activity Coaching Chatbot Interactions
+Current venue: arXiv 2026
+Current pub_date: 2026-06-25
+Current URL: https://arxiv.org/abs/2606.26641
+
+Replace with the following fields:
+Title: Invisible Impact of Empathy on Behavioral Change: Isolating the Effect of Empathy in Long-term Physical Activity Coaching Chatbot Interactions
+Authors (one per line, in publication order):
+Siyan Li
+Kai-Hui Liang
+Shopnil Shahriar
+Yilin Ye
+Shiyoh Goetsu
+Wei-Wei Du
+Masahiro Yoshida
+Tsunayuki Ohwa
+Xuhai Xu
+Zhou Yu
+Venue: CUI 2026
+Full publication venue: Proceedings of the 8th ACM Conference on Conversational User Interfaces
+Publication year: 2026
+pubDate: 2026-07-21
+Date precision: day
+DOI: 10.1145/3816046.3816277
+URL: https://doi.org/10.1145/3816046.3816277
+Topics: ai, hac
+Correction notes: Use the published CUI DOI, the official publication date of 2026-07-21, and the published first-author name Siyan Li. Capitalization of Shiyoh Goetsu follows the existing display.
