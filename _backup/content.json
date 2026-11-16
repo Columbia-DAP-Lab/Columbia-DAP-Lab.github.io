@@ -86,6 +86,18 @@
       "wholink": "https://www.wajeehaahmad.com/"
     },
     {
+      "bio": "I am an Assistant Professor of Computer Science at Barnard College, Columbia University. My research interests are in logic, automata theory, and theoretical formal methods. Previously, I was a postdoctoral associate at Cornell University, working with Professor Alexandra Silva, and a Faculty Fellow/Assistant Professor at the Courant Institute, New York University. I received my Ph.D. in Computer Science from New York University in August 2025, advised by Professor Thomas Wies. A summary of my dissertation was invited to appear in the EATCS Bulletin. I received my B.S. (Honours) from Yale-NUS College in May 2019.",
+      "date": "2026-11-17",
+      "description": "Prompt injection attacks exploit an AI agent's interactions with untrusted external data to cause it to perform dangerous actions, such as exfiltrate user data or complete unauthorized financial transactions. Existing work has shown that deterministic, model-level defenses in the literature achieve one of two extreme ends of the security-utility tradeoff: overdefended, or insecure. In this talk, I will argue that insusceptibility against prompt injection attacks is a hyperproperty, yet is treated by existing defenses as a trace property. I will discuss several hyperproperty-based monitoring approaches to preventing prompt injection attacks in a single-agent setting, and control flow hijacking in a multi-agent setting. I will also discuss present challenges of evaluating security and utility of defenses.",
+      "role": "Assistant Professor of Computer Science",
+      "tag": "Seminar",
+      "time": "12PM",
+      "title": "A Hyperproperty Lens on Security against Prompt Injection Attacks",
+      "where": "CSB 453",
+      "who": "Elaine Li, Barnard College, Columbia University",
+      "wholink": "https://efl9013.github.io/"
+    },
+    {
       "bio": "Yaniv Nemcovsky is an Associate Research Scientist in the Department of Computer Science at Columbia University, working with Professor Junfeng Yang. His research focuses on trustworthy AI, including system robustness and the mitigation of threats such as physical adversarial attacks, jailbreaks, unsafe behaviors of large language models, data poisoning and backdoors. He received his PhD in Computer Science from the Technion, Israel Institute of Technology, where his thesis addressed adversarial attacks in the real world.",
       "date": "2026-11-10",
       "description": "Large language models present hidden behaviors that standard benchmarks miss. Compliance refusal initializations reveal compliance directions via previously successful attacks, improving the attack success rate while reducing its cost. A latent adversarial proxy captures a more meaningful training signal than straightforward suffix attacks, enhancing model robustness. Steering along refusal directions reveals biases that alignment conceals rather than removes. Backdoor injection leaves a persistent signature in the representation space, undermining the attack's stealthiness. Sentence embeddings encode extensive semantic information, supporting per query model selection and performance prediction. These results present recoverable behavioral signals, encoding relevant practical information beyond standard evaluation criteria.",
