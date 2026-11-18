@@ -58,12 +58,25 @@
     {
       "bio": "Anthony Vanky is an assistant professor at Columbia's Graduate School of Architecture, Planning, and Preservation, with affiliations at the Data Science Institute and the NSF Center for Smart Streetscapes. He studies how digital data and pervasive technologies can help people understand and improve cities, with attention to residents' lived experiences. His background spans architecture, urban design, and planning. Before Columbia, he held appointments at the University of Michigan and MIT, where he also served as a research lead at the Senseable City Lab.",
       "date": "2026-12-03",
+      "description": "The formation of ethnic enclaves in the United States often followed larger patterns of urban development. Whereas early communities such as the coastal Chinatowns were often dense, legible neighborhoods, groups arriving in the late 20th and early 21st centuries followed patterns of suburbanization. These “ethnoburbs” embody complex social relationships similar to those in older or coastal enclaves but often lack the clear spatial and territorial boundaries that make them legible. Despite containing businesses, community spaces, and resources for minoritized (sub)communities, these spatial enclaves may be rendered invisible due to the dispersive physical character of these suburbs.\n\nThis talk discusses efforts to use artificial intelligence to enumerate the degree to which ethnic communities have claimed and marked physical space. We analyze text and signage in current and historic Google Street View to reveal patterns of ethnic place-making in southeastern Michigan, focusing on pan-Asian and newly formed ethnic communities in the region over time. Firstly, we describe how the signage of different groups may have “seeded” and spread along suburban corridors. We then ask whether Street View, assembled for navigation rather than memory, can be treated as an archive at all. We also ask what it means to render communities visible through a record they never consented to. Finally, we reflect on working with AI as a research collaborator, especially within the messiness of identity and placemaking. Many of the most consequential decisions—whether “Cedar” or “Siam” in a business name signals ethnic identity, whether Hindi belongs in a language taxonomy—were deliberated among people rather than computed, and are easily lost in the datafication of the work. While these tools provide a view of ethnic place-making heretofore unavailable at this scale, what (and whom) they make legible remains an open question.",
+      "image": "https://dutiful-turtle-748.convex.cloud/api/storage/2bb32189-8bcc-49e3-8762-cb3715230c59",
       "tag": "AI in the Public Interest",
       "time": "3PM-4PM",
-      "title": "TBA",
+      "title": "Ethnoburbs and Invisible Enclaves: Describing Ethnic Place-making through Machine Vision",
       "where": "CSB 453",
       "who": "Anthony Vanky, Columbia GSAPP",
       "wholink": "https://datascience.columbia.edu/people/anthony-vanky/"
+    },
+    {
+      "bio": "Associate professor in the [Decision, Risk, and Operations](https://www8.gsb.columbia.edu/faculty-research/divisions/decision-risk-operations) division and an affiliate of [Computer Science](https://www.cs.columbia.edu/people/affiliates/), and a member of the [Data Science Institute](https://datascience.columbia.edu/). He works on building trustworthy AI systems capable of continually improving through interactions with the world, taking a data-centric view grounded in empirical foundations and principled thinking. His interdisciplinary research connects tools from machine learning, operations research, and statistics. See his [research foundations overview](https://hsnamkoong.github.io/research/) and [latest agenda on lifetime-learning agents](https://hsnamkoong.github.io/agenda/).",
+      "date": "2026-12-01",
+      "description": "AI agents operating in the real world must navigate a constant scarcity of data and adapt to ever-changing environments. Despite impressive performance in basic knowledge tasks, LLMs struggle to grapple with uncertainty and actively reduce it through information gathering. This talk presents a series of recent works addressing the core challenge of uncertainty quantification in natural language-based decision-making. Rather than modeling hidden environment parameters, we frame uncertainty as stemming from unknown future outcomes and quantify it via autoregressive sequence generation—predicting the next outcome step-by-step based on past interactions. Our approach leverages in-context learning to incorporate new information on the fly, avoiding the complexity of posterior inference and enabling scalable deployment across unstructured domains such as adaptive student assessments with text and image inputs. We formalize this methodology as a reduction from online decision-making to offline next-outcome prediction, allowing us to harness the full power of large-scale datasets and compute infrastructure already optimized for sequence prediction in interactive AI systems.",
+      "role": "Associate Professor",
+      "tag": "Seminar",
+      "time": "12PM",
+      "title": "Autoregressive Generation as a Primitive for Uncertainty Quantification",
+      "who": "Hongseok Namkoong, Columbia University",
+      "wholink": "https://hsnamkoong.github.io/research/"
     },
     {
       "date": "2026-11-20",
@@ -2816,10 +2829,10 @@
       "advisor": [
         "Yusen Zhang"
       ],
-      "bio": "Post-training, RL, & Evals",
+      "bio": "RL & Evals",
       "category": "Student",
       "homepage": "https://hassamgani.com",
-      "image": "https://dutiful-turtle-748.convex.cloud/api/storage/5460fb52-9ce9-4538-9953-1b34216b873b",
+      "image": "https://dutiful-turtle-748.convex.cloud/api/storage/e3344a4f-db0d-488f-b6b5-81b6d428f390",
       "name": "Hassam Abdul Gani"
     },
     {
