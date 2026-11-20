@@ -2461,7 +2461,6 @@
       "name": "Georgios Liargkovas"
     },
     {
-      "bio": "Nikos Pagonas is a third-year Computer Science PhD student at Columbia University advised by Prof. Kostis Kaffes, where he conducts research in the DAPLab on systems for agentic AI. His work builds systems that leverage workflow structure and runtime characteristics to optimize model routing, scheduling, and resource allocation for efficient agentic serving.",
       "category": "PhD",
       "field": [
         "AI",
@@ -2647,6 +2646,15 @@
       "homepage": "https://www.linkedin.com/in/jianxingc",
       "image": "https://dutiful-turtle-748.convex.cloud/api/storage/7bde32fa-f1d4-491e-9b6c-cadff387872f",
       "name": "Jianxing Chen"
+    },
+    {
+      "advisor": [
+        "Prof. Kostis Kaffes"
+      ],
+      "category": "PhD",
+      "homepage": "https://www.linkedin.com/in/anastasios-romanos-varvarigos-444603202/",
+      "image": "https://dutiful-turtle-748.convex.cloud/api/storage/b474a026-a000-4cc2-a110-d9c8457a68b0",
+      "name": "Anastasios Romanos Varvarigos"
     },
     {
       "category": "Postdoc",
