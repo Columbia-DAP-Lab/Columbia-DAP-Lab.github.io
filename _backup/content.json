@@ -824,6 +824,18 @@
   ],
   "publications": [
     {
+      "authors": "Tiancheng Ge, Jiakai Xu, Zhou Yu, Eugene Wu, Kostis Kaffes",
+      "conf": "Agent Evaluation Science Symposium (AgentEvalSci'26)",
+      "pub_date": "2026-11-20",
+      "tags": [
+        "ai",
+        "bench",
+        "llm"
+      ],
+      "title": "Evaluating a Terminal Task Is Itself a Terminal Task: What LLM Graders Need to Judge Agent Work",
+      "url": "https://www.cs.columbia.edu/~alexxu/uploads/agentevalsci2026_terminaltask.pdf"
+    },
+    {
       "authors": "Chenhao Hong, Jiakai Xu, Kaushiki Singh, Yusen Zhang, Eugene Wu",
       "conf": "arXiv",
       "pub_date": "2026-10-30",
@@ -3383,20 +3395,20 @@
             "url": "https://dale1213.github.io/minimal-mistakes/"
           },
           {
-            "name": "Rohan Timmaraju",
-            "url": "https://www.linkedin.com/in/rohan-timmaraju/"
-          },
-          {
             "name": "Tiancheng Ge",
             "url": "https://www.linkedin.com/in/tiancheng-ge-168690290/"
           },
           {
-            "name": "Ruizhe Fu",
-            "url": "https://frzno1.github.io/"
+            "name": "Rohan Timmaraju",
+            "url": "https://www.linkedin.com/in/rohan-timmaraju/"
           },
           {
             "name": "Danielle Gillai",
             "url": "https://www.linkedin.com/in/danielle-g-3121662ba/"
+          },
+          {
+            "name": "Ruizhe Fu",
+            "url": "https://frzno1.github.io/"
           },
           {
             "name": "Georgios Liargkovas",
@@ -3456,6 +3468,12 @@
             "title": "Probe-and-Resume: When and How to Evaluate Agent Execution",
             "url": "https://arxiv.org/abs/2610.21088",
             "venue": "arXiv",
+            "year": 2026
+          },
+          {
+            "title": "Evaluating a Terminal Task Is Itself a Terminal Task: What LLM Graders Need to Judge Agent Work",
+            "url": "https://www.cs.columbia.edu/~alexxu/uploads/agentevalsci2026_terminaltask.pdf",
+            "venue": "Agent Evaluation Science Symposium (AgentEvalSci'26)",
             "year": 2026
           }
         ],
@@ -3560,7 +3578,6 @@
         "date": "2026-05-01",
         "is_benchmark": true,
         "is_project": true,
-        "is_software": true,
         "links": {
           "github": "https://github.com/scarfbench/benchmark",
           "website": "https://scarfbench.info/"
