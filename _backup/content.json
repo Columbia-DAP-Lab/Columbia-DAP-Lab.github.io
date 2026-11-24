@@ -33,6 +33,16 @@
       "wholink": "https://www.yamilrvelez.com/"
     },
     {
+      "bio": "Prof.  Henning Schulzrinne, Levi Professor of Computer Science at Columbia University, with Ph.D.  from the University of Massachusetts in Amherst, Massachusetts.  MTS at AT&T Bell Laboratories; associate department head at GMD-Fokus (Berlin); now CS and EE departments at Columbia University.  Chair of Computer Science 2004 to 2009; Engineering Fellow, Technical Advisor and Chief Technology Officer of Federal Communications Commission (FCC) 2010-2017; technology fellow for Sen.  Wyden in 2019-2020; broadband advisor at NTIA 2022-204.  Protocol standards co-developed by him, including RTP, RTSP and SIP, are now used by almost all Internet telephony and multimedia applications.  Fellow of the ACM and IEEE.",
+      "date": "2027-03-11",
+      "tag": "AI in the Public Interest",
+      "time": "12-1PM",
+      "title": "TBA",
+      "where": "CSB 453",
+      "who": "Henning Schulzrinne, Columbia CS",
+      "wholink": "https://www.cs.columbia.edu/~hgs/"
+    },
+    {
       "bio": "Tapan Parikh is an Associate Professor at Cornell Tech, and leads Convovo.ai, a research and design studio for Conversational AI. His recent work has focused on understanding LLM behaviour using qualitative methods borrowed from HCI and interpretive social science, and developing new measures that can track LLM behavior rather than capability. Previously, he was one of the founders of the ICTD sub-field, which studies the design and evaluation of computing technologies for international development. He has received several awards, including a Sloan fellowship, an NSF Career Award, TR35, and multiple best paper awards at top HCI conferences.",
       "date": "2027-02-25",
       "description": "TBA",
